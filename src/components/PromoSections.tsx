@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { getAssetPath } from "@/utils/paths";
 
 interface PromoSection {
   id: number;
@@ -32,7 +33,7 @@ export default function PromoSections({ sections }: PromoSectionsProps) {
                 <div className="w-[590px] h-[590px] relative bg-gray-100 overflow-hidden mb-[50px]">
                   <div
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${section.image})` }}
+                    style={{ backgroundImage: `url(${getAssetPath(section.image)})` }}
                   />
                 </div>
                 <div className="text-center">

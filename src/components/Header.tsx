@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useCallback, useMemo, useRef } from "react";
+import { getAssetPath } from "@/utils/paths";
 
 interface SubMenuItem {
   text: string;
@@ -291,7 +292,7 @@ export default function Header({ logo, logoAlt, mainNav, isHero = false }: Heade
                       ? 'opacity-100 scale-100' 
                       : 'opacity-0 scale-105'
                   }`}
-                  style={{ backgroundImage: `url(${megaMenuData[menuKey].image})` }}
+                  style={{ backgroundImage: `url(${getAssetPath(megaMenuData[menuKey].image)})` }}
                 />
               ))}
             </div>

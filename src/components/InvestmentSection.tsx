@@ -26,7 +26,7 @@ export default function InvestmentSection({ title, image, description, ctaText, 
           <div className="w-[590px] h-[753px] relative bg-gray-100 overflow-hidden shrink-0">
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${image})` }}
+              style={{ backgroundImage: `url(${getAssetPath(image)})` }}
             />
           </div>
 
@@ -36,7 +36,7 @@ export default function InvestmentSection({ title, image, description, ctaText, 
             <div className="w-[470px] h-[600px] relative bg-gray-100 overflow-hidden mb-[50px]">
               <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(/images/investment-product.jpg)` }}
+                style={{ backgroundImage: `url(${getAssetPath('/images/investment-product.jpg')})` }}
               />
             </div>
             

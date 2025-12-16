@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { getAssetPath } from "@/utils/paths";
 
 interface CategoryPageProps {
   category: string;

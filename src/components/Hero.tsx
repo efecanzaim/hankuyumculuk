@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { getAssetPath } from "@/utils/paths";
 
 interface Slide {
   backgroundImage: string;
@@ -55,12 +56,12 @@ export default function Hero({ slides }: HeroProps) {
               playsInline
               className="absolute inset-0 w-full h-full object-cover"
             >
-              <source src={s.backgroundImage} type="video/mp4" />
+              <source src={getAssetPath(s.backgroundImage)} type="video/mp4" />
             </video>
           ) : (
             <div
               className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-              style={{ backgroundImage: `url(${s.backgroundImage})` }}
+              style={{ backgroundImage: `url(${getAssetPath(s.backgroundImage)})` }}
             />
           )}
         </div>

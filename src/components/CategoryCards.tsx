@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { getAssetPath } from "@/utils/paths";
 
 interface Category {
   id: number;
@@ -31,7 +32,7 @@ export default function CategoryCards({ categories }: CategoryCardsProps) {
                 <div className="w-[470px] h-[600px] relative bg-gray-100 overflow-hidden">
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-                    style={{ backgroundImage: `url(${category.image})` }}
+                    style={{ backgroundImage: `url(${getAssetPath(category.image)})` }}
                   />
                 </div>
                 <div className="text-center mt-[40px]">

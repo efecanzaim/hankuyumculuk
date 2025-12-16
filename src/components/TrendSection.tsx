@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { getAssetPath } from "@/utils/paths";
 
 interface TrendSectionProps {
   leftImage: string;
@@ -32,7 +33,7 @@ export default function TrendSection({
             <div className="aspect-[710/733] relative bg-gray-100 overflow-hidden">
               <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${leftImage})` }}
+                style={{ backgroundImage: `url(${getAssetPath(leftImage)})` }}
               />
             </div>
             {/* Title overlapping image */}
@@ -60,7 +61,7 @@ export default function TrendSection({
             <div className="aspect-[350/522] relative bg-gray-100 overflow-hidden">
               <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${rightImage})` }}
+                style={{ backgroundImage: `url(${getAssetPath(rightImage)})` }}
               />
             </div>
             {/* Title overlapping image - multiline */}

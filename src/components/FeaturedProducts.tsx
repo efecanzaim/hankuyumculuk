@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { getAssetPath } from "@/utils/paths";
 
 interface Product {
   id: number;
@@ -42,7 +43,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
             <div className="w-[350px] h-[525px] relative bg-gray-100">
                   <div
                     className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${products[0]?.image})` }}
+                style={{ backgroundImage: `url(${getAssetPath(products[0]?.image || '')})` }}
                   />
                 </div>
             <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-[20px]">
@@ -58,7 +59,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
             <div className="w-[350px] h-[525px] relative bg-gray-100">
               <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${products[1]?.image})` }}
+                style={{ backgroundImage: `url(${getAssetPath(products[1]?.image || '')})` }}
               />
               </div>
             <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-[20px]">
@@ -77,7 +78,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
             <div className="w-[350px] h-[525px] relative bg-gray-100">
                   <div
                     className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${products[2]?.image})` }}
+                style={{ backgroundImage: `url(${getAssetPath(products[2]?.image || '')})` }}
                   />
                 </div>
             <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-[20px]">
@@ -93,7 +94,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
             <div className="w-[350px] h-[525px] relative bg-gray-100">
               <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${products[3]?.image})` }}
+                style={{ backgroundImage: `url(${getAssetPath(products[3]?.image || '')})` }}
               />
               </div>
             <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-[20px]">
@@ -108,7 +109,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
           <div className="w-[710px] h-[590px] relative bg-gray-100 shrink-0">
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(/images/products/featured-large-2.jpg)` }}
+              style={{ backgroundImage: `url(${getAssetPath('/images/products/featured-large-2.jpg')})` }}
             />
           </div>
         </div>
