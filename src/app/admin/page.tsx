@@ -68,7 +68,7 @@ export default function AdminPanel() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-[#2f3237] text-white py-4 px-6 flex justify-between items-center">
-        <h1 className="text-xl font-semibold">Gözümün Nuru - Admin Paneli</h1>
+        <h1 className="text-xl font-semibold">Han Kuyumculuk - Admin Paneli</h1>
         <div className="flex items-center gap-4">
           <Link href="/" className="text-sm hover:underline" target="_blank">
             Siteyi Görüntüle →

@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Admin Paneli | Gözümün Nuru",
+  title: "Admin Paneli | Han Kuyumculuk",
 };
 
 export default function AdminLayout({

@@ -5,8 +5,14 @@
   --color-dark: #2f3237;
   --color-light: #efece9;
   --color-white: #ffffff;
-  --font-display: 'Buljirya', cursive;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --color-bej: #efece9;
+  --color-pudra: #dccdbf;
+  --color-black: #2f3237;
+  --color-beyaz: #ffffff;
+  --font-display: 'Buljirya', var(--font-playfair), cursive;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-title: var(--font-playfair), serif;
+  --font-script: var(--font-carattere), cursive;
 }
 
 @theme inline {
@@ -23,9 +29,17 @@ body {
   font-family: var(--font-body);
 }
 
-/* Display Font Class */
+/* Display Font Classes */
 .font-display {
   font-family: var(--font-display);
+}
+
+.font-title {
+  font-family: var(--font-title);
+}
+
+.font-script {
+  font-family: var(--font-script);
 }
 
 /* Custom Utilities */

@@ -1,31 +1,24 @@
-import TopBanner from "@/components/TopBanner";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import TrendSection from "@/components/TrendSection";
 import ParallaxSection from "@/components/ParallaxSection";
 import StorySection from "@/components/StorySection";
 import FeaturedProducts from "@/components/FeaturedProducts";
-import CategoryCards from "@/components/CategoryCards";
-import PromoSections from "@/components/PromoSections";
+import SpecialDesignSection from "@/components/SpecialDesignSection";
+import BlogSection from "@/components/BlogSection";
 import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function Home() {
   return (
     <main>
-      {/* Top Banner */}
-      <TopBanner
-        text={content.topBanner.text}
-        visible={content.topBanner.visible}
-        topLinks={content.header.topLinks}
-      />
-
-      {/* Header */}
+      {/* Header (includes TopBanner) */}
       <Header
         logo={content.header.logo}
         logoAlt={content.header.logoAlt}
         mainNav={content.header.mainNav}
         isHero={true}
+        isTransparent={true}
       />
 
       {/* Hero Section */}
@@ -58,17 +51,30 @@ export default function Home() {
       {/* Featured Products */}
       <FeaturedProducts products={content.featuredProducts} />
 
-      {/* Category Cards */}
-      <CategoryCards categories={content.categoryCards} />
+      {/* Special Design Section */}
+      <SpecialDesignSection 
+        topCards={content.specialDesignSection.topCards}
+        bottomCards={content.specialDesignSection.bottomCards}
+      />
 
-      {/* Promo Sections */}
-      <PromoSections sections={content.promoSections} />
+      {/* Blog Section */}
+      <BlogSection
+        title={content.blogSection.title}
+        subtitle={content.blogSection.subtitle}
+        description={content.blogSection.description}
+        image={content.blogSection.image}
+        linkText={content.blogSection.linkText}
+        linkHref={content.blogSection.linkHref}
+        additionalText={content.blogSection.additionalText}
+      />
 
       {/* Footer */}
       <Footer
         logo={content.footer.logo}
         slogan={content.footer.slogan}
-        nav={content.footer.nav}
+        description={content.footer.description}
+        columns={content.footer.columns}
+        socialLinks={content.footer.socialLinks}
         copyright={content.footer.copyright}
       />
     </main>

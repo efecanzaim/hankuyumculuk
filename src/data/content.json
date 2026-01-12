@@ -5,7 +5,7 @@
   },
   "header": {
     "logo": "/images/logo.png",
-    "logoAlt": "Gözümün Nuru",
+    "logoAlt": "Han Kuyumculuk",
     "topLinks": [
       { "text": "Hakkımızda", "href": "/hakkimizda" },
       { "text": "Blog", "href": "/blog" }
@@ -52,8 +52,8 @@
   "trendSection": {
     "leftImage": "/images/trend-left.jpg",
     "rightImage": "/images/trend-right.jpg",
-    "leftTitle": "yeni trend",
-    "rightTitle": "senin\nhikayen",
+    "leftTitle": "Yeni Trend",
+    "rightTitle": "Bu Senin Stilin",
     "leftCategory": "PIRLANTA SETLER",
     "rightCategory": "PIRLANTA BİLEKLİK",
     "leftLink": "/mucevher",
@@ -63,9 +63,9 @@
     "backgroundImage": "/images/parallax-bg.jpg"
   },
   "storySection": {
-    "title": "zarafetiyle bir hikâye",
-    "mainText": "Gözümün Nuru, bir pırlantadan çok daha fazlasını temsil eder; değer verilen kişiyi, paylaşılan özel anları ve kalpten gelen duyguları ışığa dönüştüren bir semboldür.",
-    "subText": "Gözümün Nuru, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
+    "title": "Zarafetiyle Bir Hikaye",
+    "mainText": "Han Kuyumculuk, bir pırlantadan çok daha fazlasını temsil eder; değer verilen kişiyi, paylaşılan özel anları ve kalpten gelen duyguları ışığa dönüştüren bir semboldür.",
+    "subText": "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
     "linkText": "Işığın Aşka Dönüştüğü Hikâye",
     "linkHref": "/hikaye"
   },
@@ -119,40 +119,104 @@
       "link": "/ozel-tasarim"
     }
   ],
-  "promoSections": [
-    {
-      "id": 1,
-      "image": "/images/promo/goz-alici.jpg",
-      "title": "GÖZ ALICI TAKILAR",
-      "description": "Yeni sezon pırlanta\ntasarımları ile stilini aydınlat.",
-      "ctaText": "ÜRÜNLERİ İNCELE",
-      "link": "/koleksiyon"
-    },
-    {
-      "id": 2,
-      "image": "/images/promo/yeni-gelenler.jpg",
-      "title": "YENİ GELENLER",
-      "description": "Atölyemizden çıkan en yeni\ntasarımları ilk sen keşfet.",
-      "ctaText": "ÜRÜNLERİ İNCELE",
-      "link": "/ozel-tasarim"
-    }
-  ],
+  "specialDesignSection": {
+    "topCards": [
+      {
+        "title": "MÜCEVHER",
+        "image": "/images/categories/mucevher-card.jpg",
+        "link": "/mucevher",
+        "buttonText": "KEŞFET"
+      },
+      {
+        "title": "KOLEKSİYONLAR",
+        "image": "/images/categories/koleksiyon-card.jpg",
+        "link": "/koleksiyon",
+        "buttonText": "KEŞFET"
+      },
+      {
+        "title": "ÖZEL TASARIM",
+        "image": "/images/categories/ozel-tasarim-card.jpg",
+        "link": "/ozel-tasarim",
+        "buttonText": "KEŞFET"
+      }
+    ],
+    "bottomCards": [
+      {
+        "title": "GÖZ ALICI TAKILAR",
+        "subtitle": "Yeni sezon pırlanta\ntasarımları ile stilini aydınlat.",
+        "image": "/images/promo/goz-alici.jpg",
+        "link": "/koleksiyon",
+        "buttonText": "ÜRÜNLERİ İNCELE"
+      },
+      {
+        "title": "YENİ GELENLER",
+        "subtitle": "Atölyemizden çıkan en yeni\ntasarımları ilk sen keşfet.",
+        "image": "/images/promo/yeni-gelenler.jpg",
+        "link": "/ozel-tasarim",
+        "buttonText": "ÜRÜNLERİ İNCELE"
+      }
+    ]
+  },
   "investmentSection": {
     "title": "BUGÜNDEN\nYARINLARA\nGÜVENLE",
-    "image": "/images/investment.jpg",
+    "leftImage": "/images/investment.jpg",
+    "rightImage": "/images/investment-product.jpg",
     "description": "Kalitesi sertifikalı yatırımlık altın ürünleriyle geleceğinizi güvenle şekillendirin. Her gram, istikrarlı bir adım demektir.",
     "ctaText": "YATIRIMLIK ÜRÜNLER",
     "link": "/yatirim"
   },
+  "blogSection": {
+    "title": "Pırlantanın Hikâyesi,\nZarafetin İlhamı",
+    "subtitle": "HAN BLOG",
+    "description": "Gözümün Nuru Blog, pırlantanın yalnızca bir mücevher değil; anlam, duygu ve hikâye taşıyan bir değer olduğuna inananlar için hazırlandı.",
+    "image": "/images/blog-featured.jpg",
+    "linkText": "yazının devamı",
+    "linkHref": "/blog/pirlanta-hikayeleri",
+    "additionalText": "Bu alanda; yüzüklerden kolyelere, özel gün hediyelerinden pırlanta seçme rehberlerine kadar merak edilen tüm detayları, ilham veren içerikler ve uzman bakış açılarıyla bulacaksınız."
+  },
   "footer": {
     "logo": "/images/1818-logo.svg",
-    "slogan": "Işıltının Anlama Dönüştüğü Yer.",
-    "nav": [
-      { "text": "MÜCEVHER", "href": "/mucevher" },
-      { "text": "KOLEKSİYON", "href": "/koleksiyon" },
-      { "text": "ÖZEL TASARIM", "href": "/ozel-tasarim" },
-      { "text": "HEDİYE", "href": "/hediye" }
+    "slogan": "Işıltının anlama dönüştüğü yer.",
+    "description": "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
+    "columns": [
+      {
+        "title": "HAN KUYUMCULUK",
+        "links": [
+          { "text": "Hakkımızda", "href": "/hakkimizda" },
+          { "text": "İletişim", "href": "/iletisim" },
+          { "text": "Blog", "href": "/blog" }
+        ]
+      },
+      {
+        "title": "KOLEKSİYON",
+        "links": [
+          { "text": "Zenith Koleksiyonu", "href": "/koleksiyon/zenith" },
+          { "text": "Gözümün Nuru", "href": "/koleksiyon/gozumun-nuru" },
+          { "text": "Anturaj Koleksiyonu", "href": "/koleksiyon/anturaj" },
+          { "text": "Tulip Koleksiyonu", "href": "/koleksiyon/tulip" },
+          { "text": "Harmony Koleksiyonu", "href": "/koleksiyon/harmony" },
+          { "text": "İnci Koleksiyonu", "href": "/koleksiyon/inci" }
+        ]
+      },
+      {
+        "title": "MÜŞTERİ HİZMETLERİ",
+        "links": [
+          { "text": "Bakım ve Garanti", "href": "/musteri-hizmetleri/bakim-garanti" },
+          { "text": "İade Koşulları", "href": "/musteri-hizmetleri/iade-kosullari" }
+        ]
+      },
+      {
+        "title": "YASAL",
+        "links": [
+          { "text": "Çerez Politikası", "href": "/yasal/cerez-politikasi" },
+          { "text": "Gizlilik Politikası", "href": "/yasal/gizlilik-politikasi" },
+          { "text": "KVKK Aydınlatma Metni", "href": "/yasal/kvkk" }
+        ]
+      }
     ],
-    "copyright": "© 2025 Gözümün Nuru, Tüm Hakları Saklıdır"
+    "socialLinks": {
+      "instagram": "https://instagram.com/hankuyumculuk"
+    },
+    "copyright": "© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır"
   }
 }

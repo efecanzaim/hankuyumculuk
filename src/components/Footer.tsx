@@ -3,38 +3,38 @@
 import Link from "next/link";
 import Image from "next/image";
 
+interface FooterColumn {
+  title: string;
+  links: { text: string; href: string }[];
+}
+
 interface FooterProps {
   logo: string;
   slogan: string;
-  nav: { text: string; href: string }[];
+  description: string;
+  columns: FooterColumn[];
   copyright: string;
+  socialLinks?: { instagram?: string };
 }
 
-export default function Footer({ logo, slogan, nav, copyright }: FooterProps) {
-  // Diamond data based on Figma coordinates - extended for full width
-  const diamondRows = [
-    { size: 53, y: 0, xOffset: 0, count: 20, xGap: 150.3 },
-    { size: 47.76, y: 71, xOffset: 78.8, count: 20, xGap: 150.3 },
-    { size: 42.49, y: 135, xOffset: 7.5, count: 20, xGap: 150.3 },
-    { size: 37.15, y: 195, xOffset: 86.4, count: 20, xGap: 150.3 },
-    { size: 31.88, y: 244, xOffset: 15, count: 20, xGap: 150.3 },
-    { size: 26.55, y: 285, xOffset: 93.9, count: 20, xGap: 150.3 },
-    { size: 21.21, y: 319, xOffset: 22.5, count: 20, xGap: 150.3 },
-    { size: 15.94, y: 349, xOffset: 101.4, count: 20, xGap: 150.3 },
-    { size: 10.61, y: 368, xOffset: 30.1, count: 20, xGap: 150.3 },
-    { size: 5.33, y: 389, xOffset: 108.9, count: 20, xGap: 150.3 },
-  ];
-
+export default function Footer({ logo, slogan, description, columns, copyright, socialLinks }: FooterProps) {
   return (
     <>
       {/* Separator Line with Logo - Outside footer */}
-      <div className="relative z-20 bg-white">
-        <div className="max-w-[1430px] mx-auto px-4 py-8">
+      <div className="relative bg-white">
+        <div className="max-w-[1430px] mx-auto px-6 md:px-8 py-8">
           <div className="flex items-center justify-center">
-            <div className="flex-1 h-px bg-light" />
+            <div className="flex-1 h-px bg-[#efece9]" />
             <div className="px-8">
               {/* 1818 Logo - inline SVG with #2F3237 color */}
-              <svg width="110" height="70" viewBox="0 0 44 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                width="110"
+                height="41"
+                viewBox="0 0 44 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="mx-auto"
+              >
                 <g clipPath="url(#clip0_footer)">
                   <path d="M4.05132 14.2673H0V14.0891C0.431698 13.9777 0.741635 13.7884 0.918742 13.5211C1.09585 13.2538 1.1844 12.8528 1.1844 12.3294V3.1965C1.1844 2.67303 1.09585 2.27207 0.918742 2.00477C0.741635 1.73747 0.431698 1.54813 0 1.43675V1.25855L2.6566 0.1782H2.86692V12.3294C2.86692 12.8528 2.95547 13.2538 3.13258 13.5211C3.30969 13.7884 3.61962 13.9777 4.05132 14.0891V14.2673Z" fill="#2F3237"/>
                   <path d="M10.3608 14.4566C8.8222 14.4566 7.56031 14.0334 6.57515 13.1981C5.59 12.3628 5.08081 11.2045 5.04761 9.73429C5.04761 8.83214 5.29113 7.99682 5.77817 7.21718C6.26522 6.43755 7.00685 5.84726 8.01415 5.43516C7.29465 4.88942 6.9183 4.10979 6.89616 3.08512C6.90723 2.39459 7.08434 1.82657 7.41641 1.36993C7.74849 0.913286 8.18019 0.579157 8.71151 0.345267C9.24283 0.111376 9.79629 0 10.394 0C10.9918 0 11.5341 0.111376 12.0655 0.334129C12.5968 0.556881 13.0174 0.902148 13.3495 1.35879C13.6816 1.81543 13.8476 2.38345 13.8587 3.07399C13.8587 3.51949 13.7701 3.94272 13.5819 4.35481C13.3938 4.76691 13.117 5.12331 12.7407 5.42403C13.6484 5.78043 14.3679 6.31504 14.8992 7.05012C15.4305 7.7852 15.6962 8.67621 15.7072 9.73429C15.7072 10.3246 15.5965 10.9037 15.3862 11.4606C15.1759 12.0175 14.8438 12.5298 14.4121 12.9753C13.9694 13.4208 13.4159 13.7772 12.7518 14.0446C12.0876 14.3119 11.2906 14.4455 10.3719 14.4455L10.3608 14.4566ZM8.92182 13.8107C10.1062 13.7661 11.1246 13.4654 11.9991 12.8862C12.8735 12.3182 13.5487 11.6054 14.0247 10.759C14.5007 9.91249 14.7553 9.09944 14.7553 8.30867C14.7553 7.81862 14.6557 7.37311 14.4564 6.98329C14.2572 6.59348 13.9472 6.28162 13.5377 6.04773C13.117 5.81384 12.5747 5.70247 11.9105 5.70247C11.0692 5.70247 10.2944 5.85839 9.58597 6.15911C8.87754 6.45983 8.2466 6.87192 7.71528 7.37311C7.18396 7.88544 6.7744 8.45346 6.47553 9.09944C6.17666 9.73429 6.03276 10.4025 6.03276 11.0819C6.03276 11.7168 6.1656 12.2291 6.42019 12.6301C6.67478 13.031 7.00685 13.3317 7.43855 13.5211C7.87025 13.7104 8.34622 13.8107 8.86648 13.8107H8.92182ZM8.13591 5.37948C8.6783 5.21241 9.2539 5.06762 9.85163 4.96738C10.3165 4.87828 10.7593 4.77804 11.191 4.66667C11.6227 4.55529 11.9991 4.38823 12.3311 4.17661C12.6521 3.95386 12.8957 3.66428 13.0506 3.33015C13.2056 2.98488 13.2831 2.63962 13.2831 2.29435C13.2831 1.9825 13.2056 1.68178 13.0617 1.41448C12.9178 1.13604 12.6964 0.913286 12.3975 0.735084C12.0987 0.556882 11.7334 0.46778 11.2906 0.46778C10.87 0.46778 10.4494 0.545744 10.0066 0.701671C9.56383 0.857597 9.16534 1.09149 8.78899 1.3922C8.41264 1.69292 8.11377 2.06046 7.88132 2.49483C7.64887 2.9292 7.5271 3.43039 7.5271 3.98727C7.5271 4.64439 7.72635 5.11217 8.12484 5.39061L8.13591 5.37948Z" fill="#2F3237"/>
@@ -50,71 +50,91 @@ export default function Footer({ logo, slogan, nav, copyright }: FooterProps) {
                 </defs>
               </svg>
             </div>
-            <div className="flex-1 h-px bg-light" />
+            <div className="flex-1 h-px bg-[#efece9]" />
+            {/* Instagram Icon - Right next to the line */}
+            {socialLinks?.instagram && (
+              <Link href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="ml-4">
+                <svg width="24" height="24" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M15 10C12.2386 10 10 12.2386 10 15C10 17.7614 12.2386 20 15 20C17.7614 20 20 17.7614 20 15C20 12.2386 17.7614 10 15 10ZM15 18.125C13.2759 18.125 11.875 16.7241 11.875 15C11.875 13.2759 13.2759 11.875 15 11.875C16.7241 11.875 18.125 13.2759 18.125 15C18.125 16.7241 16.7241 18.125 15 18.125ZM21.1875 9.78125C21.1875 10.4062 20.6875 10.9062 20.0625 10.9062C19.4375 10.9062 18.9375 10.4062 18.9375 9.78125C18.9375 9.15625 19.4375 8.65625 20.0625 8.65625C20.6875 8.65625 21.1875 9.15625 21.1875 9.78125ZM24.9062 10.9062C24.8437 9.5 24.5312 8.25 23.5 7.21875C22.4687 6.1875 21.2187 5.875 19.8125 5.8125C18.375 5.71875 11.625 5.71875 10.1875 5.8125C8.78125 5.875 7.53125 6.1875 6.5 7.21875C5.46875 8.25 5.15625 9.5 5.09375 10.9062C5 12.3437 5 19.0937 5.09375 20.5312C5.15625 21.9375 5.46875 23.1875 6.5 24.2187C7.53125 25.25 8.78125 25.5625 10.1875 25.625C11.625 25.7187 18.375 25.7187 19.8125 25.625C21.2187 25.5625 22.4687 25.25 23.5 24.2187C24.5312 23.1875 24.8437 21.9375 24.9062 20.5312C25 19.0937 25 12.3437 24.9062 10.9062ZM22.9687 22.0625C22.6562 22.9062 22 23.5625 21.1562 23.875C20 24.2187 17.5937 24.125 15 24.125C12.4062 24.125 10 24.2187 8.84375 23.875C8 23.5625 7.34375 22.9062 7.03125 22.0625C6.6875 20.9062 6.78125 18.5 6.78125 15.9062C6.78125 13.3125 6.6875 10.9062 7.03125 9.75C7.34375 8.90625 8 8.25 8.84375 7.9375C10 7.59375 12.4062 7.6875 15 7.6875C17.5937 7.6875 20 7.59375 21.1562 7.9375C22 8.25 22.6562 8.90625 22.9687 9.75C23.3125 10.9062 23.2187 13.3125 23.2187 15.9062C23.2187 18.5 23.3125 20.9062 22.9687 22.0625Z" fill="#2F3237"/>
+                </svg>
+              </Link>
+            )}
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="relative bg-primary overflow-visible">
-        {/* Diamond Pattern Background - Slightly overflowing upwards */}
-        <div className="absolute -top-[26px] left-0 w-full h-[430px] pointer-events-none z-0 overflow-hidden">
-          <svg
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[3000px] h-[430px]"
-            viewBox="0 0 3000 430"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {diamondRows.map((row, rowIndex) => {
-              const half = row.size / 2;
-              return [...Array(row.count)].map((_, i) => {
-                const x = row.xOffset + i * row.xGap;
-                return (
-                  <path
-                    key={`r${rowIndex}-${i}`}
-                    d={`M${half} 0L${row.size} ${half}L${half} ${row.size}L0 ${half}L${half} 0Z`}
-                    transform={`translate(${x}, ${row.y})`}
-                    fill="#efece9"
-                    fillOpacity="1"
-                    stroke="#efece9"
-                    strokeOpacity="0.25"
-                    strokeWidth="0.5"
-                  />
-                );
-              });
-            })}
-          </svg>
+      <footer className="relative bg-primary overflow-hidden">
+        {/* Decorative Stripes - Background, positioned from columns section */}
+        <div className="absolute bottom-0 left-0 right-0 flex flex-col-reverse pointer-events-none" style={{ top: '280px' }}>
+          {/* Stripe 1 (bottom) - Most opaque */}
+          <div className="h-[26px] bg-[#2f3237]/20 flex-shrink-0" />
+          {/* Gap */}
+          <div className="h-[21px] flex-shrink-0" />
+          {/* Stripe 2 */}
+          <div className="h-[26px] bg-[#2f3237]/15 flex-shrink-0" />
+          {/* Gap */}
+          <div className="h-[25px] flex-shrink-0" />
+          {/* Stripe 3 */}
+          <div className="h-[23px] bg-[#2f3237]/10 flex-shrink-0" />
+          {/* Gap */}
+          <div className="h-[27px] flex-shrink-0" />
+          {/* Stripe 4 */}
+          <div className="h-[22px] bg-[#2f3237]/6 flex-shrink-0" />
+          {/* Gap */}
+          <div className="h-[25px] flex-shrink-0" />
+          {/* Stripe 5 (top) - Most transparent */}
+          <div className="h-[23px] bg-[#2f3237]/3 flex-shrink-0" />
+          {/* Remaining space fills with primary color */}
+          <div className="flex-1" />
         </div>
 
-        <div className="relative z-10 pt-[200px] md:pt-[420px] pb-[40px] px-6 md:px-0">
-        {/* Slogan */}
+        <div className="relative z-10 max-w-[1430px] mx-auto px-6 md:px-8 pt-[80px] md:pt-[100px]">
+          {/* Slogan */}
           <div className="text-center">
-            <p className="text-[20px] leading-[30px] md:text-[25px] md:leading-[25px] font-light text-[#2f3237] tracking-[0.3em] md:tracking-[0.5em] whitespace-pre-line">
-            {slogan}
-          </p>
-        </div>
+            <p className="font-['Carattere'] text-[35px] leading-[normal] tracking-[0.05em] text-[#2f3237]">
+              {slogan}
+            </p>
+          </div>
 
-        {/* Navigation - Vertical on mobile, Horizontal on desktop */}
-          <nav className="flex flex-col md:flex-row items-center justify-center gap-[25px] md:gap-[32px] mt-[60px] md:mt-[105px]">
-          {nav.map((item, index) => (
-            <Link
-              key={index}
-              href={item.href}
-                className="text-[13px] leading-[16px] font-medium text-[#2f3237] hover:opacity-70 transition-opacity"
-            >
-              {item.text}
-            </Link>
-          ))}
-        </nav>
+          {/* Description */}
+          <div className="text-center mt-[10px] max-w-[708px] mx-auto px-6">
+            <p className="font-light text-[20px] leading-[30px] text-[#2f3237]">
+              {description}
+            </p>
+          </div>
 
-        {/* Copyright */}
-          <div className="text-center mt-[40px] md:mt-[56px]">
-            <p className="text-[10px] leading-[12px] font-medium text-[#2f3237]">
-            {copyright}
-          </p>
+          {/* Footer Columns */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 mt-[80px] md:mt-[100px] max-w-[900px] mx-auto px-6">
+            {columns.map((column, index) => (
+              <div key={index} className="text-center">
+                <h3 className="font-bold text-[13px] leading-[normal] text-[#2f3237] mb-[16px]">
+                  {column.title}
+                </h3>
+                <ul className="space-y-[10px]">
+                  {column.links.map((link, linkIndex) => (
+                    <li key={linkIndex}>
+                      <Link 
+                        href={link.href}
+                        className="font-normal text-[13px] leading-[26px] text-[#2f3237] hover:opacity-70 transition-opacity"
+                      >
+                        {link.text}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Copyright */}
+          <div className="text-center mt-[60px] pb-[40px]">
+            <p className="font-normal text-[10px] leading-[normal] text-[#2f3237]">
+              {copyright}
+            </p>
+          </div>
         </div>
-      </div>
-    </footer>
+      </footer>
     </>
   );
 }

@@ -82,7 +82,7 @@ export default function Hero({ slides }: HeroProps) {
               pointerEvents: index === currentSlide ? "auto" : "none",
             }}
           >
-            <h1 className="font-display text-[70px] leading-[100px] md:text-7xl text-center mb-4 md:mb-6 tracking-wide whitespace-pre-line">
+            <h1 className="font-title text-[70px] leading-[100px] md:text-7xl text-center mb-4 md:mb-6 tracking-wide whitespace-pre-line">
               {slide.title}
             </h1>
             <p className="text-[20px] leading-[30px] md:text-xl font-light tracking-wide mb-6 md:mb-8 text-center max-w-[244px] md:max-w-2xl">

@@ -18,13 +18,19 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
   return (
     <section className="py-10 pb-20 md:py-20 md:pb-40 bg-white">
       <div className="max-w-[1430px] mx-auto px-6 md:px-4">
-        {/* Title with decorative lines on both sides */}
-        <div className="flex items-center justify-center gap-4 md:gap-[68px] mb-[30px] md:mb-[48px]">
-          <div className="h-px bg-light flex-1 md:flex-none md:w-[470px]"></div>
-          <h2 className="text-[20px] leading-[30px] font-light text-[#2f3237] whitespace-nowrap">
-            SANA ÖZEL
-          </h2>
-          <div className="h-px bg-light flex-1 md:flex-none md:w-[470px]"></div>
+        {/* SANA ÖZEL ÜRÜNLERİMİZ Heading */}
+        <div className="text-center mb-[30px] md:mb-[48px]">
+          <p className="text-[20px] leading-[30px] font-light text-[#2f3237] mb-4">
+            <span>SANA ÖZEL </span>
+            <span className="font-bold">ÜRÜNLERİMİZ</span>
+          </p>
+          
+          {/* Decorative line with center bar */}
+          <div className="flex items-center justify-center gap-0">
+            <div className="h-px bg-[#efece9] flex-1"></div>
+            <div className="w-[350px] h-[2.234px] bg-[#2f3237]"></div>
+            <div className="h-px bg-[#efece9] flex-1"></div>
+          </div>
         </div>
 
         {/* Mobile Layout */}
@@ -164,9 +170,6 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
             />
           </div>
         </div>
-        
-        {/* Bottom decorative line - separator */}
-        <div className="h-px bg-light w-full mt-[60px] md:mt-[160px]"></div>
       </div>
     </section>
   );
