@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, Carattere } from "next/font/google";
+import { Inter, Playfair_Display, Carattere, Faculty_Glyphic } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -17,6 +17,12 @@ const playfair = Playfair_Display({
 const carattere = Carattere({
   subsets: ["latin"],
   variable: "--font-carattere",
+  weight: ["400"]
+});
+
+const facultyGlyphic = Faculty_Glyphic({
+  subsets: ["latin"],
+  variable: "--font-faculty-glyphic",
   weight: ["400"]
 });
 
@@ -48,7 +54,7 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} ${carattere.variable} antialiased`}>
+      <body className={`${inter.variable} ${playfair.variable} ${carattere.variable} ${facultyGlyphic.variable} antialiased`}>
         {children}
       </body>
     </html>

@@ -14,44 +14,76 @@ export default function HakkimizdaPage() {
         isTransparent={false}
       />
       <AboutPage
-        heroTitle="HİKAYEMİZ"
-        heroSubtitle="Han Kuyumculuk"
-        heroDescription="Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır."
-        heroImage="/images/hero-bg.jpg"
-        storyTitle="HİKAYEMİZ"
-        storyText="Han Kuyumculuk, bir pırlantadan çok daha fazlasını temsil eder; değer verilen kişiyi, paylaşılan özel anları ve kalpten gelen duyguları ışığa dönüştüren bir semboldür.
-        Anturaj tasarımların en dikkat çekici özelliği, merkez taşın ihtişamını daha büyük ve etkileyici göstermesidir. Çevresini saran pırlantalar, ışığı chaque açıdan yakalayarak taşın parlaklığını artırır ve mücevhere derinlik kazandırır."
-        storyImage="/images/trend-left.jpg"
-        valuesTitle="vizyonumuz"
+        heroTitle="Zarafetiyle Bir Hikaye"
+        heroParagraph1="Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır."
+        heroParagraph2="Han Kuyumculuk, bir pırlantadan çok daha fazlasını temsil eder; değer verilen kişiyi, paylaşılan özel anları ve kalpten gelen duyguları ışığa dönüştüren bir semboldür. Anturaj tasarımların en dikkat çekici özelliği, merkez taşın ihtişamını daha büyük ve etkileyici göstermesidir. Çevresini saran pırlantalar, ışığı her açıdan yakalayarak taşın parlaklığını artırır ve mücevhere derinlik kazandırır."
+        heroImage="/images/about-hero.jpg"
+        valuesTitle="Vizyonumuz"
         values={[
           {
             title: "Zarafet",
-            description: "Her tasarımımızda zarafeti ön planda tutuyoruz. İnce işçilik ve detaylara gösterdiğimiz özen, mücevherlerimizin zamansız şıklığını yaratır."
+            description: "Her tasarımımızda zarafeti ön planda tutuyoruz. İnce işçilik ve detaylara gösterdiğimiz özen, mücevherlerimizin zamansız şıklığını yaratır.",
+            image: "/images/about-value-1.jpg"
           },
           {
             title: "Kalite",
-            description: "Sertifikalı pırlantalar ve en kaliteli malzemelerle çalışıyoruz. Her ürünümüz, uzun yıllar boyunca değerini koruyacak şekilde üretilir."
+            description: "Sertifikalı pırlantalar ve en kaliteli malzemelerle çalışıyoruz. Her ürünümüz, uzun yıllar boyunca değerini koruyacak şekilde üretilir.",
+            image: "/images/about-value-2.jpg"
           },
           {
             title: "Özgünlük",
-            description: "Her mücevher, kendine özgü bir hikâye taşır. Özel tasarım seçeneklerimizle, hayalinizdeki mücevheri gerçeğe dönüştürüyoruz."
+            description: "Her mücevher, kendine özgü bir hikâye taşır. Özel tasarım seçeneklerimizle, hayalinizdeki mücevheri gerçeğe dönüştürüyoruz.",
+            image: "/images/about-value-3.jpg"
           },
           {
             title: "Güven",
-            description: "Müşterilerimizle kurduğumuz güven ilişkisi, işimizin temelidir. Şeffaflık ve dürüstlük, her adımda rehberimizdir."
+            description: "Müşterilerimizle kurduğumuz güven ilişkisi, işimizin temelidir. Şeffaflık ve dürüstlük, her adımda rehberimizdir.",
+            image: "/images/about-value-4.jpg"
           }
         ]}
-        missionTitle="MİSYONUMUZ"
-        missionText="Han Kuyumculuk olarak, her kadının özel anlarını ışığa dönüştürmeyi hedefliyoruz. Zamansız tasarımlarımızla, değer verilen kişilere en güzel hediyeleri sunmak ve unutulmaz anılar yaratmak misyonumuzdur.
-
-        Kaliteli malzemeler ve usta işçilikle ürettiğimiz mücevherler, sadece bir aksesuar değil; duyguların ve anıların somutlaşmış halidir."
-        missionImage="/images/trend-right.jpg"
       />
       <Footer
         logo={content.footer.logo}
         slogan={content.footer.slogan}
-        nav={content.footer.nav}
+        description="Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır."
+        columns={[
+          {
+            title: "HAN KUYUMCULUK",
+            links: [
+              { text: "Hakkımızda", href: "/hakkimizda" },
+              { text: "İletişim", href: "/iletisim" },
+              { text: "Blog", href: "/blog" }
+            ]
+          },
+          {
+            title: "KOLEKSİYON",
+            links: [
+              { text: "Zenith Koleksiyonu", href: "/koleksiyon/zenith" },
+              { text: "Gözümün Nuru", href: "/koleksiyon/gozumun-nuru" },
+              { text: "Anturaj Koleksiyonu", href: "/koleksiyon/anturaj" },
+              { text: "Tulip Koleksiyonu", href: "/koleksiyon/tulip" },
+              { text: "Harmony Koleksiyonu", href: "/koleksiyon/harmony" },
+              { text: "İnci Koleksiyonu", href: "/koleksiyon/inci" }
+            ]
+          },
+          {
+            title: "MÜŞTERİ HİZMETLERİ",
+            links: [
+              { text: "Bakım ve Garanti", href: "/bakim-garanti" },
+              { text: "İade Koşulları", href: "/iade-kosullari" }
+            ]
+          },
+          {
+            title: "YASAL",
+            links: [
+              { text: "Çerez Politikası", href: "/cerez-politikasi" },
+              { text: "Gizlilik Politikası", href: "/gizlilik-politikasi" },
+              { text: "KVKK Aydınlatma Metni", href: "/kvkk" }
+            ]
+          }
+        ]}
         copyright={content.footer.copyright}
+        socialLinks={{ instagram: "https://www.instagram.com/gozumunnuruantalya" }}
       />
     </>
   );

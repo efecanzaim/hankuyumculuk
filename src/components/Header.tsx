@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { getAssetPath } from "@/utils/paths";
 import { Instagram, X } from "lucide-react";
 
@@ -17,6 +17,21 @@ interface HeaderProps {
 export default function Header({ logo, logoAlt, mainNav, isTransparent = false }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topBannerVisible, setTopBannerVisible] = useState(true);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+
+  // Menü açıkken scroll'u engelle
+  useEffect(() => {
+    if (activeMenu) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    // Cleanup
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [activeMenu]);
 
   const toggleMobileMenu = useCallback(() => {
     setMobileMenuOpen(prev => !prev);
@@ -48,7 +63,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
         {/* Desktop Header */}
         <div className="hidden lg:block">
           {/* Top Row - Logo and Side Links */}
-          <div className={`py-4 ${isTransparent ? 'bg-transparent' : 'bg-white'}`}>
+          <div className={`py-4 ${isTransparent && !activeMenu ? 'bg-transparent' : 'bg-white'}`}>
             <div className="container mx-auto px-6 lg:px-8">
               <div className="flex items-center justify-between">
                 {/* Left Side Links - Fixed Width */}
@@ -62,7 +77,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                   />
                   <Link
                     href="/rezervasyon"
-                    className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                    className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   >
                     REZERVASYON YAP
                   </Link>
@@ -70,7 +85,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
 
                 {/* Center - Logo with Lines - Takes Remaining Space */}
                 <div className="flex items-center gap-6 justify-center flex-1">
-                  <div className={`flex-1 h-px ${isTransparent ? 'bg-white opacity-50' : 'bg-[#dccdbf]'}`} />
+                  <div className={`flex-1 h-px ${isTransparent && !activeMenu ? 'bg-white opacity-50' : 'bg-[#dccdbf]'}`} />
                   <Link href="/" className="block flex-shrink-0">
                     <Image
                       src={getAssetPath("/images/han-logo.svg")}
@@ -78,40 +93,40 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                       width={110}
                       height={41}
                       className="h-[41px] w-auto"
-                      style={isTransparent ? {} : { filter: 'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(434%) hue-rotate(345deg) brightness(96%) contrast(88%)' }}
+                      style={isTransparent && !activeMenu ? {} : { filter: 'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(434%) hue-rotate(345deg) brightness(96%) contrast(88%)' }}
                     />
                   </Link>
-                  <div className={`flex-1 h-px ${isTransparent ? 'bg-white opacity-50' : 'bg-[#dccdbf]'}`} />
+                  <div className={`flex-1 h-px ${isTransparent && !activeMenu ? 'bg-white opacity-50' : 'bg-[#dccdbf]'}`} />
                 </div>
 
                 {/* Right Side Links - Fixed Width */}
                 <div className="flex items-center gap-4 justify-end w-[240px]">
                   <Link
                     href="/hakkimizda"
-                    className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                    className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   >
                     Kurumsal
                   </Link>
                   <Link
                     href="/iletisim"
-                    className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                    className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   >
                     İletişim
                   </Link>
                   <Link
                     href="/blog"
-                    className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                    className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   >
                     Blog
                   </Link>
-                  <button className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}>
+                  <button className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}>
                     EN
                   </button>
                   <Link
                     href="https://www.instagram.com/gozumunnuruantalya"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`hover:opacity-70 transition-opacity flex-shrink-0 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                    className={`hover:opacity-70 transition-opacity flex-shrink-0 ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   >
                     <Instagram size={15} />
                   </Link>
@@ -121,41 +136,87 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
           </div>
 
           {/* Navigation Row */}
-          <div className={`py-4 ${isTransparent ? 'bg-transparent' : 'bg-white'}`}>
+          <div className={`pb-4 ${isTransparent && !activeMenu ? 'bg-transparent' : 'bg-white'}`}>
             <div className="flex items-center justify-center gap-12">
-            <Link
-              href="/mucevher"
-              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+
+            {/* MÜCEVHER Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveMenu('mucevher')}
             >
-              MÜCEVHER
-            </Link>
-            <Link
-              href="/koleksiyon"
-              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+              <Link
+                href="/mucevher"
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              >
+                MÜCEVHER
+              </Link>
+              {/* Active Menu Underline */}
+              {activeMenu === 'mucevher' && (
+                <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
+              )}
+            </div>
+
+            {/* KOLEKSİYON Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveMenu('koleksiyon')}
             >
-              KOLEKSİYON
-            </Link>
+              <Link
+                href="/koleksiyon"
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              >
+                KOLEKSİYON
+              </Link>
+              {/* Active Menu Underline */}
+              {activeMenu === 'koleksiyon' && (
+                <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
+              )}
+            </div>
+
             <Link
               href="/ozel-tasarim"
-              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
             >
               SANA ÖZEL
             </Link>
-            <Link
-              href="/hediye"
-              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+
+            {/* HEDİYE Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveMenu('hediye')}
             >
-              HEDİYE
-            </Link>
-            <Link
-              href="/erkek"
-              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+              <Link
+                href="/hediye"
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              >
+                HEDİYE
+              </Link>
+              {/* Active Menu Underline */}
+              {activeMenu === 'hediye' && (
+                <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
+              )}
+            </div>
+
+            {/* ERKEKLERE ÖZEL Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveMenu('erkek')}
             >
-              ERKEKLERE ÖZEL
-            </Link>
+              <Link
+                href="/erkek"
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              >
+                ERKEKLERE ÖZEL
+              </Link>
+              {/* Active Menu Underline */}
+              {activeMenu === 'erkek' && (
+                <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
+              )}
+            </div>
+
             <Link
               href="/preloved"
-              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
             >
               PRELOVED
             </Link>
@@ -283,6 +344,167 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
           )}
         </div>
       </header>
+
+      {/* Global Dropdown Menus */}
+      {activeMenu && (
+        <div
+          className="fixed left-0 right-0 z-40 h-[60vh] overflow-y-auto"
+          style={{ top: topBannerVisible ? '141px' : '91px' }}
+          onMouseLeave={() => setActiveMenu(null)}
+        >
+          {/* Background Image with Gradient */}
+          <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
+            <Image
+              src={getAssetPath(
+                activeMenu === 'mucevher' ? "/images/mucevher-menu-bg.jpg" :
+                activeMenu === 'koleksiyon' ? "/images/collection-menu-bg.jpg" :
+                activeMenu === 'hediye' ? "/images/hediye-menu-bg.jpg" :
+                "/images/erkek-menu-bg.jpg"
+              )}
+              alt=""
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[rgba(47,50,55,0.5)] to-[rgba(47,50,55,0)]" />
+          </div>
+
+          {/* White Content Area */}
+          <div className="absolute left-0 top-0 w-full h-full bg-white pointer-events-none" />
+
+          {/* Main Content */}
+          <div className="relative max-w-[1728px] mx-auto h-full pointer-events-auto flex items-center">
+            {/* Left Menu Section */}
+            <div className="w-1/2 pl-[269px]">
+              {/* MÜCEVHER Menu */}
+              {activeMenu === 'mucevher' && (
+                <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
+                  <Link href="/mucevher/yuzuk" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Yüzük
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/mucevher/kolye" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Kolye
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/mucevher/bileklik" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Bileklik
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/mucevher/kupe" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Küpe
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/mucevher/set" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Set
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                </div>
+              )}
+
+              {/* KOLEKSİYON Menu */}
+              {activeMenu === 'koleksiyon' && (
+                <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
+                  <Link href="/koleksiyon/zenith" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Zenith Koleksiyonu
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/koleksiyon/gozumun-nuru" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Gözümün Nuru
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/koleksiyon/anturaj" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Anturaj Koleksiyonu
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/koleksiyon/tulip" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Tulip Koleksiyonu
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/koleksiyon/harmony" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Harmony Koleksiyonu
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/koleksiyon/inci" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    İnci Koleksiyonu
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                </div>
+              )}
+
+              {/* HEDİYE Menu */}
+              {activeMenu === 'hediye' && (
+                <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
+                  <Link href="/hediye/ozel-gunler" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Özel Günler
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/hediye/dogum-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Doğum Günü
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/hediye/anneler-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Anneler Günü
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/hediye/kadinlar-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Kadınlar Günü
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/hediye/yeni-dogan" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Yeni Doğan
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/hediye/erkek-hediye" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Erkek Hediye
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/hediye/mini-butceli" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Mini Bütçeli
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/hediye/aksesuar" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Aksesuar
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                </div>
+              )}
+
+              {/* ERKEKLERE ÖZEL Menu */}
+              {activeMenu === 'erkek' && (
+                <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
+                  <Link href="/erkek/tesbih" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Tesbih
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/erkek/bileklik" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Bileklik
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/erkek/yuzuk" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Yüzük
+                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Right Image */}
+            <div className="hidden lg:block absolute right-0 top-0 w-[50%] h-full">
+              <Image
+                src={getAssetPath(
+                  activeMenu === 'mucevher' ? "/images/mucevher-menu-hero.jpg" :
+                  activeMenu === 'koleksiyon' ? "/images/collection-menu-hero.jpg" :
+                  activeMenu === 'hediye' ? "/images/hediye-menu-hero.jpg" :
+                  "/images/erkek-menu-hero.jpg"
+                )}
+                alt="Menu Hero"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

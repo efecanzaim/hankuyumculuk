@@ -13,6 +13,7 @@
   --font-body: var(--font-inter), system-ui, sans-serif;
   --font-title: var(--font-playfair), serif;
   --font-script: var(--font-carattere), cursive;
+  --font-faculty: var(--font-faculty-glyphic), serif;
 }
 
 @theme inline {

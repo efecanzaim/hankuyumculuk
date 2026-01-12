@@ -1,65 +1,80 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { getAssetPath } from "@/utils/paths";
+
+interface Value {
+  title: string;
+  description: string;
+  image: string;
+}
 
 interface AboutPageProps {
   heroTitle: string;
-  heroSubtitle: string;
-  heroDescription: string;
+  heroParagraph1: string;
+  heroParagraph2: string;
   heroImage: string;
-  storyTitle: string;
-  storyText: string;
-  storyImage: string;
   valuesTitle: string;
-  values: Array<{
-    title: string;
-    description: string;
-  }>;
-  missionTitle: string;
-  missionText: string;
-  missionImage: string;
+  values: Value[];
 }
 
 export default function AboutPage({
   heroTitle,
-  heroSubtitle,
-  heroDescription,
+  heroParagraph1,
+  heroParagraph2,
   heroImage,
-  storyTitle,
-  storyText,
-  storyImage,
   valuesTitle,
   values,
-  missionTitle,
-  missionText,
-  missionImage,
 }: AboutPageProps) {
   return (
-    <div className="min-h-screen bg-light">
+    <div className="bg-white">
       {/* Hero Section */}
-      <section className="pt-[100px] md:pt-[280px] pb-[60px] md:pb-[100px] bg-primary">
-        <div className="container mx-auto px-6 md:px-8">
-          {/* Titles */}
-          <div className="max-w-[800px] mx-auto mb-[20px] md:mb-[40px]">
-            <h1 className="text-[40px] leading-[50px] md:text-[80px] md:leading-[90px] font-bold text-[#2f3237] mb-0 text-left">
-              {heroTitle}
-            </h1>
-            <h2 className="text-[50px] leading-[60px] md:text-[120px] md:leading-[110px] font-light text-[#2f3237] text-right">
-              {heroSubtitle}
-            </h2>
-          </div>
+      <section className="relative pt-[180px] md:pt-[141px] pb-0 bg-white overflow-hidden">
+        <div className="w-full mx-auto px-0">
+          <div className="flex flex-col md:flex-row">
+            {/* Left Side - Beige Background with Text */}
+            <div className="relative bg-[#dccdbf] w-full md:w-[869px] px-6 md:px-0 pt-12 md:pt-20 pb-32 md:pb-0 flex flex-col items-center justify-start md:h-[800px]">
+              {/* Title */}
+              <h1 className="font-title text-[40px] md:text-[50px] leading-[60px] md:leading-[80px] text-[#2f3237] text-center mb-8 md:mb-12 mt-0 md:mt-[78px]">
+                {heroTitle}
+              </h1>
 
-          {/* Description */}
-          <div className="text-center max-w-[950px] mx-auto mb-[40px] md:mb-[80px]">
-            <p className="text-[20px] leading-[30px] md:text-[30px] md:leading-[40px] font-light text-[#2f3237] max-w-[390px] md:max-w-none mx-auto">
-              {heroDescription}
-            </p>
-          </div>
+              {/* Paragraph 1 - Large */}
+              <p className="text-[24px] md:text-[30px] leading-[36px] md:leading-[40px] font-light text-[#2f3237] text-center max-w-[590px] mx-auto mb-8 md:mb-10 h-auto md:h-[160px]">
+                {heroParagraph1}
+              </p>
 
-          {/* Hero Image */}
-          <div className="w-full max-w-[1190px] mx-auto">
-            <div className="w-full aspect-390/324 md:h-[664px] relative">
+              {/* Paragraph 2 - Small */}
+              <p className="text-[14px] md:text-[15px] leading-[18px] md:leading-[20px] font-light text-[#2f3237] text-center max-w-[590px] mx-auto mb-12 md:mb-16 h-auto md:h-[100px]">
+                {heroParagraph2}
+              </p>
+
+              {/* Wave Pattern - Bottom - Rotated 180 degrees */}
+              <div className="absolute bottom-0 left-0 right-0 h-[214px] pointer-events-none rotate-180">
+                <div className="relative w-full h-full">
+                  {[...Array(5)].map((_, i) => {
+                    const opacity = 0.2 + (i * 0.2);
+                    const stripeHeight = 25;
+
+                    return (
+                      <div
+                        key={i}
+                        className="absolute left-0 right-0"
+                        style={{
+                          bottom: `${i * (stripeHeight * 2)}px`,
+                          height: `${stripeHeight}px`,
+                          backgroundColor: `rgba(220, 205, 191, ${opacity})`
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Image */}
+            <div className="relative w-full md:flex-1 aspect-[390/500] md:aspect-auto md:h-[800px]">
               <Image
                 src={getAssetPath(heroImage)}
                 alt={heroTitle}
@@ -72,100 +87,103 @@ export default function AboutPage({
         </div>
       </section>
 
-      {/* Story Section */}
-      <section className="py-[60px] md:py-[100px] bg-light">
-        <div className="container mx-auto px-6 md:px-8">
-          <div className="max-w-[1430px] mx-auto">
-            {/* Section Title */}
-            <div className="flex items-center justify-center gap-4 md:gap-6 mb-[30px] md:mb-[60px]">
-              <div className="flex-1 md:w-[470px] h-px bg-primary" />
-              <h3 className="text-[20px] md:text-[30px] leading-[30px] md:leading-[40px] font-light text-[#2f3237] whitespace-nowrap">
-                {storyTitle}
-              </h3>
-              <div className="flex-1 md:w-[470px] h-px bg-primary" />
-            </div>
-
-            {/* Content Layout - Mobile: stacked, Desktop: side by side */}
-            <div className="flex flex-col md:flex-row gap-6 md:gap-[130px] items-center">
-              {/* Text */}
-              <div className="w-full md:w-[590px]">
-                <p className="text-[15px] leading-[20px] md:text-[20px] md:leading-[30px] font-light text-[#2f3237] text-center md:text-left whitespace-pre-line">
-                  {storyText}
-                </p>
-              </div>
-
-              {/* Image */}
-              <div className="w-full md:w-[590px] aspect-390/403 md:h-[609px] relative">
-                <Image
-                  src={getAssetPath(storyImage)}
-                  alt={storyTitle}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Values Section */}
-      <section className="py-[60px] md:py-[100px] bg-white">
-        <div className="container mx-auto px-6 md:px-8">
-          <div className="max-w-[1430px] mx-auto">
-            {/* Section Title */}
-            <div className="text-center mb-[40px] md:mb-[80px]">
-              <h3 className="text-[40px] leading-[50px] md:text-[80px] md:leading-[90px] font-display text-[#2f3237]">
-                {valuesTitle}
-              </h3>
-            </div>
+      <section className="py-16 md:py-24 bg-white">
+        <div className="container mx-auto px-6 lg:px-8">
+          {/* Section Title */}
+          <h2 className="font-title text-[40px] md:text-[50px] leading-[50px] md:leading-[66px] text-[#2f3237] text-center mb-12 md:mb-20">
+            {valuesTitle}
+          </h2>
 
-            {/* Values Grid - Mobile: 1 column, Desktop: 2 columns */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-[130px]">
-              {values.map((value, index) => (
-                <div key={index} className="text-center md:text-left">
-                  <h4 className="text-[20px] md:text-[30px] leading-[30px] md:leading-[40px] font-bold text-[#2f3237] mb-[20px]">
-                    {value.title}
-                  </h4>
-                  <p className="text-[15px] leading-[20px] md:text-[20px] md:leading-[30px] font-light text-[#2f3237]">
-                    {value.description}
-                  </p>
+          {/* Values Grid - Zigzag Layout */}
+          <div className="max-w-[1430px] mx-auto px-4">
+            <div className="flex flex-col gap-0">
+              {/* Row 1: Zarafet (Left Text) + Image (Right) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-[10px] mb-0">
+                <div className="flex items-center justify-center text-center px-6 md:px-0">
+                  <div className="max-w-[426px]">
+                    <h3 className="font-title text-[24px] md:text-[30px] leading-[30px] text-[#2f3237] mb-6 md:mb-8">
+                      {values[0]?.title}
+                    </h3>
+                    <p className="text-[18px] md:text-[30px] leading-[28px] md:leading-[40px] font-light text-[#2f3237]">
+                      {values[0]?.description}
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Mission Section */}
-      <section className="py-[60px] md:py-[100px] bg-light">
-        <div className="container mx-auto px-6 md:px-8">
-          <div className="max-w-[1430px] mx-auto">
-            {/* Section Title */}
-            <div className="flex items-center justify-center gap-4 md:gap-6 mb-[30px] md:mb-[60px]">
-              <div className="flex-1 md:w-[470px] h-px bg-primary" />
-              <h3 className="text-[20px] md:text-[30px] leading-[30px] md:leading-[40px] font-light text-[#2f3237] whitespace-nowrap">
-                {missionTitle}
-              </h3>
-              <div className="flex-1 md:w-[470px] h-px bg-primary" />
-            </div>
-
-            {/* Content Layout - Mobile: stacked, Desktop: side by side */}
-            <div className="flex flex-col md:flex-row gap-6 md:gap-[130px] items-center">
-              {/* Image */}
-              <div className="w-full md:w-[590px] aspect-390/403 md:h-[609px] relative order-2 md:order-1">
-                <Image
-                  src={getAssetPath(missionImage)}
-                  alt={missionTitle}
-                  fill
-                  className="object-cover"
-                />
+                <div className="w-full h-[300px] md:h-[400px] relative">
+                  <Image
+                    src={getAssetPath(values[0]?.image)}
+                    alt={values[0]?.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               </div>
 
-              {/* Text */}
-              <div className="w-full md:w-[590px] order-1 md:order-2">
-                <p className="text-[15px] leading-[20px] md:text-[20px] md:leading-[30px] font-light text-[#2f3237] text-center md:text-left whitespace-pre-line">
-                  {missionText}
-                </p>
+              {/* Row 2: Image (Left) + Kalite (Right Text) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-[10px] mb-0">
+                <div className="w-full h-[300px] md:h-[400px] relative order-2 md:order-1">
+                  <Image
+                    src={getAssetPath(values[1]?.image)}
+                    alt={values[1]?.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="flex items-center justify-center text-center px-6 md:px-0 order-1 md:order-2">
+                  <div className="max-w-[426px]">
+                    <h3 className="font-title text-[24px] md:text-[30px] leading-[30px] text-[#2f3237] mb-6 md:mb-8">
+                      {values[1]?.title}
+                    </h3>
+                    <p className="text-[18px] md:text-[30px] leading-[28px] md:leading-[40px] font-light text-[#2f3237]">
+                      {values[1]?.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 3: Özgünlük (Left Text) + Image (Right) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-[10px] mb-0">
+                <div className="flex items-center justify-center text-center px-6 md:px-0">
+                  <div className="max-w-[426px]">
+                    <h3 className="font-title text-[24px] md:text-[30px] leading-[30px] text-[#2f3237] mb-6 md:mb-8">
+                      {values[2]?.title}
+                    </h3>
+                    <p className="text-[18px] md:text-[30px] leading-[28px] md:leading-[40px] font-light text-[#2f3237]">
+                      {values[2]?.description}
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full h-[300px] md:h-[400px] relative">
+                  <Image
+                    src={getAssetPath(values[2]?.image)}
+                    alt={values[2]?.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Row 4: Image (Left) + Güven (Right Text) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-[10px]">
+                <div className="w-full h-[300px] md:h-[400px] relative order-2 md:order-1">
+                  <Image
+                    src={getAssetPath(values[3]?.image)}
+                    alt={values[3]?.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="flex items-center justify-center text-center px-6 md:px-0 order-1 md:order-2">
+                  <div className="max-w-[426px]">
+                    <h3 className="font-title text-[24px] md:text-[30px] leading-[30px] text-[#2f3237] mb-6 md:mb-8">
+                      {values[3]?.title}
+                    </h3>
+                    <p className="text-[18px] md:text-[30px] leading-[28px] md:leading-[40px] font-light text-[#2f3237]">
+                      {values[3]?.description}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
