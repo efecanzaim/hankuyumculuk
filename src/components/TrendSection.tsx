@@ -32,7 +32,7 @@ export default function TrendSection({
           {/* Left Card */}
           <div className="relative">
             {/* Image */}
-            <div className="relative w-full aspect-[590/609] overflow-hidden">
+            <div className="relative w-full aspect-590/609 overflow-hidden">
               <Image
                 src={getAssetPath(leftImage)}
                 alt={leftTitle}
@@ -44,7 +44,7 @@ export default function TrendSection({
 
             {/* Title - Overlapping bottom of image */}
             <div className="relative -mt-16 z-10 text-center px-6">
-              <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-[#dccdbf] mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+              <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-primary mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
                 {leftTitle}
               </h2>
             </div>
@@ -66,7 +66,7 @@ export default function TrendSection({
           {/* Right Card */}
           <div className="relative">
             {/* Image */}
-            <div className="relative w-full aspect-[590/609] overflow-hidden">
+            <div className="relative w-full aspect-590/609 overflow-hidden">
               <Image
                 src={getAssetPath(rightImage)}
                 alt={rightTitle}
@@ -78,7 +78,7 @@ export default function TrendSection({
 
             {/* Title - Overlapping bottom of image */}
             <div className="relative -mt-16 z-10 text-center px-6">
-              <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-[#dccdbf] mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] whitespace-pre-line">
+              <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-primary mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] whitespace-pre-line">
                 {rightTitle}
               </h2>
             </div>

@@ -27,9 +27,9 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
           
           {/* Decorative line with center bar */}
           <div className="flex items-center justify-center gap-0">
-            <div className="h-px bg-[#efece9] flex-1"></div>
-            <div className="w-[350px] h-[2.234px] bg-[#2f3237]"></div>
-            <div className="h-px bg-[#efece9] flex-1"></div>
+            <div className="h-px bg-primary flex-1"></div>
+            <div className="w-[350px] h-[2.234px] bg-dark"></div>
+            <div className="h-px bg-primary flex-1"></div>
           </div>
         </div>
 

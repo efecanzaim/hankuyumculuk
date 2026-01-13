@@ -35,9 +35,9 @@ export default function BlogSection({
           
           {/* Decorative line with center bar */}
           <div className="flex items-center justify-center gap-0">
-            <div className="h-px bg-[#efece9] flex-1"></div>
-            <div className="w-[350px] h-[2.234px] bg-[#2f3237]"></div>
-            <div className="h-px bg-[#efece9] flex-1"></div>
+            <div className="h-px bg-primary flex-1"></div>
+            <div className="w-[350px] h-[2.234px] bg-dark"></div>
+            <div className="h-px bg-primary flex-1"></div>
           </div>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default function BlogSection({
 
           {/* Right Image - 590x690 */}
           <div className="flex-1 relative w-full max-w-[590px]">
-            <div className="relative aspect-[590/690] w-full overflow-hidden">
+            <div className="relative aspect-590/690 w-full overflow-hidden">
               <Image
                 src={getAssetPath(image)}
                 alt={title}
@@ -106,7 +106,7 @@ export default function BlogSection({
       <div className="text-center mt-[40px] md:mt-[60px]">
         <Link
           href="/blog"
-          className="inline-flex items-center justify-center bg-[#2f3237] text-[#efece9] h-[50px] w-[250px] text-[13px] font-light hover:bg-[#1a1c1f] transition-colors"
+          className="inline-flex items-center justify-center bg-dark text-light h-[50px] w-[250px] text-[13px] font-light hover:bg-[#3d4147] transition-colors"
         >
           TÜM PAYLAŞIMLAR
         </Link>

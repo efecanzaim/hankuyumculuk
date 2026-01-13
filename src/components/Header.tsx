@@ -12,9 +12,10 @@ interface HeaderProps {
   mainNav: { text: string; href: string }[];
   isHero?: boolean;
   isTransparent?: boolean;
+  isBlogPage?: boolean;
 }
 
-export default function Header({ logo, logoAlt, mainNav, isTransparent = false }: HeaderProps) {
+export default function Header({ logo, logoAlt, mainNav, isTransparent = false, isBlogPage = false }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topBannerVisible, setTopBannerVisible] = useState(true);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -43,9 +44,9 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
 
   return (
     <>
-      {/* Top Banner - Pudra color with black text */}
-      {topBannerVisible && (
-        <div className="absolute top-0 left-0 right-0 z-50 bg-[#dccdbf] w-full h-[50px] flex items-center justify-center px-6">
+      {/* Top Banner - Pudra color with black text - Hidden on blog page */}
+      {topBannerVisible && !isBlogPage && (
+        <div className="absolute top-0 left-0 right-0 z-50 bg-primary w-full h-[50px] flex items-center justify-center px-6">
           <p className="text-[15px] text-[#2f3237] text-center font-normal leading-normal">
             Stoklar tükenene kadar çevrimiçi teslimat siparişlerinde özel tatil ambalajlarımızı kaçırmayın
           </p>
@@ -59,11 +60,11 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
       )}
 
       {/* Main Header */}
-      <header className={`absolute left-0 right-0 z-50 bg-transparent transition-all duration-300 ${topBannerVisible ? 'top-[50px]' : 'top-0'}`}>
+      <header className={`${isBlogPage ? 'relative' : 'absolute'} left-0 right-0 z-50 ${isBlogPage ? 'bg-[#f5f5f5]' : 'bg-transparent'} transition-all duration-300 ${!isBlogPage && topBannerVisible ? 'top-[50px]' : isBlogPage ? '' : 'top-0'}`}>
         {/* Desktop Header */}
         <div className="hidden lg:block">
           {/* Top Row - Logo and Side Links */}
-          <div className={`py-4 ${isTransparent && !activeMenu ? 'bg-transparent' : 'bg-white'}`}>
+          <div className={`py-4 ${isTransparent && !activeMenu ? 'bg-transparent' : isBlogPage ? 'bg-[#f5f5f5]' : 'bg-white'}`}>
             <div className="container mx-auto px-6 lg:px-8">
               <div className="flex items-center justify-between">
                 {/* Left Side Links - Fixed Width */}
@@ -73,20 +74,20 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                     alt=""
                     width={15}
                     height={15}
-                    className="w-[15px] h-[15px] flex-shrink-0"
+                    className="w-[15px] h-[15px] shrink-0"
                   />
                   <Link
-                    href="/rezervasyon"
+                    href="/randevu"
                     className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   >
-                    REZERVASYON YAP
+                    RANDEVU OLUŞTUR
                   </Link>
                 </div>
 
                 {/* Center - Logo with Lines - Takes Remaining Space */}
                 <div className="flex items-center gap-6 justify-center flex-1">
-                  <div className={`flex-1 h-px ${isTransparent && !activeMenu ? 'bg-white opacity-50' : 'bg-[#dccdbf]'}`} />
-                  <Link href="/" className="block flex-shrink-0">
+                  <div className={`flex-1 h-px ${isTransparent && !activeMenu ? 'bg-white opacity-50' : 'bg-primary'}`} />
+                  <Link href="/" className="block shrink-0">
                     <Image
                       src={getAssetPath("/images/han-logo.svg")}
                       alt="Han Logo"
@@ -96,7 +97,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                       style={isTransparent && !activeMenu ? {} : { filter: 'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(434%) hue-rotate(345deg) brightness(96%) contrast(88%)' }}
                     />
                   </Link>
-                  <div className={`flex-1 h-px ${isTransparent && !activeMenu ? 'bg-white opacity-50' : 'bg-[#dccdbf]'}`} />
+                  <div className={`flex-1 h-px ${isTransparent && !activeMenu ? 'bg-white opacity-50' : 'bg-primary'}`} />
                 </div>
 
                 {/* Right Side Links - Fixed Width */}
@@ -126,7 +127,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                     href="https://www.instagram.com/gozumunnuruantalya"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`hover:opacity-70 transition-opacity flex-shrink-0 ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+                    className={`hover:opacity-70 transition-opacity shrink-0 ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   >
                     <Instagram size={15} />
                   </Link>
@@ -136,7 +137,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
           </div>
 
           {/* Navigation Row */}
-          <div className={`pb-4 ${isTransparent && !activeMenu ? 'bg-transparent' : 'bg-white'}`}>
+          <div className={`pb-4 ${isTransparent && !activeMenu ? 'bg-transparent' : isBlogPage ? 'bg-[#f5f5f5]' : 'bg-white'}`}>
             <div className="flex items-center justify-center gap-12">
 
             {/* MÜCEVHER Dropdown */}
@@ -266,7 +267,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className={`px-6 py-6 ${isTransparent ? 'bg-[rgba(47,50,55,0.95)]' : 'bg-white border-t border-[#dccdbf]'}`}>
+            <div className={`px-6 py-6 ${isTransparent ? 'bg-[rgba(47,50,55,0.95)]' : 'bg-white border-t border-primary'}`}>
               <nav className="flex flex-col gap-4">
                 <Link
                   href="/mucevher"
@@ -310,13 +311,13 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                 >
                   PRELOVED
                 </Link>
-                <div className={`border-t my-4 ${isTransparent ? 'border-white/20' : 'border-[#dccdbf]'}`} />
+                <div className={`border-t my-4 ${isTransparent ? 'border-white/20' : 'border-primary'}`} />
                 <Link
-                  href="/rezervasyon"
+                  href="/randevu"
                   className={`text-[13px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                   onClick={toggleMobileMenu}
                 >
-                  REZERVASYON YAP
+                  RANDEVU OLUŞTUR
                 </Link>
                 <Link
                   href="/hakkimizda"
@@ -365,7 +366,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
               fill
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-[rgba(47,50,55,0.5)] to-[rgba(47,50,55,0)]" />
+            <div className="absolute inset-0 bg-linear-to-b from-[rgba(47,50,55,0.5)] to-[rgba(47,50,55,0)]" />
           </div>
 
           {/* White Content Area */}
@@ -380,23 +381,23 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                 <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
                   <Link href="/mucevher/yuzuk" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Yüzük
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/mucevher/kolye" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Kolye
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/mucevher/bileklik" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Bileklik
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/mucevher/kupe" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Küpe
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/mucevher/set" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Set
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </div>
               )}
@@ -406,27 +407,27 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                 <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
                   <Link href="/koleksiyon/zenith" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Zenith Koleksiyonu
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/koleksiyon/gozumun-nuru" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Gözümün Nuru
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/koleksiyon/anturaj" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Anturaj Koleksiyonu
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/koleksiyon/tulip" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Tulip Koleksiyonu
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/koleksiyon/harmony" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Harmony Koleksiyonu
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/koleksiyon/inci" className="group flex items-center gap-4 hover:font-bold transition-all">
                     İnci Koleksiyonu
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </div>
               )}
@@ -436,35 +437,35 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                 <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
                   <Link href="/hediye/ozel-gunler" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Özel Günler
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/hediye/dogum-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Doğum Günü
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/hediye/anneler-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Anneler Günü
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/hediye/kadinlar-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Kadınlar Günü
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/hediye/yeni-dogan" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Yeni Doğan
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/hediye/erkek-hediye" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Erkek Hediye
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/hediye/mini-butceli" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Mini Bütçeli
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/hediye/aksesuar" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Aksesuar
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </div>
               )}
@@ -474,15 +475,15 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false }
                 <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
                   <Link href="/erkek/tesbih" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Tesbih
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/erkek/bileklik" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Bileklik
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/erkek/yuzuk" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Yüzük
-                    <span className="w-[110px] h-[2px] bg-[#dccdbf] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </div>
               )}

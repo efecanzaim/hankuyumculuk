@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
-export default function HediyePage() {
+export default function ErkekPage() {
   return (
     <>
       <TopBanner
@@ -19,16 +19,16 @@ export default function HediyePage() {
         isHero={false}
       />
       <CategoryPage
-        category="hediye"
-        heroTitle="ÖZEL"
-        heroSubtitle="HEDİYELER"
-        heroDescription="Sevdiklerinize en güzel armağanı sunun. Her özel an, unutulmaz bir hediyeyi hak eder. Aşkı, minneti ve sevgiyi ifade eden seçenekler."
-        heroSubDescription="Doğum günlerinden yıldönümlerine, anneler gününden yeni doğan kutlamalarına kadar her özel gün için mükemmel hediye seçenekleri sunuyoruz."
-        heroImage1="/images/trend-left.jpg"
-        heroImage2="/images/trend-right.jpg"
-        sectionTitle="hediye"
-        sectionDescription="Her bütçeye ve her zevke uygun hediye alternatifleri. Şık ambalajlarıyla sunulan mücevherlerimiz, sevdiklerinizi mutlu edecek."
-        sectionSubDescription="Hediye danışmanlarımız, en uygun seçimi yapmanızda size yardımcı olur. Kişiselleştirilmiş gravür seçenekleriyle hediyenizi daha da özel kılın."
+        category="erkek"
+        heroTitle="ERKEKLERE"
+        heroSubtitle="ÖZEL"
+        heroDescription="Modern erkek için tasarlanmış şık ve sofistike aksesuarlar. Tesbihten bilekliğe, yüzükten kol düğmesine özel koleksiyon."
+        heroSubDescription="Kaliteli malzemeler ve usta işçilikle üretilen erkek aksesuarları. Klasik zarafetten modern çizgilere, her tarza uygun seçenekler."
+        heroImage1="/images/erkek-menu-hero.jpg"
+        heroImage2="/images/erkek-menu-bg.jpg"
+        sectionTitle="erkek"
+        sectionDescription="Güç, karakter ve zarafeti bir arada sunan erkek koleksiyonu. Her parça, erkek stilinin tamamlayıcısı olarak tasarlandı."
+        sectionSubDescription="Tesbihlerimiz geleneksel ustalıkla, bilekliklerimiz modern tasarımlarla ve yüzüklerimiz zamansız şıklıkla öne çıkar."
         sectionImage1="/images/hero-bg.jpg"
         sectionImage2="/images/parallax-bg.jpg"
       />
@@ -43,3 +43,4 @@ export default function HediyePage() {
     </>
   );
 }
+

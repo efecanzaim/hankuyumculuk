@@ -1,10 +1,12 @@
-import CustomDesignPage from "@/components/CustomDesignPage";
+import ProductListingPage from "@/components/ProductListingPage";
 import TopBanner from "@/components/TopBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
-export default function OzelTasarimPage() {
+export default function AksesuarPage() {
+  const category = content.hediyeCategories["aksesuar"];
+
   return (
     <>
       <TopBanner
@@ -16,9 +18,17 @@ export default function OzelTasarimPage() {
         logo={content.header.logo}
         logoAlt={content.header.logoAlt}
         mainNav={content.header.mainNav}
-        isTransparent={true}
+        isHero={false}
       />
-      <CustomDesignPage />
+      <ProductListingPage
+        heroImage={category.heroImage}
+        heroTitle={category.heroTitle}
+        heroSubtitle={category.heroSubtitle}
+        heroDescription={category.heroDescription}
+        categoryTitle={category.categoryTitle}
+        products={category.products}
+        totalProducts={category.products.length}
+      />
       <Footer
         logo={content.footer.logo}
         slogan={content.footer.slogan}
@@ -30,3 +40,4 @@ export default function OzelTasarimPage() {
     </>
   );
 }
+

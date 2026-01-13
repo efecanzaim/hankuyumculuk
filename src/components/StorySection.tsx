@@ -12,7 +12,7 @@ interface StorySectionProps {
 
 export default function StorySection({ title, mainText, subText, linkText, linkHref }: StorySectionProps) {
   return (
-    <section className="relative bg-[#efece9] pt-12 md:pt-16 overflow-hidden">
+    <section className="relative bg-light pt-12 md:pt-16 overflow-hidden">
       <div className="container mx-auto px-6 lg:px-8 relative z-10">
         <div className="max-w-[950px] mx-auto text-center">
           {/* Title */}

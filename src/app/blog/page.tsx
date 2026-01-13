@@ -1,5 +1,4 @@
 import BlogArticlePage from "@/components/BlogArticlePage";
-import TopBanner from "@/components/TopBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import content from "@/data/content.json";
@@ -119,15 +118,12 @@ Amacımız yalnızca bilgi vermek değil; doğru seçimi yapmanızı sağlamak, 
 export default function BlogPage() {
   return (
     <>
-      <TopBanner
-        text={content.topBanner.text}
-        visible={content.topBanner.visible}
-        topLinks={content.header.topLinks}
-      />
+      {/* Top Banner is hidden on blog page per Figma design */}
       <Header
         logo={content.header.logo}
         logoAlt={content.header.logoAlt}
         mainNav={content.header.mainNav}
+        isBlogPage={true}
       />
       <main>
         <BlogArticlePage {...articleData} />

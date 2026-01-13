@@ -73,7 +73,7 @@ export default function ProductListingPage({
           </h2>
           
           {/* Hero Description */}
-          <p className="font-light text-[14px] md:text-[30px] leading-[22px] md:leading-[40px] text-[#2f3237] text-center max-w-[950px] mx-auto">
+          <p className="font-light text-[14px] md:text-[24px] leading-[22px] md:leading-[38px] text-[#2f3237] text-center max-w-[950px] mx-auto whitespace-pre-line">
             {heroDescription}
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function ProductListingPage({
 
             {/* Separator Line with Active Indicator */}
             <div className="flex-1 mx-8 relative">
-              <div className="w-full h-px bg-[#efece9]" />
+              <div className="w-full h-px bg-primary" />
               <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[350px] h-[2px] bg-[#2f3237]" />
             </div>
 
@@ -150,7 +150,7 @@ export default function ProductListingPage({
               <button
                 onClick={loadMoreProducts}
                 disabled={isLoading}
-                className="bg-[#2f3237] text-[#efece9] font-light text-[13px] leading-[15px] px-[60px] py-[18px] hover:bg-[#3d4147] transition-colors disabled:opacity-50"
+                className="bg-dark text-light font-light text-[13px] leading-[15px] px-[60px] py-[18px] hover:bg-[#3d4147] transition-colors disabled:opacity-50"
               >
                 {isLoading ? "YÜKLENİYOR..." : "ÜRÜNLERİ YÜKLE"}
               </button>

@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
-export default function GozumunNuruPage() {
+export default function InciPage() {
   return (
     <>
       <Header
@@ -14,20 +14,10 @@ export default function GozumunNuruPage() {
         isTransparent={false}
       />
       <CollectionPage
-        heroImage="/images/collection-gozumunnuru-hero.jpg"
-        heroTitle="Gözümün Nuru"
-        heroSubtitle="Adı konamayan, ölçülmeyen, anlat deyince anlatılamayan… Sadece hissedilen."
-        heroDescription={`Gözümün Nuru,
-hayatında yerine koyamadığın o tek şeydir.
-Bakarken içini ısıtan,
-yokluğu kalbinde iz bırakan…
-
-Bir annenin evladına baktığı gibi,
-bir insanın en kıymetlisine baktığı yerden doğdu bu koleksiyon.
-
-Gözümün Nuru,
-takılan bir mücevher değil;
-gözünden sakındığın bir değerdir.`}
+        heroImage="/images/collection-inci-hero.jpg"
+        heroTitle="İnci"
+        heroSubtitle="Denizin armağanı, zarafetin simgesi."
+        heroDescription="İnci Koleksiyonu; okyanusun derinliklerinden gelen eşsiz güzelliği pırlantalarla buluşturur. Her bir parça, incinin yumuşak parlaklığı ve pırlantanın keskin ışıltısıyla, sofistike bir zarafet sunar."
         products={[
           { id: 1, image: "/images/collection-product-1.jpg" },
           { id: 2, image: "/images/collection-product-2.jpg" },
@@ -54,3 +44,4 @@ gözünden sakındığın bir değerdir.`}
     </>
   );
 }
+

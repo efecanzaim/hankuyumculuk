@@ -37,9 +37,9 @@ export default function SpecialDesignSection({ topCards, bottomCards }: SpecialD
           
           {/* Decorative line with center bar */}
           <div className="flex items-center justify-center gap-0">
-            <div className="h-px bg-[#efece9] flex-1"></div>
-            <div className="w-[350px] h-[2.234px] bg-[#2f3237]"></div>
-            <div className="h-px bg-[#efece9] flex-1"></div>
+            <div className="h-px bg-primary flex-1"></div>
+            <div className="w-[350px] h-[2.234px] bg-dark"></div>
+            <div className="h-px bg-primary flex-1"></div>
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@ export default function SpecialDesignSection({ topCards, bottomCards }: SpecialD
             {topCards.map((card, index) => (
               <div key={index} className="flex flex-col">
                 {/* Image - 470x600 */}
-                <div className="relative w-full aspect-[470/600] mb-6 overflow-hidden">
+                <div className="relative w-full aspect-470/600 mb-6 overflow-hidden">
                   <Image
                     src={getAssetPath(card.image)}
                     alt={card.title}
@@ -68,7 +68,7 @@ export default function SpecialDesignSection({ topCards, bottomCards }: SpecialD
                 {/* Button */}
                 <Link
                   href={card.link}
-                  className="bg-[#2f3237] text-[#efece9] text-[13px] leading-[15px] font-light h-[50px] w-[230px] mx-auto flex items-center justify-center hover:bg-[#1a1c1f] transition-colors duration-300"
+                  className="bg-dark text-light text-[13px] leading-[15px] font-light h-[50px] w-[230px] mx-auto flex items-center justify-center hover:bg-[#1a1c1f] transition-colors duration-300"
                 >
                   {card.buttonText}
                 </Link>
@@ -85,7 +85,7 @@ export default function SpecialDesignSection({ topCards, bottomCards }: SpecialD
             {bottomCards.map((card, index) => (
               <div key={index} className="flex flex-col">
                 {/* Image - 590x590 (square) */}
-                <div className="relative w-full md:w-[590px] aspect-square mb-6 overflow-hidden">
+                <div className="relative w-full md:w-[590px] aspect-590/590 mb-6 overflow-hidden">
                   <Image
                     src={getAssetPath(card.image)}
                     alt={card.title}
@@ -107,7 +107,7 @@ export default function SpecialDesignSection({ topCards, bottomCards }: SpecialD
                 {/* Button */}
                 <Link
                   href={card.link}
-                  className="bg-[#2f3237] text-[#efece9] text-[13px] leading-[15px] font-light h-[50px] w-[250px] mx-auto flex items-center justify-center hover:bg-[#1a1c1f] transition-colors duration-300"
+                  className="bg-dark text-light text-[13px] leading-[15px] font-light h-[50px] w-[250px] mx-auto flex items-center justify-center hover:bg-[#1a1c1f] transition-colors duration-300"
                 >
                   {card.buttonText}
                 </Link>
@@ -119,7 +119,7 @@ export default function SpecialDesignSection({ topCards, bottomCards }: SpecialD
 
       {/* Bottom Divider */}
       <div className="max-w-[1430px] mx-auto px-6 md:px-8">
-        <div className="w-full h-[1px] bg-[#efece9]" />
+        <div className="w-full h-px bg-primary" />
       </div>
     </section>
   );

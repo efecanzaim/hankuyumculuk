@@ -27,7 +27,7 @@ export default function InvestmentSection({ title, leftImage, rightImage, descri
         {/* Images Layout */}
         <div className="flex flex-col md:flex-row justify-center items-start gap-6 md:gap-[130px] mb-8 md:mb-[60px]">
           {/* Left - Large Image (590x753) */}
-          <div className="w-full md:w-[590px] aspect-[390/498] md:h-[753px] relative overflow-hidden">
+          <div className="w-full md:w-[590px] aspect-390/498 md:h-[753px] relative overflow-hidden">
             <Image
               src={getAssetPath(leftImage)}
               alt="Investment jewelry"
@@ -37,7 +37,7 @@ export default function InvestmentSection({ title, leftImage, rightImage, descri
           </div>
 
           {/* Right - Small Image (470x600) */}
-          <div className="w-full md:w-[470px] aspect-[390/498] md:h-[600px] relative overflow-hidden">
+          <div className="w-full md:w-[470px] aspect-390/498 md:h-[600px] relative overflow-hidden">
             <Image
               src={getAssetPath(rightImage)}
               alt="Investment product"

@@ -24,7 +24,7 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
       <div className="relative bg-white">
         <div className="max-w-[1430px] mx-auto px-6 md:px-8 py-8">
           <div className="flex items-center justify-center">
-            <div className="flex-1 h-px bg-[#efece9]" />
+            <div className="flex-1 h-px bg-primary" />
             <div className="px-8">
               {/* 1818 Logo - inline SVG with #2F3237 color */}
               <svg
@@ -50,7 +50,7 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
                 </defs>
               </svg>
             </div>
-            <div className="flex-1 h-px bg-[#efece9]" />
+            <div className="flex-1 h-px bg-primary" />
             {/* Instagram Icon - Right next to the line */}
             {socialLinks?.instagram && (
               <Link href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="ml-4">
@@ -68,23 +68,23 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
         {/* Decorative Stripes - Background, positioned from columns section */}
         <div className="absolute bottom-0 left-0 right-0 flex flex-col-reverse pointer-events-none" style={{ top: '280px' }}>
           {/* Stripe 1 (bottom) - Most opaque */}
-          <div className="h-[26px] bg-[#2f3237]/20 flex-shrink-0" />
+          <div className="h-[26px] bg-dark/20 shrink-0" />
           {/* Gap */}
-          <div className="h-[21px] flex-shrink-0" />
+          <div className="h-[21px] shrink-0" />
           {/* Stripe 2 */}
-          <div className="h-[26px] bg-[#2f3237]/15 flex-shrink-0" />
+          <div className="h-[26px] bg-dark/15 shrink-0" />
           {/* Gap */}
-          <div className="h-[25px] flex-shrink-0" />
+          <div className="h-[25px] shrink-0" />
           {/* Stripe 3 */}
-          <div className="h-[23px] bg-[#2f3237]/10 flex-shrink-0" />
+          <div className="h-[23px] bg-dark/10 shrink-0" />
           {/* Gap */}
-          <div className="h-[27px] flex-shrink-0" />
+          <div className="h-[27px] shrink-0" />
           {/* Stripe 4 */}
-          <div className="h-[22px] bg-[#2f3237]/6 flex-shrink-0" />
+          <div className="h-[22px] bg-dark/6 shrink-0" />
           {/* Gap */}
-          <div className="h-[25px] flex-shrink-0" />
+          <div className="h-[25px] shrink-0" />
           {/* Stripe 5 (top) - Most transparent */}
-          <div className="h-[23px] bg-[#2f3237]/3 flex-shrink-0" />
+          <div className="h-[23px] bg-dark/3 shrink-0" />
           {/* Remaining space fills with primary color */}
           <div className="flex-1" />
         </div>
