@@ -20,15 +20,15 @@ export default function HediyePage() {
       />
       <CategoryPage
         category="hediye"
-        heroTitle="ÖZEL"
-        heroSubtitle="HEDİYELER"
-        heroDescription="Sevdiklerinize en güzel armağanı sunun. Her özel an, unutulmaz bir hediyeyi hak eder. Aşkı, minneti ve sevgiyi ifade eden seçenekler."
-        heroSubDescription="Doğum günlerinden yıldönümlerine, anneler gününden yeni doğan kutlamalarına kadar her özel gün için mükemmel hediye seçenekleri sunuyoruz."
+        heroTitle="HEDİYE"
+        heroSubtitle="Bazı şeyler anlatılmaz, verilir."
+        heroDescription="Bir kelimenin yetmediği yerde hediye konuşur. Düşünülmüş bir seçim, sessiz ama net bir mesaj taşır."
+        heroSubDescription="Hediye seçerken şunu ararsın: karşındakini gerçekten tanıyor mu? Sıradan mı, yoksa özenli mi?"
         heroImage1="/images/trend-left.jpg"
         heroImage2="/images/trend-right.jpg"
         sectionTitle="hediye"
-        sectionDescription="Her bütçeye ve her zevke uygun hediye alternatifleri. Şık ambalajlarıyla sunulan mücevherlerimiz, sevdiklerinizi mutlu edecek."
-        sectionSubDescription="Hediye danışmanlarımız, en uygun seçimi yapmanızda size yardımcı olur. Kişiselleştirilmiş gravür seçenekleriyle hediyenizi daha da özel kılın."
+        sectionDescription="Değer beklersin. Gösterişten değil, anlamdan gelen bir değer. Zamana eşlik etmesini istersin. Bir günle sınırlı kalmasın, her bakıldığında aynı duyguyu hatırlatsın."
+        sectionSubDescription="Ve verdiğin şeyin, aceleyle değil, bilerek seçildiğini hissettirmesini beklersin. Han'da hediye, bir zorunluluk değil; düşüncenin zarif bir karşılığıdır."
         sectionImage1="/images/hero-bg.jpg"
         sectionImage2="/images/parallax-bg.jpg"
       />

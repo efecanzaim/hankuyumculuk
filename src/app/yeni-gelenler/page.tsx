@@ -4,8 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
-export default function ErkekHediyePage() {
-  const category = content.hediyeCategories["erkek-hediye"];
+export default function YeniGelenlerPage() {
+  const category = content.newArrivalsCategory;
 
   return (
     <>

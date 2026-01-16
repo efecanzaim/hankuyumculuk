@@ -48,7 +48,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
       {topBannerVisible && !isBlogPage && (
         <div className="absolute top-0 left-0 right-0 z-50 bg-primary w-full h-[50px] flex items-center justify-center px-6">
           <p className="text-[15px] text-[#2f3237] text-center font-normal leading-normal">
-            Stoklar tükenene kadar çevrimiçi teslimat siparişlerinde özel tatil ambalajlarımızı kaçırmayın
+          Çok yakında sizlerle buluşuyoruz… Yeni koleksiyonlarımız için bizi takip edin!
           </p>
           <button
             onClick={closeTopBanner}
@@ -94,7 +94,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                       width={110}
                       height={41}
                       className="h-[41px] w-auto"
-                      style={isTransparent && !activeMenu ? {} : { filter: 'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(434%) hue-rotate(345deg) brightness(96%) contrast(88%)' }}
+                      style={isTransparent && !activeMenu ? {} : { filter: 'brightness(0) saturate(100%) invert(18%) sepia(5%) saturate(412%) hue-rotate(169deg) brightness(95%) contrast(89%)' }}
                     />
                   </Link>
                   <div className={`flex-1 h-px ${isTransparent && !activeMenu ? 'bg-white opacity-50' : 'bg-primary'}`} />
@@ -175,6 +175,13 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             </div>
 
             <Link
+              href="/preloved"
+              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+            >
+              PRELOVED
+            </Link>
+
+            <Link
               href="/ozel-tasarim"
               className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
             >
@@ -214,13 +221,6 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                 <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
               )}
             </div>
-
-            <Link
-              href="/preloved"
-              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
-            >
-              PRELOVED
-            </Link>
             </div>
           </div>
         </div>
@@ -250,7 +250,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                 width={80}
                 height={30}
                 className="h-[30px] w-auto"
-                style={isTransparent ? {} : { filter: 'brightness(0) saturate(100%) invert(89%) sepia(8%) saturate(434%) hue-rotate(345deg) brightness(96%) contrast(88%)' }}
+                style={isTransparent ? {} : { filter: 'brightness(0) saturate(100%) invert(18%) sepia(5%) saturate(412%) hue-rotate(169deg) brightness(95%) contrast(89%)' }}
               />
             </Link>
 
@@ -405,28 +405,8 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               {/* KOLEKSİYON Menu */}
               {activeMenu === 'koleksiyon' && (
                 <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
-                  <Link href="/koleksiyon/zenith" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Zenith Koleksiyonu
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
                   <Link href="/koleksiyon/gozumun-nuru" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Gözümün Nuru
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/koleksiyon/anturaj" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Anturaj Koleksiyonu
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/koleksiyon/tulip" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Tulip Koleksiyonu
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/koleksiyon/harmony" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Harmony Koleksiyonu
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/koleksiyon/inci" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    İnci Koleksiyonu
                     <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </div>
@@ -435,10 +415,6 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               {/* HEDİYE Menu */}
               {activeMenu === 'hediye' && (
                 <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
-                  <Link href="/hediye/ozel-gunler" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Özel Günler
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
                   <Link href="/hediye/dogum-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Doğum Günü
                     <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -451,16 +427,12 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                     Kadınlar Günü
                     <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
+                  <Link href="/hediye/ozel-gunler" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Özel Günler
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
                   <Link href="/hediye/yeni-dogan" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Yeni Doğan
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/hediye/erkek-hediye" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Erkek Hediye
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/hediye/mini-butceli" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Mini Bütçeli
                     <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                   <Link href="/hediye/aksesuar" className="group flex items-center gap-4 hover:font-bold transition-all">

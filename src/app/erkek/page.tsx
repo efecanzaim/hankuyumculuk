@@ -20,15 +20,15 @@ export default function ErkekPage() {
       />
       <CategoryPage
         category="erkek"
-        heroTitle="ERKEKLERE"
-        heroSubtitle="ÖZEL"
-        heroDescription="Modern erkek için tasarlanmış şık ve sofistike aksesuarlar. Tesbihten bilekliğe, yüzükten kol düğmesine özel koleksiyon."
-        heroSubDescription="Kaliteli malzemeler ve usta işçilikle üretilen erkek aksesuarları. Klasik zarafetten modern çizgilere, her tarza uygun seçenekler."
+        heroTitle="ERKEKLERE ÖZEL"
+        heroSubtitle="Güçlü olan, kendini anlatmak zorunda kalmaz."
+        heroDescription="Erkeklere özel seçimler, fazlalıktan arınmış bir çizgi ister. Netlik, denge ve karakter. Göze sokulan değil, fark edilen parçalar beklersin."
+        heroSubDescription="İşlev ararsın. Ama yalnızca işe yaramasını değil, doğru hissettirmesini istersin."
         heroImage1="/images/erkek-menu-hero.jpg"
         heroImage2="/images/erkek-menu-bg.jpg"
         sectionTitle="erkek"
-        sectionDescription="Güç, karakter ve zarafeti bir arada sunan erkek koleksiyonu. Her parça, erkek stilinin tamamlayıcısı olarak tasarlandı."
-        sectionSubDescription="Tesbihlerimiz geleneksel ustalıkla, bilekliklerimiz modern tasarımlarla ve yüzüklerimiz zamansız şıklıkla öne çıkar."
+        sectionDescription="Detaylar önemlidir. Çizginin keskinliği, malzemenin ağırlığı, dokunuşun hissi. Zamana dayanmasını beklersin. Bugün olduğu kadar, yıllar sonra da yerini korumasını."
+        sectionSubDescription="Han Erkeklere Özel, sessiz bir güç taşıyan, karakteri net seçimlerden oluşur."
         sectionImage1="/images/hero-bg.jpg"
         sectionImage2="/images/parallax-bg.jpg"
       />

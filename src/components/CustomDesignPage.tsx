@@ -33,7 +33,7 @@ export default function CustomDesignPage() {
             className="text-[50px] md:text-[80px] lg:text-[100px] leading-[1.05] text-white mb-10"
             style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
           >
-            Sana Özel Tasarım
+            Sana Özel
           </h1>
           
           {/* Decorative Line */}
@@ -43,9 +43,7 @@ export default function CustomDesignPage() {
             className="text-[18px] md:text-[22px] leading-[1.8] text-white/85 font-light max-w-[700px] mx-auto"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Bazı mücevherler vitrinlerde başlar.<br />
-            Bazıları ise bir düşüncede, bir histe,<br className="hidden md:block" />
-            bazen de sadece içten gelen bir istekte.
+            Her şey seni dinlemekle başlar.
           </p>
         </div>
 
@@ -69,14 +67,13 @@ export default function CustomDesignPage() {
               className="text-[26px] md:text-[34px] leading-[1.7] font-light text-[#2f3237]"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              Bu bölüm, hazır olanı seçmekten çok,<br />
+              Gerçek değer,<br />
               <span 
                 className="text-[32px] md:text-[44px] text-[#2f3237]"
                 style={{ fontFamily: 'var(--font-carattere), cursive' }}
               >
-                henüz var olmayanı birlikte ortaya çıkarmak
+                kişiye ait olanda saklıdır.
               </span>
-              <br />için var.
             </p>
           </div>
           
@@ -86,9 +83,10 @@ export default function CustomDesignPage() {
             className="text-[17px] md:text-[19px] leading-loose font-light text-[#2f3237]/75 text-center max-w-[750px] mx-auto"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Net bir tasarım fikriyle gelmen gerekmez.<br />
-            Bazen bir hatıra, bazen bir bağ,<br />
-            bazen de yalnızca "bana ait olsun" duygusu yeterlidir.
+            Sana özel olan,<br />
+            hazır kalıplara sığmaz.<br />
+            Bir ölçüden fazlasıdır;<br />
+            bir duruştur, bir ihtiyaçtır, bir hikâyedir.
           </p>
         </div>
       </section>
@@ -113,24 +111,25 @@ export default function CustomDesignPage() {
                 className="text-[50px] md:text-[60px] leading-[1.1] text-[#2f3237] mb-8"
                 style={{ fontFamily: 'var(--font-carattere), cursive' }}
               >
-                Burada süreç<br />acele etmez.
+                Dinlenmeyi<br />beklersin.
               </p>
               
               <p 
                 className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75 mb-8"
                 style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
               >
-                Şekiller, oranlar ve detaylar<br />
-                zamana yayılarak, sindirilerek oluşur.
+                Söylediğinin anlaşılmasını,<br />
+                anlatmak istediklerinin<br />
+                dikkatle ele alınmasını istersin.
               </p>
               
               <p 
                 className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75"
                 style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
               >
-                Ortaya çıkan her parça,<br />
-                başkasına benzememek üzere tasarlanır<br />
-                ve yalnızca tek bir hikâyeye ait kalır.
+                Detay ararsın.<br />
+                Her çizginin, her dokunun<br />
+                seninle bir bağ kurmasını beklersin.
               </p>
               
               <div className="w-[60px] h-[2px] bg-primary mt-10" />
@@ -148,14 +147,14 @@ export default function CustomDesignPage() {
               className="text-[40px] md:text-[56px] leading-[1.15] text-[#2f3237] mb-8"
               style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
             >
-              Süreç Nasıl İlerler?
+              Özgürlük İstersin
             </h2>
             <p 
               className="text-[18px] md:text-[20px] leading-[1.7] font-light text-[#2f3237]/70"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              Her tasarım, bir karşılaşmayla başlar.<br />
-              Bir sohbet, bir eskiz, bazen birkaç kelime…
+              Seçeneklerin seni sınırlamamasını,<br />
+              aksine sana alan açmasını beklersin.
             </p>
           </div>
 
@@ -346,21 +345,20 @@ export default function CustomDesignPage() {
             className="text-[44px] md:text-[60px] leading-[1.15] text-white mb-12"
             style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
           >
-            Neden Sana Özel?
+            Ve Sonunda...
           </h2>
           
           <p 
             className="text-[20px] md:text-[26px] leading-[1.8] font-light text-white/85 mb-10"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Çünkü bazı parçalar taşınmak için değil,<br />
+            Sana ait olduğunu hissettiren<br />
             <span 
               className="text-[26px] md:text-[34px]"
               style={{ fontFamily: 'var(--font-carattere), cursive' }}
             >
-              aidiyet duygusu yaratmak
+              bir parça beklersin.
             </span>
-            <br />için vardır.
           </p>
           
           <div className="w-[80px] h-px bg-primary mx-auto my-12" />
@@ -369,9 +367,8 @@ export default function CustomDesignPage() {
             className="text-[17px] md:text-[18px] leading-loose font-light text-white/60"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Bu mücevherler,<br />
-            bir trendin değil,<br />
-            bir insanın hikâyesine aittir.
+            Başkasına değil,<br />
+            tam olarak sana yakışan.
           </p>
         </div>
       </section>
@@ -383,22 +380,22 @@ export default function CustomDesignPage() {
             className="text-[60px] md:text-[80px] leading-none text-[#2f3237] mb-4"
             style={{ fontFamily: 'var(--font-carattere), cursive' }}
           >
-            Bir fikri değil,
+            İşte bu yüzden
           </p>
           
           <h2 
             className="text-[28px] md:text-[40px] leading-[1.4] text-[#2f3237] mb-6"
             style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
           >
-            bir hissi mücevhere dönüştürüyoruz.
+            Han &ldquo;Sana Özel&rdquo;
           </h2>
           
           <p 
             className="text-[22px] md:text-[28px] leading-[1.6] font-light text-[#2f3237]/70 mb-14"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Tek parça.<br />
-            <strong className="text-[#2f3237]">Sana ait.</strong>
+            Dinleyen, anlayan ve senin için şekillenen<br />
+            <strong className="text-[#2f3237]">bir ustalık yaklaşımı sunar.</strong>
           </p>
           
           {/* Decorative Line */}

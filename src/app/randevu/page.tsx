@@ -504,10 +504,12 @@ export default function RandevuPage() {
                               className="w-full h-[50px] px-4 bg-white border border-[#e0e0e0] text-[#2f3237] text-[15px] focus:outline-none focus:border-[#2f3237] transition-colors appearance-none"
                               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                             >
-                              <option value="ozel-tasarim">Özel Tasarım</option>
-                              <option value="nisan-yuzugu">Nişan Yüzüğü</option>
-                              <option value="alyans">Alyans</option>
-                              <option value="hediye">Hediye Önerisi</option>
+                              <option value="mucevher">Mücevher</option>
+                              <option value="koleksiyon">Koleksiyon</option>
+                              <option value="sana-ozel">Sana Özel</option>
+                              <option value="hediye">Hediye</option>
+                              <option value="erkeklere-ozel">Erkeklere Özel</option>
+                              <option value="preloved">Preloved</option>
                               <option value="diger">Diğer</option>
                             </select>
                           </div>

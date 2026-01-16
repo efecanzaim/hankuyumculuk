@@ -9,10 +9,10 @@ interface TrendSectionProps {
   rightImage: string;
   leftTitle: string;
   rightTitle: string;
-  leftCategory: string;
-  rightCategory: string;
   leftLink: string;
   rightLink: string;
+  leftTitleLink: string;
+  rightTitleLink: string;
 }
 
 export default function TrendSection({
@@ -20,10 +20,10 @@ export default function TrendSection({
   rightImage,
   leftTitle,
   rightTitle,
-  leftCategory,
-  rightCategory,
   leftLink,
-  rightLink
+  rightLink,
+  leftTitleLink,
+  rightTitleLink
 }: TrendSectionProps) {
   return (
     <section className="py-16 md:py-20 bg-white">
@@ -44,19 +44,18 @@ export default function TrendSection({
 
             {/* Title - Overlapping bottom of image */}
             <div className="relative -mt-16 z-10 text-center px-6">
-              <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-primary mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-                {leftTitle}
-              </h2>
+              <Link href={leftTitleLink}>
+                <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-primary mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] hover:opacity-80 transition-opacity cursor-pointer">
+                  {leftTitle}
+                </h2>
+              </Link>
             </div>
 
-            {/* Category and Link - Below image */}
+            {/* Link - Below image */}
             <div className="text-center px-6">
-              <p className="text-[18px] md:text-[20px] leading-[30px] font-light text-[#2f3237] mb-3 tracking-wide">
-                {leftCategory}
-              </p>
               <Link
                 href={leftLink}
-                className="text-[15px] leading-[30px] font-bold text-[#2f3237] underline hover:opacity-70 transition-opacity inline-block"
+                className="inline-block px-8 py-3 text-[13px] tracking-[0.15em] font-medium text-[#2f3237] bg-white border border-[#2f3237] hover:bg-[#2f3237] hover:text-white transition-all duration-300 uppercase"
               >
                 keşfet
               </Link>
@@ -78,19 +77,18 @@ export default function TrendSection({
 
             {/* Title - Overlapping bottom of image */}
             <div className="relative -mt-16 z-10 text-center px-6">
-              <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-primary mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] whitespace-pre-line">
-                {rightTitle}
-              </h2>
+              <Link href={rightTitleLink}>
+                <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-primary mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] whitespace-pre-line hover:opacity-80 transition-opacity cursor-pointer">
+                  {rightTitle}
+                </h2>
+              </Link>
             </div>
 
-            {/* Category and Link - Below image */}
+            {/* Link - Below image */}
             <div className="text-center px-6">
-              <p className="text-[18px] md:text-[20px] leading-[30px] font-light text-[#2f3237] mb-3 tracking-wide">
-                {rightCategory}
-              </p>
               <Link
                 href={rightLink}
-                className="text-[15px] leading-[30px] font-bold text-[#2f3237] underline hover:opacity-70 transition-opacity inline-block"
+                className="inline-block px-8 py-3 text-[13px] tracking-[0.15em] font-medium text-[#2f3237] bg-white border border-[#2f3237] hover:bg-[#2f3237] hover:text-white transition-all duration-300 uppercase"
               >
                 keşfet
               </Link>

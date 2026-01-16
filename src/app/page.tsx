@@ -30,10 +30,10 @@ export default function Home() {
         rightImage={content.trendSection.rightImage}
         leftTitle={content.trendSection.leftTitle}
         rightTitle={content.trendSection.rightTitle}
-        leftCategory={content.trendSection.leftCategory}
-        rightCategory={content.trendSection.rightCategory}
         leftLink={content.trendSection.leftLink}
         rightLink={content.trendSection.rightLink}
+        leftTitleLink={content.trendSection.leftTitleLink}
+        rightTitleLink={content.trendSection.rightTitleLink}
       />
 
       {/* Parallax Section */}

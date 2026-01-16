@@ -20,15 +20,15 @@ export default function MucevherPage() {
       />
       <CategoryPage
         category="mücevher"
-        heroTitle="ETKİLEYİCİ"
-        heroSubtitle="BİR IŞILTI"
-        heroDescription="Anturaj modeller, merkez taşın ihtişamını öne çıkarırken her açıdan ışığı yakalayan detaylarıyla kusursuz bir denge sunar."
-        heroSubDescription="İnce işçilikle yerleştirilen pırlantalar, tasarıma derinlik ve hacim kazandırarak zarafeti ön plana çıkarır. Zamansız şıklığı temsil eden bu özel tasarımlar, hem günlük kullanımda hem de özel anlarda stilinizi tamamlayan güçlü bir ifade haline gelir."
+        heroTitle="MÜCEVHER"
+        heroSubtitle="Biz biliyoruz ki…"
+        heroDescription="Güvene önem verirsiniz… Bu yüzden Han'da her parça, ustasının sözüyle ve sorumluluğuyla hayat bulur. Bir duruş ararsınız; kendini anlatabilen bir sadelik…"
+        heroSubDescription="Yüzüklerimiz, küpelerimiz, bileklik ve setlerimiz kimliğinize sessizce eşlik eder. Detay önemlidir… İlk bakışta değil, dokundukça fark edilen bir ustalıkla."
         heroImage1="/images/trend-left.jpg"
         heroImage2="/images/trend-right.jpg"
         sectionTitle="mücevher"
-        sectionDescription="Merkez taşın zarafetini çevreleyen pırlantalarla tasarlanan anturaj modeller, göz alıcı bir ışıltı sunar. Güçlü ışıltısı ve dengeli tasarımıyla zamansız bir stil."
-        sectionSubDescription="Merkez taşı çevreleyen pırlantalarla tasarlanan anturaj modeller, güçlü ışıltısı ve zarif duruşuyla göz alıcı bir şıklık sunar. Çevre pırlantalarla güçlenen, etkileyici bir ışıltı."
+        sectionDescription="Zamana direnen bir anlam ararsınız… Bugün takılan, yıllar sonra da aynı duyguyu taşıyan. Değer duygunuz vazgeçilmezdir… Gösterişten uzak, özel hissettiren bir seçimle."
+        sectionSubDescription="Ve her mücevherde bir hikâye anlam kazanır. Han mücevherleri yalnızca takılmaz; yaşanır, bağ kurulur, hatırlanır. Çünkü sizi tam anlamıyla tatmin edecek bilgi, hassasiyet, el emeği ve ustalık… Hepsi Han imzasında buluşur."
         sectionImage1="/images/hero-bg.jpg"
         sectionImage2="/images/parallax-bg.jpg"
       />

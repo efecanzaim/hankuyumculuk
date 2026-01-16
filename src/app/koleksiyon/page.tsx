@@ -20,15 +20,15 @@ export default function KoleksiyonPage() {
       />
       <CategoryPage
         category="koleksiyon"
-        heroTitle="ZAMANSIZ"
-        heroSubtitle="KOLEKSİYON"
-        heroDescription="Her parça, ustalıkla işlenmiş detayları ve zarif çizgileriyle benzersiz bir hikaye anlatır. Klasik zarafetten modern yorumlara uzanan tasarımlar."
-        heroSubDescription="Koleksiyonlarımız, geleneksel zanaatkarlığı çağdaş estetikle buluşturur. Her bir parça, nesiller boyu aktarılacak değerler taşır ve stilinize sofistike bir dokunuş katar."
+        heroTitle="KOLEKSİYON"
+        heroSubtitle="Biz inanıyoruz ki…"
+        heroDescription="Aynı duyguda buluşan, birbiriyle konuşan bir bütündür bir araya gelen parçalar. Bir koleksiyonda tutarlılık beklersiniz. Hatların, ahengin ve çizginin bir dili olmasını istersiniz."
+        heroSubDescription="Han koleksiyonları bu dili baştan sona korur. Uyum ararsınız. Tüm parçaların tek başına güçlü, birlikte ise dengeli olmasını beklersiniz."
         heroImage1="/images/trend-left.jpg"
         heroImage2="/images/trend-right.jpg"
         sectionTitle="koleksiyon"
-        sectionDescription="Özenle seçilmiş taşlar ve ince işçilikle hayat bulan koleksiyonlarımız, zarafetin ve ihtişamın buluşma noktası."
-        sectionSubDescription="Her tasarım, ışığı en güzel şekilde yansıtacak açılarla işlenir. Koleksiyonlarımız, özel anlarınızı taçlandırmak için tasarlanmıştır."
+        sectionDescription="Seçmenin kolay olmasını istersiniz. Bir koleksiyon sizi kararsızlığa sürüklememeli; doğru parçayı sezdirerek buldurmalıdır. Zamana karşı duran bir çizgi beklersiniz."
+        sectionSubDescription="Ve her koleksiyonun bir karakteri olmasını beklersiniz, kendine ait bir duruş sergiler. İşte tam da bu yüzden Han koleksiyonları, özenin ve ustalığın hissedildiği bir bütünlük sunar."
         sectionImage1="/images/hero-bg.jpg"
         sectionImage2="/images/parallax-bg.jpg"
       />
