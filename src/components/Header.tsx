@@ -75,6 +75,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                     width={15}
                     height={15}
                     className="w-[15px] h-[15px] shrink-0"
+                    style={isTransparent && !activeMenu ? {} : { filter: 'brightness(0) saturate(100%)' }}
                   />
                   <Link
                     href="/randevu"
@@ -145,12 +146,11 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               className="relative"
               onMouseEnter={() => setActiveMenu('mucevher')}
             >
-              <Link
-                href="/mucevher"
-                className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              <span
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-default ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
               >
                 MÜCEVHER
-              </Link>
+              </span>
               {/* Active Menu Underline */}
               {activeMenu === 'mucevher' && (
                 <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
@@ -162,12 +162,11 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               className="relative"
               onMouseEnter={() => setActiveMenu('koleksiyon')}
             >
-              <Link
-                href="/koleksiyon"
-                className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              <span
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-default ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
               >
                 KOLEKSİYON
-              </Link>
+              </span>
               {/* Active Menu Underline */}
               {activeMenu === 'koleksiyon' && (
                 <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
@@ -193,12 +192,11 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               className="relative"
               onMouseEnter={() => setActiveMenu('hediye')}
             >
-              <Link
-                href="/hediye"
-                className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              <span
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-default ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
               >
                 HEDİYE
-              </Link>
+              </span>
               {/* Active Menu Underline */}
               {activeMenu === 'hediye' && (
                 <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
@@ -210,17 +208,17 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               className="relative"
               onMouseEnter={() => setActiveMenu('erkek')}
             >
-              <Link
-                href="/erkek"
-                className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              <span
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-default ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
               >
                 ERKEKLERE ÖZEL
-              </Link>
+              </span>
               {/* Active Menu Underline */}
               {activeMenu === 'erkek' && (
                 <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
               )}
             </div>
+
             </div>
           </div>
         </div>
@@ -269,20 +267,16 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
           {mobileMenuOpen && (
             <div className={`px-6 py-6 ${isTransparent ? 'bg-[rgba(47,50,55,0.95)]' : 'bg-white border-t border-primary'}`}>
               <nav className="flex flex-col gap-4">
-                <Link
-                  href="/mucevher"
-                  className={`text-[15px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-                  onClick={toggleMobileMenu}
+                <span
+                  className={`text-[15px] font-normal py-2 opacity-50 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                 >
                   MÜCEVHER
-                </Link>
-                <Link
-                  href="/koleksiyon"
-                  className={`text-[15px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-                  onClick={toggleMobileMenu}
+                </span>
+                <span
+                  className={`text-[15px] font-normal py-2 opacity-50 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                 >
                   KOLEKSİYON
-                </Link>
+                </span>
                 <Link
                   href="/ozel-tasarim"
                   className={`text-[15px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
@@ -290,20 +284,16 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                 >
                   SANA ÖZEL
                 </Link>
-                <Link
-                  href="/hediye"
-                  className={`text-[15px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-                  onClick={toggleMobileMenu}
+                <span
+                  className={`text-[15px] font-normal py-2 opacity-50 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                 >
                   HEDİYE
-                </Link>
-                <Link
-                  href="/erkek"
-                  className={`text-[15px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-                  onClick={toggleMobileMenu}
+                </span>
+                <span
+                  className={`text-[15px] font-normal py-2 opacity-50 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                 >
                   ERKEKLERE ÖZEL
-                </Link>
+                </span>
                 <Link
                   href="/preloved"
                   className={`text-[15px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}

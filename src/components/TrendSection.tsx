@@ -42,10 +42,10 @@ export default function TrendSection({
               />
             </div>
 
-            {/* Title - Overlapping bottom of image */}
-            <div className="relative -mt-16 z-10 text-center px-6">
+            {/* Title - Below image */}
+            <div className="relative mt-6 z-10 text-center px-6">
               <Link href={leftTitleLink}>
-                <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-primary mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] hover:opacity-80 transition-opacity cursor-pointer">
+                <h2 className="font-title text-[32px] md:text-[46px] leading-[50px] md:leading-[70px] text-[#2f3237] mb-6 whitespace-nowrap hover:opacity-80 transition-opacity cursor-pointer">
                   {leftTitle}
                 </h2>
               </Link>
@@ -75,10 +75,10 @@ export default function TrendSection({
               />
             </div>
 
-            {/* Title - Overlapping bottom of image */}
-            <div className="relative -mt-16 z-10 text-center px-6">
+            {/* Title - Below image */}
+            <div className="relative mt-6 z-10 text-center px-6">
               <Link href={rightTitleLink}>
-                <h2 className="font-title text-[50px] md:text-[70px] leading-[80px] md:leading-[100px] text-primary mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)] whitespace-pre-line hover:opacity-80 transition-opacity cursor-pointer">
+                <h2 className="font-title text-[32px] md:text-[46px] leading-[50px] md:leading-[70px] text-[#2f3237] mb-6 whitespace-nowrap hover:opacity-80 transition-opacity cursor-pointer">
                   {rightTitle}
                 </h2>
               </Link>

@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function YuzukPage() {
-  const category = content.mucevherCategories.yuzuk;
+  const category = content.yuzukCategory;
 
   return (
     <>

@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function YeniDoganPage() {
-  const category = content.hediyeCategories["yeni-dogan"];
+  const category = content.yeniDoganCategory;
 
   return (
     <>

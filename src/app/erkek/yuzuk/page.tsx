@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function ErkekYuzukPage() {
-  const category = content.erkekCategories["yuzuk"];
+  const category = content.erkekYuzukCategory;
 
   return (
     <>

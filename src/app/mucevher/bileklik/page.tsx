@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function BileklikPage() {
-  const category = content.mucevherCategories.bileklik;
+  const category = content.bileklikCategory;
 
   return (
     <>

@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function ErkekBileklikPage() {
-  const category = content.erkekCategories["bileklik"];
+  const category = content.erkekBileklikCategory;
 
   return (
     <>

@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function OzelGunlerPage() {
-  const category = content.hediyeCategories["ozel-gunler"];
+  const category = content.ozelGunlerCategory;
 
   return (
     <>

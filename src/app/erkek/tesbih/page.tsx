@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function TesbihPage() {
-  const category = content.erkekCategories["tesbih"];
+  const category = content.tesbihCategory;
 
   return (
     <>

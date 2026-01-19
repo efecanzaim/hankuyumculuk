@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function KadinlarGunuPage() {
-  const category = content.hediyeCategories["kadinlar-gunu"];
+  const category = content.kadinlarGunuCategory;
 
   return (
     <>
@@ -40,4 +40,3 @@ export default function KadinlarGunuPage() {
     </>
   );
 }
-

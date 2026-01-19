@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function KupePage() {
-  const category = content.mucevherCategories.kupe;
+  const category = content.kupeCategory;
 
   return (
     <>

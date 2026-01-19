@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function SetPage() {
-  const category = content.mucevherCategories.set;
+  const category = content.setCategory;
 
   return (
     <>

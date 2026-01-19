@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function DogumGunuPage() {
-  const category = content.hediyeCategories["dogum-gunu"];
+  const category = content.dogumGunuCategory;
 
   return (
     <>

@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import content from "@/data/content.json";
 
 export default function AnnelerGunuPage() {
-  const category = content.hediyeCategories["anneler-gunu"];
+  const category = content.annelerGunuCategory;
 
   return (
     <>
