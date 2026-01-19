@@ -28,6 +28,7 @@ export default function AksesuarPage() {
         categoryTitle={category.categoryTitle}
         products={category.products}
         totalProducts={category.products.length}
+        appointmentSubject="hediye"
       />
       <Footer
         logo={content.footer.logo}

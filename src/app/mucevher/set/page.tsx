@@ -28,6 +28,7 @@ export default function SetPage() {
         categoryTitle={category.categoryTitle}
         products={category.products}
         totalProducts={category.products.length}
+        appointmentSubject="mucevher"
       />
       <Footer
         logo={content.footer.logo}

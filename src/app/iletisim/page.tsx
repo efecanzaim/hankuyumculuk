@@ -64,8 +64,9 @@ export default function IletisimPage() {
                     <div>
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">Adres</h3>
                       <p className="text-[#6b7280] leading-relaxed">
-                        Konyaaltı Caddesi No: 123<br />
-                        Konyaaltı, Antalya 07070
+                        Liman Mahallesi, Akdeniz Bulvarı<br />
+                        No: 257 Fenix Center<br />
+                        Konyaaltı/Antalya
                       </p>
                     </div>
                   </div>
@@ -110,8 +111,7 @@ export default function IletisimPage() {
                     <div>
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">Çalışma Saatleri</h3>
                       <p className="text-[#6b7280]">
-                        Pazartesi - Cumartesi: 10:00 - 19:00<br />
-                        Pazar: Kapalı
+                        Haftanın Her Günü: 10:00 - 20:00
                       </p>
                     </div>
                   </div>
@@ -123,14 +123,24 @@ export default function IletisimPage() {
                     </div>
                     <div>
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">Instagram</h3>
-                      <a 
-                        href="https://www.instagram.com/gozumunnuruantalya" 
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#6b7280] hover:text-[#d4af37] transition-colors"
-                      >
-                        @gozumunnuruantalya
-                      </a>
+                      <div className="flex flex-col gap-1">
+                        <a 
+                          href="https://www.instagram.com/gozumunnuruantalya" 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#6b7280] hover:text-[#d4af37] transition-colors"
+                        >
+                          @gozumunnuruantalya
+                        </a>
+                        <a 
+                          href="https://www.instagram.com/hankuyumculuk_" 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#6b7280] hover:text-[#d4af37] transition-colors"
+                        >
+                          @hankuyumculuk_
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -151,7 +161,7 @@ export default function IletisimPage() {
                 <div className="bg-white p-2 shadow-lg">
                   <div className="aspect-4/3 w-full">
                     <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3190.8!2d30.65!3d36.88!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDUyJzQ4LjAiTiAzMMKwMzknMDAuMCJF!5e0!3m2!1str!2str!4v1600000000000!5m2!1str!2str"
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3192.8477013417514!2d30.602089575529437!3d36.84612336511002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c39303a734f60f%3A0xe343a4fa77583d88!2sFenix%20Center%20AVM!5e0!3m2!1str!2str!4v1768831178229!5m2!1str!2str"
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
@@ -196,7 +206,7 @@ export default function IletisimPage() {
         <section className="lg:hidden">
           <div className="h-[300px] w-full">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3190.8!2d30.65!3d36.88!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDUyJzQ4LjAiTiAzMMKwMzknMDAuMCJF!5e0!3m2!1str!2str!4v1600000000000!5m2!1str!2str"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3192.8477013417514!2d30.602089575529437!3d36.84612336511002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c39303a734f60f%3A0xe343a4fa77583d88!2sFenix%20Center%20AVM!5e0!3m2!1str!2str!4v1768831178229!5m2!1str!2str"
               width="100%"
               height="100%"
               style={{ border: 0 }}

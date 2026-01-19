@@ -21,6 +21,7 @@ interface ProductListingPageProps {
   categoryTitle: string;
   products: Product[];
   totalProducts: number;
+  appointmentSubject?: string;
 }
 
 export default function ProductListingPage({
@@ -31,6 +32,7 @@ export default function ProductListingPage({
   categoryTitle,
   products,
   totalProducts,
+  appointmentSubject = "diger",
 }: ProductListingPageProps) {
   const [visibleProducts, setVisibleProducts] = useState(9);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,11 +64,6 @@ export default function ProductListingPage({
         
         {/* White Info Box - Overlapping the image */}
         <div className="relative mx-auto w-[calc(100%-48px)] md:w-full max-w-[1190px] bg-white px-6 md:px-[120px] py-[40px] md:py-[80px] -mt-[200px] md:-mt-[200px] z-10">
-          {/* Hero Title */}
-          <h1 className="text-[30px] md:text-[50px] leading-[40px] md:leading-[80px] text-primary text-center mb-4" style={{ fontFamily: 'var(--font-faculty-glyphic)' }}>
-            {heroTitle}
-          </h1>
-          
           {/* Hero Subtitle */}
           <h2 className="text-[20px] md:text-[30px] leading-[30px] text-[#2f3237] text-center mb-4" style={{ fontFamily: 'var(--font-faculty-glyphic)' }}>
             {heroSubtitle}
@@ -79,14 +76,9 @@ export default function ProductListingPage({
         </div>
       </section>
 
-      {/* Category Title Section */}
+      {/* Products Section */}
       <section className="py-[60px] md:py-[80px]">
         <div className="max-w-[1430px] mx-auto px-6 md:px-8">
-          {/* Category Title */}
-          <h2 className="font-light text-[20px] leading-[30px] text-[#2f3237] text-center mb-[30px]">
-            {categoryTitle}
-          </h2>
-
           {/* Filter Bar */}
           <div className="flex items-center justify-between mb-[20px]">
             {/* Product Count */}
@@ -156,6 +148,28 @@ export default function ProductListingPage({
               </button>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Appointment CTA Section */}
+      <section className="py-[80px] md:py-[120px] bg-[#2f3237]">
+        <div className="max-w-[800px] mx-auto px-6 text-center">
+          <h2 
+            className="text-[28px] md:text-[40px] leading-[36px] md:leading-[50px] text-white mb-6"
+            style={{ fontFamily: 'var(--font-faculty-glyphic)' }}
+          >
+            Size Özel Bir Deneyim İçin
+          </h2>
+          <p className="text-[16px] md:text-[18px] leading-[26px] md:leading-[30px] text-white/70 mb-10 max-w-[600px] mx-auto">
+            Uzman ekibimizle birebir görüşme için randevu oluşturun. 
+            Size en uygun parçayı birlikte keşfedelim.
+          </p>
+          <Link
+            href={`/randevu?subject=${appointmentSubject}`}
+            className="inline-block bg-white text-[#2f3237] text-[13px] tracking-[0.15em] font-medium px-12 py-5 hover:bg-[#f5f5f5] transition-colors uppercase"
+          >
+            Randevu Oluştur
+          </Link>
         </div>
       </section>
     </div>

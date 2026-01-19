@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import TopBanner from "@/components/TopBanner";
 import Header from "@/components/Header";
@@ -22,13 +23,23 @@ interface TimeSlot {
 }
 
 export default function RandevuPage() {
+  const searchParams = useSearchParams();
+  const subjectFromUrl = searchParams.get('subject');
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    subject: "ozel-tasarim",
+    subject: subjectFromUrl || "diger",
     message: "",
   });
+  
+  // URL'den gelen subject değiştiğinde formu güncelle
+  useEffect(() => {
+    if (subjectFromUrl) {
+      setFormData(prev => ({ ...prev, subject: subjectFromUrl }));
+    }
+  }, [subjectFromUrl]);
   
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -610,8 +621,8 @@ export default function RandevuPage() {
                     className="text-[15px] text-[#2f3237]/60 font-light"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    Nuruosmaniye Caddesi No:45<br />
-                    Fatih, İstanbul
+                    Liman Mahallesi, Akdeniz Bulvarı<br />
+                    No: 257 Fenix Center, Konyaaltı/Antalya
                   </p>
                 </div>
 
@@ -654,8 +665,7 @@ export default function RandevuPage() {
                     className="text-[15px] text-[#2f3237]/60 font-light"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    Pazartesi - Cumartesi: 10:00 - 19:00<br />
-                    Pazar: Kapalı
+                    Haftanın Her Günü: 10:00 - 20:00
                   </p>
                 </div>
               </div>

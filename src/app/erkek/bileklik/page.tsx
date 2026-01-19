@@ -28,6 +28,7 @@ export default function ErkekBileklikPage() {
         categoryTitle={category.categoryTitle}
         products={category.products}
         totalProducts={category.products.length}
+        appointmentSubject="erkeklere-ozel"
       />
       <Footer
         logo={content.footer.logo}

@@ -28,6 +28,7 @@ export default function BileklikPage() {
         categoryTitle={category.categoryTitle}
         products={category.products}
         totalProducts={category.products.length}
+        appointmentSubject="mucevher"
       />
       <Footer
         logo={content.footer.logo}

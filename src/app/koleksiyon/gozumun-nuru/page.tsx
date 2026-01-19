@@ -28,6 +28,7 @@ export default function GozumunNuruPage() {
         categoryTitle={category.categoryTitle}
         products={category.products}
         totalProducts={category.products.length}
+        appointmentSubject="koleksiyon"
       />
       <Footer
         logo={content.footer.logo}
