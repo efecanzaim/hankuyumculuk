@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display, Carattere, Faculty_Glyphic } from "next/font/google";
 import "./globals.css";
+import { PreviewProvider } from "@/contexts/PreviewContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -55,7 +56,9 @@ export default function RootLayout({
         }} />
       </head>
       <body className={`${inter.variable} ${playfair.variable} ${carattere.variable} ${facultyGlyphic.variable} antialiased`}>
-        {children}
+        <PreviewProvider>
+          {children}
+        </PreviewProvider>
       </body>
     </html>
   );

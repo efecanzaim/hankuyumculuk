@@ -31,14 +31,22 @@ export default function Hero({ slides }: HeroProps) {
     setCurrentSlide(index);
   };
 
-  const isVideo = (src: string) => {
+  const isVideo = (src: string | undefined) => {
+    if (!src) return false;
     return src.endsWith('.mp4') || src.endsWith('.webm') || src.endsWith('.ogg');
   };
+
+  // Eğer slides yoksa veya boşsa, hiçbir şey gösterme
+  if (!slides || slides.length === 0) {
+    return null;
+  }
 
   return (
     <section className="relative h-screen overflow-hidden">
       {/* Background Images/Videos */}
-      {slides.map((s, index) => (
+      {slides.map((s, index) => {
+        const bgImage = s.backgroundImage || '';
+        return (
         <div
           key={index}
           className="absolute inset-0"
@@ -48,7 +56,7 @@ export default function Hero({ slides }: HeroProps) {
             zIndex: index === currentSlide ? 1 : 0,
           }}
         >
-          {isVideo(s.backgroundImage) ? (
+          {isVideo(bgImage) ? (
             <video
               autoPlay
               muted
@@ -56,16 +64,17 @@ export default function Hero({ slides }: HeroProps) {
               playsInline
               className="absolute inset-0 w-full h-full object-cover"
             >
-              <source src={getAssetPath(s.backgroundImage)} type="video/mp4" />
+              <source src={getAssetPath(bgImage)} type="video/mp4" />
             </video>
-          ) : (
+          ) : bgImage ? (
             <div
               className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-              style={{ backgroundImage: `url(${getAssetPath(s.backgroundImage)})` }}
+              style={{ backgroundImage: `url(${getAssetPath(bgImage)})` }}
             />
-          )}
+          ) : null}
         </div>
-      ))}
+      )})}
+
 
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-linear-to-b from-[#2f3237]/50 via-transparent to-transparent z-2" />
@@ -89,7 +98,7 @@ export default function Hero({ slides }: HeroProps) {
               {slide.subtitle}
             </p>
             <Link
-              href={slide.ctaLink}
+              href={slide.ctaLink || "#"}
               className="border border-white w-[250px] md:w-auto px-10 py-4 text-[15px] font-light tracking-wide hover:bg-white hover:text-[#2f3237] transition-colors duration-300 text-center"
             >
               {slide.ctaText}

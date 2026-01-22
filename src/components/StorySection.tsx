@@ -10,7 +10,7 @@ interface StorySectionProps {
   linkHref: string;
 }
 
-export default function StorySection({ title, mainText, subText, linkText, linkHref }: StorySectionProps) {
+export default function StorySection({ title, mainText, subText, linkText, linkHref = "#" }: StorySectionProps) {
   return (
     <section className="relative bg-light pt-12 md:pt-16 overflow-hidden">
       <div className="container mx-auto px-6 lg:px-8 relative z-10">

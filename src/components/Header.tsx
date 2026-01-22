@@ -13,11 +13,13 @@ interface HeaderProps {
   isHero?: boolean;
   isTransparent?: boolean;
   isBlogPage?: boolean;
+  bannerText?: string;
+  bannerVisible?: boolean;
 }
 
-export default function Header({ logo, logoAlt, mainNav, isTransparent = false, isBlogPage = false }: HeaderProps) {
+export default function Header({ logo, logoAlt, mainNav, isTransparent = false, isBlogPage = false, bannerText, bannerVisible = true }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [topBannerVisible, setTopBannerVisible] = useState(true);
+  const [topBannerVisible, setTopBannerVisible] = useState(bannerVisible);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   // Menü açıkken scroll'u engelle
@@ -45,10 +47,10 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
   return (
     <>
       {/* Top Banner - Pudra color with black text - Hidden on blog page */}
-      {topBannerVisible && !isBlogPage && (
+      {topBannerVisible && !isBlogPage && bannerText && (
         <div className="absolute top-0 left-0 right-0 z-50 bg-primary w-full h-[50px] flex items-center justify-center px-6">
           <p className="text-[15px] text-[#2f3237] text-center font-normal leading-normal">
-          Çok yakında sizlerle buluşuyoruz… Yeni koleksiyonlarımız için bizi takip edin!
+          {bannerText}
           </p>
           <button
             onClick={closeTopBanner}
@@ -81,7 +83,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                     href="/randevu"
                     className={`text-[11px] font-normal hover:opacity-70 transition-opacity whitespace-nowrap ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   >
-                    RANDEVU OLUŞTUR
+                    RANDEVU OLUŞTURUN
                   </Link>
                 </div>
 
@@ -184,7 +186,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               href="/ozel-tasarim"
               className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
             >
-              SANA ÖZEL
+              SİZE ÖZEL
             </Link>
 
             {/* HEDİYE Dropdown */}
@@ -268,12 +270,12 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             <div className={`px-6 py-6 ${isTransparent ? 'bg-[rgba(47,50,55,0.95)]' : 'bg-white border-t border-primary'}`}>
               <nav className="flex flex-col gap-4">
                 <span
-                  className={`text-[15px] font-normal py-2 opacity-50 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  className={`text-[15px] font-normal py-2 opacity-50 cursor-default ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                 >
                   MÜCEVHER
                 </span>
                 <span
-                  className={`text-[15px] font-normal py-2 opacity-50 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  className={`text-[15px] font-normal py-2 opacity-50 cursor-default ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                 >
                   KOLEKSİYON
                 </span>
@@ -282,15 +284,15 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                   className={`text-[15px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                   onClick={toggleMobileMenu}
                 >
-                  SANA ÖZEL
+                  SİZE ÖZEL
                 </Link>
                 <span
-                  className={`text-[15px] font-normal py-2 opacity-50 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  className={`text-[15px] font-normal py-2 opacity-50 cursor-default ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                 >
                   HEDİYE
                 </span>
                 <span
-                  className={`text-[15px] font-normal py-2 opacity-50 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  className={`text-[15px] font-normal py-2 opacity-50 cursor-default ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                 >
                   ERKEKLERE ÖZEL
                 </span>
@@ -307,7 +309,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                   className={`text-[13px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
                   onClick={toggleMobileMenu}
                 >
-                  RANDEVU OLUŞTUR
+                  RANDEVU OLUŞTURUN
                 </Link>
                 <Link
                   href="/hakkimizda"

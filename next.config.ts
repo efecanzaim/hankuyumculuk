@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  // Static export için tüm sayfaları dahil et - Apache için true olmalı
+  trailingSlash: true,
   ...(isGitHubPages && {
     basePath,
     assetPrefix: basePath,

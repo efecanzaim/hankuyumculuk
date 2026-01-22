@@ -22,17 +22,24 @@ interface BottomCard {
 interface SpecialDesignSectionProps {
   topCards: TopCard[];
   bottomCards: BottomCard[];
+  titlePart1?: string;
+  titlePart2?: string;
 }
 
-export default function SpecialDesignSection({ topCards, bottomCards }: SpecialDesignSectionProps) {
+export default function SpecialDesignSection({ 
+  topCards, 
+  bottomCards,
+  titlePart1 = "KENDİNİZİ",
+  titlePart2 = "ÖZEL HİSSEDİN"
+}: SpecialDesignSectionProps) {
   return (
     <section className="bg-white">
-      {/* KENDİNİ ÖZEL HİSSET Heading */}
+      {/* Section Heading */}
       <div className="max-w-[1430px] mx-auto px-6 md:px-8 pt-[40px] md:pt-[60px]">
         <div className="text-center mb-[30px] md:mb-[40px]">
           <p className="text-[20px] leading-[30px] font-light text-[#2f3237] mb-4">
-            <span>KENDİNİ </span>
-            <span className="font-bold">ÖZEL HİSSET</span>
+            <span>{titlePart1} </span>
+            <span className="font-bold">{titlePart2}</span>
           </p>
           
           {/* Decorative line with center bar */}
@@ -67,7 +74,7 @@ export default function SpecialDesignSection({ topCards, bottomCards }: SpecialD
 
                 {/* Button */}
                 <Link
-                  href={card.link}
+                  href={card.link || "#"}
                   className="bg-dark text-light text-[13px] leading-[15px] font-light h-[50px] w-[230px] mx-auto flex items-center justify-center hover:bg-[#1a1c1f] transition-colors duration-300"
                 >
                   {card.buttonText}
@@ -106,7 +113,7 @@ export default function SpecialDesignSection({ topCards, bottomCards }: SpecialD
 
                 {/* Button */}
                 <Link
-                  href={card.link}
+                  href={card.link || "#"}
                   className="bg-dark text-light text-[13px] leading-[15px] font-light h-[50px] w-[250px] mx-auto flex items-center justify-center hover:bg-[#1a1c1f] transition-colors duration-300"
                 >
                   {card.buttonText}

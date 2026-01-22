@@ -1,9 +1,13 @@
+"use client";
+
 import CategoryPage from "@/components/CategoryPage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import content from "@/data/content.json";
+import { useContent } from "@/hooks/useContent";
 
 export default function YatirimPage() {
+  const content = useContent();
+
   return (
     <>
       <Header

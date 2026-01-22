@@ -37,7 +37,7 @@ export default function CategoryCards({ categories }: CategoryCardsProps) {
                   {category.title}
                 </h3>
                 <p className="text-[15px] leading-[30px] font-light text-[#2f3237] link-underline inline-block">
-                  keşfet
+                  keşfedin
                 </p>
               </div>
             </Link>
@@ -69,7 +69,7 @@ export default function CategoryCards({ categories }: CategoryCardsProps) {
                     {category.title}
                   </h3>
                   <p className="text-[15px] leading-[30px] font-light text-[#2f3237] link-underline inline-block">
-                    keşfet
+                    keşfedin
                   </p>
                 </div>
               </Link>

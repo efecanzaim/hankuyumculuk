@@ -1,18 +1,20 @@
+"use client";
+
 import ProductListingPage from "@/components/ProductListingPage";
 import TopBanner from "@/components/TopBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import content from "@/data/content.json";
+import { useContent } from "@/hooks/useContent";
 
 export default function KadinlarGunuPage() {
-  const category = content.kadinlarGunuCategory;
+  const content = useContent();
+  const category = content.hediyeCategories?.["kadinlar-gunu"] || content.kadinlarGunuCategory;
 
   return (
     <>
       <TopBanner
         text={content.topBanner.text}
         visible={content.topBanner.visible}
-        topLinks={content.header.topLinks}
       />
       <Header
         logo={content.header.logo}

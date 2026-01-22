@@ -2,11 +2,18 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import content from "@/data/content.json";
+import TopBanner from "@/components/TopBanner";
+import { useContent } from "@/hooks/useContent";
 
 export default function CerezPolitikasiPage() {
+  const content = useContent();
+
   return (
     <>
+      <TopBanner
+        text={content.topBanner.text}
+        visible={content.topBanner.visible}
+      />
       <Header
         logo={content.header.logo}
         logoAlt={content.header.logoAlt}

@@ -95,3 +95,39 @@ html {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Custom Sidebar Scrollbar - İçerik pozisyonunu korur */
+.sidebar-scroll {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+  box-sizing: border-box;
+  /* Scroll bar için her zaman yer ayır - içerik kaymaz */
+  scrollbar-gutter: stable;
+  width: 240px; /* w-60 = 240px */
+}
+
+/* Webkit (Chrome, Safari, Edge) */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+  border: none;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.2s ease;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.5);
+  background-clip: padding-box;
+}

@@ -1,18 +1,20 @@
+"use client";
+
 import ProductListingPage from "@/components/ProductListingPage";
 import TopBanner from "@/components/TopBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import content from "@/data/content.json";
+import { useContent } from "@/hooks/useContent";
 
 export default function ErkekYuzukPage() {
-  const category = content.erkekYuzukCategory;
+  const content = useContent();
+  const category = content.erkekCategories?.["erkek-yuzuk"] || content.erkekYuzukCategory;
 
   return (
     <>
       <TopBanner
         text={content.topBanner.text}
         visible={content.topBanner.visible}
-        topLinks={content.header.topLinks}
       />
       <Header
         logo={content.header.logo}
@@ -41,4 +43,3 @@ export default function ErkekYuzukPage() {
     </>
   );
 }
-

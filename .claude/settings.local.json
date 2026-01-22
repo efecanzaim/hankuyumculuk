@@ -5,7 +5,11 @@
       "Bash(git push:*)",
       "mcp__figma-dev-mode-mcp-server__get_design_context",
       "mcp__figma-dev-mode-mcp-server__get_screenshot",
-      "mcp__figma-dev-mode-mcp-server__get_metadata"
+      "mcp__figma-dev-mode-mcp-server__get_metadata",
+      "Bash(npm run build:*)",
+      "Bash(dir:*)",
+      "Bash(ls:*)",
+      "Bash(powershell -Command \"Get-ChildItem -Path ''src\\\\app'' -Recurse -Filter ''*.tsx'' | ForEach-Object { \\(Get-Content $_FullName -Raw\\) -replace ''topLinks=\\\\{content\\\\.header\\\\.topLinks\\\\}\\\\s*\\\\n?\\\\s*'', '''' | Set-Content $_FullName -NoNewline }\")"
     ]
   }
 }

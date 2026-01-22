@@ -168,7 +168,7 @@ export default function ProductListingPage({
             href={`/randevu?subject=${appointmentSubject}`}
             className="inline-block bg-white text-[#2f3237] text-[13px] tracking-[0.15em] font-medium px-12 py-5 hover:bg-[#f5f5f5] transition-colors uppercase"
           >
-            Randevu Oluştur
+            Randevu Oluşturun
           </Link>
         </div>
       </section>

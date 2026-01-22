@@ -20,7 +20,7 @@ export default function BlogSection({
   description,
   image,
   linkText,
-  linkHref,
+  linkHref = "#",
   additionalText
 }: BlogSectionProps) {
   return (

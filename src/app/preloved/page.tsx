@@ -1,10 +1,13 @@
+"use client";
+
 import ProductListingPage from "@/components/ProductListingPage";
 import TopBanner from "@/components/TopBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import content from "@/data/content.json";
+import { useContent } from "@/hooks/useContent";
 
 export default function PrelovedPage() {
+  const content = useContent();
   const category = content.prelovedCategory;
 
   return (
@@ -12,7 +15,6 @@ export default function PrelovedPage() {
       <TopBanner
         text={content.topBanner.text}
         visible={content.topBanner.visible}
-        topLinks={content.header.topLinks}
       />
       <Header
         logo={content.header.logo}
@@ -40,4 +42,3 @@ export default function PrelovedPage() {
     </>
   );
 }
-

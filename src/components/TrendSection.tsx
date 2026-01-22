@@ -20,10 +20,10 @@ export default function TrendSection({
   rightImage,
   leftTitle,
   rightTitle,
-  leftLink,
-  rightLink,
-  leftTitleLink,
-  rightTitleLink
+  leftLink = "#",
+  rightLink = "#",
+  leftTitleLink = "#",
+  rightTitleLink = "#"
 }: TrendSectionProps) {
   return (
     <section className="py-16 md:py-20 bg-white">
@@ -57,7 +57,7 @@ export default function TrendSection({
                 href={leftLink}
                 className="inline-block px-8 py-3 text-[13px] tracking-[0.15em] font-medium text-[#2f3237] bg-white border border-[#2f3237] hover:bg-[#2f3237] hover:text-white transition-all duration-300 uppercase"
               >
-                keşfet
+                keşfedin
               </Link>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function TrendSection({
                 href={rightLink}
                 className="inline-block px-8 py-3 text-[13px] tracking-[0.15em] font-medium text-[#2f3237] bg-white border border-[#2f3237] hover:bg-[#2f3237] hover:text-white transition-all duration-300 uppercase"
               >
-                keşfet
+                keşfedin
               </Link>
             </div>
           </div>

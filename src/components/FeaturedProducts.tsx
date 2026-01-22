@@ -12,17 +12,27 @@ interface Product {
 
 interface FeaturedProductsProps {
   products: Product[];
+  titlePart1?: string;
+  titlePart2?: string;
+  bannerImage1?: string;
+  bannerImage2?: string;
 }
 
-export default function FeaturedProducts({ products }: FeaturedProductsProps) {
+export default function FeaturedProducts({ 
+  products, 
+  titlePart1 = "SİZE ÖZEL",
+  titlePart2 = "ÜRÜNLERİMİZ",
+  bannerImage1 = "/images/products/featured-large-1.jpg",
+  bannerImage2 = "/images/products/featured-large-2.jpg"
+}: FeaturedProductsProps) {
   return (
     <section className="py-10 pb-20 md:py-20 md:pb-40 bg-white">
       <div className="max-w-[1430px] mx-auto px-6 md:px-4">
-        {/* SANA ÖZEL ÜRÜNLERİMİZ Heading */}
+        {/* Section Heading */}
         <div className="text-center mb-[30px] md:mb-[48px]">
           <p className="text-[20px] leading-[30px] font-light text-[#2f3237] mb-4">
-            <span>SANA ÖZEL </span>
-            <span className="font-bold">ÜRÜNLERİMİZ</span>
+            <span>{titlePart1} </span>
+            <span className="font-bold">{titlePart2}</span>
           </p>
           
           {/* Decorative line with center bar */}
@@ -39,7 +49,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
           <div className="w-full aspect-390/324 relative bg-gray-100 mb-6 pointer-events-none">
             <div
               className="absolute inset-0 bg-cover bg-center pointer-events-none"
-              style={{ backgroundImage: `url(${getAssetPath('/images/products/featured-large-1.jpg')})` }}
+              style={{ backgroundImage: `url(${getAssetPath(bannerImage1)})` }}
             />
           </div>
 
@@ -63,7 +73,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
           <div className="w-full aspect-390/324 relative bg-gray-100 mb-6 pointer-events-none">
             <div
               className="absolute inset-0 bg-cover bg-center pointer-events-none"
-              style={{ backgroundImage: `url(${getAssetPath('/images/products/featured-large-2.jpg')})` }}
+              style={{ backgroundImage: `url(${getAssetPath(bannerImage2)})` }}
             />
           </div>
 
@@ -91,7 +101,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
           <div className="w-[710px] h-[590px] relative bg-gray-100 shrink-0 pointer-events-none">
             <div
               className="absolute inset-0 bg-cover bg-center pointer-events-none"
-              style={{ backgroundImage: `url(${getAssetPath('/images/products/featured-large-1.jpg')})` }}
+              style={{ backgroundImage: `url(${getAssetPath(bannerImage1)})` }}
             />
           </div>
 
@@ -166,7 +176,7 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
           <div className="w-[710px] h-[590px] relative bg-gray-100 shrink-0 pointer-events-none">
             <div
               className="absolute inset-0 bg-cover bg-center pointer-events-none"
-              style={{ backgroundImage: `url(${getAssetPath('/images/products/featured-large-2.jpg')})` }}
+              style={{ backgroundImage: `url(${getAssetPath(bannerImage2)})` }}
             />
           </div>
         </div>

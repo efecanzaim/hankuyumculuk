@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import TopBanner from "@/components/TopBanner";
@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Calendar from "@/components/Calendar";
 import TimeSlots from "@/components/TimeSlots";
-import content from "@/data/content.json";
+import { useContent } from "@/hooks/useContent";
 import { getAssetPath } from "@/utils/paths";
 
 // Google Apps Script URL - .env dosyasından veya doğrudan buraya yazın
@@ -22,7 +22,8 @@ interface TimeSlot {
   available: boolean;
 }
 
-export default function RandevuPage() {
+function RandevuContent() {
+  const content = useContent();
   const searchParams = useSearchParams();
   const subjectFromUrl = searchParams.get('subject');
   
@@ -211,7 +212,6 @@ export default function RandevuPage() {
       <TopBanner
         text={content.topBanner.text}
         visible={content.topBanner.visible}
-        topLinks={content.header.topLinks}
       />
       <Header
         logo={content.header.logo}
@@ -247,7 +247,7 @@ export default function RandevuPage() {
               className="text-[44px] md:text-[60px] leading-[1.1] text-white mb-6"
               style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
             >
-              Randevu Oluştur
+              Randevu Oluşturun
             </h1>
             <p 
               className="text-[16px] md:text-[18px] leading-[1.6] text-white/80 font-light max-w-[500px] mx-auto"
@@ -517,7 +517,7 @@ export default function RandevuPage() {
                             >
                               <option value="mucevher">Mücevher</option>
                               <option value="koleksiyon">Koleksiyon</option>
-                              <option value="sana-ozel">Sana Özel</option>
+                              <option value="size-ozel">Size Özel</option>
                               <option value="hediye">Hediye</option>
                               <option value="erkeklere-ozel">Erkeklere Özel</option>
                               <option value="preloved">Preloved</option>
@@ -584,7 +584,7 @@ export default function RandevuPage() {
                                   GÖNDERİLİYOR
                                 </>
                               ) : (
-                                "RANDEVU OLUŞTUR"
+                                "RANDEVU OLUŞTURUN"
                               )}
                             </button>
                           </div>
@@ -683,5 +683,17 @@ export default function RandevuPage() {
         socialLinks={content.footer.socialLinks}
       />
     </>
+  );
+}
+
+export default function RandevuPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[#2f3237] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <RandevuContent />
+    </Suspense>
   );
 }

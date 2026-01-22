@@ -3,16 +3,16 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBanner from "@/components/TopBanner";
-import content from "@/data/content.json";
+import { useContent } from "@/hooks/useContent";
 import { FiMapPin, FiPhone, FiMail, FiClock, FiInstagram } from "react-icons/fi";
 
 export default function IletisimPage() {
+  const content = useContent();
   return (
     <>
-      <TopBanner 
-        text={content.topBanner.text} 
+      <TopBanner
+        text={content.topBanner.text}
         visible={content.topBanner.visible}
-        topLinks={content.header.topLinks}
       />
       <Header
         logo={content.header.logo}
@@ -151,7 +151,7 @@ export default function IletisimPage() {
                     href="/randevu"
                     className="inline-block px-8 py-4 bg-[#2f3237] text-white text-sm tracking-wider hover:bg-[#d4af37] transition-colors duration-300"
                   >
-                    RANDEVU AL
+                    RANDEVU ALIN
                   </a>
                 </div>
               </div>

@@ -43,7 +43,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <TopBanner
         text={content.topBanner.text}
         visible={content.topBanner.visible}
-        topLinks={content.header.topLinks}
       />
       <Header
         logo={content.header.logo}
