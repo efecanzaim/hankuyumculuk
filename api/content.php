@@ -14,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 $db = getDB();
 
 try {
+    // Hata raporlamayı aç (development için)
+    error_reporting(E_ALL);
+    ini_set('display_errors', 0); // JSON response için kapalı tut
     // =====================================================
     // HEADER AYARLARI
     // =====================================================
@@ -151,22 +154,85 @@ try {
     $categories = $stmt->fetchAll();
     
     // =====================================================
-    // ÜRÜNLER
+    // ÜRÜNLER - category_products tablosundan al (varsa)
     // =====================================================
-    $stmt = $db->query('SELECT * FROM products WHERE is_active = 1 ORDER BY category_id, sort_order ASC');
-    $products = $stmt->fetchAll();
-    
-    // Ürünleri kategorilere göre grupla
     $productsByCategory = [];
-    foreach ($products as $product) {
-        $catId = $product['category_id'];
-        if (!isset($productsByCategory[$catId])) {
-            $productsByCategory[$catId] = [];
+    
+    // Önce category_products tablosunun var olup olmadığını kontrol et
+    $tableExists = false;
+    try {
+        $checkStmt = $db->query("SHOW TABLES LIKE 'category_products'");
+        $tableExists = $checkStmt->rowCount() > 0;
+    } catch (Exception $e) {
+        error_log('Table check error: ' . $e->getMessage());
+    }
+    
+    if ($tableExists) {
+        // category_products tablosu varsa, oradan al
+        try {
+            $stmt = $db->query('
+                SELECT cp.category_id, cp.product_id, cp.sort_order,
+                       p.id, p.slug, p.main_image, p.name, p.subtitle, p.is_active
+                FROM category_products cp
+                INNER JOIN products p ON cp.product_id = p.id
+                WHERE cp.is_active = 1 AND p.is_active = 1
+                ORDER BY cp.category_id, cp.sort_order ASC
+            ');
+            $categoryProducts = $stmt->fetchAll();
+            
+            // Ürünleri kategorilere göre grupla
+            foreach ($categoryProducts as $cp) {
+                $catId = $cp['category_id'];
+                if (!isset($productsByCategory[$catId])) {
+                    $productsByCategory[$catId] = [];
+                }
+                $productsByCategory[$catId][] = [
+                    'id' => (int)$cp['id'],
+                    'slug' => $cp['slug'] ?? '',
+                    'main_image' => $cp['main_image'] ?? '',
+                    'name' => $cp['name'] ?? '',
+                    'subtitle' => $cp['subtitle'] ?? '',
+                    'sort_order' => (int)$cp['sort_order']
+                ];
+            }
+        } catch (PDOException $e) {
+            error_log('category_products query error: ' . $e->getMessage());
+            // Hata olursa fallback'e geç
+            $tableExists = false;
         }
-        if ($product['gallery_images']) {
-            $product['gallery_images'] = json_decode($product['gallery_images'], true);
+    }
+    
+    // Eğer category_products tablosu yoksa veya boşsa, fallback olarak products tablosundan al
+    if (!$tableExists || empty($productsByCategory)) {
+        try {
+            $stmt = $db->query('
+                SELECT id, slug, main_image, name, subtitle, category_id, sort_order
+                FROM products
+                WHERE is_active = 1 AND category_id IS NOT NULL
+                ORDER BY category_id, sort_order ASC
+            ');
+            $allProducts = $stmt->fetchAll();
+            
+            foreach ($allProducts as $p) {
+                $catId = $p['category_id'];
+                if ($catId) {
+                    if (!isset($productsByCategory[$catId])) {
+                        $productsByCategory[$catId] = [];
+                    }
+                    $productsByCategory[$catId][] = [
+                        'id' => (int)$p['id'],
+                        'slug' => $p['slug'] ?? '',
+                        'main_image' => $p['main_image'] ?? '',
+                        'name' => $p['name'] ?? '',
+                        'subtitle' => $p['subtitle'] ?? '',
+                        'sort_order' => (int)$p['sort_order']
+                    ];
+                }
+            }
+        } catch (PDOException $e) {
+            error_log('Fallback products query error: ' . $e->getMessage());
+            $productsByCategory = [];
         }
-        $productsByCategory[$catId][] = $product;
     }
     
     // Kategorileri formatla ve ürünlerini ekle
@@ -356,14 +422,26 @@ try {
         // Meta bilgiler
         '_meta' => [
             'generatedAt' => date('c'),
-            'totalProducts' => count($products),
+            'totalProducts' => array_sum(array_map('count', $productsByCategory)),
             'totalCategories' => count($categories)
         ]
     ];
     
     jsonResponse($content);
     
+} catch (PDOException $e) {
+    error_log('Database error in content.php: ' . $e->getMessage());
+    error_log('SQL Error Code: ' . $e->getCode());
+    jsonResponse([
+        'error' => 'Veritabanı hatası',
+        'message' => $e->getMessage(),
+        'code' => $e->getCode()
+    ], 500);
 } catch (Exception $e) {
-    jsonResponse(['error' => 'İçerik yüklenemedi: ' . $e->getMessage()], 500);
+    error_log('General error in content.php: ' . $e->getMessage());
+    jsonResponse([
+        'error' => 'İçerik yüklenirken hata oluştu',
+        'message' => $e->getMessage()
+    ], 500);
 }
 ?>

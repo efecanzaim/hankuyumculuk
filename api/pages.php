@@ -70,8 +70,8 @@ switch ($method) {
         }
 
         $stmt = $db->prepare('
-            INSERT INTO pages (slug, title, hero_image, hero_title, hero_subtitle, content, meta_title, meta_description)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO pages (slug, title, hero_image, hero_title, hero_subtitle, content, values_title, meta_title, meta_description)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $slug,
@@ -80,6 +80,7 @@ switch ($method) {
             $data['heroTitle'] ?? $data['hero_title'] ?? null,
             $data['heroSubtitle'] ?? $data['hero_subtitle'] ?? null,
             $data['content'] ?? null,
+            $data['valuesTitle'] ?? $data['values_title'] ?? 'Vizyonumuz',
             $data['metaTitle'] ?? $data['meta_title'] ?? null,
             $data['metaDescription'] ?? $data['meta_description'] ?? null
         ]);
@@ -105,6 +106,7 @@ switch ($method) {
             'heroImage' => 'hero_image',
             'heroTitle' => 'hero_title',
             'heroSubtitle' => 'hero_subtitle',
+            'valuesTitle' => 'values_title',
             'metaTitle' => 'meta_title',
             'metaDescription' => 'meta_description',
             'isActive' => 'is_active'
@@ -167,6 +169,7 @@ function formatPage($page) {
         'heroTitle' => $page['hero_title'],
         'heroSubtitle' => $page['hero_subtitle'],
         'content' => $page['content'],
+        'valuesTitle' => $page['values_title'] ?? 'Vizyonumuz',
         'metaTitle' => $page['meta_title'],
         'metaDescription' => $page['meta_description']
     ];

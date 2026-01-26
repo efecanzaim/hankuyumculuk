@@ -17,6 +17,7 @@ interface AboutPageProps {
   heroImage: string;
   valuesTitle: string;
   values: Value[];
+  aboutContent?: string; // Yeni eklenen Hakkımızda metni
 }
 
 export default function AboutPage({
@@ -26,6 +27,7 @@ export default function AboutPage({
   heroImage,
   valuesTitle,
   values,
+  aboutContent,
 }: AboutPageProps) {
   return (
     <div className="bg-white">
@@ -189,6 +191,45 @@ export default function AboutPage({
           </div>
         </div>
       </section>
+
+      {/* Hakkımızda İçerik Bölümü */}
+      {aboutContent && (
+        <section className="py-16 md:py-24 bg-white">
+          <div className="max-w-[1430px] mx-auto px-6 md:px-8">
+            {/* Başlık */}
+            <div className="text-center mb-12 md:mb-20">
+              <h2 
+                className="text-[30px] md:text-[40px] leading-[40px] md:leading-[50px] text-[#2f3237] mb-6"
+                style={{ fontFamily: 'var(--font-faculty-glyphic)' }}
+              >
+                Hakkımızda | Han Kuyumculuk
+              </h2>
+              {/* Dekoratif çizgi */}
+              <div className="flex items-center justify-center gap-0">
+                <div className="h-px bg-primary flex-1 max-w-[200px]"></div>
+                <div className="w-[350px] h-[2.234px] bg-dark"></div>
+                <div className="h-px bg-primary flex-1 max-w-[200px]"></div>
+              </div>
+            </div>
+
+            {/* İçerik */}
+            <div className="max-w-[950px] mx-auto">
+              <div 
+                className="text-[#2f3237] space-y-6"
+                style={{ 
+                  fontFamily: 'var(--font-bw-modelica)',
+                  fontSize: '16px',
+                  lineHeight: '28px',
+                  fontWeight: 300
+                }}
+                dangerouslySetInnerHTML={{ 
+                  __html: aboutContent.replace(/<p>/g, '<p class="mb-6">').replace(/<ul>/g, '<ul class="list-disc list-inside space-y-2 my-6 ml-4">').replace(/<li>/g, '<li class="ml-2">')
+                }}
+              />
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

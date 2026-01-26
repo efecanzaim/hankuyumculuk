@@ -226,6 +226,9 @@ CREATE TABLE IF NOT EXISTS products (
     main_image VARCHAR(255) COMMENT 'Ana ürün görseli',
     banner_image VARCHAR(255) COMMENT 'Detay sayfası banner',
     gallery_images JSON COMMENT 'Galeri görselleri dizisi',
+    -- Sertifika Bilgileri - Altın
+    gold_weight DECIMAL(10,2) COMMENT 'Altın ağırlığı (gram)',
+    gold_karat INT COMMENT 'Altın ayar (14, 18, 22 vb.)',
     -- Durum ve sıralama
     is_featured BOOLEAN DEFAULT FALSE COMMENT 'Ana sayfada gösterilsin mi',
     sort_order INT DEFAULT 0,
@@ -233,6 +236,23 @@ CREATE TABLE IF NOT EXISTS products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================
+-- 8.1 ÜRÜN TAŞ BİLGİLERİ (Sertifika)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS product_stones (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT NOT NULL COMMENT 'Bağlı olduğu ürün',
+    stone_type VARCHAR(100) NOT NULL COMMENT 'Taş türü (Pırlanta, Yakut vb.)',
+    carat DECIMAL(10,2) COMMENT 'Karat değeri',
+    quantity INT DEFAULT 1 COMMENT 'Taş adedi',
+    color VARCHAR(20) COMMENT 'Renk (F, G, H vb.)',
+    clarity VARCHAR(20) COMMENT 'Berraklık (VS, VVS, SI vb.)',
+    cut VARCHAR(50) COMMENT 'Kesim (Yuvarlak, Baget, Prenses vb.)',
+    sort_order INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
@@ -377,6 +397,23 @@ CREATE TABLE IF NOT EXISTS appointments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
+-- 18. BLOG YAZILARI
+-- =====================================================
+CREATE TABLE IF NOT EXISTS blog_posts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL COMMENT 'Blog başlığı',
+    slug VARCHAR(255) NOT NULL UNIQUE COMMENT 'URL için benzersiz slug',
+    excerpt TEXT COMMENT 'Kısa özet (liste görünümünde gösterilir)',
+    content LONGTEXT COMMENT 'Blog içeriği (tam metin)',
+    image VARCHAR(500) COMMENT 'Ana görsel',
+    author VARCHAR(100) DEFAULT 'Han Kuyumculuk' COMMENT 'Yazar adı',
+    status ENUM('draft', 'published') DEFAULT 'draft' COMMENT 'Durum (taslak/yayında)',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Oluşturulma tarihi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Güncellenme tarihi',
+    published_at TIMESTAMP NULL COMMENT 'Yayınlanma tarihi'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================
 -- INDEX'LER (Performans için)
 -- =====================================================
 CREATE INDEX idx_categories_parent ON categories(parent_type);
@@ -387,6 +424,9 @@ CREATE INDEX idx_products_featured ON products(is_featured);
 CREATE INDEX idx_products_active ON products(is_active);
 CREATE INDEX idx_hero_slides_order ON hero_slides(sort_order);
 CREATE INDEX idx_pages_slug ON pages(slug);
+CREATE INDEX idx_blog_posts_slug ON blog_posts(slug);
+CREATE INDEX idx_blog_posts_status ON blog_posts(status);
+CREATE INDEX idx_blog_posts_published ON blog_posts(published_at);
 
 SET FOREIGN_KEY_CHECKS = 1;
 

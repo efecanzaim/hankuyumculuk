@@ -32,16 +32,29 @@ import {
   FiPlus,
   FiTrash2,
   FiEdit3,
-  FiPackage
+  FiPackage,
+  FiFileText
 } from "react-icons/fi";
 import initialContent from "@/data/content.json";
 
 type ContentType = Record<string, unknown>;
 
+// Taş bilgisi tipi
+interface ProductStone {
+  id?: number;
+  stone_type: string;
+  carat: string | number; // API'den number, form'dan string gelebilir
+  quantity: number;
+  color: string;
+  clarity: string;
+  cut: string;
+}
+
 // Ürün tipi
 interface Product {
   id?: number;
   category_id: number | null;
+  categories?: number[]; // Çoklu kategori seçimi için
   slug?: string;
   name: string;
   subtitle: string;
@@ -51,6 +64,10 @@ interface Product {
   gallery_images: string[];
   sort_order: number;
   is_active: boolean;
+  // Sertifika Bilgileri
+  gold_weight?: string | number; // Form'da string, API'den number gelebilir
+  gold_karat?: string | number; // Form'da string, API'den number gelebilir
+  stones?: ProductStone[];
 }
 
 // Kategori tipi
@@ -211,6 +228,8 @@ export default function AdminPanel() {
   const [isDragging, setIsDragging] = useState(false);
   const [devicePreset, setDevicePreset] = useState<"desktop" | "tablet" | "mobile" | "custom">("desktop");
   const containerRef = useRef<HTMLDivElement>(null);
+  const productListRef = useRef<HTMLDivElement>(null);
+  const [previewCollapsed, setPreviewCollapsed] = useState(false);
 
   // Ürün yönetimi state
   const [products, setProducts] = useState<Product[]>([]);
@@ -219,6 +238,7 @@ export default function AdminPanel() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [newProduct, setNewProduct] = useState<Product>({
     category_id: null,
+    categories: [],
     slug: "",
     name: "",
     subtitle: "",
@@ -228,6 +248,51 @@ export default function AdminPanel() {
     gallery_images: [],
     sort_order: 0,
     is_active: true,
+    gold_weight: "",
+    gold_karat: "",
+    stones: [],
+  });
+
+  // Toplu ürün yükleme state
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [parsedProducts, setParsedProducts] = useState<Product[]>([]);
+  const [bulkUploadStatus, setBulkUploadStatus] = useState<'idle' | 'parsing' | 'uploading' | 'success' | 'error'>('idle');
+  const [bulkUploadError, setBulkUploadError] = useState<string>("");
+
+  // Öne çıkan ürünler state
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [loadingFeaturedProducts, setLoadingFeaturedProducts] = useState(false);
+
+  // Hakkımızda sayfası state
+  const [aboutPage, setAboutPage] = useState<any>(null);
+  const [loadingAboutPage, setLoadingAboutPage] = useState(false);
+  const [aboutValues, setAboutValues] = useState<any[]>([]);
+  const [loadingAboutValues, setLoadingAboutValues] = useState(false);
+
+  // Blog yönetimi state
+  interface BlogPost {
+    id?: number;
+    title: string;
+    slug: string;
+    excerpt: string;
+    content: string;
+    image: string;
+    author: string;
+    status: "draft" | "published";
+    created_at?: string;
+    published_at?: string;
+  }
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [loadingBlog, setLoadingBlog] = useState(false);
+  const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
+  const [newBlogPost, setNewBlogPost] = useState<BlogPost>({
+    title: "",
+    slug: "",
+    excerpt: "",
+    content: "",
+    image: "",
+    author: "Han Kuyumculuk",
+    status: "draft",
   });
 
   // Slug oluştur (ürün adından)
@@ -616,7 +681,28 @@ export default function AdminPanel() {
 
           if (categoriesRes.ok) {
             const categoriesData = await categoriesRes.json();
-            setCategories(Array.isArray(categoriesData) ? categoriesData : []);
+            // API gruplu obje döndürüyor, düz listeye çevir
+            if (Array.isArray(categoriesData)) {
+              setCategories(categoriesData);
+            } else if (typeof categoriesData === 'object' && categoriesData !== null) {
+              // Gruplu objeyi düz listeye çevir
+              const flatCategories: Category[] = [];
+              Object.entries(categoriesData).forEach(([parentType, cats]) => {
+                if (Array.isArray(cats)) {
+                  cats.forEach((cat: { id: number; name: string; slug: string; parentType?: string }) => {
+                    flatCategories.push({
+                      id: cat.id,
+                      name: cat.name,
+                      slug: cat.slug,
+                      parent_type: cat.parentType || parentType,
+                    });
+                  });
+                }
+              });
+              setCategories(flatCategories);
+            } else {
+              setCategories([]);
+            }
           }
         } catch (fetchError) {
           // API erişilemiyorsa sessizce devam et (development modunda normal)
@@ -688,31 +774,173 @@ export default function AdminPanel() {
     setLoadingProducts(false);
   };
 
-  // Kategori güncelle
-  const updateCategory = async (categoryId: number, field: string, value: string) => {
+  // Blog yazılarını yükle
+  const loadBlogPosts = async () => {
+    setLoadingBlog(true);
     try {
       if (API_URL) {
-        const response = await fetch(`${API_URL}/api/categories.php`, {
+        const response = await fetch(`${API_URL}/api/blog.php`, { credentials: "include" });
+        if (response.ok) {
+          const data = await response.json();
+          setBlogPosts(Array.isArray(data) ? data : []);
+        }
+      }
+    } catch (error) {
+      console.warn("Blog yazıları yüklenemedi:", error);
+      setBlogPosts([]);
+    }
+    setLoadingBlog(false);
+  };
+
+  // Blog yazısı ekle
+  const handleAddBlogPost = async () => {
+    if (!newBlogPost.title) {
+      setMessage({ type: "error", text: "Başlık gerekli" });
+      return;
+    }
+    setSaving(true);
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/blog.php`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(newBlogPost),
+        });
+        if (response.ok) {
+          setMessage({ type: "success", text: "Blog yazısı eklendi" });
+          setNewBlogPost({
+            title: "",
+            slug: "",
+            excerpt: "",
+            content: "",
+            image: "",
+            author: "Han Kuyumculuk",
+            status: "draft",
+          });
+          loadBlogPosts();
+          setActiveSection("blog-liste");
+        }
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Blog yazısı eklenirken hata oluştu" });
+    }
+    setSaving(false);
+  };
+
+  // Blog yazısı güncelle
+  const handleUpdateBlogPost = async () => {
+    if (!editingBlogPost) return;
+    setSaving(true);
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/blog.php`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ id: categoryId, [field]: value }),
+          body: JSON.stringify(editingBlogPost),
         });
-
         if (response.ok) {
-          // Local state güncelle
+          setMessage({ type: "success", text: "Blog yazısı güncellendi" });
+          setEditingBlogPost(null);
+          loadBlogPosts();
+        }
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Blog yazısı güncellenirken hata oluştu" });
+    }
+    setSaving(false);
+  };
+
+  // Blog yazısı sil
+  const handleDeleteBlogPost = async (id: number) => {
+    if (!confirm("Bu blog yazısını silmek istediğinize emin misiniz?")) return;
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/blog.php`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ id }),
+        });
+        if (response.ok) {
+          setMessage({ type: "success", text: "Blog yazısı silindi" });
+          loadBlogPosts();
+        }
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Blog yazısı silinirken hata oluştu" });
+    }
+  };
+
+  // Kategori güncelle veya oluştur
+  const updateCategory = async (categoryId: number | null, field: string, value: string, categoryKey?: string, parentType?: string) => {
+    try {
+      if (API_URL) {
+        // Eğer kategori ID yoksa, önce kategoriyi oluştur
+        if (!categoryId && categoryKey && parentType) {
+          // Kategori adını slug'dan oluştur
+          const categoryName = categoryKey
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          
+          const response = await fetch(`${API_URL}/api/categories.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              name: categoryName,
+              slug: categoryKey,
+              parent_type: parentType,
+              [field]: value
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Kategorileri yeniden yükle
+            loadProducts();
+            return data.id;
+          } else {
+            const errorData = await response.json();
+            setMessage({ type: "error", text: errorData.error || "Kategori oluşturulamadı" });
+            return null;
+          }
+        } else if (categoryId) {
+          // Mevcut kategoriyi güncelle
+          const response = await fetch(`${API_URL}/api/categories.php`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ id: categoryId, [field]: value }),
+          });
+
+          if (response.ok) {
+            // Local state güncelle
+            setCategories(prev => prev.map(cat =>
+              cat.id === categoryId ? { ...cat, [field]: value } : cat
+            ));
+            return categoryId;
+          } else {
+            const errorData = await response.json();
+            setMessage({ type: "error", text: errorData.error || "Kategori güncellenemedi" });
+            return null;
+          }
+        }
+      } else {
+        // Development: local state güncelle
+        if (categoryId) {
           setCategories(prev => prev.map(cat =>
             cat.id === categoryId ? { ...cat, [field]: value } : cat
           ));
         }
-      } else {
-        // Development: local state güncelle
-        setCategories(prev => prev.map(cat =>
-          cat.id === categoryId ? { ...cat, [field]: value } : cat
-        ));
+        return categoryId;
       }
     } catch (error) {
       console.error("Kategori güncelleme hatası:", error);
+      setMessage({ type: "error", text: "Kategori güncellenirken hata oluştu" });
+      return null;
     }
   };
 
@@ -781,6 +1009,9 @@ export default function AdminPanel() {
   const handleUpdateProduct = async () => {
     if (!editingProduct || !editingProduct.id) return;
 
+    // Scroll pozisyonunu kaydet
+    const scrollPosition = productListRef.current?.scrollTop || 0;
+
     setSaving(true);
     try {
       if (API_URL) {
@@ -794,7 +1025,14 @@ export default function AdminPanel() {
         if (response.ok) {
           setMessage({ type: "success", text: "Ürün güncellendi!" });
           setEditingProduct(null);
-          loadProducts();
+          await loadProducts();
+
+          // Scroll pozisyonunu geri yükle
+          setTimeout(() => {
+            if (productListRef.current) {
+              productListRef.current.scrollTop = scrollPosition;
+            }
+          }, 100);
         } else {
           throw new Error("Ürün güncellenemedi");
         }
@@ -843,6 +1081,573 @@ export default function AdminPanel() {
     setTimeout(() => setMessage({ type: "", text: "" }), 3000);
   };
 
+  // Öne çıkan ürünleri yükle
+  const loadFeaturedProducts = async () => {
+    setLoadingFeaturedProducts(true);
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/featured-products.php`, {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setFeaturedProducts(Array.isArray(data) ? data : []);
+        }
+      } else {
+        // Development: content.json'dan yükle
+        const featured = (content?.featuredProducts as unknown[]) || [];
+        setFeaturedProducts(featured as any[]);
+      }
+    } catch (error) {
+      console.error("Öne çıkan ürünler yükleme hatası:", error);
+    } finally {
+      setLoadingFeaturedProducts(false);
+    }
+  };
+
+  // Öne çıkan ürün ekle
+  const handleAddFeaturedProduct = async (productId: number) => {
+    setSaving(true);
+    try {
+      if (API_URL) {
+        const product = products.find(p => p.id === productId);
+        if (!product) {
+          throw new Error("Ürün bulunamadı");
+        }
+
+        const response = await fetch(`${API_URL}/api/featured-products.php`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            productId: productId,
+            displayName: product.name,
+            displayCategory: categories.find(c => c.id === product.category_id)?.name || "",
+          }),
+        });
+
+        if (response.ok) {
+          setMessage({ type: "success", text: "Ürün eklendi!" });
+          await loadFeaturedProducts();
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Ürün eklenemedi");
+        }
+      } else {
+        // Development: local state'e ekle
+        const product = products.find(p => p.id === productId);
+        if (product) {
+          const newFeatured = {
+            id: Date.now(),
+            productId: productId,
+            productName: product.name,
+            image: product.image,
+            displayName: product.name,
+            displayCategory: categories.find(c => c.id === product.category_id)?.name || "",
+            sortOrder: featuredProducts.length,
+            isActive: true,
+          };
+          setFeaturedProducts([...featuredProducts, newFeatured]);
+          updateField("featuredProducts", "", [...(content?.featuredProducts as unknown[] || []), newFeatured]);
+          setMessage({ type: "success", text: "Ürün eklendi (local)!" });
+        }
+      }
+    } catch (error) {
+      console.error("Öne çıkan ürün ekleme hatası:", error);
+      setMessage({ type: "error", text: error instanceof Error ? error.message : "Ürün eklenemedi!" });
+    }
+    setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
+  // Öne çıkan ürün sil
+  const handleDeleteFeaturedProduct = async (featuredProductId: number) => {
+    setSaving(true);
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/featured-products.php?id=${featuredProductId}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          setMessage({ type: "success", text: "Ürün listeden kaldırıldı!" });
+          await loadFeaturedProducts();
+        } else {
+          throw new Error("Ürün silinemedi");
+        }
+      } else {
+        // Development: local state'ten sil
+        setFeaturedProducts(featuredProducts.filter(fp => fp.id !== featuredProductId));
+        const updated = (content?.featuredProducts as unknown[] || []).filter((fp: any) => fp.id !== featuredProductId);
+        updateField("featuredProducts", "", updated);
+        setMessage({ type: "success", text: "Ürün listeden kaldırıldı (local)!" });
+      }
+    } catch (error) {
+      console.error("Öne çıkan ürün silme hatası:", error);
+      setMessage({ type: "error", text: "Ürün silinemedi!" });
+    }
+    setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
+  // Hakkımızda sayfasını yükle
+  const loadAboutPage = async () => {
+    setLoadingAboutPage(true);
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/pages.php?slug=hakkimizda`, {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          // Eksik alanları varsayılan değerlerle doldur
+          setAboutPage({
+            id: data.id || null,
+            slug: data.slug || "hakkimizda",
+            title: data.title || "Hakkımızda",
+            heroImage: data.heroImage || "/images/about-hero.jpg",
+            heroTitle: data.heroTitle || "Zarafetiyle Bir Hikaye",
+            heroSubtitle: data.heroSubtitle || "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
+            content: data.content || "",
+            valuesTitle: data.valuesTitle || "Vizyonumuz"
+          });
+        } else {
+          // Fallback: Varsayılan değerler
+          setAboutPage({
+            id: null,
+            slug: "hakkimizda",
+            title: "Hakkımızda",
+            heroImage: "/images/about-hero.jpg",
+            heroTitle: "Zarafetiyle Bir Hikaye",
+            heroSubtitle: "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
+            content: "",
+            valuesTitle: "Vizyonumuz"
+          });
+        }
+      } else {
+        // Development: Varsayılan değerler
+        setAboutPage({
+          id: null,
+          slug: "hakkimizda",
+          title: "Hakkımızda",
+          heroImage: "/images/about-hero.jpg",
+          heroTitle: "Zarafetiyle Bir Hikaye",
+          heroSubtitle: "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
+          content: "",
+          valuesTitle: "Vizyonumuz"
+        });
+      }
+    } catch (error) {
+      console.error("Hakkımızda sayfası yükleme hatası:", error);
+      // Hata durumunda da varsayılan değerleri set et
+      setAboutPage({
+        id: null,
+        slug: "hakkimizda",
+        title: "Hakkımızda",
+        heroImage: "/images/about-hero.jpg",
+        heroTitle: "Zarafetiyle Bir Hikaye",
+        heroSubtitle: "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
+        content: "",
+        valuesTitle: "Vizyonumuz"
+      });
+    } finally {
+      setLoadingAboutPage(false);
+    }
+  };
+
+  // Hakkımızda sayfasını kaydet
+  const saveAboutPage = async () => {
+    if (!aboutPage) return;
+
+    setSaving(true);
+    try {
+      if (API_URL) {
+        const method = aboutPage.id ? "PUT" : "POST";
+        const body = aboutPage.id 
+          ? { ...aboutPage, id: aboutPage.id }
+          : { ...aboutPage };
+
+        const response = await fetch(`${API_URL}/api/pages.php`, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(body),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setMessage({ type: "success", text: "Hakkımızda sayfası kaydedildi!" });
+          if (data.id) {
+            setAboutPage({ ...aboutPage, id: data.id });
+          }
+        } else {
+          throw new Error("Sayfa kaydedilemedi");
+        }
+      } else {
+        // Development: Local state'e kaydet
+        setMessage({ type: "success", text: "Hakkımızda sayfası kaydedildi (local)!" });
+      }
+    } catch (error) {
+      console.error("Hakkımızda sayfası kaydetme hatası:", error);
+      setMessage({ type: "error", text: "Sayfa kaydedilemedi!" });
+    }
+    setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
+  // Hakkımızda Values'ları yükle
+  const loadAboutValues = async () => {
+    setLoadingAboutValues(true);
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/about-values.php`, {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setAboutValues(Array.isArray(data) ? data : []);
+        } else {
+          setAboutValues([]);
+        }
+      } else {
+        // Development: Varsayılan değerler
+        setAboutValues([
+          { id: 1, title: "Zarafet", description: "Her tasarımımızda zarafeti ön planda tutuyoruz.", image: "/images/about-value-1.jpg", sortOrder: 1 },
+          { id: 2, title: "Kalite", description: "Sertifikalı pırlantalar ve en kaliteli malzemelerle çalışıyoruz.", image: "/images/about-value-2.jpg", sortOrder: 2 },
+          { id: 3, title: "Özgünlük", description: "Her mücevher, kendine özgü bir hikâye taşır.", image: "/images/about-value-3.jpg", sortOrder: 3 },
+          { id: 4, title: "Güven", description: "Müşterilerimizle kurduğumuz güven ilişkisi, işimizin temelidir.", image: "/images/about-value-4.jpg", sortOrder: 4 }
+        ]);
+      }
+    } catch (error) {
+      console.error("Values yükleme hatası:", error);
+      setAboutValues([]);
+    } finally {
+      setLoadingAboutValues(false);
+    }
+  };
+
+  // Value kaydet/güncelle
+  const saveAboutValue = async (value: any) => {
+    setSaving(true);
+    try {
+      if (API_URL) {
+        const method = value.id ? "PUT" : "POST";
+        const response = await fetch(`${API_URL}/api/about-values.php`, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(value),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setMessage({ type: "success", text: "Değer kaydedildi!" });
+          if (data.id && !value.id) {
+            // Yeni eklenen value'ya ID ata
+            setAboutValues(prev => prev.map(v => v === value ? { ...v, id: data.id } : v));
+          }
+          loadAboutValues(); // Listeyi yenile
+        } else {
+          throw new Error("Değer kaydedilemedi");
+        }
+      } else {
+        setMessage({ type: "success", text: "Değer kaydedildi (local)!" });
+      }
+    } catch (error) {
+      console.error("Değer kaydetme hatası:", error);
+      setMessage({ type: "error", text: "Değer kaydedilemedi!" });
+    }
+    setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
+  // Value sil
+  const deleteAboutValue = async (id: number) => {
+    if (!confirm("Bu değeri silmek istediğinizden emin misiniz?")) return;
+
+    setSaving(true);
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/about-values.php?id=${id}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          setMessage({ type: "success", text: "Değer silindi!" });
+          loadAboutValues(); // Listeyi yenile
+        } else {
+          throw new Error("Değer silinemedi");
+        }
+      } else {
+        setMessage({ type: "success", text: "Değer silindi (local)!" });
+        setAboutValues(prev => prev.filter(v => v.id !== id));
+      }
+    } catch (error) {
+      console.error("Değer silme hatası:", error);
+      setMessage({ type: "error", text: "Değer silinemedi!" });
+    }
+    setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
+  // JavaScript object literal formatını JSON'a çevir
+  const convertObjectLiteralToJSON = (str: string): string => {
+    try {
+      // Önce geçerli JSON olup olmadığını kontrol et
+      JSON.parse(str);
+      return str; // Zaten geçerli JSON
+    } catch {
+      // JavaScript object literal formatını JSON'a çevir
+      let result = str.trim();
+      
+      // Adım 1: Boş değerleri düzelt (color: , -> "color": "")
+      result = result.replace(/:\s*,/g, ': "",');
+      result = result.replace(/:\s*}/g, ': ""}');
+      
+      // Adım 2: Property name'leri tırnak içine al (zaten tırnaklı olanları atla)
+      result = result.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":');
+      
+      // Adım 3: String değerleri tırnak içine al
+      // Daha güvenilir bir yaklaşım: her "key: value" çiftini ayrı ayrı işle
+      result = result.replace(/:\s*([^",}\[\]]+?)(\s*[,}])/g, (match, value, suffix) => {
+        const trimmed = value.trim();
+        
+        // Zaten tırnak içindeyse dokunma (çift veya tek tırnak)
+        if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+          return match;
+        }
+        if (trimmed.startsWith("'") && trimmed.endsWith("'")) {
+          // Tek tırnakları çift tırnağa çevir
+          const unquoted = trimmed.slice(1, -1);
+          const escaped = unquoted.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+          return `: "${escaped}"${suffix}`;
+        }
+        
+        // Sayı mı kontrol et (negatif sayılar ve ondalık sayılar dahil)
+        if (/^-?\d+\.?\d*$/.test(trimmed)) {
+          return `: ${trimmed}${suffix}`;
+        }
+        
+        // Boolean veya null mı kontrol et
+        if (trimmed === 'true' || trimmed === 'false' || trimmed === 'null') {
+          return `: ${trimmed}${suffix}`;
+        }
+        
+        // Boş değer (zaten Adım 1'de düzeltilmiş olmalı ama yine de kontrol et)
+        if (trimmed === '') {
+          return `: ""${suffix}`;
+        }
+        
+        // String değer - tırnak içine al (özel karakterleri escape et)
+        const escaped = trimmed.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        return `: "${escaped}"${suffix}`;
+      });
+      
+      return result;
+    }
+  };
+
+  // CSV dosyasını parse et
+  const parseCSV = useCallback((file: File) => {
+    setBulkUploadStatus('parsing');
+    setBulkUploadError('');
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result as string;
+        const lines = text.split('\n').filter(line => line.trim());
+
+        if (lines.length < 2) {
+          throw new Error('CSV dosyası boş veya geçersiz');
+        }
+
+        // Header'ı kontrol et - delimiter'ı otomatik algıla (virgül veya noktalı virgül)
+        const firstLine = lines[0];
+        const delimiter = firstLine.includes(';') ? ';' : ',';
+
+        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, '').replace(/^\uFEFF/, '').toLowerCase());
+        console.log('CSV Headers:', headers);
+        console.log('Delimiter:', delimiter);
+
+        const products: Product[] = [];
+
+        // Her satırı parse et (header'dan sonraki satırlar)
+        for (let i = 1; i < lines.length; i++) {
+          const values: string[] = [];
+          let currentValue = '';
+          let insideQuotes = false;
+
+          // CSV parsing with quote handling
+          for (let j = 0; j < lines[i].length; j++) {
+            const char = lines[i][j];
+
+            if (char === '"') {
+              insideQuotes = !insideQuotes;
+            } else if (char === delimiter && !insideQuotes) {
+              values.push(currentValue.trim().replace(/^"|"$/g, ''));
+              currentValue = '';
+            } else {
+              currentValue += char;
+            }
+          }
+          values.push(currentValue.trim().replace(/^"|"$/g, '')); // Son değeri ekle
+
+          if (values.length < 3) continue; // En az 3 kolon olmalı (slug, name, subtitle)
+
+          // Header'a göre değerleri eşleştir
+          const getValue = (key: string): string => {
+            const index = headers.indexOf(key.toLowerCase());
+            return index >= 0 ? (values[index] || '') : '';
+          };
+
+          const slug = getValue('slug');
+          const name = getValue('name');
+          const subtitle = getValue('subtitle');
+          const description = getValue('description');
+          const categoryId = getValue('category_id');
+          const image = getValue('image');
+          const bannerImage = getValue('banner_image');
+          const galleryImagesStr = getValue('gallery_images');
+          const goldWeight = getValue('gold_weight')?.replace(/^'/, ''); // Başındaki tek tırnağı kaldır
+          const goldKarat = getValue('gold_karat');
+          const stonesJson = getValue('stones_json');
+
+          if (!name && !slug) continue; // name veya slug yoksa atla
+
+          // Galeri görsellerini parse et
+          const galleryImages = galleryImagesStr
+            ? galleryImagesStr.split(',').map(img => img.trim()).filter(img => img)
+            : [];
+
+          // Taş bilgilerini parse et
+          let stones: ProductStone[] = [];
+          if (stonesJson) {
+            try {
+              // CSV'deki escape edilmiş double quote'ları düzelt ("" -> ")
+              let cleanedJson = stonesJson.replace(/""/g, '"');
+              
+              // Eğer hala parse edilemiyorsa, JavaScript object literal formatını dene
+              try {
+                stones = JSON.parse(cleanedJson);
+              } catch {
+                // JavaScript object literal formatını JSON'a çevir
+                cleanedJson = convertObjectLiteralToJSON(cleanedJson);
+                stones = JSON.parse(cleanedJson);
+              }
+              
+              console.log('Parsed stones for', name, ':', stones);
+            } catch (error) {
+              console.warn('Taş bilgileri parse edilemedi:', stonesJson, error);
+            }
+          }
+
+          products.push({
+            category_id: categoryId ? parseInt(categoryId) : null,
+            slug: slug || createSlug(name),
+            name: name || slug || '',
+            subtitle: subtitle || '',
+            description: description || '',
+            image: image || '',
+            banner_image: bannerImage || '',
+            gallery_images: galleryImages,
+            sort_order: 0,
+            is_active: true,
+            gold_weight: goldWeight || '',
+            gold_karat: goldKarat || '',
+            stones: stones,
+          });
+        }
+
+        if (products.length === 0) {
+          throw new Error('CSV dosyasında geçerli ürün bulunamadı');
+        }
+
+        setParsedProducts(products);
+        setBulkUploadStatus('idle');
+        setMessage({ type: 'success', text: `${products.length} ürün başarıyla parse edildi!` });
+        setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+      } catch (error) {
+        console.error('CSV parse hatası:', error);
+        setBulkUploadError(error instanceof Error ? error.message : 'CSV dosyası parse edilemedi');
+        setBulkUploadStatus('error');
+      }
+    };
+
+    reader.onerror = () => {
+      setBulkUploadError('Dosya okunamadı');
+      setBulkUploadStatus('error');
+    };
+
+    reader.readAsText(file, 'UTF-8');
+  }, []);
+
+  // Toplu ürün yükleme
+  const handleBulkUpload = async () => {
+    if (parsedProducts.length === 0) {
+      setMessage({ type: "error", text: "Yüklenecek ürün bulunamadı" });
+      return;
+    }
+
+    setBulkUploadStatus('uploading');
+    setSaving(true);
+
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/products-bulk.php`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ products: parsedProducts }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          setMessage({
+            type: "success",
+            text: `${result.inserted || parsedProducts.length} ürün başarıyla eklendi!`
+          });
+          setParsedProducts([]);
+          setUploadedFile(null);
+          setBulkUploadStatus('success');
+          loadProducts();
+
+          // 2 saniye sonra liste sayfasına git
+          setTimeout(() => {
+            setActiveSection('urunler-liste');
+          }, 2000);
+        } else {
+          throw new Error(result.message || "Ürünler eklenemedi");
+        }
+      } else {
+        // Development: local state'e ekle
+        const newProducts = parsedProducts.map((p, index) => ({
+          ...p,
+          id: Math.max(0, ...products.map(pr => pr.id || 0)) + index + 1
+        }));
+        setProducts([...products, ...newProducts]);
+        setMessage({ type: "success", text: `${parsedProducts.length} ürün eklendi (local)!` });
+        setParsedProducts([]);
+        setUploadedFile(null);
+        setBulkUploadStatus('success');
+
+        setTimeout(() => {
+          setActiveSection('urunler-liste');
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Toplu yükleme hatası:", error);
+      setMessage({ type: "error", text: error instanceof Error ? error.message : "Ürünler eklenemedi!" });
+      setBulkUploadStatus('error');
+    }
+
+    setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 5000);
+  };
+
   // Kategori-ürün ilişkisini yükle
   const loadCategoryProducts = async (categoryId: number) => {
     setLoadingCategoryProducts(true);
@@ -874,6 +1679,12 @@ export default function AdminPanel() {
 
   // Kategori-ürün ilişkisini kaydet
   const saveCategoryProducts = async (categoryId: number, productIds: number[]) => {
+    if (!categoryId) {
+      setMessage({ type: "error", text: "Kategori bulunamadı. Lütfen önce kategori bilgilerini kaydedin." });
+      setTimeout(() => setMessage({ type: "", text: "" }), 5000);
+      return;
+    }
+
     setSaving(true);
     try {
       if (API_URL) {
@@ -883,11 +1694,14 @@ export default function AdminPanel() {
           credentials: "include",
           body: JSON.stringify({ category_id: categoryId, product_ids: productIds }),
         });
-        if (response.ok) {
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
           setMessage({ type: "success", text: "Ürünler kaydedildi!" });
           setCategoryProducts(prev => ({ ...prev, [categoryId]: productIds }));
         } else {
-          throw new Error("Ürünler kaydedilemedi");
+          throw new Error(data.error || "Ürünler kaydedilemedi");
         }
       } else {
         // Development: local state'e kaydet
@@ -896,10 +1710,10 @@ export default function AdminPanel() {
       }
     } catch (error) {
       console.error("Kategori ürünleri kaydetme hatası:", error);
-      setMessage({ type: "error", text: "Ürünler kaydedilemedi!" });
+      setMessage({ type: "error", text: error instanceof Error ? error.message : "Ürünler kaydedilemedi!" });
     } finally {
       setSaving(false);
-      setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+      setTimeout(() => setMessage({ type: "", text: "" }), 5000);
     }
   };
 
@@ -907,6 +1721,25 @@ export default function AdminPanel() {
   useEffect(() => {
     if (activeSection.startsWith("urunler-")) {
       loadProducts();
+    }
+    if (activeSection === "anasayfa-ozel-urunler") {
+      loadFeaturedProducts();
+      loadProducts(); // Ürünleri de yükle
+    }
+  }, [activeSection]);
+
+  // Blog sayfasına geçildiğinde yükle
+  useEffect(() => {
+    if (activeSection.startsWith("blog-")) {
+      loadBlogPosts();
+    }
+  }, [activeSection]);
+
+  // Hakkımızda sayfasına geçildiğinde yükle
+  useEffect(() => {
+    if (activeSection === "hakkimizda-sayfa") {
+      loadAboutPage();
+      loadAboutValues();
     }
   }, [activeSection]);
 
@@ -949,6 +1782,7 @@ export default function AdminPanel() {
         { key: "anasayfa-hero", label: "Hero Slider" },
         { key: "anasayfa-trend", label: "Trend Bölümü" },
         { key: "anasayfa-hikaye", label: "Hikaye Bölümü" },
+        { key: "anasayfa-ozel-urunler", label: "Size Özel Ürünlerimiz" },
         { key: "anasayfa-ozel", label: "Özel Tasarım Kartları" },
         { key: "anasayfa-blog", label: "Blog Bölümü" },
       ]
@@ -1013,6 +1847,14 @@ export default function AdminPanel() {
       ]
     },
     {
+      key: "hakkimizda",
+      label: "Hakkımızda",
+      icon: FiStar,
+      subItems: [
+        { key: "hakkimizda-sayfa", label: "Sayfa İçeriği" },
+      ]
+    },
+    {
       key: "iletisim",
       label: "İletişim",
       icon: FiPhone,
@@ -1029,12 +1871,22 @@ export default function AdminPanel() {
       ]
     },
     {
+      key: "blog",
+      label: "Blog Yönetimi",
+      icon: FiFileText,
+      subItems: [
+        { key: "blog-liste", label: "Blog Yazıları" },
+        { key: "blog-ekle", label: "Yeni Yazı Ekle" },
+      ]
+    },
+    {
       key: "urunler",
       label: "Ürün Yönetimi",
       icon: FiPackage,
       subItems: [
         { key: "urunler-liste", label: "Tüm Ürünler" },
         { key: "urunler-ekle", label: "Yeni Ürün Ekle" },
+        { key: "urunler-toplu-yukle", label: "Toplu Ürün Yükle" },
       ]
     },
   ];
@@ -1351,6 +2203,126 @@ export default function AdminPanel() {
                 </Section>
               )}
 
+              {/* ANA SAYFA - SİZE ÖZEL ÜRÜNLERİMİZ */}
+              {activeSection === "anasayfa-ozel-urunler" && (
+                <div className="space-y-6">
+                  <Section title="Size Özel Ürünlerimiz" subtitle="Ana sayfa öne çıkan ürünler bölümü">
+                    <div className="space-y-4">
+                      {/* Başlık */}
+                      <div className="space-y-3">
+                        <InputField
+                          label="Başlık 1. Kısım"
+                          value={(content.featuredProductsSection as Record<string, unknown>)?.titlePart1 as string || "SİZE ÖZEL"}
+                          onChange={(v) => updateField("featuredProductsSection", "titlePart1", v)}
+                        />
+                        <InputField
+                          label="Başlık 2. Kısım"
+                          value={(content.featuredProductsSection as Record<string, unknown>)?.titlePart2 as string || "ÜRÜNLERİMİZ"}
+                          onChange={(v) => updateField("featuredProductsSection", "titlePart2", v)}
+                        />
+                      </div>
+
+                      {/* Banner Görselleri */}
+                      <div className="space-y-3">
+                        <ImageUploadField
+                          label="Banner Görsel 1"
+                          value={(content.featuredProductsSection as Record<string, unknown>)?.bannerImage1 as string || ""}
+                          onChange={(v) => updateField("featuredProductsSection", "bannerImage1", v)}
+                          folder="products"
+                        />
+                        <ImageUploadField
+                          label="Banner Görsel 2"
+                          value={(content.featuredProductsSection as Record<string, unknown>)?.bannerImage2 as string || ""}
+                          onChange={(v) => updateField("featuredProductsSection", "bannerImage2", v)}
+                          folder="products"
+                        />
+                      </div>
+                    </div>
+                  </Section>
+
+                  {/* Öne Çıkan Ürünler Listesi */}
+                  <Section title="Öne Çıkan Ürünler" subtitle="Ana sayfada gösterilecek ürünler">
+                    <div className="space-y-4">
+                      {/* Ürün Ekle Butonu */}
+                      <div className="flex items-center justify-between">
+                        <p className="text-gray-400 text-sm">
+                          {featuredProducts.length} ürün seçili
+                        </p>
+                        <select
+                          onChange={(e) => {
+                            const productId = parseInt(e.target.value);
+                            if (productId) {
+                              handleAddFeaturedProduct(productId);
+                              e.target.value = ""; // Reset
+                            }
+                          }}
+                          className="px-3 py-1.5 bg-[#0f0f0f] border border-[#2a2a2a] text-white rounded-lg text-xs font-medium focus:outline-none focus:border-[#d4af37]"
+                          defaultValue=""
+                        >
+                          <option value="">Ürün Seç...</option>
+                          {products
+                            .filter(p => p.id && !featuredProducts.some(fp => fp.productId === p.id))
+                            .map(product => (
+                              <option key={product.id} value={product.id}>
+                                {product.name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+
+                      {/* Ürün Listesi */}
+                      {loadingFeaturedProducts ? (
+                        <div className="text-center py-8 text-gray-500">Yükleniyor...</div>
+                      ) : featuredProducts.length === 0 ? (
+                        <div className="text-center py-8 text-gray-500 text-sm">
+                          Henüz ürün eklenmedi. Ürün eklemek için yukarıdaki butonu kullanın.
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          {featuredProducts.map((fp, index) => (
+                            <div
+                              key={fp.id}
+                              className="flex items-center gap-3 p-3 bg-[#0f0f0f] rounded-lg border border-[#2a2a2a]"
+                            >
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-12 h-12 rounded overflow-hidden bg-[#1a1a1a] shrink-0">
+                                    {fp.image && (
+                                      <img
+                                        src={fp.image.startsWith('http') ? fp.image : `${API_URL || ''}${fp.image}`}
+                                        alt={fp.displayName || fp.productName}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    )}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-white text-sm font-medium truncate">
+                                      {fp.displayName || fp.productName}
+                                    </p>
+                                    <p className="text-gray-400 text-xs truncate">
+                                      {fp.displayCategory || "Kategori belirtilmemiş"}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => handleDeleteFeaturedProduct(fp.id)}
+                                  className="p-2 text-red-400 hover:text-red-300 hover:bg-[#2a2a2a] rounded"
+                                  title="Sil"
+                                >
+                                  <FiTrash2 size={16} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </Section>
+                </div>
+              )}
+
               {/* ANA SAYFA - ÖZEL TASARIM KARTLARI */}
               {activeSection === "anasayfa-ozel" && (
                 <Section title="Özel Tasarım Kartları" subtitle="Kendini Özel Hisset bölümü">
@@ -1601,146 +2573,6 @@ export default function AdminPanel() {
               )}
 
 
-              {/* KATEGORİ YÖNETİMİ - MÜCEVHER */}
-              {activeSection.startsWith("mucevher-") && (
-                <CategoryManagementSection
-                  activeSection={activeSection}
-                  categoryMap={{
-                    "mucevher-yuzuk": { id: 1, name: "Yüzük", slug: "yuzuk" },
-                    "mucevher-kolye": { id: 2, name: "Kolye", slug: "kolye" },
-                    "mucevher-bileklik": { id: 3, name: "Bileklik", slug: "bileklik" },
-                    "mucevher-kupe": { id: 4, name: "Küpe", slug: "kupe" },
-                    "mucevher-set": { id: 5, name: "Set", slug: "set" },
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const newProducts = current.includes(productId)
-                      ? current.filter(id => id !== productId)
-                      : [...current, productId];
-                    saveCategoryProducts(categoryId, newProducts);
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                  content={content}
-                  updateField={updateField}
-                />
-              )}
-
-              {/* KATEGORİ YÖNETİMİ - KOLEKSİYON */}
-              {activeSection.startsWith("koleksiyon-") && (
-                <CategoryManagementSection
-                  activeSection={activeSection}
-                  categoryMap={{
-                    "koleksiyon-gozumun-nuru": { id: 6, name: "Gözümün Nuru", slug: "gozumun-nuru" },
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const newProducts = current.includes(productId)
-                      ? current.filter(id => id !== productId)
-                      : [...current, productId];
-                    saveCategoryProducts(categoryId, newProducts);
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                  content={content}
-                  updateField={updateField}
-                />
-              )}
-
-              {/* KATEGORİ YÖNETİMİ - HEDİYE */}
-              {activeSection.startsWith("hediye-") && (
-                <CategoryManagementSection
-                  activeSection={activeSection}
-                  categoryMap={{
-                    "hediye-dogum-gunu": { id: 7, name: "Doğum Günü", slug: "dogum-gunu" },
-                    "hediye-anneler-gunu": { id: 8, name: "Anneler Günü", slug: "anneler-gunu" },
-                    "hediye-kadinlar-gunu": { id: 9, name: "Kadınlar Günü", slug: "kadinlar-gunu" },
-                    "hediye-ozel-gunler": { id: 10, name: "Özel Günler", slug: "ozel-gunler" },
-                    "hediye-yeni-dogan": { id: 11, name: "Yeni Doğan", slug: "yeni-dogan" },
-                    "hediye-aksesuar": { id: 12, name: "Aksesuar", slug: "aksesuar" },
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const newProducts = current.includes(productId)
-                      ? current.filter(id => id !== productId)
-                      : [...current, productId];
-                    saveCategoryProducts(categoryId, newProducts);
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                  content={content}
-                  updateField={updateField}
-                />
-              )}
-
-              {/* KATEGORİ YÖNETİMİ - ERKEK */}
-              {activeSection.startsWith("erkek-") && (
-                <CategoryManagementSection
-                  activeSection={activeSection}
-                  categoryMap={{
-                    "erkek-tesbih": { id: 13, name: "Tesbih", slug: "tesbih" },
-                    "erkek-bileklik": { id: 14, name: "Erkek Bileklik", slug: "bileklik" },
-                    "erkek-yuzuk": { id: 15, name: "Erkek Yüzük", slug: "yuzuk" },
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const newProducts = current.includes(productId)
-                      ? current.filter(id => id !== productId)
-                      : [...current, productId];
-                    saveCategoryProducts(categoryId, newProducts);
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                  content={content}
-                  updateField={updateField}
-                />
-              )}
-
-              {/* KATEGORİ YÖNETİMİ - PRELOVED */}
-              {activeSection === "preloved-sayfa" && (
-                <CategoryManagementSection
-                  activeSection={activeSection}
-                  categoryMap={{
-                    "preloved-sayfa": { id: 16, name: "Preloved", slug: "preloved" },
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const newProducts = current.includes(productId)
-                      ? current.filter(id => id !== productId)
-                      : [...current, productId];
-                    saveCategoryProducts(categoryId, newProducts);
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                  content={content}
-                  updateField={updateField}
-                />
-              )}
 
               {/* ÜRÜN LİSTESİ */}
               {activeSection === "urunler-liste" && (
@@ -1761,7 +2593,7 @@ export default function AdminPanel() {
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div ref={productListRef} className="space-y-3 max-h-[600px] overflow-y-auto">
                       {products.map((product) => (
                         <div
                           key={product.id}
@@ -1858,9 +2690,21 @@ export default function AdminPanel() {
                             onChange={(v) => setEditingProduct({ ...editingProduct, description: v })}
                           />
                           <ImageField
-                            label="Ürün Görseli"
+                            label="Hero Görsel"
                             value={editingProduct.image}
                             onChange={(v) => setEditingProduct({ ...editingProduct, image: v })}
+                            folder="products"
+                          />
+                          <ImageField
+                            label="Banner Görseli (1 adet)"
+                            value={editingProduct.banner_image}
+                            onChange={(v) => setEditingProduct({ ...editingProduct, banner_image: v })}
+                            folder="products"
+                          />
+                          <GalleryImagesField
+                            label="Galeri Görselleri (Slider - Birden fazla)"
+                            images={editingProduct.gallery_images || []}
+                            onChange={(images) => setEditingProduct({ ...editingProduct, gallery_images: images })}
                             folder="products"
                           />
                           <div>
@@ -1891,18 +2735,220 @@ export default function AdminPanel() {
                             </p>
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-400 mb-2">Kategori</label>
-                            <select
-                              value={editingProduct.category_id || ""}
-                              onChange={(e) => setEditingProduct({ ...editingProduct, category_id: e.target.value ? Number(e.target.value) : null })}
-                              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
-                            >
-                              <option value="">Kategori Seçin</option>
-                              {categories.map((cat) => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
-                              ))}
-                            </select>
+                            <label className="block text-xs font-medium text-gray-400 mb-2">Kategoriler</label>
+                            <div className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 max-h-48 overflow-y-auto">
+                              {categories.length === 0 ? (
+                                <p className="text-gray-500 text-xs">Kategori yükleniyor...</p>
+                              ) : (
+                                <div className="space-y-2">
+                                  {categories.map((cat) => (
+                                    <label
+                                      key={cat.id}
+                                      className="flex items-center gap-2 cursor-pointer hover:bg-[#1a1a1a] p-1.5 rounded"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={(editingProduct.categories || []).includes(cat.id)}
+                                        onChange={(e) => {
+                                          const currentCategories = editingProduct.categories || [];
+                                          const newCategories = e.target.checked
+                                            ? [...currentCategories, cat.id]
+                                            : currentCategories.filter(id => id !== cat.id);
+                                          setEditingProduct({
+                                            ...editingProduct,
+                                            categories: newCategories,
+                                            category_id: newCategories.length > 0 ? newCategories[0] : null // İlk kategoriyi ana kategori olarak belirle
+                                          });
+                                        }}
+                                        className="w-4 h-4 text-[#d4af37] bg-[#1a1a1a] border-[#2a2a2a] rounded focus:ring-2 focus:ring-[#d4af37]"
+                                      />
+                                      <span className="text-sm text-white">{cat.name}</span>
+                                      <span className="text-xs text-gray-500">({cat.parent_type})</span>
+                                    </label>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-gray-500 text-xs mt-1">
+                              {(editingProduct.categories || []).length} kategori seçildi
+                            </p>
                           </div>
+
+                          {/* SERTİFİKA BİLGİLERİ */}
+                          <div className="border-t border-[#2a2a2a] pt-4 mt-4">
+                            <h4 className="text-white font-medium text-sm mb-4">Sertifika Bilgileri</h4>
+
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                              <InputField
+                                label="Altın Ağırlığı (gr)"
+                                value={editingProduct.gold_weight ? String(editingProduct.gold_weight) : ""}
+                                onChange={(v) => setEditingProduct({ ...editingProduct, gold_weight: v })}
+                                placeholder="Örn: 8.94"
+                              />
+                              <div>
+                                <label className="block text-xs font-medium text-gray-400 mb-2">Altın Ayar</label>
+                                <select
+                                  value={editingProduct.gold_karat || ""}
+                                  onChange={(e) => setEditingProduct({ ...editingProduct, gold_karat: e.target.value })}
+                                  className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
+                                >
+                                  <option value="">Seçin</option>
+                                  <option value="8">8K</option>
+                                  <option value="14">14K</option>
+                                  <option value="18">18K</option>
+                                  <option value="22">22K</option>
+                                  <option value="24">24K</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            {/* Taş Bilgileri */}
+                            <div className="mb-4">
+                              <div className="flex items-center justify-between mb-2">
+                                <label className="text-xs font-medium text-gray-400">Taş Bilgileri</label>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const newStones = [...(editingProduct.stones || []), {
+                                      stone_type: "Pırlanta",
+                                      carat: "",
+                                      quantity: 1,
+                                      color: "",
+                                      clarity: "",
+                                      cut: "Yuvarlak"
+                                    }];
+                                    setEditingProduct({ ...editingProduct, stones: newStones });
+                                  }}
+                                  className="text-xs text-[#d4af37] hover:text-[#c9a432] flex items-center gap-1"
+                                >
+                                  <FiPlus size={12} /> Taş Ekle
+                                </button>
+                              </div>
+
+                              {editingProduct.stones && editingProduct.stones.length > 0 ? (
+                                <div className="space-y-3">
+                                  {editingProduct.stones.map((stone, idx) => (
+                                    <div key={idx} className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3">
+                                      <div className="flex items-center justify-between mb-2">
+                                        <span className="text-xs text-gray-500">Taş #{idx + 1}</span>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const newStones = editingProduct.stones?.filter((_, i) => i !== idx) || [];
+                                            setEditingProduct({ ...editingProduct, stones: newStones });
+                                          }}
+                                          className="text-red-400 hover:text-red-300"
+                                        >
+                                          <FiTrash2 size={14} />
+                                        </button>
+                                      </div>
+                                      <div className="grid grid-cols-3 gap-2">
+                                        <div>
+                                          <label className="block text-[10px] text-gray-500 mb-1">Taş Türü</label>
+                                          <select
+                                            value={stone.stone_type}
+                                            onChange={(e) => {
+                                              const newStones = [...(editingProduct.stones || [])];
+                                              newStones[idx] = { ...stone, stone_type: e.target.value };
+                                              setEditingProduct({ ...editingProduct, stones: newStones });
+                                            }}
+                                            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                          >
+                                            <option value="Pırlanta">Pırlanta</option>
+                                            <option value="Yakut">Yakut</option>
+                                            <option value="Zümrüt">Zümrüt</option>
+                                            <option value="Safir">Safir</option>
+                                            <option value="Turmalin">Turmalin</option>
+                                            <option value="Tanzanit">Tanzanit</option>
+                                            <option value="Ametist">Ametist</option>
+                                            <option value="Akuamarin">Akuamarin</option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] text-gray-500 mb-1">Karat</label>
+                                          <input
+                                            type="text"
+                                            value={stone.carat}
+                                            onChange={(e) => {
+                                              const newStones = [...(editingProduct.stones || [])];
+                                              newStones[idx] = { ...stone, carat: e.target.value };
+                                              setEditingProduct({ ...editingProduct, stones: newStones });
+                                            }}
+                                            placeholder="0.50"
+                                            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] text-gray-500 mb-1">Adet</label>
+                                          <input
+                                            type="number"
+                                            value={stone.quantity}
+                                            onChange={(e) => {
+                                              const newStones = [...(editingProduct.stones || [])];
+                                              newStones[idx] = { ...stone, quantity: parseInt(e.target.value) || 1 };
+                                              setEditingProduct({ ...editingProduct, stones: newStones });
+                                            }}
+                                            min="1"
+                                            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] text-gray-500 mb-1">Renk</label>
+                                          <input
+                                            type="text"
+                                            value={stone.color}
+                                            onChange={(e) => {
+                                              const newStones = [...(editingProduct.stones || [])];
+                                              newStones[idx] = { ...stone, color: e.target.value };
+                                              setEditingProduct({ ...editingProduct, stones: newStones });
+                                            }}
+                                            placeholder="F"
+                                            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] text-gray-500 mb-1">Berraklık</label>
+                                          <input
+                                            type="text"
+                                            value={stone.clarity}
+                                            onChange={(e) => {
+                                              const newStones = [...(editingProduct.stones || [])];
+                                              newStones[idx] = { ...stone, clarity: e.target.value };
+                                              setEditingProduct({ ...editingProduct, stones: newStones });
+                                            }}
+                                            placeholder="VS"
+                                            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                          />
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] text-gray-500 mb-1">Kesim</label>
+                                          <select
+                                            value={stone.cut}
+                                            onChange={(e) => {
+                                              const newStones = [...(editingProduct.stones || [])];
+                                              newStones[idx] = { ...stone, cut: e.target.value };
+                                              setEditingProduct({ ...editingProduct, stones: newStones });
+                                            }}
+                                            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                          >
+                                            <option value="Yuvarlak">Yuvarlak</option>
+                                            <option value="Baget">Baget</option>
+                                            <option value="Prenses">Prenses</option>
+                                            <option value="Oval">Oval</option>
+                                            <option value="Markiz">Markiz</option>
+                                            <option value="Armut">Armut</option>
+                                          </select>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-gray-500 text-xs">Henüz taş eklenmemiş</p>
+                              )}
+                            </div>
+                          </div>
+
                           <div className="flex gap-3 pt-4">
                             <button
                               onClick={() => setEditingProduct(null)}
@@ -1947,15 +2993,21 @@ export default function AdminPanel() {
                       onChange={(v) => setNewProduct({ ...newProduct, description: v })}
                     />
                     <ImageField
-                      label="Ürün Görseli"
+                      label="Hero Görsel"
                       value={newProduct.image}
                       onChange={(v) => setNewProduct({ ...newProduct, image: v })}
                       folder="products"
                     />
                     <ImageField
-                      label="Banner Görseli"
+                      label="Banner Görseli (1 adet)"
                       value={newProduct.banner_image}
                       onChange={(v) => setNewProduct({ ...newProduct, banner_image: v })}
+                      folder="products"
+                    />
+                    <GalleryImagesField
+                      label="Galeri Görselleri (Slider - Birden fazla)"
+                      images={newProduct.gallery_images || []}
+                      onChange={(images) => setNewProduct({ ...newProduct, gallery_images: images })}
                       folder="products"
                     />
                     <div>
@@ -1986,18 +3038,219 @@ export default function AdminPanel() {
                       </p>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-400 mb-2">Kategori</label>
-                      <select
-                        value={newProduct.category_id || ""}
-                        onChange={(e) => setNewProduct({ ...newProduct, category_id: e.target.value ? Number(e.target.value) : null })}
-                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
-                      >
-                        <option value="">Kategori Seçin</option>
-                        {categories.map((cat) => (
-                          <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                      </select>
+                      <label className="block text-xs font-medium text-gray-400 mb-2">Kategoriler</label>
+                      <div className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 max-h-48 overflow-y-auto">
+                        {categories.length === 0 ? (
+                          <p className="text-gray-500 text-xs">Kategori yükleniyor...</p>
+                        ) : (
+                          <div className="space-y-2">
+                            {categories.map((cat) => (
+                              <label
+                                key={cat.id}
+                                className="flex items-center gap-2 cursor-pointer hover:bg-[#1a1a1a] p-1.5 rounded"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={(newProduct.categories || []).includes(cat.id)}
+                                  onChange={(e) => {
+                                    const currentCategories = newProduct.categories || [];
+                                    const newCategories = e.target.checked
+                                      ? [...currentCategories, cat.id]
+                                      : currentCategories.filter(id => id !== cat.id);
+                                    setNewProduct({
+                                      ...newProduct,
+                                      categories: newCategories,
+                                      category_id: newCategories.length > 0 ? newCategories[0] : null // İlk kategoriyi ana kategori olarak belirle
+                                    });
+                                  }}
+                                  className="w-4 h-4 text-[#d4af37] bg-[#1a1a1a] border-[#2a2a2a] rounded focus:ring-2 focus:ring-[#d4af37]"
+                                />
+                                <span className="text-sm text-white">{cat.name}</span>
+                                <span className="text-xs text-gray-500">({cat.parent_type})</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-gray-500 text-xs mt-1">
+                        {(newProduct.categories || []).length} kategori seçildi
+                      </p>
                     </div>
+                    {/* SERTİFİKA BİLGİLERİ */}
+                    <div className="border-t border-[#2a2a2a] pt-4 mt-4">
+                      <h4 className="text-white font-medium text-sm mb-4">Sertifika Bilgileri</h4>
+
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <InputField
+                          label="Altın Ağırlığı (gr)"
+                          value={newProduct.gold_weight ? String(newProduct.gold_weight) : ""}
+                          onChange={(v) => setNewProduct({ ...newProduct, gold_weight: v })}
+                          placeholder="Örn: 8.94"
+                        />
+                        <div>
+                          <label className="block text-xs font-medium text-gray-400 mb-2">Altın Ayar</label>
+                          <select
+                            value={newProduct.gold_karat || ""}
+                            onChange={(e) => setNewProduct({ ...newProduct, gold_karat: e.target.value })}
+                            className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
+                          >
+                            <option value="">Seçin</option>
+                            <option value="8">8K</option>
+                            <option value="14">14K</option>
+                            <option value="18">18K</option>
+                            <option value="22">22K</option>
+                            <option value="24">24K</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Taş Bilgileri */}
+                      <div className="mb-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-xs font-medium text-gray-400">Taş Bilgileri</label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newStones = [...(newProduct.stones || []), {
+                                stone_type: "Pırlanta",
+                                carat: "",
+                                quantity: 1,
+                                color: "",
+                                clarity: "",
+                                cut: "Yuvarlak"
+                              }];
+                              setNewProduct({ ...newProduct, stones: newStones });
+                            }}
+                            className="text-xs text-[#d4af37] hover:text-[#c9a432] flex items-center gap-1"
+                          >
+                            <FiPlus size={12} /> Taş Ekle
+                          </button>
+                        </div>
+
+                        {newProduct.stones && newProduct.stones.length > 0 ? (
+                          <div className="space-y-3">
+                            {newProduct.stones.map((stone, idx) => (
+                              <div key={idx} className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-xs text-gray-500">Taş #{idx + 1}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const newStones = newProduct.stones?.filter((_, i) => i !== idx) || [];
+                                      setNewProduct({ ...newProduct, stones: newStones });
+                                    }}
+                                    className="text-red-400 hover:text-red-300"
+                                  >
+                                    <FiTrash2 size={14} />
+                                  </button>
+                                </div>
+                                <div className="grid grid-cols-3 gap-2">
+                                  <div>
+                                    <label className="block text-[10px] text-gray-500 mb-1">Taş Türü</label>
+                                    <select
+                                      value={stone.stone_type}
+                                      onChange={(e) => {
+                                        const newStones = [...(newProduct.stones || [])];
+                                        newStones[idx] = { ...stone, stone_type: e.target.value };
+                                        setNewProduct({ ...newProduct, stones: newStones });
+                                      }}
+                                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                    >
+                                      <option value="Pırlanta">Pırlanta</option>
+                                      <option value="Yakut">Yakut</option>
+                                      <option value="Zümrüt">Zümrüt</option>
+                                      <option value="Safir">Safir</option>
+                                      <option value="Turmalin">Turmalin</option>
+                                      <option value="Tanzanit">Tanzanit</option>
+                                      <option value="Ametist">Ametist</option>
+                                      <option value="Akuamarin">Akuamarin</option>
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label className="block text-[10px] text-gray-500 mb-1">Karat</label>
+                                    <input
+                                      type="text"
+                                      value={stone.carat}
+                                      onChange={(e) => {
+                                        const newStones = [...(newProduct.stones || [])];
+                                        newStones[idx] = { ...stone, carat: e.target.value };
+                                        setNewProduct({ ...newProduct, stones: newStones });
+                                      }}
+                                      placeholder="0.50"
+                                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[10px] text-gray-500 mb-1">Adet</label>
+                                    <input
+                                      type="number"
+                                      value={stone.quantity}
+                                      onChange={(e) => {
+                                        const newStones = [...(newProduct.stones || [])];
+                                        newStones[idx] = { ...stone, quantity: parseInt(e.target.value) || 1 };
+                                        setNewProduct({ ...newProduct, stones: newStones });
+                                      }}
+                                      min="1"
+                                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[10px] text-gray-500 mb-1">Renk</label>
+                                    <input
+                                      type="text"
+                                      value={stone.color}
+                                      onChange={(e) => {
+                                        const newStones = [...(newProduct.stones || [])];
+                                        newStones[idx] = { ...stone, color: e.target.value };
+                                        setNewProduct({ ...newProduct, stones: newStones });
+                                      }}
+                                      placeholder="F"
+                                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[10px] text-gray-500 mb-1">Berraklık</label>
+                                    <input
+                                      type="text"
+                                      value={stone.clarity}
+                                      onChange={(e) => {
+                                        const newStones = [...(newProduct.stones || [])];
+                                        newStones[idx] = { ...stone, clarity: e.target.value };
+                                        setNewProduct({ ...newProduct, stones: newStones });
+                                      }}
+                                      placeholder="VS"
+                                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-[10px] text-gray-500 mb-1">Kesim</label>
+                                    <select
+                                      value={stone.cut}
+                                      onChange={(e) => {
+                                        const newStones = [...(newProduct.stones || [])];
+                                        newStones[idx] = { ...stone, cut: e.target.value };
+                                        setNewProduct({ ...newProduct, stones: newStones });
+                                      }}
+                                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                    >
+                                      <option value="Yuvarlak">Yuvarlak</option>
+                                      <option value="Baget">Baget</option>
+                                      <option value="Prenses">Prenses</option>
+                                      <option value="Oval">Oval</option>
+                                      <option value="Markiz">Markiz</option>
+                                      <option value="Armut">Armut</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-gray-500 text-xs">Henüz taş eklenmemiş</p>
+                        )}
+                      </div>
+                    </div>
+
                     <InputField
                       label="Sıralama"
                       value={String(newProduct.sort_order)}
@@ -2018,6 +3271,455 @@ export default function AdminPanel() {
                 </Section>
               )}
 
+              {/* TOPLU ÜRÜN YÜKLEME */}
+              {activeSection === "urunler-toplu-yukle" && (
+                <Section title="Toplu Ürün Yükle" subtitle="CSV dosyası ile birden fazla ürün ekleyin">
+                  <div className="space-y-6">
+                    {/* Bilgilendirme ve Şablon İndirme */}
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+                      <div className="flex items-start gap-3">
+                        <FiAlertCircle className="text-blue-400 shrink-0 mt-0.5" size={20} />
+                        <div className="flex-1">
+                          <h4 className="text-blue-400 font-medium text-sm mb-2">Nasıl Kullanılır?</h4>
+                          <ul className="text-gray-400 text-xs space-y-1 list-disc list-inside">
+                            <li>Önce örnek şablon dosyasını indirin</li>
+                            <li>Excel veya Google Sheets'te dosyayı açın</li>
+                            <li>Ürün bilgilerini doldurun (her satır bir ürün)</li>
+                            <li>Dosyayı CSV formatında kaydedin (UTF-8 encoding)</li>
+                            <li>Aşağıdaki alana yükleyin</li>
+                          </ul>
+                          <a
+                            href="/urun-yukleme-sablonu.csv"
+                            download
+                            className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-500/30 transition-colors"
+                          >
+                            <FiFileText size={14} />
+                            Örnek Şablon İndir (CSV)
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Dosya Yükleme Alanı */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-400 mb-2">CSV Dosyası Yükle</label>
+                      <div
+                        className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
+                          uploadedFile
+                            ? 'border-green-500/50 bg-green-500/5'
+                            : 'border-[#3a3a3a] hover:border-[#d4af37] bg-[#0f0f0f]'
+                        }`}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const file = e.dataTransfer.files[0];
+                          if (file && (file.name.endsWith('.csv') || file.name.endsWith('.txt'))) {
+                            setUploadedFile(file);
+                            parseCSV(file);
+                          } else {
+                            setMessage({ type: 'error', text: 'Lütfen CSV dosyası yükleyin' });
+                            setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+                          }
+                        }}
+                      >
+                        <input
+                          type="file"
+                          accept=".csv,.txt"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setUploadedFile(file);
+                              parseCSV(file);
+                            }
+                          }}
+                          className="hidden"
+                          id="csv-upload"
+                        />
+                        <label htmlFor="csv-upload" className="cursor-pointer">
+                          {uploadedFile ? (
+                            <div className="flex flex-col items-center gap-2">
+                              <FiCheck className="text-green-400" size={32} />
+                              <p className="text-green-400 font-medium">{uploadedFile.name}</p>
+                              <p className="text-gray-500 text-xs">
+                                {parsedProducts.length} ürün parse edildi
+                              </p>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setUploadedFile(null);
+                                  setParsedProducts([]);
+                                }}
+                                className="mt-2 px-3 py-1.5 bg-[#2a2a2a] text-gray-400 hover:text-white rounded-lg text-xs font-medium hover:bg-[#3a3a3a] transition-colors"
+                              >
+                                Başka Dosya Seç
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center gap-2">
+                              <FiFileText className="text-gray-600" size={32} />
+                              <p className="text-white font-medium">CSV dosyanızı buraya sürükleyin</p>
+                              <p className="text-gray-500 text-xs">veya tıklayarak dosya seçin</p>
+                              <p className="text-gray-600 text-xs mt-2">Desteklenen format: .csv</p>
+                            </div>
+                          )}
+                        </label>
+                      </div>
+
+                      {bulkUploadStatus === 'parsing' && (
+                        <div className="mt-3 flex items-center gap-2 text-blue-400 text-sm">
+                          <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                          <span>CSV dosyası işleniyor...</span>
+                        </div>
+                      )}
+
+                      {bulkUploadError && (
+                        <div className="mt-3 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                          <p className="text-red-400 text-sm">{bulkUploadError}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Ürün Önizleme Tablosu */}
+                    {parsedProducts.length > 0 && (
+                      <div>
+                        <h4 className="text-white font-medium text-sm mb-3">
+                          Ürün Önizleme ({parsedProducts.length} ürün)
+                        </h4>
+                        <div className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-xl overflow-hidden">
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                              <thead className="bg-[#1a1a1a]">
+                                <tr className="border-b border-[#2a2a2a]">
+                                  <th className="px-4 py-3 text-left text-gray-400 font-medium text-xs">#</th>
+                                  <th className="px-4 py-3 text-left text-gray-400 font-medium text-xs">Ürün Kodu</th>
+                                  <th className="px-4 py-3 text-left text-gray-400 font-medium text-xs">Alt Başlık</th>
+                                  <th className="px-4 py-3 text-left text-gray-400 font-medium text-xs">Görsel</th>
+                                  <th className="px-4 py-3 text-left text-gray-400 font-medium text-xs">Altın Ağırlığı</th>
+                                  <th className="px-4 py-3 text-left text-gray-400 font-medium text-xs">Ayar</th>
+                                  <th className="px-4 py-3 text-left text-gray-400 font-medium text-xs">Taş Sayısı</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {parsedProducts.map((product, index) => (
+                                  <tr key={index} className="border-b border-[#2a2a2a] hover:bg-[#1a1a1a]">
+                                    <td className="px-4 py-3 text-gray-500 text-xs">{index + 1}</td>
+                                    <td className="px-4 py-3 text-white text-xs">{product.name}</td>
+                                    <td className="px-4 py-3 text-gray-400 text-xs truncate max-w-[150px]">
+                                      {product.subtitle || '-'}
+                                    </td>
+                                    <td className="px-4 py-3 text-gray-400 text-xs truncate max-w-[120px]" title={product.image}>
+                                      {product.image ? '✓' : '-'}
+                                    </td>
+                                    <td className="px-4 py-3 text-gray-400 text-xs">
+                                      {product.gold_weight ? `${product.gold_weight} gr` : '-'}
+                                    </td>
+                                    <td className="px-4 py-3 text-gray-400 text-xs">
+                                      {product.gold_karat ? `${product.gold_karat}K` : '-'}
+                                    </td>
+                                    <td className="px-4 py-3 text-xs">
+                                      <span className={`px-2 py-1 rounded ${
+                                        product.stones && product.stones.length > 0
+                                          ? 'bg-[#d4af37]/20 text-[#d4af37]'
+                                          : 'bg-gray-500/20 text-gray-400'
+                                      }`}>
+                                        {product.stones?.length || 0} taş
+                                      </span>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                        {/* Toplu Yükleme Butonu */}
+                        <div className="mt-4 flex items-center gap-3">
+                          <button
+                            onClick={handleBulkUpload}
+                            disabled={saving || parsedProducts.length === 0}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c9a432] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            {bulkUploadStatus === 'uploading' ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-[#0f0f0f] border-t-transparent rounded-full animate-spin"></div>
+                                <span>Yükleniyor... ({parsedProducts.length} ürün)</span>
+                              </>
+                            ) : (
+                              <>
+                                <FiPlus size={18} />
+                                <span>{parsedProducts.length} Ürünü Ekle</span>
+                              </>
+                            )}
+                          </button>
+                          <button
+                            onClick={() => {
+                              setParsedProducts([]);
+                              setUploadedFile(null);
+                              setBulkUploadError('');
+                            }}
+                            className="px-4 py-3 bg-[#2a2a2a] text-gray-400 hover:text-white rounded-lg font-medium hover:bg-[#3a3a3a] transition-colors"
+                          >
+                            İptal
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Section>
+              )}
+
+              {/* BLOG LİSTESİ */}
+              {activeSection === "blog-liste" && (
+                <Section title="Blog Yazıları" subtitle="Mevcut blog yazılarını görüntüle ve düzenle">
+                  {loadingBlog ? (
+                    <div className="flex justify-center py-8">
+                      <div className="w-8 h-8 border-4 border-[#d4af37] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  ) : blogPosts.length === 0 ? (
+                    <div className="bg-[#0f0f0f] rounded-xl p-8 text-center">
+                      <FiFileText className="mx-auto text-gray-600 mb-3" size={32} />
+                      <p className="text-gray-500 text-sm">Henüz blog yazısı eklenmemiş</p>
+                      <button
+                        onClick={() => setActiveSection("blog-ekle")}
+                        className="mt-4 px-4 py-2 bg-[#d4af37] text-[#0f0f0f] rounded-lg text-sm font-medium hover:bg-[#c9a432]"
+                      >
+                        İlk Yazıyı Ekle
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {blogPosts.map((post) => (
+                        <div
+                          key={post.id}
+                          className="flex items-center gap-4 p-3 bg-[#0f0f0f] rounded-lg border border-[#2a2a2a] hover:border-[#3a3a3a] transition-colors"
+                        >
+                          {/* Blog Görseli */}
+                          <div className="w-20 h-14 rounded-lg bg-[#2a2a2a] overflow-hidden shrink-0">
+                            {post.image ? (
+                              <img
+                                src={post.image.startsWith("data:") ? post.image : (API_URL ? `${API_URL}${post.image}` : post.image)}
+                                alt={post.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <FiImage className="text-gray-600" size={20} />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Blog Bilgileri */}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-white text-sm font-medium truncate">{post.title}</h4>
+                            <p className="text-gray-500 text-xs truncate">{post.excerpt || "Özet yok"}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className={`text-xs px-2 py-0.5 rounded ${post.status === "published" ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"}`}>
+                                {post.status === "published" ? "Yayında" : "Taslak"}
+                              </span>
+                              <span className="text-gray-600 text-xs">
+                                {post.published_at ? new Date(post.published_at).toLocaleDateString("tr-TR") : ""}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Aksiyon Butonları */}
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              onClick={() => setEditingBlogPost(post)}
+                              className="p-2 text-gray-400 hover:text-white hover:bg-[#2a2a2a] rounded-lg"
+                              title="Düzenle"
+                            >
+                              <FiEdit3 size={16} />
+                            </button>
+                            <button
+                              onClick={() => post.id && handleDeleteBlogPost(post.id)}
+                              className="p-2 text-gray-400 hover:text-red-400 hover:bg-[#2a2a2a] rounded-lg"
+                              title="Sil"
+                            >
+                              <FiTrash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+
+                      <button
+                        onClick={() => setActiveSection("blog-ekle")}
+                        className="w-full flex items-center justify-center gap-2 p-3 border border-dashed border-[#3a3a3a] rounded-lg text-gray-500 hover:text-[#d4af37] hover:border-[#d4af37] transition-colors"
+                      >
+                        <FiPlus size={16} />
+                        <span className="text-sm">Yeni Yazı Ekle</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Blog Düzenleme Modal */}
+                  {editingBlogPost && (
+                    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+                      <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <div className="sticky top-0 bg-[#1a1a1a] p-4 border-b border-[#2a2a2a] flex items-center justify-between">
+                          <h3 className="text-white font-semibold">Blog Yazısı Düzenle</h3>
+                          <button
+                            onClick={() => setEditingBlogPost(null)}
+                            className="p-2 text-gray-400 hover:text-white hover:bg-[#2a2a2a] rounded-lg"
+                          >
+                            <FiX size={18} />
+                          </button>
+                        </div>
+                        <div className="p-4 space-y-4">
+                          <InputField
+                            label="Başlık"
+                            value={editingBlogPost.title}
+                            onChange={(v) => setEditingBlogPost({ ...editingBlogPost, title: v })}
+                          />
+                          <InputField
+                            label="Slug (URL Adresi)"
+                            value={editingBlogPost.slug}
+                            onChange={(v) => {
+                              // Slug formatını zorla (küçük harf, tire, rakam)
+                              const cleanSlug = v
+                                .toLowerCase()
+                                .replace(/ı/g, 'i')
+                                .replace(/ğ/g, 'g')
+                                .replace(/ü/g, 'u')
+                                .replace(/ş/g, 's')
+                                .replace(/ö/g, 'o')
+                                .replace(/ç/g, 'c')
+                                .replace(/[^a-z0-9-]/g, '');
+                              setEditingBlogPost({ ...editingBlogPost, slug: cleanSlug });
+                            }}
+                            placeholder="ornek-blog-yazisi"
+                          />
+                          <InputField
+                            label="Özet"
+                            value={editingBlogPost.excerpt}
+                            onChange={(v) => setEditingBlogPost({ ...editingBlogPost, excerpt: v })}
+                          />
+                          <TextareaField
+                            label="İçerik"
+                            value={editingBlogPost.content}
+                            onChange={(v) => setEditingBlogPost({ ...editingBlogPost, content: v })}
+                            rows={8}
+                          />
+                          <ImageField
+                            label="Kapak Görseli"
+                            value={editingBlogPost.image}
+                            onChange={(v) => setEditingBlogPost({ ...editingBlogPost, image: v })}
+                          />
+                          <div>
+                            <label className="block text-xs font-medium text-gray-400 mb-2">Durum</label>
+                            <select
+                              value={editingBlogPost.status}
+                              onChange={(e) => setEditingBlogPost({ ...editingBlogPost, status: e.target.value as "draft" | "published" })}
+                              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#d4af37]"
+                            >
+                              <option value="draft">Taslak</option>
+                              <option value="published">Yayında</option>
+                            </select>
+                          </div>
+                          <div className="pt-4">
+                            <button
+                              onClick={handleUpdateBlogPost}
+                              disabled={saving}
+                              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c9a432] disabled:opacity-50"
+                            >
+                              <FiSave size={18} />
+                              {saving ? "Kaydediliyor..." : "Kaydet"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Section>
+              )}
+
+              {/* BLOG EKLE */}
+              {activeSection === "blog-ekle" && (
+                <Section title="Yeni Blog Yazısı" subtitle="Yeni bir blog yazısı oluştur">
+                  <div className="space-y-4">
+                    <InputField
+                      label="Başlık"
+                      value={newBlogPost.title}
+                      onChange={(v) => {
+                        setNewBlogPost({ ...newBlogPost, title: v });
+                        // Otomatik slug oluştur (sadece boşsa)
+                        if (!newBlogPost.slug || newBlogPost.slug === "") {
+                          const autoSlug = v
+                            .toLowerCase()
+                            .replace(/ı/g, 'i')
+                            .replace(/ğ/g, 'g')
+                            .replace(/ü/g, 'u')
+                            .replace(/ş/g, 's')
+                            .replace(/ö/g, 'o')
+                            .replace(/ç/g, 'c')
+                            .replace(/[^a-z0-9]+/g, '-')
+                            .replace(/^-+|-+$/g, '');
+                          setNewBlogPost(prev => ({ ...prev, slug: autoSlug }));
+                        }
+                      }}
+                      placeholder="Blog yazısı başlığı"
+                    />
+                    <InputField
+                      label="Slug (URL Adresi)"
+                      value={newBlogPost.slug}
+                      onChange={(v) => {
+                        // Slug formatını zorla (küçük harf, tire, rakam)
+                        const cleanSlug = v
+                          .toLowerCase()
+                          .replace(/ı/g, 'i')
+                          .replace(/ğ/g, 'g')
+                          .replace(/ü/g, 'u')
+                          .replace(/ş/g, 's')
+                          .replace(/ö/g, 'o')
+                          .replace(/ç/g, 'c')
+                          .replace(/[^a-z0-9-]/g, '');
+                        setNewBlogPost({ ...newBlogPost, slug: cleanSlug });
+                      }}
+                      placeholder="ornek-blog-yazisi"
+                    />
+                    <InputField
+                      label="Özet"
+                      value={newBlogPost.excerpt}
+                      onChange={(v) => setNewBlogPost({ ...newBlogPost, excerpt: v })}
+                      placeholder="Kısa özet (ana sayfada görünür)"
+                    />
+                    <TextareaField
+                      label="İçerik"
+                      value={newBlogPost.content}
+                      onChange={(v) => setNewBlogPost({ ...newBlogPost, content: v })}
+                      rows={10}
+                    />
+                    <ImageField
+                      label="Kapak Görseli"
+                      value={newBlogPost.image}
+                      onChange={(v) => setNewBlogPost({ ...newBlogPost, image: v })}
+                    />
+                    <div>
+                      <label className="block text-xs font-medium text-gray-400 mb-2">Durum</label>
+                      <select
+                        value={newBlogPost.status}
+                        onChange={(e) => setNewBlogPost({ ...newBlogPost, status: e.target.value as "draft" | "published" })}
+                        className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#d4af37]"
+                      >
+                        <option value="draft">Taslak</option>
+                        <option value="published">Yayınla</option>
+                      </select>
+                    </div>
+                    <div className="pt-4">
+                      <button
+                        onClick={handleAddBlogPost}
+                        disabled={saving || !newBlogPost.title}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c9a432] disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <FiPlus size={18} />
+                        {saving ? "Ekleniyor..." : "Blog Yazısı Ekle"}
+                      </button>
+                    </div>
+                  </div>
+                </Section>
+              )}
+
               {/* MÜCEVHER KATEGORİLERİ */}
               {activeSection === "mucevher-yuzuk" && (
                 <CategorySection
@@ -2028,7 +3730,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "yuzuk" && c.parent_type === "mucevher");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "yuzuk", "mucevher");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2041,7 +3755,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "kolye" && c.parent_type === "mucevher");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "kolye", "mucevher");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2054,7 +3780,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "bileklik" && c.parent_type === "mucevher");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "bileklik", "mucevher");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2067,7 +3805,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "kupe" && c.parent_type === "mucevher");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "kupe", "mucevher");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2080,7 +3830,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "set" && c.parent_type === "mucevher");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "set", "mucevher");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2095,7 +3857,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "gozumun-nuru" && c.parent_type === "koleksiyon");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "gozumun-nuru", "koleksiyon");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2110,7 +3884,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "dogum-gunu" && c.parent_type === "hediye");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "dogum-gunu", "hediye");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2123,7 +3909,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "anneler-gunu" && c.parent_type === "hediye");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "anneler-gunu", "hediye");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2136,7 +3934,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "kadinlar-gunu" && c.parent_type === "hediye");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "kadinlar-gunu", "hediye");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2149,7 +3959,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "ozel-gunler" && c.parent_type === "hediye");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "ozel-gunler", "hediye");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2162,7 +3984,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "yeni-dogan" && c.parent_type === "hediye");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "yeni-dogan", "hediye");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2175,7 +4009,19 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "aksesuar" && c.parent_type === "hediye");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "aksesuar", "hediye");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2190,33 +4036,69 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "tesbih" && c.parent_type === "erkek");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "tesbih", "erkek");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
               {activeSection === "erkek-bileklik" && (
                 <CategorySection
                   title="Erkek Bileklik"
-                  categoryKey="erkek-bileklik"
+                  categoryKey="bileklik"
                   parentType="erkek"
                   content={content}
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "bileklik" && c.parent_type === "erkek");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "bileklik", "erkek");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
               {activeSection === "erkek-yuzuk" && (
                 <CategorySection
                   title="Erkek Yüzük"
-                  categoryKey="erkek-yuzuk"
+                  categoryKey="yuzuk"
                   parentType="erkek"
                   content={content}
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "yuzuk" && c.parent_type === "erkek");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "yuzuk", "erkek");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
@@ -2238,12 +4120,205 @@ export default function AdminPanel() {
                   categories={categories}
                   onUpdate={(field, value) => {
                     const cat = categories.find(c => c.slug === "preloved" && c.parent_type === "preloved");
-                    if (cat) updateCategory(cat.id, field, value);
+                    updateCategory(cat?.id || null, field, value, "preloved", "preloved");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
                   }}
                 />
               )}
 
               {/* İLETİŞİM */}
+              {/* HAKKIMIZDA SAYFASI */}
+              {activeSection === "hakkimizda-sayfa" && (
+                <div className="space-y-6">
+                  {loadingAboutPage ? (
+                    <div className="text-center py-8 text-gray-500">Yükleniyor...</div>
+                  ) : aboutPage ? (
+                    <>
+                      <Section title="Hero Bölümü" subtitle="Sayfa üst kısmı">
+                        <InputField
+                          label="Hero Başlık"
+                          value={aboutPage.heroTitle || ""}
+                          onChange={(v) => setAboutPage({ ...aboutPage, heroTitle: v })}
+                        />
+                        <TextareaField
+                          label="Hero Alt Başlık"
+                          value={aboutPage.heroSubtitle || ""}
+                          onChange={(v) => setAboutPage({ ...aboutPage, heroSubtitle: v })}
+                          rows={3}
+                        />
+                        <ImageField
+                          label="Hero Görsel"
+                          value={aboutPage.heroImage || ""}
+                          onChange={(v) => setAboutPage({ ...aboutPage, heroImage: v })}
+                          folder="pages"
+                        />
+                      </Section>
+
+                      <Section title="Vizyonumuz Bölümü" subtitle="Values (Değerler) bölümü">
+                        <InputField
+                          label="Bölüm Başlığı"
+                          value={aboutPage.valuesTitle || "Vizyonumuz"}
+                          onChange={(v) => setAboutPage({ ...aboutPage, valuesTitle: v })}
+                        />
+                        
+                        <div className="mt-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <label className="block text-xs font-medium text-gray-400">Değerler</label>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newValue = { id: null, title: "", description: "", image: "", sortOrder: aboutValues.length + 1 };
+                                setAboutValues([...aboutValues, newValue]);
+                              }}
+                              className="px-3 py-1.5 bg-[#2a2a2a] text-white rounded text-xs hover:bg-[#3a3a3a] transition-colors flex items-center gap-1"
+                            >
+                              <FiPlus size={12} />
+                              Yeni Değer Ekle
+                            </button>
+                          </div>
+
+                          {loadingAboutValues ? (
+                            <div className="text-center py-4 text-gray-500 text-sm">Yükleniyor...</div>
+                          ) : (
+                            <div className="space-y-4">
+                              {aboutValues.map((value, index) => (
+                                <div key={value.id || index} className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-4">
+                                  <div className="flex items-start justify-between mb-3">
+                                    <span className="text-xs text-gray-500">Değer #{index + 1}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => deleteAboutValue(value.id)}
+                                      className="text-red-400 hover:text-red-300 text-xs"
+                                    >
+                                      <FiTrash2 size={14} />
+                                    </button>
+                                  </div>
+                                  <div className="space-y-3">
+                                    <InputField
+                                      label="Başlık"
+                                      value={value.title || ""}
+                                      onChange={(v) => {
+                                        const updated = [...aboutValues];
+                                        updated[index] = { ...updated[index], title: v };
+                                        setAboutValues(updated);
+                                      }}
+                                    />
+                                    <TextareaField
+                                      label="Açıklama"
+                                      value={value.description || ""}
+                                      onChange={(v) => {
+                                        const updated = [...aboutValues];
+                                        updated[index] = { ...updated[index], description: v };
+                                        setAboutValues(updated);
+                                      }}
+                                      rows={2}
+                                    />
+                                    <ImageField
+                                      label="Görsel"
+                                      value={value.image || ""}
+                                      onChange={(v) => {
+                                        const updated = [...aboutValues];
+                                        updated[index] = { ...updated[index], image: v };
+                                        setAboutValues(updated);
+                                      }}
+                                      folder="pages"
+                                    />
+                                    <div className="flex justify-end">
+                                      <button
+                                        type="button"
+                                        onClick={() => saveAboutValue(value)}
+                                        disabled={saving}
+                                        className="px-4 py-2 bg-[#2a2a2a] text-white rounded text-xs hover:bg-[#3a3a3a] transition-colors disabled:opacity-50"
+                                      >
+                                        {saving ? "Kaydediliyor..." : "Kaydet"}
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                              {aboutValues.length === 0 && (
+                                <div className="text-center py-8 text-gray-500 text-sm">
+                                  Henüz değer eklenmemiş. "Yeni Değer Ekle" butonuna tıklayarak ekleyebilirsiniz.
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </Section>
+
+                      <Section title="Hakkımızda İçeriği" subtitle="Ana metin bölümü">
+                        <TextareaField
+                          label="İçerik"
+                          value={aboutPage.content ? aboutPage.content.replace(/<p>/g, '').replace(/<\/p>/g, '\n').replace(/<br\s*\/?>/gi, '\n').replace(/<ul>/g, '').replace(/<\/ul>/g, '').replace(/<li>/g, '• ').replace(/<\/li>/g, '\n').trim() : ""}
+                          onChange={(v) => {
+                            // Normal metni HTML'e çevir
+                            let htmlContent = v
+                              .split('\n')
+                              .filter(line => line.trim())
+                              .map(line => {
+                                line = line.trim();
+                                // Liste item'i mi kontrol et
+                                if (line.startsWith('• ') || line.startsWith('- ')) {
+                                  return `<li>${line.substring(2)}</li>`;
+                                }
+                                return `<p>${line}</p>`;
+                              })
+                              .join('\n');
+                            
+                            // Liste item'leri varsa <ul> içine al
+                            if (htmlContent.includes('<li>')) {
+                              htmlContent = htmlContent.replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>');
+                              // Ardışık <ul> etiketlerini birleştir
+                              htmlContent = htmlContent.replace(/<\/ul>\s*<ul>/g, '');
+                            }
+                            
+                            setAboutPage({ ...aboutPage, content: htmlContent });
+                          }}
+                          rows={20}
+                          placeholder="Metni buraya yazın. Her satır bir paragraf olacak. Liste için satır başına • veya - kullanın."
+                        />
+                        <p className="text-gray-500 text-xs mt-2">
+                          Her satır otomatik olarak paragrafa dönüştürülür. Liste için satır başına • veya - kullanın.
+                        </p>
+                      </Section>
+
+                      <div className="flex justify-end">
+                        <button
+                          onClick={saveAboutPage}
+                          disabled={saving}
+                          className="px-6 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold text-sm hover:bg-[#c9a432] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                          {saving ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-[#0f0f0f] border-t-transparent rounded-full animate-spin" />
+                              Kaydediliyor...
+                            </>
+                          ) : (
+                            <>
+                              <FiSave size={16} />
+                              Kaydet
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi</div>
+                  )}
+                </div>
+              )}
+
               {activeSection === "iletisim-bilgiler" && (
                 <Section title="İletişim Bilgileri" subtitle="İletişim sayfası içeriği">
                   <InputField
@@ -2273,65 +4348,86 @@ export default function AdminPanel() {
           </div>
 
           {/* Resize Handle */}
-          <div
-            className="hidden lg:flex w-1 bg-[#2a2a2a] hover:bg-[#d4af37] cursor-col-resize items-center justify-center group transition-colors"
-            onMouseDown={() => setIsDragging(true)}
-          >
-            <div className="w-0.5 h-8 bg-[#3a3a3a] group-hover:bg-[#d4af37] rounded-full" />
-          </div>
+          {!previewCollapsed && (
+            <div
+              className="hidden lg:flex w-1 bg-[#2a2a2a] hover:bg-[#d4af37] cursor-col-resize items-center justify-center group transition-colors"
+              onMouseDown={() => setIsDragging(true)}
+            >
+              <div className="w-0.5 h-8 bg-[#3a3a3a] group-hover:bg-[#d4af37] rounded-full" />
+            </div>
+          )}
 
           {/* Live Preview */}
-          <div 
+          <div
             className="hidden lg:flex flex-col bg-[#0a0a0a]"
-            style={{ width: `${previewWidth}%` }}
+            style={{ width: previewCollapsed ? '40px' : `${previewWidth}%` }}
           >
             <div className="flex items-center justify-between px-4 py-2 bg-[#1a1a1a] border-b border-[#2a2a2a]">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400 font-medium">Canlı Önizleme</span>
-                <span className="text-[10px] text-gray-600">({Math.round(previewWidth)}%)</span>
+                {!previewCollapsed && (
+                  <>
+                    <span className="text-xs text-gray-400 font-medium">Canlı Önizleme</span>
+                    <span className="text-[10px] text-gray-600">({Math.round(previewWidth)}%)</span>
+                  </>
+                )}
               </div>
               <div className="flex items-center gap-1">
-                {/* Device Presets */}
-                <button 
-                  onClick={() => setDevice("desktop")} 
-                  className={`p-1.5 rounded transition-colors ${devicePreset === "desktop" ? "bg-[#d4af37] text-[#0f0f0f]" : "text-gray-500 hover:text-white hover:bg-[#2a2a2a]"}`}
-                  title="Masaüstü (65%)"
-                >
-                  <FiMonitor size={14} />
-                </button>
-                <button 
-                  onClick={() => setDevice("tablet")} 
-                  className={`p-1.5 rounded transition-colors ${devicePreset === "tablet" ? "bg-[#d4af37] text-[#0f0f0f]" : "text-gray-500 hover:text-white hover:bg-[#2a2a2a]"}`}
-                  title="Tablet (50%)"
-                >
-                  <FiTablet size={14} />
-                </button>
-                <button 
-                  onClick={() => setDevice("mobile")} 
-                  className={`p-1.5 rounded transition-colors ${devicePreset === "mobile" ? "bg-[#d4af37] text-[#0f0f0f]" : "text-gray-500 hover:text-white hover:bg-[#2a2a2a]"}`}
-                  title="Mobil (25%)"
-                >
-                  <FiSmartphone size={14} />
-                </button>
-                <div className="w-px h-4 bg-[#2a2a2a] mx-1" />
-                <button 
-                  onClick={() => setPreviewKey(prev => prev + 1)} 
+                {/* Collapse/Expand Toggle */}
+                <button
+                  onClick={() => setPreviewCollapsed(!previewCollapsed)}
                   className="p-1.5 text-gray-500 hover:text-white hover:bg-[#2a2a2a] rounded"
-                  title="Yenile"
+                  title={previewCollapsed ? "Önizlemeyi Aç" : "Önizlemeyi Kapat"}
                 >
-                  <FiRefreshCw size={14} />
+                  {previewCollapsed ? <FiEye size={14} /> : <FiEyeOff size={14} />}
                 </button>
+                {!previewCollapsed && (
+                  <>
+                    <div className="w-px h-4 bg-[#2a2a2a] mx-1" />
+                    {/* Device Presets */}
+                    <button
+                      onClick={() => setDevice("desktop")}
+                      className={`p-1.5 rounded transition-colors ${devicePreset === "desktop" ? "bg-[#d4af37] text-[#0f0f0f]" : "text-gray-500 hover:text-white hover:bg-[#2a2a2a]"}`}
+                      title="Masaüstü (65%)"
+                    >
+                      <FiMonitor size={14} />
+                    </button>
+                    <button
+                      onClick={() => setDevice("tablet")}
+                      className={`p-1.5 rounded transition-colors ${devicePreset === "tablet" ? "bg-[#d4af37] text-[#0f0f0f]" : "text-gray-500 hover:text-white hover:bg-[#2a2a2a]"}`}
+                      title="Tablet (50%)"
+                    >
+                      <FiTablet size={14} />
+                    </button>
+                    <button
+                      onClick={() => setDevice("mobile")}
+                      className={`p-1.5 rounded transition-colors ${devicePreset === "mobile" ? "bg-[#d4af37] text-[#0f0f0f]" : "text-gray-500 hover:text-white hover:bg-[#2a2a2a]"}`}
+                      title="Mobil (25%)"
+                    >
+                      <FiSmartphone size={14} />
+                    </button>
+                    <div className="w-px h-4 bg-[#2a2a2a] mx-1" />
+                    <button
+                      onClick={() => setPreviewKey(prev => prev + 1)}
+                      className="p-1.5 text-gray-500 hover:text-white hover:bg-[#2a2a2a] rounded"
+                      title="Yenile"
+                    >
+                      <FiRefreshCw size={14} />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
-            <div className="flex-1 p-4 overflow-hidden flex items-center justify-center">
-              <div className="bg-white rounded-lg overflow-hidden shadow-2xl h-full w-full">
-                <iframe
-                  key={previewKey}
-                  src="/"
-                  className="w-full h-full border-0"
-                />
+            {!previewCollapsed && (
+              <div className="flex-1 p-4 overflow-hidden flex items-center justify-center">
+                <div className="bg-white rounded-lg overflow-hidden shadow-2xl h-full w-full">
+                  <iframe
+                    key={previewKey}
+                    src="/"
+                    className="w-full h-full border-0"
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -2340,211 +4436,6 @@ export default function AdminPanel() {
 }
 
 // Reusable Components
-// Kategori Yönetimi Component
-function CategoryManagementSection({
-  activeSection,
-  categoryMap,
-  products,
-  categoryProducts,
-  loadingCategoryProducts,
-  onProductToggle,
-  onSave,
-  content,
-  updateField,
-}: {
-  activeSection: string;
-  categoryMap: Record<string, { id: number; name: string; slug: string }>;
-  products: Product[];
-  categoryProducts: Record<number, number[]>;
-  loadingCategoryProducts: boolean;
-  onProductToggle: (categoryId: number, productId: number) => void;
-  onSave: (categoryId: number) => void;
-  content: ContentType | null;
-  updateField: (path: string, field: string, value: unknown) => void;
-}) {
-  const category = categoryMap[activeSection];
-  if (!category || !content) return null;
-
-  const selectedProductIds = categoryProducts[category.id] || [];
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // Kategori içeriğini bul
-  const getCategoryContent = () => {
-    const categorySlug = category.slug;
-    
-    // Mücevher kategorileri
-    if (activeSection.startsWith("mucevher-")) {
-      const mucevherCategories = (content.mucevherCategories as Record<string, unknown>) || {};
-      return mucevherCategories[categorySlug] as Record<string, unknown> | undefined;
-    }
-    
-    // Koleksiyon kategorileri
-    if (activeSection.startsWith("koleksiyon-")) {
-      if (categorySlug === "gozumun-nuru") {
-        return content.gozumunNuruCategory as Record<string, unknown> | undefined;
-      }
-    }
-    
-    // Hediye kategorileri
-    if (activeSection.startsWith("hediye-")) {
-      const hediyeCategories = (content.hediyeCategories as Record<string, unknown>) || {};
-      return hediyeCategories[categorySlug] as Record<string, unknown> | undefined;
-    }
-    
-    // Erkek kategorileri
-    if (activeSection.startsWith("erkek-")) {
-      const erkekCategories = (content.erkekCategories as Record<string, unknown>) || {};
-      return erkekCategories[categorySlug] as Record<string, unknown> | undefined;
-    }
-    
-    // Preloved
-    if (activeSection === "preloved-sayfa") {
-      return content.prelovedCategory as Record<string, unknown> | undefined;
-    }
-    
-    return undefined;
-  };
-
-  const categoryContent = getCategoryContent();
-  const categoryPath = activeSection.startsWith("mucevher-") 
-    ? `mucevherCategories.${category.slug}`
-    : activeSection.startsWith("koleksiyon-")
-    ? "gozumunNuruCategory"
-    : activeSection.startsWith("hediye-")
-    ? `hediyeCategories.${category.slug}`
-    : activeSection.startsWith("erkek-")
-    ? `erkekCategories.${category.slug}`
-    : "prelovedCategory";
-
-  const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (p.subtitle && p.subtitle.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
-  return (
-    <div className="space-y-6">
-      {/* Kategori İçerik Ayarları */}
-      <Section title={`${category.name} - Sayfa İçeriği`} subtitle="Kategori sayfası başlık ve açıklamaları">
-        <InputField
-          label="Hero Başlık"
-          value={(categoryContent?.heroTitle as string) || ""}
-          onChange={(v) => updateField(categoryPath, "heroTitle", v)}
-        />
-        <InputField
-          label="Hero Alt Başlık"
-          value={(categoryContent?.heroSubtitle as string) || ""}
-          onChange={(v) => updateField(categoryPath, "heroSubtitle", v)}
-        />
-        <TextareaField
-          label="Hero Açıklama"
-          value={(categoryContent?.heroDescription as string) || ""}
-          onChange={(v) => updateField(categoryPath, "heroDescription", v)}
-          rows={4}
-        />
-        <InputField
-          label="Kategori Liste Başlığı"
-          value={(categoryContent?.categoryTitle as string) || ""}
-          onChange={(v) => updateField(categoryPath, "categoryTitle", v)}
-        />
-      </Section>
-
-      {/* Ürün Seçimi */}
-      <Section title="Ürün Seçimi" subtitle="Bu kategoride gösterilecek ürünleri seçin">
-        <div className="space-y-4">
-          {/* Arama */}
-          <div>
-            <label className="block text-xs font-medium text-gray-400 mb-2">Ürün Ara</label>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Ürün adı veya alt başlık ile ara..."
-              className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#d4af37] transition-colors"
-            />
-          </div>
-
-          {/* Seçili Ürün Sayısı */}
-          <div className="flex items-center justify-between p-3 bg-[#d4af37]/10 rounded-lg border border-[#d4af37]/20">
-            <span className="text-xs text-gray-400">Seçili Ürün Sayısı</span>
-            <span className="text-[#d4af37] font-semibold">{selectedProductIds.length}</span>
-          </div>
-
-          {/* Ürün Listesi */}
-          {loadingCategoryProducts ? (
-            <div className="flex justify-center py-8">
-              <div className="w-8 h-8 border-4 border-[#d4af37] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="bg-[#0f0f0f] rounded-xl p-8 text-center">
-              <FiPackage className="mx-auto text-gray-600 mb-3" size={32} />
-              <p className="text-gray-500 text-sm">
-                {searchTerm ? "Arama sonucu bulunamadı" : "Henüz ürün eklenmemiş"}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-2 max-h-[500px] overflow-y-auto">
-              {filteredProducts.map((product) => {
-                const isSelected = selectedProductIds.includes(product.id || 0);
-                return (
-                  <div
-                    key={product.id}
-                    className={`flex items-center gap-3 p-3 rounded-lg border transition-colors cursor-pointer ${
-                      isSelected
-                        ? "bg-[#d4af37]/10 border-[#d4af37]"
-                        : "bg-[#0f0f0f] border-[#2a2a2a] hover:border-[#3a3a3a]"
-                    }`}
-                    onClick={() => product.id && onProductToggle(category.id, product.id)}
-                  >
-                    {/* Checkbox */}
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                      isSelected
-                        ? "bg-[#d4af37] border-[#d4af37]"
-                        : "border-gray-600"
-                    }`}>
-                      {isSelected && <FiCheck size={12} className="text-[#0f0f0f]" />}
-                    </div>
-
-                    {/* Ürün Görseli */}
-                    <div className="w-12 h-12 rounded-lg bg-[#2a2a2a] overflow-hidden shrink-0">
-                      {product.image ? (
-                        <img
-                          src={product.image.startsWith("data:") ? product.image : (process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}${product.image}` : product.image)}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <FiImage className="text-gray-600" size={16} />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Ürün Bilgileri */}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-white text-sm font-medium truncate">{product.name}</h4>
-                      {product.subtitle && (
-                        <p className="text-gray-500 text-xs truncate">{product.subtitle}</p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Kaydet Butonu */}
-          <button
-            onClick={() => onSave(category.id)}
-            className="w-full bg-[#d4af37] text-[#0f0f0f] py-3 rounded-lg font-semibold text-sm hover:bg-[#c9a432] transition-colors"
-          >
-            Ürün Seçimini Kaydet
-          </button>
-        </div>
-      </Section>
-    </div>
-  );
-}
-
 function Section({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return (
     <div className="space-y-4">
@@ -2566,7 +4457,12 @@ function CategorySection({
   parentType,
   content,
   categories,
-  onUpdate
+  onUpdate,
+  products,
+  categoryProducts,
+  loadingCategoryProducts,
+  onProductToggle,
+  onSave
 }: {
   title: string;
   categoryKey: string;
@@ -2574,8 +4470,15 @@ function CategorySection({
   content: Record<string, unknown>;
   categories: Category[];
   onUpdate: (field: string, value: string) => void;
+  products?: Product[];
+  categoryProducts?: Record<number, number[]>;
+  loadingCategoryProducts?: boolean;
+  onProductToggle?: (categoryId: number, productId: number) => void;
+  onSave?: (categoryId: number) => void;
 }) {
+  const [searchTerm, setSearchTerm] = useState("");
   const category = categories.find(c => c.slug === categoryKey && c.parent_type === parentType);
+  const selectedProductIds = category ? (categoryProducts?.[category.id] || []) : [];
 
   // Content'ten kategori verilerini al (API'den gelen)
   const getCategoryFromContent = () => {
@@ -2599,36 +4502,146 @@ function CategorySection({
 
   const categoryData = getCategoryFromContent();
 
+  const filteredProducts = products?.filter(p =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (p.subtitle && p.subtitle.toLowerCase().includes(searchTerm.toLowerCase()))
+  ) || [];
+
   return (
-    <Section title={title} subtitle="Kategori sayfası içeriği">
-      <ImageUploadField
-        label="Hero Görseli"
-        value={category?.hero_image || (categoryData?.heroImage as string) || ""}
-        onChange={(v) => onUpdate("hero_image", v)}
-        folder="categories"
-      />
-      <InputFieldSimple
-        label="Hero Başlık"
-        value={category?.hero_title || (categoryData?.heroTitle as string) || ""}
-        onChange={(v) => onUpdate("hero_title", v)}
-      />
-      <InputFieldSimple
-        label="Hero Alt Başlık"
-        value={category?.hero_subtitle || (categoryData?.heroSubtitle as string) || ""}
-        onChange={(v) => onUpdate("hero_subtitle", v)}
-      />
-      <TextareaFieldSimple
-        label="Hero Açıklama"
-        value={category?.hero_description || (categoryData?.heroDescription as string) || ""}
-        onChange={(v) => onUpdate("hero_description", v)}
-        rows={3}
-      />
-      <InputFieldSimple
-        label="Liste Başlığı"
-        value={category?.list_title || (categoryData?.categoryTitle as string) || ""}
-        onChange={(v) => onUpdate("list_title", v)}
-      />
-    </Section>
+    <div className="space-y-6">
+      <Section title={title} subtitle="Kategori sayfası içeriği">
+        <ImageUploadField
+          label="Hero Görseli"
+          value={category?.hero_image || (categoryData?.heroImage as string) || ""}
+          onChange={(v) => onUpdate("hero_image", v)}
+          folder="categories"
+        />
+        <InputFieldSimple
+          label="Hero Başlık"
+          value={category?.hero_title || (categoryData?.heroTitle as string) || ""}
+          onChange={(v) => onUpdate("hero_title", v)}
+        />
+        <InputFieldSimple
+          label="Hero Alt Başlık"
+          value={category?.hero_subtitle || (categoryData?.heroSubtitle as string) || ""}
+          onChange={(v) => onUpdate("hero_subtitle", v)}
+        />
+        <TextareaFieldSimple
+          label="Hero Açıklama"
+          value={category?.hero_description || (categoryData?.heroDescription as string) || ""}
+          onChange={(v) => onUpdate("hero_description", v)}
+          rows={3}
+        />
+        <InputFieldSimple
+          label="Liste Başlığı"
+          value={category?.list_title || (categoryData?.categoryTitle as string) || ""}
+          onChange={(v) => onUpdate("list_title", v)}
+        />
+      </Section>
+
+      {/* Ürün Seçimi */}
+      {products && products.length > 0 && onProductToggle && onSave && (
+        <Section title="Ürün Seçimi" subtitle="Bu kategoride gösterilecek ürünleri seçin">
+          <div className="space-y-4">
+            {/* Arama */}
+            <div>
+              <label className="block text-xs font-medium text-gray-400 mb-2">Ürün Ara</label>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Ürün adı veya alt başlık ile ara..."
+                className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#d4af37] transition-colors"
+              />
+            </div>
+
+            {/* Seçili Ürün Sayısı */}
+            <div className="flex items-center justify-between p-3 bg-[#d4af37]/10 rounded-lg border border-[#d4af37]/20">
+              <span className="text-xs text-gray-400">Seçili Ürün Sayısı</span>
+              <span className="text-[#d4af37] font-semibold">{selectedProductIds.length}</span>
+            </div>
+
+            {/* Ürün Listesi */}
+            {loadingCategoryProducts ? (
+              <div className="flex justify-center py-8">
+                <div className="w-8 h-8 border-4 border-[#d4af37] border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="bg-[#0f0f0f] rounded-xl p-8 text-center">
+                <FiPackage className="mx-auto text-gray-600 mb-3" size={32} />
+                <p className="text-gray-500 text-sm">
+                  {searchTerm ? "Arama sonucu bulunamadı" : "Henüz ürün eklenmemiş"}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                {filteredProducts.map((product) => {
+                  const isSelected = selectedProductIds.includes(product.id || 0);
+                  return (
+                    <div
+                      key={product.id}
+                      className={`flex items-center gap-3 p-3 rounded-lg border transition-colors cursor-pointer ${
+                        isSelected
+                          ? "bg-[#d4af37]/10 border-[#d4af37]"
+                          : "bg-[#0f0f0f] border-[#2a2a2a] hover:border-[#3a3a3a]"
+                      }`}
+                      onClick={() => product.id && category && onProductToggle(category.id, product.id)}
+                    >
+                      {/* Checkbox */}
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                        isSelected
+                          ? "bg-[#d4af37] border-[#d4af37]"
+                          : "border-gray-600"
+                      }`}>
+                        {isSelected && <FiCheck size={12} className="text-[#0f0f0f]" />}
+                      </div>
+
+                      {/* Ürün Görseli */}
+                      <div className="w-12 h-12 rounded-lg bg-[#2a2a2a] overflow-hidden shrink-0">
+                        {product.image ? (
+                          <img
+                            src={product.image.startsWith("data:") ? product.image : (process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}${product.image}` : product.image)}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <FiImage className="text-gray-600" size={16} />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Ürün Bilgileri */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-white text-sm font-medium truncate">{product.name}</h4>
+                        {product.subtitle && (
+                          <p className="text-gray-500 text-xs truncate">{product.subtitle}</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Kaydet Butonu */}
+            {category && (
+              <button
+                onClick={() => onSave(category.id)}
+                className="w-full bg-[#d4af37] text-[#0f0f0f] py-3 rounded-lg font-semibold text-sm hover:bg-[#c9a432] transition-colors"
+              >
+                Ürün Seçimini Kaydet
+              </button>
+            )}
+            {!category && (
+              <p className="text-yellow-500 text-sm text-center">
+                Bu kategori henüz veritabanında tanımlanmamış. Önce kategoriyi kaydedin.
+              </p>
+            )}
+          </div>
+        </Section>
+      )}
+    </div>
   );
 }
 
@@ -2751,7 +4764,7 @@ function InputField({ label, value, onChange, placeholder }: { label: string; va
   );
 }
 
-function TextareaField({ label, value, onChange, rows = 4 }: { label: string; value: string; onChange: (v: string) => void; rows?: number }) {
+function TextareaField({ label, value, onChange, rows = 4, placeholder }: { label: string; value: string; onChange: (v: string) => void; rows?: number; placeholder?: string }) {
   return (
     <div>
       <label className="block text-xs font-medium text-gray-400 mb-2">{label}</label>
@@ -2759,6 +4772,7 @@ function TextareaField({ label, value, onChange, rows = 4 }: { label: string; va
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
+        placeholder={placeholder}
         className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-600 focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none resize-none"
       />
     </div>
@@ -2923,6 +4937,203 @@ function ImageField({
           <p className="text-red-400 text-xs flex items-center gap-1">
             <FiAlertCircle size={12} />
             {error}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Galeri Görselleri Bileşeni (Birden fazla görsel)
+function GalleryImagesField({
+  label,
+  images,
+  onChange,
+  folder = "products"
+}: {
+  label: string;
+  images: string[];
+  onChange: (images: string[]) => void;
+  folder?: string;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    setError("");
+
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Dosya türü kontrolü
+        const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+        if (!allowedTypes.includes(file.type)) {
+          setError(`${file.name}: Sadece JPG, PNG, GIF ve WebP dosyaları yüklenebilir`);
+          continue;
+        }
+
+        // Dosya boyutu kontrolü (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          setError(`${file.name}: Dosya boyutu 10MB'dan küçük olmalı`);
+          continue;
+        }
+
+        if (API_URL) {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("folder", folder);
+
+          const response = await fetch(`${API_URL}/api/upload.php`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+          });
+
+          const data = await response.json();
+          if (data.success && data.url) {
+            uploadedUrls.push(data.url);
+          } else {
+            setError(`${file.name}: Yükleme başarısız`);
+          }
+        } else {
+          // Development: Base64'e çevir
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            if (event.target?.result) {
+              uploadedUrls.push(event.target.result as string);
+              if (uploadedUrls.length === files.length) {
+                onChange([...images, ...uploadedUrls]);
+                setUploading(false);
+              }
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      if (API_URL && uploadedUrls.length > 0) {
+        onChange([...images, ...uploadedUrls]);
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      setError("Görsel yüklenirken hata oluştu");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = images.filter((_, i) => i !== index);
+    onChange(newImages);
+  };
+
+  const moveImage = (index: number, direction: "up" | "down") => {
+    const newImages = [...images];
+    if (direction === "up" && index > 0) {
+      [newImages[index], newImages[index - 1]] = [newImages[index - 1], newImages[index]];
+    } else if (direction === "down" && index < newImages.length - 1) {
+      [newImages[index], newImages[index + 1]] = [newImages[index + 1], newImages[index]];
+    }
+    onChange(newImages);
+  };
+
+  return (
+    <div>
+      <label className="block text-xs font-medium text-gray-400 mb-2">{label}</label>
+      <div className="space-y-3">
+        {/* Görsel Listesi */}
+        {images.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {images.map((image, index) => (
+              <div key={index} className="relative group">
+                <div className="aspect-square rounded-lg overflow-hidden bg-[#0f0f0f] border border-[#2a2a2a]">
+                  <img
+                    src={image.startsWith("data:") ? image : (API_URL ? `${API_URL}${image}` : image)}
+                    alt={`Galeri ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => moveImage(index, "up")}
+                    disabled={index === 0}
+                    className="p-1.5 bg-[#2a2a2a] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a]"
+                    title="Yukarı taşı"
+                  >
+                    <FiChevronRight size={14} className="-rotate-90" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="p-1.5 bg-red-500 text-white rounded hover:bg-red-600"
+                    title="Sil"
+                  >
+                    <FiTrash2 size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveImage(index, "down")}
+                    disabled={index === images.length - 1}
+                    className="p-1.5 bg-[#2a2a2a] text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#3a3a3a]"
+                    title="Aşağı taşı"
+                  >
+                    <FiChevronRight size={14} className="rotate-90" />
+                  </button>
+                </div>
+                <div className="absolute top-1 left-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                  {index + 1}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Yükleme Butonu */}
+        <label className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-[#2a2a2a] rounded-lg cursor-pointer hover:border-[#d4af37] transition-colors">
+          {uploading ? (
+            <>
+              <div className="w-4 h-4 border-2 border-[#d4af37] border-t-transparent rounded-full animate-spin" />
+              <span className="text-sm text-gray-400">Yükleniyor...</span>
+            </>
+          ) : (
+            <>
+              <FiPlus size={16} className="text-[#d4af37]" />
+              <span className="text-sm text-gray-400">Görsel Ekle (Birden fazla seçebilirsiniz)</span>
+            </>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleUpload}
+            className="hidden"
+            disabled={uploading}
+          />
+        </label>
+
+        {error && (
+          <p className="text-red-400 text-xs flex items-center gap-1">
+            <FiAlertCircle size={12} />
+            {error}
+          </p>
+        )}
+
+        {images.length > 0 && (
+          <p className="text-gray-500 text-xs">
+            {images.length} görsel eklendi. Sıralamayı değiştirmek için görsellerin üzerine gelin.
           </p>
         )}
       </div>

@@ -90,13 +90,23 @@ export default function BlogSection({
           {/* Right Image - 590x690 */}
           <div className="flex-1 relative w-full max-w-[590px]">
             <div className="relative aspect-590/690 w-full overflow-hidden">
-              <Image
-                src={getAssetPath(image)}
-                alt={title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 590px"
-              />
+              {image.startsWith('http') ? (
+                // External URL - use regular img tag
+                <img
+                  src={image}
+                  alt={title}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : (
+                // Local image - use Next Image
+                <Image
+                  src={getAssetPath(image)}
+                  alt={title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 590px"
+                />
+              )}
             </div>
           </div>
         </div>

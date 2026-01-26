@@ -8,7 +8,7 @@ import { useContent } from "@/hooks/useContent";
 
 export default function ErkekYuzukPage() {
   const content = useContent();
-  const category = content.erkekCategories?.["erkek-yuzuk"] || content.erkekYuzukCategory;
+  const category = content.erkekCategories?.yuzuk || content.erkekYuzukCategory;
 
   return (
     <>

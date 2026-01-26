@@ -1,0 +1,37 @@
+====================================
+KATEGORİ ID LİSTESİ
+====================================
+
+CSV dosyanıza ürün eklerken category_id kolonunda
+aşağıdaki ID'lerden birini kullanın:
+
+MÜCEVHER KATEGORİLERİ:
+  1 = Yüzük (mucevher/yuzuk)
+  2 = Kolye (mucevher/kolye)
+  3 = Bileklik (mucevher/bileklik)
+  4 = Küpe (mucevher/kupe)
+  5 = Set (mucevher/set)
+
+ERKEK KATEGORİLERİ:
+  8 = Tesbih (erkek/tesbih)
+  9 = Erkek Bileklik (erkek/bileklik)
+  10 = Erkek Yüzük (erkek/yuzuk)
+
+HEDİYE KATEGORİLERİ:
+  11 = Yeni Doğan (hediye/yeni-dogan)
+  12 = Doğum Günü (hediye/dogum-gunu)
+  13 = Anneler Günü (hediye/anneler-gunu)
+  14 = Kadınlar Günü (hediye/kadinlar-gunu)
+  15 = Özel Günler (hediye/ozel-gunler)
+  16 = Aksesuar (hediye/aksesuar)
+
+DİĞER:
+  6 = Koleksiyon - Gözümün Nuru (koleksiyon/gozumun-nuru)
+  7 = Preloved
+
+NOT: Eğer kategori ID'sini boş bırakırsanız, ürün kategorisiz olarak eklenecektir.
+
+CSV Örnek Satır:
+1;pirlanta-yuzuk;Pırlanta Yüzük;...
+
+(İlk kolon category_id, bu örnekte 1 = Yüzük kategorisi)

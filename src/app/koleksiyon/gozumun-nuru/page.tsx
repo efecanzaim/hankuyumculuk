@@ -8,7 +8,7 @@ import { useContent } from "@/hooks/useContent";
 
 export default function GozumunNuruPage() {
   const content = useContent();
-  const category = content.koleksiyonCategories?.["gozumun-nuru"] || content.gozumunNuruCategory;
+  const category = content.gozumunNuruCategory;
 
   return (
     <>

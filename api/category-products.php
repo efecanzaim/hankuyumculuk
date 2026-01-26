@@ -35,8 +35,11 @@ switch ($method) {
         break;
         
     case 'POST':
+        // Auth gerekli
+        requireAuth();
+        
         // Kategoriye ürün ekle/çıkar
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data = getJsonBody();
         $categoryId = $data['category_id'] ?? null;
         $productIds = $data['product_ids'] ?? [];
         

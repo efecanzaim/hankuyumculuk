@@ -4,6 +4,16 @@ import Image from "next/image";
 import { useState } from "react";
 import { getAssetPath } from "@/utils/paths";
 
+interface Stone {
+  id?: number;
+  stone_type: string;
+  carat: number | string | null;
+  quantity: number;
+  color?: string;
+  clarity?: string;
+  cut?: string;
+}
+
 interface ProductDetailPageProps {
   mainImage: string;
   productName: string;
@@ -11,6 +21,9 @@ interface ProductDetailPageProps {
   description: string;
   bannerImage: string;
   galleryImages: string[];
+  goldWeight?: number | string | null;
+  goldKarat?: number | string | null;
+  stones?: Stone[];
 }
 
 export default function ProductDetailPage({
@@ -20,9 +33,20 @@ export default function ProductDetailPage({
   description,
   bannerImage,
   galleryImages,
+  goldWeight,
+  goldKarat,
+  stones = [],
 }: ProductDetailPageProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = galleryImages.length;
+
+  // Helper function to safely convert to number
+  const toNumber = (value: number | string | null | undefined): number | null => {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number') return value;
+    const parsed = parseFloat(String(value));
+    return isNaN(parsed) ? null : parsed;
+  };
 
   const goToPrevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
@@ -194,6 +218,140 @@ export default function ProductDetailPage({
 
         </div>
       </section>
+
+      {/* Product Specifications Table - Sertifika Bilgileri */}
+      {(goldWeight || goldKarat || (stones && stones.length > 0)) && (
+        <section className="py-[60px] md:py-[100px]">
+          <div className="max-w-[1430px] mx-auto px-6 md:px-8">
+            <div className="flex flex-col items-center">
+              {/* Başlık */}
+              <h2 
+                className="text-[30px] leading-[30px] text-[#2f3237] mb-[20px] text-center"
+                style={{ fontFamily: 'var(--font-faculty-glyphic)' }}
+              >
+                Sertifika Bilgileri
+              </h2>
+              
+              {/* Ürün Adı */}
+              <p 
+                className="text-[29px] leading-[40px] text-[#2f3237] mb-[40px] text-center font-light"
+                style={{ fontFamily: 'var(--font-bw-modelica)' }}
+              >
+                {productTitle}
+              </p>
+
+              {/* Tablo Container */}
+              <div className="w-full max-w-[710px]">
+                {/* Taş Bilgileri Tablosu */}
+                {stones && stones.length > 0 && (
+                  <div className="mb-[40px]">
+                    {/* Tablo Başlıkları */}
+                    <div className="grid grid-cols-6 gap-4 mb-[20px]">
+                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                        Taş
+                      </div>
+                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                        Karat
+                      </div>
+                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                        Adet
+                      </div>
+                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                        Renk
+                      </div>
+                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                        Berraklık
+                      </div>
+                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                        Kesim
+                      </div>
+                    </div>
+
+                    {/* Ayırıcı Çizgi */}
+                    <div className="w-full h-px bg-light mb-[20px]"></div>
+
+                    {/* Taş Satırları */}
+                    {stones.map((stone, index) => (
+                      <div key={index}>
+                        <div className="grid grid-cols-6 gap-4 mb-[20px]">
+                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                            {stone.stone_type}
+                          </div>
+                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                            {(() => {
+                              const caratNum = toNumber(stone.carat);
+                              return caratNum !== null ? caratNum.toFixed(2).replace('.', ',') : '-';
+                            })()}
+                          </div>
+                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                            {stone.quantity}
+                          </div>
+                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                            {stone.color || '-'}
+                          </div>
+                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                            {stone.clarity || '-'}
+                          </div>
+                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                            {stone.cut || '-'}
+                          </div>
+                        </div>
+                        {index < stones.length - 1 && (
+                          <div className="w-full h-px bg-light mb-[20px]"></div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Altın Bilgileri */}
+                {(goldWeight || goldKarat) && (
+                  <div>
+                    {/* Ayırıcı Çizgi */}
+                    {stones && stones.length > 0 && (
+                      <div className="w-full h-px bg-light mb-[20px]"></div>
+                    )}
+                    
+                    {/* Altın Başlıkları */}
+                    <div className="grid grid-cols-2 gap-4 mb-[20px]">
+                      {goldWeight && (
+                        <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                          Altın Ağırlığı
+                        </div>
+                      )}
+                      {goldKarat && (
+                        <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                          Altın Ayar
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Ayırıcı Çizgi */}
+                    <div className="w-full h-px bg-light mb-[20px]"></div>
+
+                    {/* Altın Değerleri */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {goldWeight && (() => {
+                        const weightNum = toNumber(goldWeight);
+                        return weightNum !== null && (
+                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                            {weightNum.toFixed(0)} Gr
+                          </div>
+                        );
+                      })()}
+                      {goldKarat && (
+                        <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                          {goldKarat}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
