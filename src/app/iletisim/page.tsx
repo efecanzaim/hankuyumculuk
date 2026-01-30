@@ -2,7 +2,6 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import TopBanner from "@/components/TopBanner";
 import { useContent } from "@/hooks/useContent";
 import { FiMapPin, FiPhone, FiMail, FiClock, FiInstagram } from "react-icons/fi";
 
@@ -10,19 +9,17 @@ export default function IletisimPage() {
   const content = useContent();
   return (
     <>
-      <TopBanner
-        text={content.topBanner.text}
-        visible={content.topBanner.visible}
-      />
       <Header
         logo={content.header.logo}
         logoAlt={content.header.logoAlt}
         mainNav={content.header.mainNav}
         isHero={false}
         isTransparent={false}
+        bannerText={content.topBanner?.text}
+        bannerVisible={content.topBanner?.visible}
       />
-      
-      <main className="min-h-screen bg-[#faf9f7] pt-[120px] lg:pt-[140px]">
+
+      <main className="min-h-screen bg-[#faf9f7] pt-[170px] lg:pt-[190px]">
         {/* Hero Section */}
         <section className="relative h-[40vh] min-h-[300px] bg-[#2f3237] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-b from-black/30 to-black/50" />
@@ -130,7 +127,7 @@ export default function IletisimPage() {
                           rel="noopener noreferrer"
                           className="text-[#6b7280] hover:text-[#d4af37] transition-colors"
                         >
-                          @gozumunnuruantalya
+                          @gozumunnuru.antalyaantalya
                         </a>
                         <a 
                           href="https://www.instagram.com/hankuyumculuk_" 

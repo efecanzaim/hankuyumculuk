@@ -2,7 +2,6 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import TopBanner from "@/components/TopBanner";
 import { useContent } from "@/hooks/useContent";
 
 export default function BakimGarantiPage() {
@@ -10,19 +9,17 @@ export default function BakimGarantiPage() {
 
   return (
     <>
-      <TopBanner
-        text={content.topBanner.text}
-        visible={content.topBanner.visible}
-      />
       <Header
         logo={content.header.logo}
         logoAlt={content.header.logoAlt}
         mainNav={content.header.mainNav}
         isHero={false}
         isTransparent={false}
+        bannerText={content.topBanner?.text}
+        bannerVisible={content.topBanner?.visible}
       />
-      
-      <main className="min-h-screen bg-white pt-[160px] pb-20">
+
+      <main className="min-h-screen bg-white pt-[210px] pb-20">
         <div className="max-w-[900px] mx-auto px-6 md:px-8">
           {/* Page Title */}
           <h1 className="text-[32px] md:text-[50px] leading-[1.2] text-primary text-center mb-16" style={{ fontFamily: 'var(--font-faculty-glyphic)' }}>

@@ -81,11 +81,11 @@
     "backgroundImage": "/images/parallax-bg.jpg"
   },
   "storySection": {
-    "title": "Zarafetiyle Bir Hikaye",
-    "mainText": "Han Kuyumculuk, bir pırlantadan çok daha fazlasını temsil eder; değer verilen kişiyi, paylaşılan özel anları ve kalpten gelen duyguları ışığa dönüştüren bir semboldür.",
-    "subText": "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
-    "linkText": "Işığın Aşka Dönüştüğü Hikâye",
-    "linkHref": "/hikaye"
+    "title": "Hakkımızda | Han Kuyumculuk",
+    "mainText": "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaat değil; bir disiplin, bir süreklilik ve bir sorumluluk olarak gören köklü bir üretici kuruluştur.\n\nKuruluşundan bu yana geçen yıllar boyunca Han Kuyumculuk, tasarımdan üretime uzanan tüm süreçlerde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır. İstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek markanın karakterini oluşturur.\n\nBugün vitrinlerde görülen, farklı markalar altında sunulan birçok mücevher tasarımının arkasında Han imzası bulunmaktadır. Han Kuyumculuk, çoğu zaman adı görünmeden; ancak işçiliği, oranı ve detay diliyle kendini belli eden bir üretici olarak sektörde güçlü bir yer edinmiştir.",
+    "subText": "Han, üretici kimliğiyle var olur. Tüm koleksiyonlar; alanında uzun yıllar deneyim kazanmış, her biri kendi uzmanlık alanında söz sahibi ekipler tarafından geliştirilir. Pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip uzman kadro, her parçayı teknik doğruluk kadar estetik dengeyle de ele alır. Bu yaklaşım, Han Kuyumculuk'un pırlantada güvenilen ve referans alınan bir marka olarak konumlanmasını sağlamıştır.\n\nÜretimde süreklilik, Han için yalnızca hacim değil; standartların korunması anlamına gelir. Kullanılan hammaddeden işçilik detaylarına, kalite kontrolden son sunuma kadar tüm aşamalar sistematik bir yapı içinde yürütülür. Bu yapı, yıllar içinde edinilen deneyimin kurumsal hafızaya dönüşmüş halidir.\n\nHan Kuyumculuk, hızlı trendlerin peşinden gitmek yerine zamansızlığı esas alır. Tasarımlar; dönemsel etkilerden bağımsız, uzun yıllar değerini koruyacak bir estetik anlayışla şekillendirilir. Bu yaklaşım, markanın hem üretici hem de tasarımcı kimliğinin doğal bir sonucudur. Han, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
+    "linkText": "Tam Hakkımızda Sayfasını Ziyaret Et",
+    "linkHref": "/hakkimizda"
   },
   "featuredProductsSection": {
     "titlePart1": "SİZE ÖZEL",
@@ -750,6 +750,14 @@
       "heroDescription": "Ele baktıkça değişen bir his.\nBazen alışkanlık, bazen ağırlık gibi.\nSöze gelmeyen bir yerden.\nNe anlatmak istiyor, ne saklamak.\nSadece duruyor…",
       "categoryTitle": "ERKEK YÜZÜKLERİ",
       "products": []
+    },
+    "kol": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Erkek Kol",
+      "heroSubtitle": "Stil ve rahatlığın mükemmel birleşimi.",
+      "heroDescription": "Erkekler için tasarlanmış\nzaif ve konforlu kol ürünleri.",
+      "categoryTitle": "ERKEK KOL",
+      "products": []
     }
   },
   "prelovedCategory": {
@@ -814,55 +822,40 @@
     "heroSubtitle": "Sevdiklerinize özel, anlam dolu tasarımlar.",
     "heroDescription": "Gözümün Nuru koleksiyonu,\nsevgi ve değerin sembolü\nolarak tasarlandı.",
     "categoryTitle": "GÖZÜMÜN NURU",
-    "products": []
-  },
-  "dogumGunuCategory": {
-    "heroImage": "/images/hediye-menu-hero.jpg",
-    "heroTitle": "Doğum Günü",
-    "heroSubtitle": "Özel günler için özel hediyeler.",
-    "heroDescription": "Sevdiklerinizin doğum gününü\nunutulmaz kılacak\nhediye seçenekleri.",
-    "categoryTitle": "DOĞUM GÜNÜ HEDİYELERİ",
-    "products": []
-  },
-  "annelerGunuCategory": {
-    "heroImage": "/images/hediye-menu-hero.jpg",
-    "heroTitle": "Anneler Günü",
-    "heroSubtitle": "Annenize özel, sevgi dolu hediyeler.",
-    "heroDescription": "Anneler Günü'nde\nsevginizi en güzel şekilde\nifade edin.",
-    "categoryTitle": "ANNELER GÜNÜ HEDİYELERİ",
-    "products": []
-  },
-  "kadinlarGunuCategory": {
-    "heroImage": "/images/hediye-menu-hero.jpg",
-    "heroTitle": "Kadınlar Günü",
-    "heroSubtitle": "Güçlü kadınlara özel tasarımlar.",
-    "heroDescription": "8 Mart Kadınlar Günü için\nanlamlı ve zarif\nhediye seçenekleri.",
-    "categoryTitle": "KADINLAR GÜNÜ HEDİYELERİ",
-    "products": []
-  },
-  "ozelGunlerCategory": {
-    "heroImage": "/images/hediye-menu-hero.jpg",
-    "heroTitle": "Özel Günler",
-    "heroSubtitle": "Her özel an için mükemmel hediye.",
-    "heroDescription": "Yıldönümleri, nişanlar,\nve tüm özel anlarınız için\nhediye önerileri.",
-    "categoryTitle": "ÖZEL GÜN HEDİYELERİ",
-    "products": []
-  },
-  "yeniDoganCategory": {
-    "heroImage": "/images/hediye-menu-hero.jpg",
-    "heroTitle": "Yeni Doğan",
-    "heroSubtitle": "Minik melekler için özel hediyeler.",
-    "heroDescription": "Yeni doğan bebekler için\nşirin ve anlamlı\nhediye seçenekleri.",
-    "categoryTitle": "YENİ DOĞAN HEDİYELERİ",
-    "products": []
-  },
-  "aksesuarCategory": {
-    "heroImage": "/images/hediye-menu-hero.jpg",
-    "heroTitle": "Aksesuar",
-    "heroSubtitle": "Tarzınızı tamamlayan detaylar.",
-    "heroDescription": "Kol düğmeleri, broşlar\nve daha fazlası...\nAksesuar koleksiyonumuzu keşfedin.",
-    "categoryTitle": "AKSESUAR",
-    "products": []
+    "products": [
+      {
+        "id": 1001,
+        "name": "Harmony Yüzük",
+        "subtitle": "Sevginin temeli",
+        "description": "Zamansız tasarım, modern zarif çizgiler...",
+        "image": "/images/products/product-1.jpg",
+        "category": "YÜZÜK"
+      },
+      {
+        "id": 1002,
+        "name": "Işık Bileklik",
+        "subtitle": "Bağlılığın sembolü",
+        "description": "Elinizde taşıdığınız sevgi, hareket ettikçe parıldayan...",
+        "image": "/images/products/product-2.jpg",
+        "category": "BİLEKLİK"
+      },
+      {
+        "id": 1003,
+        "name": "Yakınlık Kolye",
+        "subtitle": "Göğsüne yakın sevgi",
+        "description": "Kalbinize en yakın yerinde duran, anlam yüklü bir parça...",
+        "image": "/images/products/product-3.jpg",
+        "category": "KOLYE"
+      },
+      {
+        "id": 1004,
+        "name": "Değer Küpe",
+        "subtitle": "Yüze yakın söz",
+        "description": "Yüzün en güzel çerçevesini oluşturan, incelikli tasarım...",
+        "image": "/images/products/product-4.jpg",
+        "category": "KÜPE"
+      }
+    ]
   },
   "tesbihCategory": {
     "heroImage": "/images/erkek-menu-hero.jpg",
@@ -886,6 +879,14 @@
     "heroSubtitle": "Güç ve zarafetin buluşması.",
     "heroDescription": "Erkekler için tasarlanmış\nşık ve kaliteli yüzükler.",
     "categoryTitle": "ERKEK YÜZÜK",
+    "products": []
+  },
+  "erkekKolCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Erkek Kol",
+    "heroSubtitle": "Stil ve rahatlığın mükemmel birleşimi.",
+    "heroDescription": "Erkekler için tasarlanmış\nzaif ve konforlu kol ürünleri.",
+    "categoryTitle": "ERKEK KOL",
     "products": []
   },
   "footer": {

@@ -82,18 +82,18 @@ export default function ProductListingPage({
           {/* Filter Bar */}
           <div className="flex items-center justify-between mb-[20px]">
             {/* Product Count */}
-            <p className="text-[13px] font-medium text-[#2f3237]">
+            <p className="text-[13px] font-medium text-[#2f3237] shrink-0">
               {totalProducts} Ürün bulunmaktadır
             </p>
 
-            {/* Separator Line with Active Indicator */}
-            <div className="flex-1 mx-8 relative">
+            {/* Separator Line with Active Indicator - Hidden on mobile */}
+            <div className="hidden md:block flex-1 mx-8 relative">
               <div className="w-full h-px bg-primary" />
               <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[350px] h-[2px] bg-[#2f3237]" />
             </div>
 
             {/* Filter Button */}
-            <button className="text-[13px] font-medium text-[#2f3237] hover:opacity-70 transition-opacity">
+            <button className="text-[13px] font-medium text-[#2f3237] hover:opacity-70 transition-opacity shrink-0">
               Ürünleri filtrele
             </button>
           </div>
@@ -111,7 +111,12 @@ export default function ProductListingPage({
                 className="group block"
               >
                 {/* Product Image */}
-                <div className="relative aspect-square w-full overflow-hidden bg-[#f5f5f5]">
+                <div 
+                  className="relative aspect-square w-full overflow-hidden bg-[#ffffff]"
+                  style={{
+                    boxShadow: 'inset 0 0 40px 20px rgba(252, 252, 252, 0.8)'
+                  }}
+                >
                   <Image
                     src={getAssetPath(product.image)}
                     alt={product.name}

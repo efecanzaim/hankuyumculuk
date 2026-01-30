@@ -21,20 +21,21 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topBannerVisible, setTopBannerVisible] = useState(bannerVisible);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [mobileActiveDropdown, setMobileActiveDropdown] = useState<string | null>(null);
 
   // Menü açıkken scroll'u engelle
   useEffect(() => {
-    if (activeMenu) {
+    if (activeMenu || mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-    
+
     // Cleanup
     return () => {
       document.body.style.overflow = '';
     };
-  }, [activeMenu]);
+  }, [activeMenu, mobileMenuOpen]);
 
   const toggleMobileMenu = useCallback(() => {
     setMobileMenuOpen(prev => !prev);
@@ -62,7 +63,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
       )}
 
       {/* Main Header */}
-      <header className={`${isBlogPage ? 'relative' : 'absolute'} left-0 right-0 z-50 ${isBlogPage ? 'bg-[#f5f5f5]' : 'bg-transparent'} transition-all duration-300 ${!isBlogPage && topBannerVisible ? 'top-[50px]' : isBlogPage ? '' : 'top-0'}`}>
+      <header className={`${isBlogPage ? 'relative' : 'absolute'} left-0 right-0 z-50 ${isBlogPage ? 'bg-[#f5f5f5]' : isTransparent ? 'bg-transparent' : 'bg-white'} transition-all duration-300 ${!isBlogPage && topBannerVisible && bannerText ? 'top-[50px]' : isBlogPage ? '' : 'top-0'}`}>
         {/* Desktop Header */}
         <div className="hidden lg:block">
           {/* Top Row - Logo and Side Links */}
@@ -189,21 +190,12 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               SİZE ÖZEL
             </Link>
 
-            {/* HEDİYE Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setActiveMenu('hediye')}
+            <Link
+              href="/hediye"
+              className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
             >
-              <span
-                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-default ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
-              >
-                HEDİYE
-              </span>
-              {/* Active Menu Underline */}
-              {activeMenu === 'hediye' && (
-                <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
-              )}
-            </div>
+              HEDİYE
+            </Link>
 
             {/* ERKEKLERE ÖZEL Dropdown */}
             <div
@@ -265,76 +257,201 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             </Link>
           </div>
 
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className={`px-6 py-6 ${isTransparent ? 'bg-[rgba(47,50,55,0.95)]' : 'bg-white border-t border-primary'}`}>
-              <nav className="flex flex-col gap-4">
-                <span
-                  className={`text-[15px] font-normal py-2 opacity-50 cursor-default ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-                >
-                  MÜCEVHER
-                </span>
-                <span
-                  className={`text-[15px] font-normal py-2 opacity-50 cursor-default ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-                >
-                  KOLEKSİYON
-                </span>
-                <Link
-                  href="/ozel-tasarim"
-                  className={`text-[15px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-                  onClick={toggleMobileMenu}
-                >
-                  SİZE ÖZEL
-                </Link>
-                <span
-                  className={`text-[15px] font-normal py-2 opacity-50 cursor-default ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-                >
-                  HEDİYE
-                </span>
-                <span
-                  className={`text-[15px] font-normal py-2 opacity-50 cursor-default ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-                >
-                  ERKEKLERE ÖZEL
-                </span>
+        </div>
+
+        {/* Mobile Menu - Slide from left */}
+        <div
+          className={`lg:hidden fixed inset-0 z-[100] transition-opacity duration-300 ${
+            mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={toggleMobileMenu}
+          />
+
+          {/* Menu Panel */}
+          <div
+            className={`absolute top-0 left-0 h-full w-full bg-white transform transition-transform duration-300 ease-out ${
+              mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+            }`}
+          >
+            {/* Menu Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+              <Link href="/" onClick={toggleMobileMenu}>
+                <Image
+                  src={getAssetPath("/images/han-logo.svg")}
+                  alt="Han Logo"
+                  width={80}
+                  height={30}
+                  className="h-[28px] w-auto"
+                  style={{ filter: 'brightness(0) saturate(100%) invert(18%) sepia(5%) saturate(412%) hue-rotate(169deg) brightness(95%) contrast(89%)' }}
+                />
+              </Link>
+              <button
+                onClick={toggleMobileMenu}
+                className="text-[#2f3237] p-1"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Menu Content */}
+            <div className="overflow-y-auto h-[calc(100%-70px)]">
+              <nav className="px-6 py-4">
+                {/* MÜCEVHER Dropdown */}
+                <div className="border-b border-gray-100">
+                  <button
+                    onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'mucevher' ? null : 'mucevher')}
+                    className="flex items-center justify-between w-full py-4 text-[15px] font-medium text-[#2f3237]"
+                  >
+                    MÜCEVHER
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-200 ${mobileActiveDropdown === 'mucevher' ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'mucevher' ? 'max-h-[300px]' : 'max-h-0'}`}>
+                    <div className="pb-4 pl-4 flex flex-col gap-3">
+                      <Link href="/mucevher/yuzuk" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Yüzük</Link>
+                      <Link href="/mucevher/kolye" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Kolye</Link>
+                      <Link href="/mucevher/bileklik" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Bileklik</Link>
+                      <Link href="/mucevher/kupe" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Küpe</Link>
+                      <Link href="/mucevher/set" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Set</Link>
+                    </div>
+                  </div>
+                </div>
+
+                {/* KOLEKSİYON Dropdown */}
+                <div className="border-b border-gray-100">
+                  <button
+                    onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'koleksiyon' ? null : 'koleksiyon')}
+                    className="flex items-center justify-between w-full py-4 text-[15px] font-medium text-[#2f3237]"
+                  >
+                    KOLEKSİYON
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'max-h-[300px]' : 'max-h-0'}`}>
+                    <div className="pb-4 pl-4 flex flex-col gap-3">
+                      <Link href="/koleksiyon/gozumun-nuru" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Gözümün Nuru</Link>
+                    </div>
+                  </div>
+                </div>
+
+                {/* PRELOVED */}
                 <Link
                   href="/preloved"
-                  className={`text-[15px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  className="block py-4 text-[15px] font-medium text-[#2f3237] border-b border-gray-100"
                   onClick={toggleMobileMenu}
                 >
                   PRELOVED
                 </Link>
-                <div className={`border-t my-4 ${isTransparent ? 'border-white/20' : 'border-primary'}`} />
+
+                {/* SİZE ÖZEL */}
+                <Link
+                  href="/ozel-tasarim"
+                  className="block py-4 text-[15px] font-medium text-[#2f3237] border-b border-gray-100"
+                  onClick={toggleMobileMenu}
+                >
+                  SİZE ÖZEL
+                </Link>
+
+                {/* HEDİYE */}
+                <Link
+                  href="/hediye"
+                  className="block py-4 text-[15px] font-medium text-[#2f3237] border-b border-gray-100"
+                  onClick={toggleMobileMenu}
+                >
+                  HEDİYE
+                </Link>
+
+                {/* ERKEKLERE ÖZEL Dropdown */}
+                <div className="border-b border-gray-100">
+                  <button
+                    onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'erkek' ? null : 'erkek')}
+                    className="flex items-center justify-between w-full py-4 text-[15px] font-medium text-[#2f3237]"
+                  >
+                    ERKEKLERE ÖZEL
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-200 ${mobileActiveDropdown === 'erkek' ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'erkek' ? 'max-h-[300px]' : 'max-h-0'}`}>
+                    <div className="pb-4 pl-4 flex flex-col gap-3">
+                      <Link href="/erkek/tesbih" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Tesbih</Link>
+                      <Link href="/erkek/bileklik" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Bileklik</Link>
+                      <Link href="/erkek/yuzuk" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Yüzük</Link>
+                      <Link href="/erkek/kol" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Kol</Link>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="my-4" />
+
+                {/* Secondary Links */}
                 <Link
                   href="/randevu"
-                  className={`text-[13px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  className="block py-3 text-[13px] text-[#2f3237]/70"
                   onClick={toggleMobileMenu}
                 >
                   RANDEVU OLUŞTURUN
                 </Link>
                 <Link
                   href="/hakkimizda"
-                  className={`text-[13px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  className="block py-3 text-[13px] text-[#2f3237]/70"
                   onClick={toggleMobileMenu}
                 >
                   Kurumsal
                 </Link>
                 <Link
                   href="/iletisim"
-                  className={`text-[13px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  className="block py-3 text-[13px] text-[#2f3237]/70"
                   onClick={toggleMobileMenu}
                 >
                   İletişim
                 </Link>
                 <Link
                   href="/blog"
-                  className={`text-[13px] font-normal py-2 ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  className="block py-3 text-[13px] text-[#2f3237]/70"
                   onClick={toggleMobileMenu}
                 >
                   Blog
                 </Link>
+
+                {/* Instagram */}
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                  <Link
+                    href="https://www.instagram.com/gozumunnuruantalya"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-[13px] text-[#2f3237]/70"
+                    onClick={toggleMobileMenu}
+                  >
+                    <Instagram size={18} />
+                    @gozumunnuru.antalyaantalya
+                  </Link>
+                </div>
               </nav>
             </div>
-          )}
+          </div>
         </div>
       </header>
 
@@ -403,37 +520,6 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                   </Link>
                 </div>
               )}
-
-              {/* HEDİYE Menu */}
-              {activeMenu === 'hediye' && (
-                <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
-                  <Link href="/hediye/dogum-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Doğum Günü
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/hediye/anneler-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Anneler Günü
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/hediye/kadinlar-gunu" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Kadınlar Günü
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/hediye/ozel-gunler" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Özel Günler
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/hediye/yeni-dogan" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Yeni Doğan
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                  <Link href="/hediye/aksesuar" className="group flex items-center gap-4 hover:font-bold transition-all">
-                    Aksesuar
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                </div>
-              )}
-
               {/* ERKEKLERE ÖZEL Menu */}
               {activeMenu === 'erkek' && (
                 <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
@@ -447,6 +533,10 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                   </Link>
                   <Link href="/erkek/yuzuk" className="group flex items-center gap-4 hover:font-bold transition-all">
                     Yüzük
+                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                  <Link href="/erkek/kol" className="group flex items-center gap-4 hover:font-bold transition-all">
+                    Kol
                     <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import ProductListingPage from "@/components/ProductListingPage";
-import TopBanner from "@/components/TopBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useContent } from "@/hooks/useContent";
@@ -12,15 +11,13 @@ export default function KolyePage() {
 
   return (
     <>
-      <TopBanner
-        text={content.topBanner.text}
-        visible={content.topBanner.visible}
-      />
       <Header
         logo={content.header.logo}
         logoAlt={content.header.logoAlt}
         mainNav={content.header.mainNav}
         isHero={false}
+        bannerText={content.topBanner?.text}
+        bannerVisible={content.topBanner?.visible}
       />
       <ProductListingPage
         heroImage={category.heroImage}

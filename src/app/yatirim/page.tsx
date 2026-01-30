@@ -16,6 +16,8 @@ export default function YatirimPage() {
         mainNav={content.header.mainNav}
         isHero={false}
         isTransparent={false}
+        bannerText={content.topBanner?.text}
+        bannerVisible={content.topBanner?.visible}
       />
       <CategoryPage
         category="yatırım"

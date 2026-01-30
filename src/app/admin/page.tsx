@@ -600,15 +600,10 @@ export default function AdminPanel() {
           { key: "kupe_category", value: content?.kupeCategory },
           { key: "set_category", value: content?.setCategory },
           { key: "gozumun_nuru_category", value: content?.gozumunNuruCategory },
-          { key: "dogum_gunu_category", value: content?.dogumGunuCategory },
-          { key: "anneler_gunu_category", value: content?.annelerGunuCategory },
-          { key: "kadinlar_gunu_category", value: content?.kadinlarGunuCategory },
-          { key: "ozel_gunler_category", value: content?.ozelGunlerCategory },
-          { key: "yeni_dogan_category", value: content?.yeniDoganCategory },
-          { key: "aksesuar_category", value: content?.aksesuarCategory },
           { key: "tesbih_category", value: content?.tesbihCategory },
           { key: "erkek_bileklik_category", value: content?.erkekBileklikCategory },
           { key: "erkek_yuzuk_category", value: content?.erkekYuzukCategory },
+          { key: "erkek_kol_category", value: content?.erkekKolCategory },
           // Diğer sayfalar
           { key: "ozel_tasarim_page", value: content?.ozelTasarimPage },
           { key: "preloved_page", value: content?.prelovedPage },
@@ -722,15 +717,10 @@ export default function AdminPanel() {
           { key: "kupeCategory", name: "Küpe", slug: "kupe", parentType: "mucevher" },
           { key: "setCategory", name: "Set", slug: "set", parentType: "mucevher" },
           { key: "gozumunNuruCategory", name: "Gözümün Nuru", slug: "gozumun-nuru", parentType: "koleksiyon" },
-          { key: "dogumGunuCategory", name: "Doğum Günü", slug: "dogum-gunu", parentType: "hediye" },
-          { key: "annelerGunuCategory", name: "Anneler Günü", slug: "anneler-gunu", parentType: "hediye" },
-          { key: "kadinlarGunuCategory", name: "Kadınlar Günü", slug: "kadinlar-gunu", parentType: "hediye" },
-          { key: "ozelGunlerCategory", name: "Özel Günler", slug: "ozel-gunler", parentType: "hediye" },
-          { key: "yeniDoganCategory", name: "Yeni Doğan", slug: "yeni-dogan", parentType: "hediye" },
-          { key: "aksesuarCategory", name: "Aksesuar", slug: "aksesuar", parentType: "hediye" },
           { key: "tesbihCategory", name: "Tesbih", slug: "tesbih", parentType: "erkek" },
           { key: "erkekBileklikCategory", name: "Erkek Bileklik", slug: "bileklik", parentType: "erkek" },
           { key: "erkekYuzukCategory", name: "Erkek Yüzük", slug: "yuzuk", parentType: "erkek" },
+          { key: "erkekKolCategory", name: "Erkek Kol", slug: "kol", parentType: "erkek" },
         ];
 
         categoryMap.forEach((catInfo, index) => {
@@ -1207,9 +1197,8 @@ export default function AdminPanel() {
             slug: data.slug || "hakkimizda",
             title: data.title || "Hakkımızda",
             heroImage: data.heroImage || "/images/about-hero.jpg",
-            heroTitle: data.heroTitle || "Zarafetiyle Bir Hikaye",
-            heroSubtitle: data.heroSubtitle || "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
-            content: data.content || "",
+            heroTitle: data.heroTitle || "Hakkımızda | Han Kuyumculuk",
+            heroParagraph2: data.heroParagraph2 || "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaatten öte; disiplin, süreklilik ve sorumluluk anlayışıyla ele alan köklü bir üreticidir. Kuruluşundan bu yana tasarımdan üretime uzanan tüm süreçlerinde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır.\n\nİstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek Han'ın karakterini oluşturur. Bugün farklı markalar altında vitrinlerde yer alan birçok mücevher tasarımının arkasında Han imzası bulunur; çoğu zaman adı görünmeden, işçiliği ve detay diliyle kendini belli eder.\n\nTüm koleksiyonlar; pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip, alanında uzman ve istikrarlı ekipler tarafından geliştirilir. Üretimde süreklilik, Han için yalnızca hacim değil; hammaddeden son sunuma kadar standartların titizlikle korunması anlamına gelir.\n\nBugün Han Kuyumculuk;\n• Gücünü yıllara dayanan üretim tecrübesinden,\n• Güvenilirliğini uzman ve istikrarlı ekibinden,\n• Kimliğini ise pırlantada söz sahibi olma kararlılığından alır.\n\nHan, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
             valuesTitle: data.valuesTitle || "Vizyonumuz"
           });
         } else {
@@ -1219,9 +1208,8 @@ export default function AdminPanel() {
             slug: "hakkimizda",
             title: "Hakkımızda",
             heroImage: "/images/about-hero.jpg",
-            heroTitle: "Zarafetiyle Bir Hikaye",
-            heroSubtitle: "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
-            content: "",
+            heroTitle: "Hakkımızda | Han Kuyumculuk",
+            heroParagraph2: "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaatten öte; disiplin, süreklilik ve sorumluluk anlayışıyla ele alan köklü bir üreticidir. Kuruluşundan bu yana tasarımdan üretime uzanan tüm süreçlerinde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır.\n\nİstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek Han'ın karakterini oluşturur. Bugün farklı markalar altında vitrinlerde yer alan birçok mücevher tasarımının arkasında Han imzası bulunur; çoğu zaman adı görünmeden, işçiliği ve detay diliyle kendini belli eder.\n\nTüm koleksiyonlar; pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip, alanında uzman ve istikrarlı ekipler tarafından geliştirilir. Üretimde süreklilik, Han için yalnızca hacim değil; hammaddeden son sunuma kadar standartların titizlikle korunması anlamına gelir.\n\nBugün Han Kuyumculuk;\n• Gücünü yıllara dayanan üretim tecrübesinden,\n• Güvenilirliğini uzman ve istikrarlı ekibinden,\n• Kimliğini ise pırlantada söz sahibi olma kararlılığından alır.\n\nHan, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
             valuesTitle: "Vizyonumuz"
           });
         }
@@ -1232,9 +1220,8 @@ export default function AdminPanel() {
           slug: "hakkimizda",
           title: "Hakkımızda",
           heroImage: "/images/about-hero.jpg",
-          heroTitle: "Zarafetiyle Bir Hikaye",
-          heroSubtitle: "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
-          content: "",
+          heroTitle: "Hakkımızda | Han Kuyumculuk",
+          heroParagraph2: "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaatten öte; disiplin, süreklilik ve sorumluluk anlayışıyla ele alan köklü bir üreticidir. Kuruluşundan bu yana tasarımdan üretime uzanan tüm süreçlerinde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır.\n\nİstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek Han'ın karakterini oluşturur. Bugün farklı markalar altında vitrinlerde yer alan birçok mücevher tasarımının arkasında Han imzası bulunur; çoğu zaman adı görünmeden, işçiliği ve detay diliyle kendini belli eder.\n\nTüm koleksiyonlar; pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip, alanında uzman ve istikrarlı ekipler tarafından geliştirilir. Üretimde süreklilik, Han için yalnızca hacim değil; hammaddeden son sunuma kadar standartların titizlikle korunması anlamına gelir.\n\nBugün Han Kuyumculuk;\n• Gücünü yıllara dayanan üretim tecrübesinden,\n• Güvenilirliğini uzman ve istikrarlı ekibinden,\n• Kimliğini ise pırlantada söz sahibi olma kararlılığından alır.\n\nHan, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
           valuesTitle: "Vizyonumuz"
         });
       }
@@ -1246,9 +1233,8 @@ export default function AdminPanel() {
         slug: "hakkimizda",
         title: "Hakkımızda",
         heroImage: "/images/about-hero.jpg",
-        heroTitle: "Zarafetiyle Bir Hikaye",
-        heroSubtitle: "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
-        content: "",
+        heroTitle: "Hakkımızda | Han Kuyumculuk",
+        heroParagraph2: "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaatten öte; disiplin, süreklilik ve sorumluluk anlayışıyla ele alan köklü bir üreticidir. Kuruluşundan bu yana tasarımdan üretime uzanan tüm süreçlerinde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır.\n\nİstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek Han'ın karakterini oluşturur. Bugün farklı markalar altında vitrinlerde yer alan birçok mücevher tasarımının arkasında Han imzası bulunur; çoğu zaman adı görünmeden, işçiliği ve detay diliyle kendini belli eder.\n\nTüm koleksiyonlar; pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip, alanında uzman ve istikrarlı ekipler tarafından geliştirilir. Üretimde süreklilik, Han için yalnızca hacim değil; hammaddeden son sunuma kadar standartların titizlikle korunması anlamına gelir.\n\nBugün Han Kuyumculuk;\n• Gücünü yıllara dayanan üretim tecrübesinden,\n• Güvenilirliğini uzman ve istikrarlı ekibinden,\n• Kimliğini ise pırlantada söz sahibi olma kararlılığından alır.\n\nHan, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
         valuesTitle: "Vizyonumuz"
       });
     } finally {
@@ -1752,16 +1738,11 @@ export default function AdminPanel() {
       "mucevher-kupe": 4,
       "mucevher-set": 5,
       "koleksiyon-gozumun-nuru": 6,
-      "hediye-dogum-gunu": 7,
-      "hediye-anneler-gunu": 8,
-      "hediye-kadinlar-gunu": 9,
-      "hediye-ozel-gunler": 10,
-      "hediye-yeni-dogan": 11,
-      "hediye-aksesuar": 12,
       "erkek-tesbih": 13,
       "erkek-bileklik": 14,
       "erkek-yuzuk": 15,
-      "preloved": 16,
+      "erkek-kol": 16,
+      "preloved": 17,
     };
     
     const categoryId = categoryMap[activeSection];
@@ -1812,12 +1793,7 @@ export default function AdminPanel() {
       label: "Hediye",
       icon: FiGift,
       subItems: [
-        { key: "hediye-dogum-gunu", label: "Doğum Günü" },
-        { key: "hediye-anneler-gunu", label: "Anneler Günü" },
-        { key: "hediye-kadinlar-gunu", label: "Kadınlar Günü" },
-        { key: "hediye-ozel-gunler", label: "Özel Günler" },
-        { key: "hediye-yeni-dogan", label: "Yeni Doğan" },
-        { key: "hediye-aksesuar", label: "Aksesuar" },
+        { key: "hediye-sayfa", label: "Sayfa İçeriği" },
       ]
     },
     {
@@ -1828,6 +1804,7 @@ export default function AdminPanel() {
         { key: "erkek-tesbih", label: "Tesbih" },
         { key: "erkek-bileklik", label: "Bileklik" },
         { key: "erkek-yuzuk", label: "Yüzük" },
+        { key: "erkek-kol", label: "Kol" },
       ]
     },
     {
@@ -3875,155 +3852,10 @@ export default function AdminPanel() {
               )}
 
               {/* HEDİYE KATEGORİLERİ */}
-              {activeSection === "hediye-dogum-gunu" && (
-                <CategorySection
-                  title="Doğum Günü"
-                  categoryKey="dogum-gunu"
-                  parentType="hediye"
-                  content={content}
-                  categories={categories}
-                  onUpdate={(field, value) => {
-                    const cat = categories.find(c => c.slug === "dogum-gunu" && c.parent_type === "hediye");
-                    updateCategory(cat?.id || null, field, value, "dogum-gunu", "hediye");
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
-                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                />
-              )}
-              {activeSection === "hediye-anneler-gunu" && (
-                <CategorySection
-                  title="Anneler Günü"
-                  categoryKey="anneler-gunu"
-                  parentType="hediye"
-                  content={content}
-                  categories={categories}
-                  onUpdate={(field, value) => {
-                    const cat = categories.find(c => c.slug === "anneler-gunu" && c.parent_type === "hediye");
-                    updateCategory(cat?.id || null, field, value, "anneler-gunu", "hediye");
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
-                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                />
-              )}
-              {activeSection === "hediye-kadinlar-gunu" && (
-                <CategorySection
-                  title="Kadınlar Günü"
-                  categoryKey="kadinlar-gunu"
-                  parentType="hediye"
-                  content={content}
-                  categories={categories}
-                  onUpdate={(field, value) => {
-                    const cat = categories.find(c => c.slug === "kadinlar-gunu" && c.parent_type === "hediye");
-                    updateCategory(cat?.id || null, field, value, "kadinlar-gunu", "hediye");
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
-                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                />
-              )}
-              {activeSection === "hediye-ozel-gunler" && (
-                <CategorySection
-                  title="Özel Günler"
-                  categoryKey="ozel-gunler"
-                  parentType="hediye"
-                  content={content}
-                  categories={categories}
-                  onUpdate={(field, value) => {
-                    const cat = categories.find(c => c.slug === "ozel-gunler" && c.parent_type === "hediye");
-                    updateCategory(cat?.id || null, field, value, "ozel-gunler", "hediye");
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
-                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                />
-              )}
-              {activeSection === "hediye-yeni-dogan" && (
-                <CategorySection
-                  title="Yeni Doğan"
-                  categoryKey="yeni-dogan"
-                  parentType="hediye"
-                  content={content}
-                  categories={categories}
-                  onUpdate={(field, value) => {
-                    const cat = categories.find(c => c.slug === "yeni-dogan" && c.parent_type === "hediye");
-                    updateCategory(cat?.id || null, field, value, "yeni-dogan", "hediye");
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
-                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                />
-              )}
-              {activeSection === "hediye-aksesuar" && (
-                <CategorySection
-                  title="Aksesuar"
-                  categoryKey="aksesuar"
-                  parentType="hediye"
-                  content={content}
-                  categories={categories}
-                  onUpdate={(field, value) => {
-                    const cat = categories.find(c => c.slug === "aksesuar" && c.parent_type === "hediye");
-                    updateCategory(cat?.id || null, field, value, "aksesuar", "hediye");
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
-                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                />
+              {activeSection === "hediye-sayfa" && (
+                <Section title="Hediye" subtitle="Hediye sayfası içeriği">
+                  <p className="text-gray-500 text-sm">Bu sayfa ana hediye sayfası olarak gösterilmektedir.</p>
+                </Section>
               )}
 
               {/* ERKEKLERE ÖZEL KATEGORİLERİ */}
@@ -4102,6 +3934,31 @@ export default function AdminPanel() {
                   }}
                 />
               )}
+              {activeSection === "erkek-kol" && (
+                <CategorySection
+                  title="Erkek Kol"
+                  categoryKey="kol"
+                  parentType="erkek"
+                  content={content}
+                  categories={categories}
+                  onUpdate={(field, value) => {
+                    const cat = categories.find(c => c.slug === "kol" && c.parent_type === "erkek");
+                    updateCategory(cat?.id || null, field, value, "kol", "erkek");
+                  }}
+                  products={products}
+                  categoryProducts={categoryProducts}
+                  loadingCategoryProducts={loadingCategoryProducts}
+                  onProductToggle={(categoryId, productId) => {
+                    const current = categoryProducts[categoryId] || [];
+                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                  }}
+                  onSave={(categoryId) => {
+                    const productIds = categoryProducts[categoryId] || [];
+                    saveCategoryProducts(categoryId, productIds);
+                  }}
+                />
+              )}
 
               {/* SİZE ÖZEL (ÖZEL TASARIM) */}
               {activeSection === "ozel-tasarim-sayfa" && (
@@ -4152,10 +4009,11 @@ export default function AdminPanel() {
                           onChange={(v) => setAboutPage({ ...aboutPage, heroTitle: v })}
                         />
                         <TextareaField
-                          label="Hero Alt Başlık"
-                          value={aboutPage.heroSubtitle || ""}
-                          onChange={(v) => setAboutPage({ ...aboutPage, heroSubtitle: v })}
-                          rows={3}
+                          label="Hero Detay Metin"
+                          value={aboutPage.heroParagraph2 || ""}
+                          onChange={(v) => setAboutPage({ ...aboutPage, heroParagraph2: v })}
+                          rows={15}
+                          placeholder="Detaylı hakkımızda metni. Paragraflar arasında boş satır bırakın."
                         />
                         <ImageField
                           label="Hero Görsel"
@@ -4255,42 +4113,6 @@ export default function AdminPanel() {
                             </div>
                           )}
                         </div>
-                      </Section>
-
-                      <Section title="Hakkımızda İçeriği" subtitle="Ana metin bölümü">
-                        <TextareaField
-                          label="İçerik"
-                          value={aboutPage.content ? aboutPage.content.replace(/<p>/g, '').replace(/<\/p>/g, '\n').replace(/<br\s*\/?>/gi, '\n').replace(/<ul>/g, '').replace(/<\/ul>/g, '').replace(/<li>/g, '• ').replace(/<\/li>/g, '\n').trim() : ""}
-                          onChange={(v) => {
-                            // Normal metni HTML'e çevir
-                            let htmlContent = v
-                              .split('\n')
-                              .filter(line => line.trim())
-                              .map(line => {
-                                line = line.trim();
-                                // Liste item'i mi kontrol et
-                                if (line.startsWith('• ') || line.startsWith('- ')) {
-                                  return `<li>${line.substring(2)}</li>`;
-                                }
-                                return `<p>${line}</p>`;
-                              })
-                              .join('\n');
-                            
-                            // Liste item'leri varsa <ul> içine al
-                            if (htmlContent.includes('<li>')) {
-                              htmlContent = htmlContent.replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>');
-                              // Ardışık <ul> etiketlerini birleştir
-                              htmlContent = htmlContent.replace(/<\/ul>\s*<ul>/g, '');
-                            }
-                            
-                            setAboutPage({ ...aboutPage, content: htmlContent });
-                          }}
-                          rows={20}
-                          placeholder="Metni buraya yazın. Her satır bir paragraf olacak. Liste için satır başına • veya - kullanın."
-                        />
-                        <p className="text-gray-500 text-xs mt-2">
-                          Her satır otomatik olarak paragrafa dönüştürülür. Liste için satır başına • veya - kullanın.
-                        </p>
                       </Section>
 
                       <div className="flex justify-end">

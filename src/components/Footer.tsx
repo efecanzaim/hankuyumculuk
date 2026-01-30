@@ -79,7 +79,7 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
         <div className="relative z-10 max-w-[1430px] mx-auto px-6 md:px-8 pt-[80px] md:pt-[100px]">
           {/* Slogan */}
           <div className="text-center">
-            <p className="font-['Carattere'] text-[35px] leading-[normal] tracking-[0.05em] text-[#2f3237]">
+            <p className="text-[35px] leading-[normal] tracking-[0.05em] text-[#2f3237]" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>
               {slogan}
             </p>
           </div>

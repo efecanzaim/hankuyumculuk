@@ -150,13 +150,18 @@ export default function ProductDetailPage({
                     transform: isCenter 
                       ? 'translateX(-50%) scale(1)' 
                       : isLeft 
-                        ? 'translateX(calc(-50% - min(475px, 27.5vw) - 10px)) scale(0.95)' 
-                        : 'translateX(calc(-50% + min(475px, 27.5vw) + 10px)) scale(0.95)',
+                        ? 'translateX(calc(-50% - min(475px, 27.5vw) - 30px)) scale(0.95)' 
+                        : 'translateX(calc(-50% + min(475px, 27.5vw) + 30px)) scale(0.95)',
                     opacity: isCenter ? 1 : 0.5,
                     zIndex: isCenter ? 10 : 5,
                   }}
                 >
-                  <div className="relative w-full h-full">
+                  <div 
+                    className="relative w-full h-full bg-white overflow-hidden"
+                    style={{
+                      boxShadow: 'inset 0 0 40px 20px rgba(252, 252, 252, 0.8)'
+                    }}
+                  >
                     <Image
                       src={getAssetPath(image)}
                       alt={`${productName} - ${index + 1}`}

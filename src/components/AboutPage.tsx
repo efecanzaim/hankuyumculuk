@@ -12,7 +12,6 @@ interface Value {
 
 interface AboutPageProps {
   heroTitle: string;
-  heroParagraph1: string;
   heroParagraph2: string;
   heroImage: string;
   valuesTitle: string;
@@ -22,7 +21,6 @@ interface AboutPageProps {
 
 export default function AboutPage({
   heroTitle,
-  heroParagraph1,
   heroParagraph2,
   heroImage,
   valuesTitle,
@@ -32,46 +30,21 @@ export default function AboutPage({
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="relative pt-[180px] md:pt-[141px] pb-0 bg-white overflow-hidden">
+      <section className="relative pt-[230px] md:pt-[191px] pb-0 bg-white overflow-hidden">
         <div className="w-full mx-auto px-0">
           <div className="flex flex-col md:flex-row">
             {/* Left Side - Beige Background with Text */}
             <div className="relative bg-primary w-full md:w-[869px] px-6 md:px-0 pt-12 md:pt-20 pb-32 md:pb-0 flex flex-col items-center justify-start md:h-[800px]">
               {/* Title */}
-              <h1 className="font-title text-[40px] md:text-[50px] leading-[60px] md:leading-[80px] text-[#2f3237] text-center mb-8 md:mb-12 mt-0 md:mt-[78px]">
+              <h1 className="font-title text-[40px] md:text-[50px] leading-[60px] md:leading-[80px] text-[#2f3237] text-center mb-8 md:mb-12 mt-0 md:mt-[20px]">
                 {heroTitle}
               </h1>
 
-              {/* Paragraph 1 - Large */}
-              <p className="text-[24px] md:text-[30px] leading-[36px] md:leading-[40px] font-light text-[#2f3237] text-center max-w-[590px] mx-auto mb-8 md:mb-10 h-auto md:h-[160px]">
-                {heroParagraph1}
-              </p>
-
-              {/* Paragraph 2 - Small */}
-              <p className="text-[14px] md:text-[15px] leading-[18px] md:leading-[20px] font-light text-[#2f3237] text-center max-w-[590px] mx-auto mb-12 md:mb-16 h-auto md:h-[100px]">
-                {heroParagraph2}
-              </p>
-
-              {/* Wave Pattern - Bottom - Rotated 180 degrees */}
-              <div className="absolute bottom-0 left-0 right-0 h-[214px] pointer-events-none rotate-180">
-                <div className="relative w-full h-full">
-                  {[...Array(5)].map((_, i) => {
-                    const opacity = 0.2 + (i * 0.2);
-                    const stripeHeight = 25;
-
-                    return (
-                      <div
-                        key={i}
-                        className="absolute left-0 right-0"
-                        style={{
-                          bottom: `${i * (stripeHeight * 2)}px`,
-                          height: `${stripeHeight}px`,
-                          backgroundColor: `rgba(220, 205, 191, ${opacity})`
-                        }}
-                      />
-                    );
-                  })}
-                </div>
+              {/* Main Content */}
+              <div className="text-[14px] md:text-[15px] leading-[24px] md:leading-[28px] font-light text-[#2f3237] text-justify max-w-[700px] mx-auto px-4 md:px-8 mb-12 md:mb-16">
+                {heroParagraph2.split('\n\n').filter(p => p.trim()).map((para, idx) => (
+                  <p key={idx} className="mb-5 last:mb-0">{para}</p>
+                ))}
               </div>
             </div>
 
@@ -191,45 +164,6 @@ export default function AboutPage({
           </div>
         </div>
       </section>
-
-      {/* Hakkımızda İçerik Bölümü */}
-      {aboutContent && (
-        <section className="py-16 md:py-24 bg-white">
-          <div className="max-w-[1430px] mx-auto px-6 md:px-8">
-            {/* Başlık */}
-            <div className="text-center mb-12 md:mb-20">
-              <h2 
-                className="text-[30px] md:text-[40px] leading-[40px] md:leading-[50px] text-[#2f3237] mb-6"
-                style={{ fontFamily: 'var(--font-faculty-glyphic)' }}
-              >
-                Hakkımızda | Han Kuyumculuk
-              </h2>
-              {/* Dekoratif çizgi */}
-              <div className="flex items-center justify-center gap-0">
-                <div className="h-px bg-primary flex-1 max-w-[200px]"></div>
-                <div className="w-[350px] h-[2.234px] bg-dark"></div>
-                <div className="h-px bg-primary flex-1 max-w-[200px]"></div>
-              </div>
-            </div>
-
-            {/* İçerik */}
-            <div className="max-w-[950px] mx-auto">
-              <div 
-                className="text-[#2f3237] space-y-6"
-                style={{ 
-                  fontFamily: 'var(--font-bw-modelica)',
-                  fontSize: '16px',
-                  lineHeight: '28px',
-                  fontWeight: 300
-                }}
-                dangerouslySetInnerHTML={{ 
-                  __html: aboutContent.replace(/<p>/g, '<p class="mb-6">').replace(/<ul>/g, '<ul class="list-disc list-inside space-y-2 my-6 ml-4">').replace(/<li>/g, '<li class="ml-2">')
-                }}
-              />
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
 }

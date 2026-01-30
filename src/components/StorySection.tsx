@@ -11,6 +11,10 @@ interface StorySectionProps {
 }
 
 export default function StorySection({ title, mainText, subText, linkText, linkHref = "#" }: StorySectionProps) {
+  // Split text by double newlines to create paragraphs
+  const mainParagraphs = mainText.split("\n\n").filter(p => p.trim());
+  const subParagraphs = subText.split("\n\n").filter(p => p.trim());
+
   return (
     <section className="relative bg-light pt-12 md:pt-16 overflow-hidden">
       <div className="container mx-auto px-6 lg:px-8 relative z-10">
@@ -21,14 +25,22 @@ export default function StorySection({ title, mainText, subText, linkText, linkH
           </h2>
 
           {/* Main Text - Large */}
-          <p className="text-[24px] md:text-[30px] leading-[36px] md:leading-[40px] font-light text-[#2f3237] mb-8 md:mb-10">
-            {mainText}
-          </p>
+          <div className="mb-8 md:mb-10">
+            {mainParagraphs.map((para, idx) => (
+              <p key={idx} className="text-[18px] md:text-[20px] leading-[28px] md:leading-[32px] font-light text-[#2f3237] mb-4">
+                {para}
+              </p>
+            ))}
+          </div>
 
           {/* Sub Text - Small */}
-          <p className="text-[14px] md:text-[15px] leading-[20px] font-light text-[#2f3237] max-w-[710px] mx-auto mb-6 md:mb-8">
-            {subText}
-          </p>
+          <div className="mb-6 md:mb-8">
+            {subParagraphs.map((para, idx) => (
+              <p key={idx} className="text-[14px] md:text-[15px] leading-[20px] font-light text-[#2f3237] max-w-[710px] mx-auto mb-4">
+                {para}
+              </p>
+            ))}
+          </div>
 
           {/* Link */}
           <Link

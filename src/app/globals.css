@@ -12,8 +12,10 @@
   --font-display: 'Buljirya', var(--font-playfair), cursive;
   --font-body: var(--font-inter), system-ui, sans-serif;
   --font-title: var(--font-playfair), serif;
-  --font-script: var(--font-carattere), cursive;
-  --font-faculty: var(--font-faculty-glyphic), serif;
+  --font-script: var(--font-inter), cursive, sans-serif;
+  --font-faculty: var(--font-playfair), serif;
+  --font-bw-modelica: var(--font-inter), sans-serif;
+  --font-faculty-glyphic: var(--font-playfair), serif;
 }
 
 @theme inline {

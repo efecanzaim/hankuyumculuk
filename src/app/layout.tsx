@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, Carattere, Faculty_Glyphic } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { PreviewProvider } from "@/contexts/PreviewContext";
 
@@ -13,18 +13,6 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
   weight: ["400", "500", "600", "700"]
-});
-
-const carattere = Carattere({
-  subsets: ["latin"],
-  variable: "--font-carattere",
-  weight: ["400"]
-});
-
-const facultyGlyphic = Faculty_Glyphic({
-  subsets: ["latin"],
-  variable: "--font-faculty-glyphic",
-  weight: ["400"]
 });
 
 export const metadata: Metadata = {
@@ -55,7 +43,7 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} ${carattere.variable} ${facultyGlyphic.variable} antialiased`}>
+      <body className={`${inter.variable} ${playfair.variable} antialiased`}>
         <PreviewProvider>
           {children}
         </PreviewProvider>

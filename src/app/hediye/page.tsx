@@ -7,9 +7,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { getAssetPath } from "@/utils/paths";
 
-export default function GozumunNuruPage() {
+export default function HediyePage() {
   const content = useContent();
-  const category = content.gozumunNuruCategory;
 
   return (
     <>
@@ -27,8 +26,8 @@ export default function GozumunNuruPage() {
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
-            src={getAssetPath("/images/collection-menu-hero.jpg")}
-            alt="Gözümün Nuru"
+            src={getAssetPath("/images/hediye-menu-hero.jpg")}
+            alt="Hediye"
             fill
             className="object-cover"
             priority
@@ -42,13 +41,13 @@ export default function GozumunNuruPage() {
             className="text-[14px] md:text-[16px] tracking-[0.4em] text-white/60 mb-6 uppercase"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Han Koleksiyonu
+            Han Kuyumculuk
           </p>
           <h1
             className="text-[50px] md:text-[80px] lg:text-[100px] leading-[1.05] text-white mb-10"
             style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
           >
-            Gözümün Nuru
+            Hediye
           </h1>
 
           {/* Decorative Line */}
@@ -58,7 +57,7 @@ export default function GozumunNuruPage() {
             className="text-[18px] md:text-[22px] leading-[1.8] text-white/85 font-light max-w-[700px] mx-auto"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Değerini yitirmeyen bir yakınlıktan doğdu
+            Kalplerde bir iz olarak kalan özel günler vardır
           </p>
         </div>
 
@@ -82,13 +81,13 @@ export default function GozumunNuruPage() {
               className="text-[26px] md:text-[34px] leading-[1.7] font-light text-[#2f3237]"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              "Sen benim hayatımı güzelleştiren biri değilsin;
+              Bir teşekkür,
               <br />
               <span
                 className="text-[32px] md:text-[44px] text-[#2f3237]"
                 style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
               >
-                hayatımı anlamlı kılan yerdesin."
+                bir kutlama
               </span>
             </p>
           </div>
@@ -99,11 +98,14 @@ export default function GozumunNuruPage() {
             className="text-[17px] md:text-[19px] leading-loose font-light text-[#2f3237]/75 text-center max-w-[750px] mx-auto"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Gözümün Nuru,
+            "iyi ki varsın" demenin en kalıcı hâli…
             <br />
-            değerini yitirmeyen bir yakınlıktan doğdu.
             <br />
-            Ruhun penceresinden süzülen aydınlık bir bağdan…
+            Han'da hediye,
+            <br />
+            yalnızca bir mücevher seçimi değil;
+            <br />
+            duyulmuş, düşünülmüş ve anlam yüklenmiş bir jesttir.
           </p>
         </div>
       </section>
@@ -114,8 +116,8 @@ export default function GozumunNuruPage() {
           {/* Left - Image */}
           <div className="lg:w-1/2 relative h-[450px] lg:h-auto">
             <Image
-              src={getAssetPath("/images/trend-right.jpg")}
-              alt="Gözümün Nuru"
+              src={getAssetPath("/images/trend-left.jpg")}
+              alt="Hediye Seçimi"
               fill
               className="object-cover"
             />
@@ -128,31 +130,31 @@ export default function GozumunNuruPage() {
                 className="text-[50px] md:text-[60px] leading-[1.1] text-[#2f3237] mb-8"
                 style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
               >
-                Her detay<br />bir bağ
+                Değer<br />verdiğini göster
               </p>
 
               <p
                 className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75 mb-8"
                 style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
               >
-                Bu koleksiyondaki her parça,
+                Değer verdiğini, düşündüğünü
                 <br />
-                birine duyulan saf sevginin,
+                ve özen gösterdiğini göstermenin
                 <br />
-                koruma içgüdüsünün
-                <br />
-                ve vazgeçilmez olma hissinin manevi yansımasıdır.
+                en açık yoludur.
               </p>
 
               <p
                 className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75"
                 style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
               >
-                Her dokunuş, her detay;
+                Anneler Günü'nde minneti,
                 <br />
-                koruyan, saran, tamamlayan emek harcanmış
+                Kadınlar Günü'nde zarafeti,
                 <br />
-                bir bağın izini taşır.
+                Sevgililer Günü'nde bağı,
+                <br />
+                yıl dönümlerinde ortak bir hikâyeyi anlatır.
               </p>
 
               <div className="w-[60px] h-[2px] bg-primary mt-10" />
@@ -161,7 +163,7 @@ export default function GozumunNuruPage() {
         </div>
       </section>
 
-      {/* Collection Section */}
+      {/* Categories Section */}
       <section className="py-[100px] md:py-[160px] bg-white">
         <div className="max-w-[1300px] mx-auto px-6">
           {/* Section Title */}
@@ -170,71 +172,78 @@ export default function GozumunNuruPage() {
               className="text-[40px] md:text-[56px] leading-[1.15] text-[#2f3237] mb-8"
               style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
             >
-              Koleksiyonu Keşfet
+              Kategorilerimiz
             </h2>
             <p
               className="text-[18px] md:text-[20px] leading-[1.7] font-light text-[#2f3237]/70"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-                Işık saçmaktan daha çok;<br />
-              ait olmak için…
+              Seçilmiş, düşünülmüş ve<br />
+              uzun vadeli bir değerin ifadesi
             </p>
           </div>
 
-          {/* Products Grid */}
-          {category.products.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {category.products.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/urun/${product.id}`}
-                  className="group"
-                >
-                  <div className="space-y-6">
-                    <div className="relative h-[400px] overflow-hidden">
-                      {product.image ? (
-                        <Image
-                          src={getAssetPath(product.image)}
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-[#f5f5f5] flex items-center justify-center text-[#2f3237] opacity-30">
-                          Görsel
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
-                    </div>
-
-                    <div>
-                      <h3
-                        className="text-[18px] text-[#2f3237] mb-2 group-hover:font-bold transition-all"
-                        style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
-                      >
-                        {product.name}
-                      </h3>
-                      <p
-                        className="text-[14px] font-light text-[#2f3237]/70 group-hover:text-[#2f3237] transition-colors"
-                        style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
-                      >
-                        {product.subtitle || "Özel tasarım"}
-                      </p>
-                    </div>
+          {/* Categories Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[900px] mx-auto">
+            {[
+              {
+                title: "Yüzük",
+                description: "Biçiminin içinde anlam",
+                image: "/images/products/product-1.jpg",
+                href: "/mucevher/yuzuk"
+              },
+              {
+                title: "Kolye",
+                description: "Göğsüne yakın sevgi",
+                image: "/images/products/product-2.jpg",
+                href: "/mucevher/kolye"
+              },
+              {
+                title: "Bileklik",
+                description: "Hareketiyle hikâye",
+                image: "/images/products/product-3.jpg",
+                href: "/mucevher/bileklik"
+              },
+              {
+                title: "Küpe",
+                description: "Yüze yakın söz",
+                image: "/images/products/product-4.jpg",
+                href: "/mucevher/kupe"
+              },
+            ].map((category, index) => (
+              <Link key={index} href={category.href} className="group">
+                <div className="overflow-hidden">
+                  <div className="relative h-[400px] mb-6">
+                    <Image
+                      src={getAssetPath(category.image)}
+                      alt={category.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
                   </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16">
-              <p
-                className="text-[#2f3237] opacity-50"
-                style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
-              >
-                Koleksiyonda henüz ürün yok.
-              </p>
-            </div>
-          )}
+
+                  <h3
+                    className="text-[32px] text-[#2f3237] mb-3 group-hover:font-bold transition-all"
+                    style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
+                  >
+                    {category.title}
+                  </h3>
+                  <p
+                    className="text-[16px] font-light text-[#2f3237]/70 group-hover:text-[#2f3237] transition-colors"
+                    style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
+                  >
+                    {category.description}
+                  </p>
+
+                  <div className="mt-6 inline-flex items-center gap-2 text-[12px] font-light text-[#2f3237] group-hover:translate-x-1 transition-transform">
+                    Keşfet
+                    <span>→</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -257,23 +266,27 @@ export default function GozumunNuruPage() {
             className="text-[18px] md:text-[20px] leading-[1.9] font-light text-white/85"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Gösterişten ziyade,
+            Her parça;
             <br />
-            hissettirmeye odaklı tasarlandı.
+            zamansız tasarımı, dengeli oranları ve ustalıklı işçiliğiyle
+            <br />
+            verildiği ana değer katar.
           </p>
 
           <p
             className="text-[20px] md:text-[26px] leading-[1.8] font-light text-white/85"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Han mücevherleri,
+            Gösterişten çok dengeye,
             <br />
             <span
               className="text-[26px] md:text-[34px]"
               style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
             >
-              özel hissettirmek için var olur.
+              abartıdan çok ustalığa,
             </span>
+            <br />
+            geçicilikten çok kalıcılığa odaklanır.
           </p>
 
           <div className="w-[80px] h-px bg-primary mx-auto my-12" />
@@ -282,9 +295,11 @@ export default function GozumunNuruPage() {
             className="text-[17px] md:text-[18px] leading-loose font-light text-white/60"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
-            Bu çok özel birinin hikâyesi…
+            Çünkü bazı hediyeler,
             <br />
-            Peki Sen neresindesin?
+            kutudan çıktığı an değil,
+            <br />
+            yıllar sonra bile hatırlandığında anlam kazanır…
           </p>
         </div>
       </section>
@@ -296,14 +311,14 @@ export default function GozumunNuruPage() {
             className="text-[60px] md:text-[80px] leading-none text-[#2f3237] mb-4"
             style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
           >
-            Seçilmiş
+            Peki Sen?
           </p>
 
           <h2
             className="text-[28px] md:text-[40px] leading-[1.4] text-[#2f3237] mb-6"
             style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
           >
-            Düşünülmüş ve Uzun Vadeli Bir Değer
+            Kimin hayatında iz bırakmak istiyorsun
           </h2>
 
           <p

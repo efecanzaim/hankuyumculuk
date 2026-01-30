@@ -70,7 +70,7 @@ export default function CustomDesignPage() {
               Gerçek değer,<br />
               <span 
                 className="text-[32px] md:text-[44px] text-[#2f3237]"
-                style={{ fontFamily: 'var(--font-carattere), cursive' }}
+                style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
               >
                 kişiye ait olanda saklıdır.
               </span>
@@ -109,7 +109,7 @@ export default function CustomDesignPage() {
             <div className="px-8 md:px-16 lg:px-20 py-20 lg:py-0 max-w-[550px] mx-auto lg:mx-0">
               <p 
                 className="text-[50px] md:text-[60px] leading-[1.1] text-[#2f3237] mb-8"
-                style={{ fontFamily: 'var(--font-carattere), cursive' }}
+                style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
               >
                 Dinlenmeyi<br />beklersiniz.
               </p>
@@ -359,7 +359,7 @@ export default function CustomDesignPage() {
             Size ait olduğunu hissettiren<br />
             <span 
               className="text-[26px] md:text-[34px]"
-              style={{ fontFamily: 'var(--font-carattere), cursive' }}
+              style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
             >
               bir parça beklersiniz.
             </span>
@@ -382,7 +382,7 @@ export default function CustomDesignPage() {
         <div className="max-w-[900px] mx-auto px-6 text-center">
           <p 
             className="text-[60px] md:text-[80px] leading-none text-[#2f3237] mb-4"
-            style={{ fontFamily: 'var(--font-carattere), cursive' }}
+            style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
           >
             İşte bu yüzden
           </p>
@@ -407,7 +407,7 @@ export default function CustomDesignPage() {
           
           {/* CTA Button */}
           <Link
-            href="/randevu"
+            href="/randevu?subject=size-ozel"
             className="inline-flex items-center justify-center bg-[#2f3237] text-light text-[14px] tracking-[0.15em] font-light px-14 py-5 hover:bg-[#1a1c1f] transition-all duration-300 group"
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
