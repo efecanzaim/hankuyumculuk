@@ -42,7 +42,7 @@ export default function Hero({ slides }: HeroProps) {
   }
 
   return (
-    <section className="relative h-screen overflow-hidden">
+    <section className="relative h-[600px] md:h-screen overflow-hidden">
       {/* Background Images/Videos */}
       {slides.map((s, index) => {
         const bgImage = s.backgroundImage || '';
@@ -80,26 +80,26 @@ export default function Hero({ slides }: HeroProps) {
       <div className="absolute inset-0 bg-linear-to-b from-[#2f3237]/50 via-transparent to-transparent z-2" />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-white pt-32">
+      <div className="relative z-10 flex flex-col items-center justify-center h-full text-white pt-0 md:pt-32">
         {slides.map((slide, index) => (
           <div
             key={index}
-            className="absolute inset-0 flex flex-col items-center justify-center pt-16 md:pt-32 px-6 md:px-4"
+            className="absolute inset-0 flex flex-col items-center justify-center pt-0 md:pt-32 px-6 md:px-4"
             style={{
               opacity: index === currentSlide ? 1 : 0,
               transition: "opacity 1.5s ease-in-out",
               pointerEvents: index === currentSlide ? "auto" : "none",
             }}
           >
-            <h1 className="font-title text-[70px] leading-[100px] md:text-7xl text-center mb-4 md:mb-6 tracking-wide whitespace-pre-line">
+            <h1 className="font-title text-[40px] leading-[40px] md:text-[70px] md:leading-[100px] text-center mb-4 md:mb-6 tracking-wide whitespace-pre-line">
               {slide.title}
             </h1>
-            <p className="text-[20px] leading-[30px] md:text-xl font-light tracking-wide mb-6 md:mb-8 text-center max-w-[244px] md:max-w-2xl">
+            <p className="text-[15px] leading-[30px] md:text-[20px] md:leading-[30px] font-light tracking-wide mb-6 md:mb-8 text-center max-w-[280px] md:max-w-2xl uppercase">
               {slide.subtitle}
             </p>
             <Link
               href={slide.ctaLink || "#"}
-              className="border border-white w-[250px] md:w-auto px-10 py-4 text-[15px] font-light tracking-wide hover:bg-white hover:text-[#2f3237] transition-colors duration-300 text-center"
+              className="border border-white w-[250px] h-[50px] flex items-center justify-center text-[15px] font-light tracking-wide hover:bg-white hover:text-[#2f3237] transition-colors duration-300 text-center"
             >
               {slide.ctaText}
             </Link>
@@ -107,7 +107,7 @@ export default function Hero({ slides }: HeroProps) {
         ))}
 
         {/* Slider Dots */}
-        <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
+        <div className="absolute bottom-10 md:bottom-16 left-1/2 transform -translate-x-1/2 flex gap-[10px] z-20">
           {slides.map((_, index) => (
             <button
               key={index}
@@ -115,7 +115,7 @@ export default function Hero({ slides }: HeroProps) {
               className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? "bg-white"
-                  : "border border-white opacity-50 hover:opacity-100"
+                  : "border border-white hover:opacity-100"
               }`}
             />
           ))}

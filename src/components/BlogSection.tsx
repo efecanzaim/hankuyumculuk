@@ -43,41 +43,92 @@ export default function BlogSection({
       </div>
 
       {/* Content Area with Navigation Arrows */}
-      <div className="relative max-w-[1430px] mx-auto px-6 md:px-8">
-        {/* Left Arrow */}
+      <div className="relative max-w-[1430px] mx-auto px-[10px] md:px-8">
+        {/* Left Arrow - Desktop only */}
         <button className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 w-[20px] h-[40px] items-center justify-center text-[#2f3237] hover:opacity-70 transition-opacity z-10">
           <svg width="20" height="40" viewBox="0 0 20 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15 5L5 20L15 35" stroke="#2f3237" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
 
-        {/* Right Arrow */}
+        {/* Right Arrow - Desktop only */}
         <button className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 w-[20px] h-[40px] items-center justify-center text-[#2f3237] hover:opacity-70 transition-opacity z-10">
           <svg width="20" height="40" viewBox="0 0 20 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 5L15 20L5 35" stroke="#2f3237" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
 
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-[60px] px-[40px] md:px-[60px]">
-          {/* Left Content */}
-          <div className="flex-1 text-center max-w-[470px]">
-            {/* Title - Faculty Glyphic style */}
-            <h2 className="font-title text-[28px] md:text-[35px] leading-[36px] md:leading-[45px] text-[#2f3237] mb-6 whitespace-pre-line">
+        {/* Mobile Layout - Image first, then content */}
+        <div className="block md:hidden">
+          {/* Image */}
+          <div className="relative w-full aspect-[420/491] mb-8 overflow-hidden">
+            {image.startsWith('http') ? (
+              <img
+                src={image}
+                alt={title}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={getAssetPath(image)}
+                alt={title}
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+            )}
+          </div>
+
+          {/* Content */}
+          <div className="text-center px-2">
+            {/* Title */}
+            <h2 className="font-title text-[35px] leading-[45px] text-[#2f3237] mb-6 whitespace-pre-line max-w-[420px] mx-auto">
               {title}
             </h2>
-            
-            {/* Description - 30px */}
-            <p className="text-[24px] md:text-[30px] leading-[32px] md:leading-[40px] font-light text-[#2f3237] mb-6">
+
+            {/* Description */}
+            <p className="text-[23px] leading-[33px] font-light text-[#2f3237] mb-6 max-w-[334px] mx-auto">
               {description}
             </p>
-            
-            {/* Additional Text - 15px */}
+
+            {/* Additional Text */}
             {additionalText && (
-              <p className="text-[14px] md:text-[15px] leading-[20px] font-light text-[#2f3237] mb-8">
+              <p className="text-[15px] leading-[20px] font-light text-[#2f3237] mb-6 max-w-[420px] mx-auto">
                 {additionalText}
               </p>
             )}
-            
+
+            {/* Link */}
+            <Link
+              href={linkHref}
+              className="inline-block text-[15px] leading-[30px] font-bold text-[#2f3237] underline hover:opacity-70 transition-opacity"
+            >
+              {linkText}
+            </Link>
+          </div>
+        </div>
+
+        {/* Desktop Layout - Side by side */}
+        <div className="hidden md:flex flex-row items-center gap-[60px] px-[60px]">
+          {/* Left Content */}
+          <div className="flex-1 text-center max-w-[470px]">
+            {/* Title - Faculty Glyphic style */}
+            <h2 className="font-title text-[35px] leading-[45px] text-[#2f3237] mb-6 whitespace-pre-line">
+              {title}
+            </h2>
+
+            {/* Description - 30px */}
+            <p className="text-[30px] leading-[40px] font-light text-[#2f3237] mb-6">
+              {description}
+            </p>
+
+            {/* Additional Text - 15px */}
+            {additionalText && (
+              <p className="text-[15px] leading-[20px] font-light text-[#2f3237] mb-8">
+                {additionalText}
+              </p>
+            )}
+
             {/* Link - underlined */}
             <Link
               href={linkHref}
@@ -89,7 +140,7 @@ export default function BlogSection({
 
           {/* Right Image - 590x690 */}
           <div className="flex-1 relative w-full max-w-[590px]">
-            <div className="relative aspect-590/690 w-full overflow-hidden">
+            <div className="relative aspect-[590/690] w-full overflow-hidden">
               {image.startsWith('http') ? (
                 // External URL - use regular img tag
                 <img
@@ -104,7 +155,7 @@ export default function BlogSection({
                   alt={title}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 590px"
+                  sizes="590px"
                 />
               )}
             </div>

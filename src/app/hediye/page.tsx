@@ -84,7 +84,7 @@ export default function HediyePage() {
               Bir teşekkür,
               <br />
               <span
-                className="text-[32px] md:text-[44px] text-[#2f3237]"
+                className="text-[24px] md:text-[32px] text-[#2f3237]"
                 style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
               >
                 bir kutlama
@@ -127,7 +127,7 @@ export default function HediyePage() {
           <div className="lg:w-1/2 bg-[#f5f5f5] flex items-center">
             <div className="px-8 md:px-16 lg:px-20 py-20 lg:py-0 max-w-[550px] mx-auto lg:mx-0">
               <p
-                className="text-[50px] md:text-[60px] leading-[1.1] text-[#2f3237] mb-8"
+                className="text-[32px] md:text-[40px] leading-[1.1] text-[#2f3237] mb-8"
                 style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
               >
                 Değer<br />verdiğini göster
@@ -280,7 +280,7 @@ export default function HediyePage() {
             Gösterişten çok dengeye,
             <br />
             <span
-              className="text-[26px] md:text-[34px]"
+              className="text-[22px] md:text-[28px]"
               style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
             >
               abartıdan çok ustalığa,
@@ -308,7 +308,7 @@ export default function HediyePage() {
       <section className="py-[120px] md:py-[180px] bg-[#f5f5f5]">
         <div className="max-w-[900px] mx-auto px-6 text-center">
           <p
-            className="text-[60px] md:text-[80px] leading-none text-[#2f3237] mb-4"
+            className="text-[32px] md:text-[44px] leading-none text-[#2f3237] mb-4"
             style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
           >
             Peki Sen?

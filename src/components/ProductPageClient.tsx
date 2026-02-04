@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import ProductDetailPage from "@/components/ProductDetailPage";
-import TopBanner from "@/components/TopBanner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useContent } from "@/hooks/useContent";
@@ -40,6 +39,51 @@ interface ProductPageClientProps {
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+
+// Demo ürün verisi (development için)
+const demoProduct: Product = {
+  id: 1,
+  slug: "demo-urun",
+  name: "Işıltı",
+  subtitle: "Pırlanta Tektaş Yüzük",
+  description: "Zamansız bir zarafet sunan bu pırlanta tektaş yüzük, özel anlarınızı taçlandırmak için tasarlandı. Her detayında ustalık ve özen barındıran bu parça, sevdiklerinize olan bağlılığınızın en güzel ifadesi.",
+  mainImage: "/images/collection-product-1.jpg",
+  image: "/images/collection-product-1.jpg",
+  bannerImage: "/images/parallax-bg.jpg",
+  banner_image: "/images/parallax-bg.jpg",
+  galleryImages: [
+    "/images/collection-product-2.jpg",
+    "/images/collection-product-3.jpg",
+    "/images/collection-product-4.jpg",
+  ],
+  gallery_images: [
+    "/images/collection-product-2.jpg",
+    "/images/collection-product-3.jpg",
+    "/images/collection-product-4.jpg",
+  ],
+  gold_weight: 4.73,
+  gold_karat: "18 Ayar",
+  stones: [
+    {
+      id: 1,
+      stone_type: "Pırlanta",
+      carat: 0.50,
+      quantity: 1,
+      color: "F",
+      clarity: "VS1",
+      cut: "Yuvarlak",
+    },
+    {
+      id: 2,
+      stone_type: "Pırlanta",
+      carat: 0.10,
+      quantity: 12,
+      color: "G",
+      clarity: "VS2",
+      cut: "Trapez",
+    },
+  ],
+};
 
 export default function ProductPageClient({ slug, initialProduct }: ProductPageClientProps) {
   const content = useContent();
@@ -113,20 +157,25 @@ export default function ProductPageClient({ slug, initialProduct }: ProductPageC
             });
             setLoading(false);
           } else {
-            // Eğer content.json'da yoksa ve initialProduct varsa onu kullan
-            if (initialProduct) {
-              setProduct(initialProduct);
-              setLoading(false);
-            } else {
-              setError("Ürün bulunamadı");
-              setLoading(false);
-            }
+            // Eğer content.json'da yoksa demo ürünü göster (development)
+            console.log("Demo ürün gösteriliyor - slug:", slug);
+            setProduct({
+              ...demoProduct,
+              slug: slug,
+            });
+            setLoading(false);
           }
         }
       } catch (err) {
         console.error("Ürün yükleme hatası:", err);
-        // Hata durumunda initialProduct varsa onu kullan
-        if (initialProduct) {
+        // Hata durumunda demo ürünü göster (development)
+        if (!API_URL) {
+          console.log("Demo ürün gösteriliyor (hata sonrası)");
+          setProduct({
+            ...demoProduct,
+            slug: slug,
+          });
+        } else if (initialProduct) {
           setProduct(initialProduct);
         } else {
           setError("Ürün yüklenirken hata oluştu");
@@ -141,15 +190,13 @@ export default function ProductPageClient({ slug, initialProduct }: ProductPageC
   if (loading) {
     return (
       <>
-        <TopBanner
-          text={content.topBanner.text}
-          visible={content.topBanner.visible}
-        />
         <Header
           logo={content.header.logo}
           logoAlt={content.header.logoAlt}
           mainNav={content.header.mainNav}
           isHero={false}
+          bannerText={content.topBanner?.text}
+          bannerVisible={content.topBanner?.visible}
         />
         <div className="min-h-screen bg-white pt-[141px] flex items-center justify-center">
           <div className="text-center">
@@ -172,15 +219,13 @@ export default function ProductPageClient({ slug, initialProduct }: ProductPageC
   if (error || !product) {
     return (
       <>
-        <TopBanner
-          text={content.topBanner.text}
-          visible={content.topBanner.visible}
-        />
         <Header
           logo={content.header.logo}
           logoAlt={content.header.logoAlt}
           mainNav={content.header.mainNav}
           isHero={false}
+          bannerText={content.topBanner?.text}
+          bannerVisible={content.topBanner?.visible}
         />
         <div className="min-h-screen bg-white pt-[141px] flex items-center justify-center">
           <div className="text-center">
@@ -202,15 +247,13 @@ export default function ProductPageClient({ slug, initialProduct }: ProductPageC
 
   return (
     <>
-      <TopBanner
-        text={content.topBanner.text}
-        visible={content.topBanner.visible}
-      />
       <Header
         logo={content.header.logo}
         logoAlt={content.header.logoAlt}
         mainNav={content.header.mainNav}
         isHero={false}
+        bannerText={content.topBanner?.text}
+        bannerVisible={content.topBanner?.visible}
       />
       <ProductDetailPage
         mainImage={product.mainImage || product.image || ""}

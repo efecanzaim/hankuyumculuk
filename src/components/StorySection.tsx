@@ -16,27 +16,27 @@ export default function StorySection({ title, mainText, subText, linkText, linkH
   const subParagraphs = subText.split("\n\n").filter(p => p.trim());
 
   return (
-    <section className="relative bg-light pt-12 md:pt-16 overflow-hidden">
-      <div className="container mx-auto px-6 lg:px-8 relative z-10">
-        <div className="max-w-[950px] mx-auto text-center">
+    <section className="relative bg-light pt-10 md:pt-16 overflow-hidden">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+        <div className="max-w-[420px] md:max-w-[950px] mx-auto text-center">
           {/* Title */}
-          <h2 className="font-title text-[40px] md:text-[50px] leading-[60px] md:leading-[80px] text-[#2f3237] mb-8 md:mb-10">
+          <h2 className="font-title text-[30px] md:text-[50px] leading-[30px] md:leading-[80px] text-[#2f3237] mb-6 md:mb-10">
             {title}
           </h2>
 
           {/* Main Text - Large */}
-          <div className="mb-8 md:mb-10">
+          <div className="mb-6 md:mb-10">
             {mainParagraphs.map((para, idx) => (
-              <p key={idx} className="text-[18px] md:text-[20px] leading-[28px] md:leading-[32px] font-light text-[#2f3237] mb-4">
+              <p key={idx} className="text-[20px] md:text-[20px] leading-[20px] md:leading-[32px] font-light text-[#2f3237] mb-4 max-w-[420px] md:max-w-none mx-auto">
                 {para}
               </p>
             ))}
           </div>
 
           {/* Sub Text - Small */}
-          <div className="mb-6 md:mb-8">
+          <div className="mb-4 md:mb-8">
             {subParagraphs.map((para, idx) => (
-              <p key={idx} className="text-[14px] md:text-[15px] leading-[20px] font-light text-[#2f3237] max-w-[710px] mx-auto mb-4">
+              <p key={idx} className="text-[15px] md:text-[15px] leading-[20px] font-light text-[#2f3237] max-w-[420px] md:max-w-[710px] mx-auto mb-4">
                 {para}
               </p>
             ))}

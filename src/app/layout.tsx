@@ -17,7 +17,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: "Han Kuyumculuk | Pırlanta & Mücevher",
-  description: "Işıltının Anlama Dönüştüğü Yer. Her pırlantada aşkın zarafetini taşır.",
+  description: "Seninle güzelleşir her şey… Her pırlantada aşkın zarafetini taşır.",
   keywords: "pırlanta, mücevher, altın, yüzük, kolye, bileklik, küpe, özel tasarım",
 };
 

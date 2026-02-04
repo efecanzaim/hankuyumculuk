@@ -34,9 +34,9 @@ export default function AboutPage({
         <div className="w-full mx-auto px-0">
           <div className="flex flex-col md:flex-row">
             {/* Left Side - Beige Background with Text */}
-            <div className="relative bg-primary w-full md:w-[869px] px-6 md:px-0 pt-12 md:pt-20 pb-32 md:pb-0 flex flex-col items-center justify-start md:h-[800px]">
+            <div className="relative bg-primary w-full md:flex-1 px-6 md:px-0 pt-8 md:pt-10 pb-32 md:pb-0 flex flex-col items-center justify-start md:h-[800px]">
               {/* Title */}
-              <h1 className="font-title text-[40px] md:text-[50px] leading-[60px] md:leading-[80px] text-[#2f3237] text-center mb-8 md:mb-12 mt-0 md:mt-[20px]">
+              <h1 className="font-title text-[40px] md:text-[50px] leading-[60px] md:leading-[80px] text-[#2f3237] text-center mb-8 md:mb-12 mt-0 md:mt-0">
                 {heroTitle}
               </h1>
 
@@ -49,7 +49,7 @@ export default function AboutPage({
             </div>
 
             {/* Right Side - Image */}
-            <div className="relative w-full md:flex-1 aspect-390/500 md:aspect-auto md:h-[800px]">
+            <div className="relative w-full md:w-[750px] ml-auto aspect-[390/500] md:aspect-auto md:h-[800px]">
               <Image
                 src={getAssetPath(heroImage)}
                 alt={heroTitle}

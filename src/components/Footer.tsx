@@ -76,32 +76,32 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
           <div className="flex-1" />
         </div>
 
-        <div className="relative z-10 max-w-[1430px] mx-auto px-6 md:px-8 pt-[80px] md:pt-[100px]">
-          {/* Slogan */}
-          <div className="text-center">
-            <p className="text-[35px] leading-[normal] tracking-[0.05em] text-[#2f3237]" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>
-              {slogan}
-            </p>
-          </div>
-
-          {/* Description */}
-          <div className="text-center mt-[10px] max-w-[708px] mx-auto px-6">
+        <div className="relative z-10 max-w-[1430px] mx-auto px-4 md:px-8 pt-[60px] md:pt-[100px]">
+          {/* Description - Shown first on mobile */}
+          <div className="text-center max-w-[420px] md:max-w-[708px] mx-auto px-2 md:px-6">
             <p className="font-light text-[20px] leading-[30px] text-[#2f3237]">
               {description}
             </p>
           </div>
 
+          {/* Slogan */}
+          <div className="text-center mt-[20px] md:mt-[10px]">
+            <p className="text-[35px] leading-[normal] tracking-[0.05em] text-[#2f3237]" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>
+              {slogan}
+            </p>
+          </div>
+
           {/* Footer Columns */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 mt-[80px] md:mt-[100px] max-w-[900px] mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-16 mt-[50px] md:mt-[100px] max-w-[900px] mx-auto px-4 md:px-6">
             {columns.map((column, index) => (
               <div key={index} className="text-center">
-                <h3 className="font-bold text-[13px] leading-[normal] text-[#2f3237] mb-[16px]">
+                <h3 className="font-bold text-[13px] leading-[normal] text-[#2f3237] mb-[12px] md:mb-[16px]">
                   {column.title}
                 </h3>
-                <ul className="space-y-[10px]">
+                <ul className="space-y-[8px] md:space-y-[10px]">
                   {column.links.map((link, linkIndex) => (
                     <li key={linkIndex}>
-                      <Link 
+                      <Link
                         href={link.href}
                         className="font-normal text-[13px] leading-[26px] text-[#2f3237] hover:opacity-70 transition-opacity"
                       >
@@ -115,7 +115,7 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
           </div>
 
           {/* Copyright */}
-          <div className="text-center mt-[60px] pb-[40px]">
+          <div className="text-center mt-[40px] md:mt-[60px] pb-[30px] md:pb-[40px]">
             <p className="font-normal text-[10px] leading-[normal] text-[#2f3237]">
               {copyright}
             </p>

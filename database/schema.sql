@@ -502,7 +502,7 @@ INSERT INTO homepage_blog_section (title, subtitle, description, additional_text
 
 -- Footer ayarları
 INSERT INTO footer_settings (logo_image, slogan, copyright_text) VALUES
-('/images/1818-logo.svg', 'Işıltının anlama dönüştüğü yer.', '© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır');
+('/images/1818-logo.svg', 'Seninle güzelleşir her şey…', '© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır');
 
 -- Footer sütunları
 INSERT INTO footer_columns (title, sort_order) VALUES
@@ -723,7 +723,7 @@ WHERE id = 1;
 
 -- Sosyal medya hesaplarını güncelle
 UPDATE social_media SET 
-    url = 'https://www.instagram.com/gozumunnuruantalya',
+    url = 'https://www.instagram.com/gozumunnuru.antalya',
     icon = 'instagram',
     sort_order = 1
 WHERE id = 1;

@@ -395,7 +395,7 @@ try {
         // Footer
         'footer' => [
             'logo' => $footerSettings['logo_image'] ?? '/images/1818-logo.svg',
-            'slogan' => $footerSettings['slogan'] ?? 'Işıltının anlama dönüştüğü yer.',
+            'slogan' => $footerSettings['slogan'] ?? 'Seninle güzelleşir her şey…',
             'copyright' => $footerSettings['copyright_text'] ?? '© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır',
             'columns' => $formattedColumns,
             'socialLinks' => $socialLinks

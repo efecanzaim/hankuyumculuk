@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getAssetPath } from "@/utils/paths";
 
 interface Stone {
@@ -38,7 +38,48 @@ export default function ProductDetailPage({
   stones = [],
 }: ProductDetailPageProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [bgColor, setBgColor] = useState("#ffffff");
   const totalSlides = galleryImages.length;
+
+  // Görselin kenar rengini algıla
+  useEffect(() => {
+    const img = new window.Image();
+    img.crossOrigin = "anonymous";
+    img.src = getAssetPath(mainImage);
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      // Görselin kenarlarından renk örnekleri al
+      const samples: number[][] = [];
+      const sampleSize = 10;
+
+      // Üst kenar
+      for (let x = 0; x < img.width; x += Math.floor(img.width / sampleSize)) {
+        const pixel = ctx.getImageData(x, 0, 1, 1).data;
+        samples.push([pixel[0], pixel[1], pixel[2]]);
+      }
+
+      // Alt kenar
+      for (let x = 0; x < img.width; x += Math.floor(img.width / sampleSize)) {
+        const pixel = ctx.getImageData(x, img.height - 1, 1, 1).data;
+        samples.push([pixel[0], pixel[1], pixel[2]]);
+      }
+
+      // Ortalama rengi hesapla
+      const avgR = Math.round(samples.reduce((sum, p) => sum + p[0], 0) / samples.length);
+      const avgG = Math.round(samples.reduce((sum, p) => sum + p[1], 0) / samples.length);
+      const avgB = Math.round(samples.reduce((sum, p) => sum + p[2], 0) / samples.length);
+
+      setBgColor(`rgb(${avgR}, ${avgG}, ${avgB})`);
+    };
+  }, [mainImage]);
 
   // Helper function to safely convert to number
   const toNumber = (value: number | string | null | undefined): number | null => {
@@ -46,6 +87,28 @@ export default function ProductDetailPage({
     if (typeof value === 'number') return value;
     const parsed = parseFloat(String(value));
     return isNaN(parsed) ? null : parsed;
+  };
+
+  // Kesim değerlerini İngilizce'ye çevir
+  const cutMapping: Record<string, string> = {
+    'Yuvarlak': 'Round',
+    'Zümrüt': 'Emerald',
+    'Markiz': 'Marquise',
+    'Kalp': 'Heart',
+    'Armut': 'Pear',
+    'Damla': 'Pear',
+    'Yastık': 'Cushion',
+    'Radyan': 'Radiant',
+    'Işıltılı': 'Radiant',
+    'Oval': 'Oval',
+    'Prenses': 'Princess',
+    'Trapez': 'Trapezoid',
+    'Baget': 'Baguette',
+  };
+
+  const getCutName = (cut: string | undefined): string => {
+    if (!cut) return '-';
+    return cutMapping[cut] || cut;
   };
 
   const goToPrevSlide = () => {
@@ -59,15 +122,19 @@ export default function ProductDetailPage({
   return (
     <div className="min-h-screen bg-white pt-[141px]">
       {/* Main Product Image Section */}
-      <section className="relative w-full">
-        <div className="max-w-[1430px] mx-auto px-6 md:px-8">
+      <section
+        className="relative w-full transition-colors duration-500"
+        style={{ backgroundColor: bgColor }}
+      >
+        <div className="max-w-[1000px] mx-auto px-4 md:px-8">
           {/* Main Product Image */}
-          <div className="relative w-full h-[400px] md:h-[694px] mx-auto max-w-[1189px]">
+          <div className="relative w-full">
             <Image
               src={getAssetPath(mainImage)}
               alt={productName}
-              fill
-              className="object-cover"
+              width={1000}
+              height={1000}
+              className="w-full h-auto"
               priority
             />
           </div>
@@ -75,11 +142,11 @@ export default function ProductDetailPage({
       </section>
 
       {/* Product Info Section */}
-      <section className="py-[40px] md:py-[60px]">
+      <section className="relative -mt-[30px] md:-mt-[60px] pt-0 pb-[40px] md:pb-[60px]">
         <div className="max-w-[1430px] mx-auto px-6 md:px-8 text-center">
           {/* Product Name - Large */}
-          <h1 
-            className="text-[50px] md:text-[100px] leading-[60px] md:leading-[200px] text-primary mb-0"
+          <h1
+            className="text-[50px] md:text-[100px] leading-[60px] md:leading-[120px] text-primary mb-0"
             style={{ fontFamily: 'var(--font-faculty-glyphic)' }}
           >
             {productName}
@@ -118,45 +185,26 @@ export default function ProductDetailPage({
       <section className="py-[60px] md:py-[100px] overflow-hidden">
         <div className="relative">
           {/* Slider Container */}
-          <div 
+          <div
             className="relative flex items-center justify-center"
             style={{ height: 'min(950px, 55vw)' }}
           >
             {galleryImages.map((image, index) => {
-              // Calculate position relative to current slide
-              const position = index - currentSlide;
-              // Handle wrap-around for infinite loop effect
-              const adjustedPosition = position < -1 
-                ? position + totalSlides 
-                : position > 1 
-                  ? position - totalSlides 
-                  : position;
-              
-              const isCenter = adjustedPosition === 0;
-              const isLeft = adjustedPosition === -1;
-              const isRight = adjustedPosition === 1;
-              const isVisible = isCenter || isLeft || isRight;
-
-              if (!isVisible) return null;
+              const isActive = index === currentSlide;
 
               return (
                 <div
                   key={index}
-                  className="absolute transition-all duration-500 ease-in-out top-0"
+                  className={`absolute transition-all duration-500 ease-in-out top-0 ${isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                   style={{
                     width: 'min(950px, 55vw)',
                     height: 'min(950px, 55vw)',
                     left: '50%',
-                    transform: isCenter 
-                      ? 'translateX(-50%) scale(1)' 
-                      : isLeft 
-                        ? 'translateX(calc(-50% - min(475px, 27.5vw) - 30px)) scale(0.95)' 
-                        : 'translateX(calc(-50% + min(475px, 27.5vw) + 30px)) scale(0.95)',
-                    opacity: isCenter ? 1 : 0.5,
-                    zIndex: isCenter ? 10 : 5,
+                    transform: 'translateX(-50%)',
+                    zIndex: isActive ? 10 : 0,
                   }}
                 >
-                  <div 
+                  <div
                     className="relative w-full h-full bg-white overflow-hidden"
                     style={{
                       boxShadow: 'inset 0 0 40px 20px rgba(252, 252, 252, 0.8)'
@@ -298,7 +346,7 @@ export default function ProductDetailPage({
                             {stone.clarity || '-'}
                           </div>
                           <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                            {stone.cut || '-'}
+                            {getCutName(stone.cut)}
                           </div>
                         </div>
                         {index < stones.length - 1 && (
@@ -340,7 +388,7 @@ export default function ProductDetailPage({
                         const weightNum = toNumber(goldWeight);
                         return weightNum !== null && (
                           <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                            {weightNum.toFixed(0)} Gr
+                            {weightNum.toFixed(2).replace('.', ',')} Gr
                           </div>
                         );
                       })()}

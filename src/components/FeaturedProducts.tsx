@@ -46,51 +46,97 @@ export default function FeaturedProducts({
         {/* Mobile Layout */}
         <div className="block md:hidden">
           {/* Banner 1 */}
-          <div className="w-full aspect-390/324 relative bg-gray-100 mb-6 pointer-events-none">
-            <div
-              className="absolute inset-0 bg-cover bg-center pointer-events-none"
-              style={{ backgroundImage: `url(${getAssetPath(bannerImage1)})` }}
-            />
-          </div>
-
-          {/* Product 1 */}
-          <div className="block mb-6 pointer-events-none">
-            <div className="w-[290px] mx-auto aspect-290/435 relative bg-gray-100">
+          <div className="px-[10px] mb-6">
+            <div className="w-full aspect-[420/349] relative bg-gray-100 pointer-events-none">
               <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${getAssetPath(products[0]?.image || '')})` }}
+                className="absolute inset-0 bg-cover bg-center pointer-events-none"
+                style={{ backgroundImage: `url(${getAssetPath(bannerImage1)})` }}
               />
             </div>
-            <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-[20px]">
-              {products[0]?.name}
-            </p>
-            <p className="text-[10px] leading-[20px] font-bold text-[#2f3237]">
-              {products[0]?.category}
-            </p>
+          </div>
+
+          {/* Products Row 1 - Horizontal Carousel */}
+          <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4 px-[10px] mb-6">
+            {/* Product 1 */}
+            <div className="flex-shrink-0 w-[248px] snap-center pointer-events-none">
+              <div className="relative w-full aspect-square bg-gray-100">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${getAssetPath(products[0]?.image || '')})` }}
+                />
+                <div className="absolute inset-0 bg-[#d9d9d9] opacity-10" />
+              </div>
+              <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-3">
+                {products[0]?.name}
+              </p>
+              <p className="text-[10px] leading-[20px] font-bold text-[#2f3237]">
+                {products[0]?.category}
+              </p>
+            </div>
+
+            {/* Product 2 */}
+            <div className="flex-shrink-0 w-[248px] snap-center pointer-events-none">
+              <div className="relative w-full aspect-square bg-gray-100">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${getAssetPath(products[1]?.image || '')})` }}
+                />
+                <div className="absolute inset-0 bg-[#d9d9d9] opacity-10" />
+              </div>
+              <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-3">
+                {products[1]?.name}
+              </p>
+              <p className="text-[10px] leading-[20px] font-bold text-[#2f3237]">
+                {products[1]?.category}
+              </p>
+            </div>
           </div>
 
           {/* Banner 2 */}
-          <div className="w-full aspect-390/324 relative bg-gray-100 mb-6 pointer-events-none">
-            <div
-              className="absolute inset-0 bg-cover bg-center pointer-events-none"
-              style={{ backgroundImage: `url(${getAssetPath(bannerImage2)})` }}
-            />
-          </div>
-
-          {/* Product 2 */}
-          <div className="block pointer-events-none">
-            <div className="w-[290px] mx-auto aspect-290/435 relative bg-gray-100">
+          <div className="px-[10px] mb-6">
+            <div className="w-full aspect-[420/349] relative bg-gray-100 pointer-events-none">
               <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url(${getAssetPath(products[1]?.image || '')})` }}
+                className="absolute inset-0 bg-cover bg-center pointer-events-none"
+                style={{ backgroundImage: `url(${getAssetPath(bannerImage2)})` }}
               />
             </div>
-            <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-[20px]">
-              {products[1]?.name}
-            </p>
-            <p className="text-[10px] leading-[20px] font-bold text-[#2f3237]">
-              {products[1]?.category}
-            </p>
+          </div>
+
+          {/* Products Row 2 - Horizontal Carousel */}
+          <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4 px-[10px]">
+            {/* Product 3 */}
+            <div className="flex-shrink-0 w-[248px] snap-center pointer-events-none">
+              <div className="relative w-full aspect-square bg-gray-100">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${getAssetPath(products[2]?.image || '')})` }}
+                />
+                <div className="absolute inset-0 bg-[#d9d9d9] opacity-10" />
+              </div>
+              <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-3">
+                {products[2]?.name}
+              </p>
+              <p className="text-[10px] leading-[20px] font-bold text-[#2f3237]">
+                {products[2]?.category}
+              </p>
+            </div>
+
+            {/* Product 4 */}
+            <div className="flex-shrink-0 w-[248px] snap-center pointer-events-none">
+              <div className="relative w-full aspect-square bg-gray-100">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${getAssetPath(products[3]?.image || '')})` }}
+                />
+                <div className="absolute inset-0 bg-[#d9d9d9] opacity-10" />
+              </div>
+              <p className="text-[15px] leading-[25px] font-light text-[#2f3237] mt-3">
+                {products[3]?.name}
+              </p>
+              <p className="text-[10px] leading-[20px] font-bold text-[#2f3237]">
+                {products[3]?.category}
+              </p>
+            </div>
           </div>
         </div>
 

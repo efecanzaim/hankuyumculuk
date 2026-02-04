@@ -68,8 +68,8 @@ export default function CustomDesignPage() {
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
               Gerçek değer,<br />
-              <span 
-                className="text-[32px] md:text-[44px] text-[#2f3237]"
+              <span
+                className="text-[24px] md:text-[32px] text-[#2f3237]"
                 style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
               >
                 kişiye ait olanda saklıdır.
@@ -107,8 +107,8 @@ export default function CustomDesignPage() {
           {/* Right - Content */}
           <div className="lg:w-1/2 bg-[#f5f5f5] flex items-center">
             <div className="px-8 md:px-16 lg:px-20 py-20 lg:py-0 max-w-[550px] mx-auto lg:mx-0">
-              <p 
-                className="text-[50px] md:text-[60px] leading-[1.1] text-[#2f3237] mb-8"
+              <p
+                className="text-[32px] md:text-[40px] leading-[1.1] text-[#2f3237] mb-8"
                 style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
               >
                 Dinlenmeyi<br />beklersiniz.
@@ -357,8 +357,8 @@ export default function CustomDesignPage() {
             style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
           >
             Size ait olduğunu hissettiren<br />
-            <span 
-              className="text-[26px] md:text-[34px]"
+            <span
+              className="text-[22px] md:text-[28px]"
               style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
             >
               bir parça beklersiniz.
@@ -380,8 +380,8 @@ export default function CustomDesignPage() {
       {/* Final CTA Section */}
       <section className="py-[120px] md:py-[180px] bg-[#f5f5f5]">
         <div className="max-w-[900px] mx-auto px-6 text-center">
-          <p 
-            className="text-[60px] md:text-[80px] leading-none text-[#2f3237] mb-4"
+          <p
+            className="text-[32px] md:text-[44px] leading-none text-[#2f3237] mb-4"
             style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
           >
             İşte bu yüzden

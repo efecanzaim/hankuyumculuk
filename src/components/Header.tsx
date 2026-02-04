@@ -50,7 +50,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
       {/* Top Banner - Pudra color with black text - Hidden on blog page */}
       {topBannerVisible && !isBlogPage && bannerText && (
         <div className="absolute top-0 left-0 right-0 z-50 bg-primary w-full h-[50px] flex items-center justify-center px-6">
-          <p className="text-[15px] text-[#2f3237] text-center font-normal leading-normal">
+          <p className="text-[12px] md:text-[15px] text-[#2f3237] text-center font-normal leading-[13px] md:leading-normal">
           {bannerText}
           </p>
           <button
@@ -128,7 +128,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                     EN
                   </button>
                   <Link
-                    href="https://www.instagram.com/gozumunnuruantalya"
+                    href="https://www.instagram.com/gozumunnuru.antalya"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`hover:opacity-70 transition-opacity shrink-0 ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
@@ -219,96 +219,113 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
 
         {/* Mobile Header */}
         <div className={`lg:hidden ${isTransparent ? 'bg-transparent' : 'bg-white'}`}>
-          <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center justify-between px-4 py-4">
             {/* Hamburger Menu */}
             <button
               onClick={toggleMobileMenu}
-              className={isTransparent ? 'text-white' : 'text-[#2f3237]'}
+              className={`w-[30px] ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
             >
               {mobileMenuOpen ? (
                 <X size={24} />
               ) : (
-                <svg className="w-[30px] h-[19px]" fill="none" stroke="currentColor" viewBox="0 0 30 19">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M0 1h30M0 9.5h30M0 18h30" />
+                <svg className="w-[21px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 21 15">
+                  <path strokeLinecap="round" strokeWidth={1.5} d="M0 1h21M0 7.5h21M0 14h21" />
                 </svg>
               )}
             </button>
 
-            {/* Logo */}
-            <Link href="/" className="block">
-              <Image
-                src={getAssetPath("/images/han-logo.svg")}
-                alt="Han Logo"
-                width={80}
-                height={30}
-                className="h-[30px] w-auto"
-                style={isTransparent ? {} : { filter: 'brightness(0) saturate(100%) invert(18%) sepia(5%) saturate(412%) hue-rotate(169deg) brightness(95%) contrast(89%)' }}
-              />
-            </Link>
+            {/* Center - Logo with Lines */}
+            <div className="flex items-center gap-4 flex-1 justify-center">
+              <div className={`w-[76px] h-px ${isTransparent ? 'bg-white/50' : 'bg-primary'}`} />
+              <Link href="/" className="block">
+                <Image
+                  src={getAssetPath("/images/han-logo.svg")}
+                  alt="Han Logo"
+                  width={76}
+                  height={28}
+                  className="h-[28px] w-auto"
+                  style={isTransparent ? {} : { filter: 'brightness(0) saturate(100%) invert(18%) sepia(5%) saturate(412%) hue-rotate(169deg) brightness(95%) contrast(89%)' }}
+                />
+              </Link>
+              <div className={`w-[76px] h-px ${isTransparent ? 'bg-white/50' : 'bg-primary'}`} />
+            </div>
 
             {/* Instagram */}
             <Link
-              href="https://www.instagram.com/gozumunnuruantalya"
+              href="https://www.instagram.com/gozumunnuru.antalya"
               target="_blank"
               rel="noopener noreferrer"
-              className={isTransparent ? 'text-white' : 'text-[#2f3237]'}
+              className={`w-[30px] flex justify-end ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
             >
-              <Instagram size={20} />
+              <Instagram size={18} />
             </Link>
           </div>
 
         </div>
 
-        {/* Mobile Menu - Slide from left */}
+        {/* Mobile Menu - Full Screen */}
         <div
           className={`lg:hidden fixed inset-0 z-[100] transition-opacity duration-300 ${
             mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
         >
-          {/* Overlay */}
+          {/* Menu Panel - Full Screen White */}
           <div
-            className="absolute inset-0 bg-black/40"
-            onClick={toggleMobileMenu}
-          />
-
-          {/* Menu Panel */}
-          <div
-            className={`absolute top-0 left-0 h-full w-full bg-white transform transition-transform duration-300 ease-out ${
+            className={`absolute inset-0 bg-white transform transition-transform duration-300 ease-out ${
               mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-            {/* Menu Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-              <Link href="/" onClick={toggleMobileMenu}>
-                <Image
-                  src={getAssetPath("/images/han-logo.svg")}
-                  alt="Han Logo"
-                  width={80}
-                  height={30}
-                  className="h-[28px] w-auto"
-                  style={{ filter: 'brightness(0) saturate(100%) invert(18%) sepia(5%) saturate(412%) hue-rotate(169deg) brightness(95%) contrast(89%)' }}
-                />
-              </Link>
+            {/* Menu Header - Logo centered with lines */}
+            <div className="flex items-center justify-between px-4 py-5">
+              {/* Hamburger / Close */}
               <button
                 onClick={toggleMobileMenu}
-                className="text-[#2f3237] p-1"
+                className="text-[#2f3237] w-[30px]"
               >
-                <X size={24} />
+                <svg className="w-[21px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 21 15">
+                  <path strokeLinecap="round" strokeWidth={1.5} d="M0 1h21M0 7.5h21M0 14h21" />
+                </svg>
               </button>
+
+              {/* Center - Logo with Lines */}
+              <div className="flex items-center gap-4 flex-1 justify-center">
+                <div className="w-[76px] h-px bg-primary" />
+                <Link href="/" onClick={toggleMobileMenu}>
+                  <Image
+                    src={getAssetPath("/images/han-logo.svg")}
+                    alt="Han Logo"
+                    width={76}
+                    height={28}
+                    className="h-[28px] w-auto"
+                    style={{ filter: 'brightness(0) saturate(100%) invert(18%) sepia(5%) saturate(412%) hue-rotate(169deg) brightness(95%) contrast(89%)' }}
+                  />
+                </Link>
+                <div className="w-[76px] h-px bg-primary" />
+              </div>
+
+              {/* Instagram */}
+              <Link
+                href="https://www.instagram.com/gozumunnuru.antalya"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#2f3237] w-[30px] flex justify-end"
+              >
+                <Instagram size={18} />
+              </Link>
             </div>
 
-            {/* Menu Content */}
-            <div className="overflow-y-auto h-[calc(100%-70px)]">
-              <nav className="px-6 py-4">
+            {/* Menu Content - Centered */}
+            <div className="overflow-y-auto h-[calc(100%-80px)] flex flex-col">
+              <nav className="flex-1 px-6 pt-6">
                 {/* MÜCEVHER Dropdown */}
-                <div className="border-b border-gray-100">
+                <div className="mb-2">
                   <button
                     onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'mucevher' ? null : 'mucevher')}
-                    className="flex items-center justify-between w-full py-4 text-[15px] font-medium text-[#2f3237]"
+                    className="flex items-center justify-between w-full py-2 text-[18px] font-bold text-[#5b5b5b]"
                   >
-                    MÜCEVHER
+                    <span className="flex-1 text-center">MÜCEVHER</span>
                     <svg
-                      className={`w-4 h-4 transition-transform duration-200 ${mobileActiveDropdown === 'mucevher' ? 'rotate-180' : ''}`}
+                      className={`w-3 h-3 transition-transform duration-200 ${mobileActiveDropdown === 'mucevher' ? 'rotate-180' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -317,25 +334,25 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                     </svg>
                   </button>
                   <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'mucevher' ? 'max-h-[300px]' : 'max-h-0'}`}>
-                    <div className="pb-4 pl-4 flex flex-col gap-3">
-                      <Link href="/mucevher/yuzuk" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Yüzük</Link>
-                      <Link href="/mucevher/kolye" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Kolye</Link>
-                      <Link href="/mucevher/bileklik" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Bileklik</Link>
-                      <Link href="/mucevher/kupe" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Küpe</Link>
-                      <Link href="/mucevher/set" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Set</Link>
+                    <div className="flex flex-col items-center py-2">
+                      <Link href="/mucevher/yuzuk" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Yüzük</Link>
+                      <Link href="/mucevher/kolye" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Kolye</Link>
+                      <Link href="/mucevher/bileklik" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Bileklik</Link>
+                      <Link href="/mucevher/kupe" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Küpe</Link>
+                      <Link href="/mucevher/set" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Set</Link>
                     </div>
                   </div>
                 </div>
 
                 {/* KOLEKSİYON Dropdown */}
-                <div className="border-b border-gray-100">
+                <div className="mb-2">
                   <button
                     onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'koleksiyon' ? null : 'koleksiyon')}
-                    className="flex items-center justify-between w-full py-4 text-[15px] font-medium text-[#2f3237]"
+                    className="flex items-center justify-between w-full py-2 text-[18px] font-bold text-[#5b5b5b]"
                   >
-                    KOLEKSİYON
+                    <span className="flex-1 text-center">KOLEKSİYON</span>
                     <svg
-                      className={`w-4 h-4 transition-transform duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'rotate-180' : ''}`}
+                      className={`w-3 h-3 transition-transform duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'rotate-180' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -344,48 +361,90 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                     </svg>
                   </button>
                   <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'max-h-[300px]' : 'max-h-0'}`}>
-                    <div className="pb-4 pl-4 flex flex-col gap-3">
-                      <Link href="/koleksiyon/gozumun-nuru" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Gözümün Nuru</Link>
+                    <div className="flex flex-col items-center py-2">
+                      <Link href="/koleksiyon/gozumun-nuru" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Gözümün Nuru</Link>
                     </div>
                   </div>
                 </div>
 
-                {/* PRELOVED */}
-                <Link
-                  href="/preloved"
-                  className="block py-4 text-[15px] font-medium text-[#2f3237] border-b border-gray-100"
-                  onClick={toggleMobileMenu}
-                >
-                  PRELOVED
-                </Link>
+                {/* PRELOVED Dropdown */}
+                <div className="mb-2">
+                  <button
+                    onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'preloved' ? null : 'preloved')}
+                    className="flex items-center justify-between w-full py-2 text-[18px] font-bold text-[#5b5b5b]"
+                  >
+                    <span className="flex-1 text-center">PRELOVED</span>
+                    <svg
+                      className={`w-3 h-3 transition-transform duration-200 ${mobileActiveDropdown === 'preloved' ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'preloved' ? 'max-h-[300px]' : 'max-h-0'}`}>
+                    <div className="flex flex-col items-center py-2">
+                      <Link href="/preloved" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Tüm Ürünler</Link>
+                    </div>
+                  </div>
+                </div>
 
-                {/* SİZE ÖZEL */}
-                <Link
-                  href="/ozel-tasarim"
-                  className="block py-4 text-[15px] font-medium text-[#2f3237] border-b border-gray-100"
-                  onClick={toggleMobileMenu}
-                >
-                  SİZE ÖZEL
-                </Link>
+                {/* SİZE ÖZEL Dropdown */}
+                <div className="mb-2">
+                  <button
+                    onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'ozel' ? null : 'ozel')}
+                    className="flex items-center justify-between w-full py-2 text-[18px] font-bold text-[#5b5b5b]"
+                  >
+                    <span className="flex-1 text-center">SİZE ÖZEL</span>
+                    <svg
+                      className={`w-3 h-3 transition-transform duration-200 ${mobileActiveDropdown === 'ozel' ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'ozel' ? 'max-h-[300px]' : 'max-h-0'}`}>
+                    <div className="flex flex-col items-center py-2">
+                      <Link href="/ozel-tasarim" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Özel Tasarım</Link>
+                    </div>
+                  </div>
+                </div>
 
-                {/* HEDİYE */}
-                <Link
-                  href="/hediye"
-                  className="block py-4 text-[15px] font-medium text-[#2f3237] border-b border-gray-100"
-                  onClick={toggleMobileMenu}
-                >
-                  HEDİYE
-                </Link>
+                {/* HEDİYE Dropdown */}
+                <div className="mb-2">
+                  <button
+                    onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'hediye' ? null : 'hediye')}
+                    className="flex items-center justify-between w-full py-2 text-[18px] font-bold text-[#5b5b5b]"
+                  >
+                    <span className="flex-1 text-center">HEDİYE</span>
+                    <svg
+                      className={`w-3 h-3 transition-transform duration-200 ${mobileActiveDropdown === 'hediye' ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'hediye' ? 'max-h-[300px]' : 'max-h-0'}`}>
+                    <div className="flex flex-col items-center py-2">
+                      <Link href="/hediye" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Hediye Fikirleri</Link>
+                    </div>
+                  </div>
+                </div>
 
                 {/* ERKEKLERE ÖZEL Dropdown */}
-                <div className="border-b border-gray-100">
+                <div className="mb-2">
                   <button
                     onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'erkek' ? null : 'erkek')}
-                    className="flex items-center justify-between w-full py-4 text-[15px] font-medium text-[#2f3237]"
+                    className="flex items-center justify-between w-full py-2 text-[18px] font-bold text-[#5b5b5b]"
                   >
-                    ERKEKLERE ÖZEL
+                    <span className="flex-1 text-center">ERKEKLERE ÖZEL</span>
                     <svg
-                      className={`w-4 h-4 transition-transform duration-200 ${mobileActiveDropdown === 'erkek' ? 'rotate-180' : ''}`}
+                      className={`w-3 h-3 transition-transform duration-200 ${mobileActiveDropdown === 'erkek' ? 'rotate-180' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -394,60 +453,35 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                     </svg>
                   </button>
                   <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'erkek' ? 'max-h-[300px]' : 'max-h-0'}`}>
-                    <div className="pb-4 pl-4 flex flex-col gap-3">
-                      <Link href="/erkek/tesbih" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Tesbih</Link>
-                      <Link href="/erkek/bileklik" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Bileklik</Link>
-                      <Link href="/erkek/yuzuk" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Yüzük</Link>
-                      <Link href="/erkek/kol" className="text-[14px] text-[#2f3237]/80" onClick={toggleMobileMenu}>Kol</Link>
+                    <div className="flex flex-col items-center py-2">
+                      <Link href="/erkek/tesbih" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Tesbih</Link>
+                      <Link href="/erkek/bileklik" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Bileklik</Link>
+                      <Link href="/erkek/yuzuk" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Yüzük</Link>
+                      <Link href="/erkek/kol" className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>Kol</Link>
                     </div>
                   </div>
                 </div>
 
-                {/* Divider */}
-                <div className="my-4" />
-
-                {/* Secondary Links */}
-                <Link
-                  href="/randevu"
-                  className="block py-3 text-[13px] text-[#2f3237]/70"
-                  onClick={toggleMobileMenu}
-                >
-                  RANDEVU OLUŞTURUN
-                </Link>
-                <Link
-                  href="/hakkimizda"
-                  className="block py-3 text-[13px] text-[#2f3237]/70"
-                  onClick={toggleMobileMenu}
-                >
-                  Kurumsal
-                </Link>
-                <Link
-                  href="/iletisim"
-                  className="block py-3 text-[13px] text-[#2f3237]/70"
-                  onClick={toggleMobileMenu}
-                >
-                  İletişim
-                </Link>
-                <Link
-                  href="/blog"
-                  className="block py-3 text-[13px] text-[#2f3237]/70"
-                  onClick={toggleMobileMenu}
-                >
-                  Blog
-                </Link>
-
-                {/* Instagram */}
-                <div className="mt-6 pt-6 border-t border-gray-100">
+                {/* Reservation Button */}
+                <div className="text-center mt-8">
                   <Link
-                    href="https://www.instagram.com/gozumunnuruantalya"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-[13px] text-[#2f3237]/70"
+                    href="/randevu"
+                    className="inline-flex items-center justify-center gap-2 bg-[#2f3237] text-white h-[50px] w-[248px] text-[11px]"
                     onClick={toggleMobileMenu}
                   >
-                    <Instagram size={18} />
-                    @gozumunnuru.antalyaantalya
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M7.5 0L9.18 5.18L14.5 5.5L10.5 8.82L11.82 14.5L7.5 11.18L3.18 14.5L4.5 8.82L0.5 5.5L5.82 5.18L7.5 0Z" fill="white"/>
+                    </svg>
+                    REZERVASYON YAP
                   </Link>
+                </div>
+
+                {/* Secondary Links */}
+                <div className="flex items-center justify-center gap-6 mt-10 text-[13px] text-[#5b5b5b]">
+                  <Link href="/hakkimizda" onClick={toggleMobileMenu}>Kurumsal</Link>
+                  <Link href="/iletisim" onClick={toggleMobileMenu}>İletişim</Link>
+                  <Link href="/blog" onClick={toggleMobileMenu}>Blog</Link>
+                  <button className="text-[#5b5b5b]">EN</button>
                 </div>
               </nav>
             </div>

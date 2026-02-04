@@ -2914,6 +2914,11 @@ export default function AdminPanel() {
                                             <option value="Oval">Oval</option>
                                             <option value="Markiz">Markiz</option>
                                             <option value="Armut">Armut</option>
+                                            <option value="Zümrüt">Zümrüt</option>
+                                            <option value="Kalp">Kalp</option>
+                                            <option value="Yastık">Yastık</option>
+                                            <option value="Radyan">Radyan</option>
+                                            <option value="Trapez">Trapez</option>
                                           </select>
                                         </div>
                                       </div>
@@ -3216,6 +3221,11 @@ export default function AdminPanel() {
                                       <option value="Oval">Oval</option>
                                       <option value="Markiz">Markiz</option>
                                       <option value="Armut">Armut</option>
+                                      <option value="Zümrüt">Zümrüt</option>
+                                      <option value="Kalp">Kalp</option>
+                                      <option value="Yastık">Yastık</option>
+                                      <option value="Radyan">Radyan</option>
+                                      <option value="Trapez">Trapez</option>
                                     </select>
                                   </div>
                                 </div>

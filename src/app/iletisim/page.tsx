@@ -122,12 +122,12 @@ export default function IletisimPage() {
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">Instagram</h3>
                       <div className="flex flex-col gap-1">
                         <a 
-                          href="https://www.instagram.com/gozumunnuruantalya" 
+                          href="https://www.instagram.com/gozumunnuru.antalya" 
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[#6b7280] hover:text-[#d4af37] transition-colors"
                         >
-                          @gozumunnuru.antalyaantalya
+                          @gozumunnuru.antalya
                         </a>
                         <a 
                           href="https://www.instagram.com/hankuyumculuk_" 
