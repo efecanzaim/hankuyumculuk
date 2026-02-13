@@ -1,0 +1,914 @@
+{
+  "topBanner": {
+    "text": "Çok yakında sizlerle buluşuyoruz… Yeni koleksiyonlarımız için bizi takip edin!",
+    "visible": true
+  },
+  "header": {
+    "logo": "/images/logo.png",
+    "logoAlt": "Han Kuyumculuk",
+    "topLinks": [
+      {
+        "text": "Hakkımızda",
+        "href": "/hakkimizda"
+      },
+      {
+        "text": "Blog",
+        "href": "/blog"
+      }
+    ],
+    "mainNav": [
+      {
+        "text": "MÜCEVHER",
+        "href": "/mucevher"
+      },
+      {
+        "text": "KOLEKSİYON",
+        "href": "/koleksiyon"
+      },
+      {
+        "text": "ÖZEL TASARIM",
+        "href": "/ozel-tasarim"
+      },
+      {
+        "text": "HEDİYE",
+        "href": "/hediye"
+      }
+    ]
+  },
+  "hero": {
+    "slides": [
+      {
+        "backgroundImage": "/images/hero-bg.mp4",
+        "title": "zarafet  sanatı",
+        "subtitle": "EŞSIZ TASARIMLAR, ZAMANSIZ DEĞERLER",
+        "ctaText": "MÜCEVHERLERİ KEŞFEDİN",
+        "ctaLink": "/mucevher"
+      },
+      {
+        "backgroundImage": "/images/hero-bg2.mp4",
+        "title": "sonsuz masal",
+        "subtitle": "HER PARÇADA BİR HİKÂYE SAKLANIYOR",
+        "ctaText": "KOLEKSİYONLARI KEŞFEDİN",
+        "ctaLink": "/koleksiyon"
+      },
+      {
+        "backgroundImage": "/images/hero-bg3.mp4",
+        "title": "özel  randevu",
+        "subtitle": "SİZE ÖZEL BİR DENEYİM İÇİN",
+        "ctaText": "RANDEVU OLUŞTURUN",
+        "ctaLink": "/randevu"
+      },
+      {
+        "backgroundImage": "/images/hero-bg4.mp4",
+        "title": "nadide  sanat",
+        "subtitle": "SADECE SİZE ÖZEL TASARIMLAR",
+        "ctaText": "SİZE ÖZEL",
+        "ctaLink": "/ozel-tasarim"
+      }
+    ]
+  },
+  "trendSection": {
+    "leftImage": "/images/trend-left.jpg",
+    "rightImage": "/images/trend-right.jpg",
+    "leftTitle": "Tasarımlarımızı Keşfedin",
+    "rightTitle": "Koleksiyonumuzu Keşfedin",
+    "leftLink": "/mucevher/yuzuk",
+    "rightLink": "/koleksiyon/gozumun-nuru",
+    "leftTitleLink": "/mucevher/yuzuk",
+    "rightTitleLink": "/koleksiyon/gozumun-nuru"
+  },
+  "parallaxSection": {
+    "backgroundImage": "/images/parallax-bg.jpg"
+  },
+  "storySection": {
+    "title": "Zarafetiyle Bir Hikaye",
+    "mainText": "Han Kuyumculuk, bir pırlantadan çok daha fazlasını temsil eder; değer verilen kişiyi, paylaşılan özel anları ve kalpten gelen duyguları ışığa dönüştüren bir semboldür.\n\nHan Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
+    "subText": "",
+    "linkText": "Işığın Aşka Dönüştüğü Hikâye",
+    "linkHref": "/hakkimizda"
+  },
+  "featuredProductsSection": {
+    "titlePart1": "SİZE ÖZEL",
+    "titlePart2": "ÜRÜNLERİMİZ",
+    "bannerImage1": "/images/products/featured-large-1.jpg",
+    "bannerImage2": "/images/products/featured-large-2.jpg"
+  },
+  "featuredProducts": [
+    {
+      "id": 1,
+      "image": "/images/products/product-1.jpg",
+      "name": "Harmony Pırlanta Yüzük 0,55 Karat",
+      "category": "PIRLANTA YÜZÜK",
+      "link": "/urun/harmony-pirlanta-yuzuk"
+    },
+    {
+      "id": 2,
+      "image": "/images/products/product-2.jpg",
+      "name": "Su Yolu Bileklik 1,00 Karat Pırlanta",
+      "category": "PIRLANTA BİLEKLİK",
+      "link": "/urun/su-yolu-bileklik"
+    },
+    {
+      "id": 3,
+      "image": "/images/products/product-3.jpg",
+      "name": "Yakamoz Pırlanta Bileklik 0,10 Karat",
+      "category": "PIRLANTA BİLEKLİK",
+      "link": "/urun/yakamoz-bileklik"
+    },
+    {
+      "id": 4,
+      "image": "/images/products/product-4.jpg",
+      "name": "Baget Pırlanta Bileklik 0,31 Karat",
+      "category": "PIRLANTA BİLEKLİK",
+      "link": "/urun/baget-bileklik"
+    }
+  ],
+  "categoryCards": [
+    {
+      "id": 1,
+      "image": "/images/categories/mucevher.jpg",
+      "title": "MÜCEVHER",
+      "link": "/mucevher"
+    },
+    {
+      "id": 2,
+      "image": "/images/categories/koleksiyon.jpg",
+      "title": "KOLEKSİYONLAR",
+      "link": "/koleksiyon"
+    },
+    {
+      "id": 3,
+      "image": "/images/categories/ozel-tasarim.jpg",
+      "title": "ÖZEL TASARIM",
+      "link": "/ozel-tasarim"
+    }
+  ],
+  "specialDesignSection": {
+    "titlePart1": "KENDİNİZİ",
+    "titlePart2": "ÖZEL HİSSEDİN",
+    "topCards": [
+      {
+        "title": "HEDİYE",
+        "image": "/images/categories/mucevher-card.jpg",
+        "link": "/hediye/dogum-gunu",
+        "buttonText": "KEŞFEDİN"
+      },
+      {
+        "title": "ERKEKLERE ÖZEL",
+        "image": "/images/categories/koleksiyon-card.jpg",
+        "link": "/erkek/tesbih",
+        "buttonText": "KEŞFEDİN"
+      },
+      {
+        "title": "ÖZEL TASARIM",
+        "image": "/images/categories/ozel-tasarim-card.jpg",
+        "link": "/ozel-tasarim",
+        "buttonText": "KEŞFEDİN"
+      }
+    ],
+    "bottomCards": [
+      {
+        "title": "PRELOVED",
+        "subtitle": "Yeni sezon pırlanta\ntasarımları ile stilinizi aydınlatın.",
+        "image": "/images/promo/goz-alici.jpg",
+        "link": "/preloved",
+        "buttonText": "ÜRÜNLERİ İNCELEYİN"
+      },
+      {
+        "title": "RANDEVU OLUŞTURUN",
+        "subtitle": "Size özel bir deneyim için\nrandevu alın, sizi bekliyor olacağız.",
+        "image": "/images/promo/yeni-gelenler.jpg",
+        "link": "/randevu",
+        "buttonText": "RANDEVU ALIN"
+      }
+    ]
+  },
+  "investmentSection": {
+    "title": "BUGÜNDEN\nYARINLARA\nGÜVENLE",
+    "leftImage": "/images/investment.jpg",
+    "rightImage": "/images/investment-product.jpg",
+    "description": "Kalitesi sertifikalı yatırımlık altın ürünleriyle geleceğinizi güvenle şekillendirin. Her gram, istikrarlı bir adım demektir.",
+    "ctaText": "YATIRIMLIK ÜRÜNLER",
+    "link": "/yatirim"
+  },
+  "blogSection": {
+    "title": "Pırlantanın Hikâyesi,\nZarafetin İlhamı",
+    "subtitle": "HAN BLOG",
+    "description": "Gözümün Nuru Blog, pırlantanın yalnızca bir mücevher değil; anlam, duygu ve hikâye taşıyan bir değer olduğuna inananlar için hazırlandı.",
+    "image": "/images/blog-featured.jpg",
+    "linkText": "yazının devamı",
+    "linkHref": "/blog/pirlanta-hikayeleri",
+    "additionalText": "Bu alanda; yüzüklerden kolyelere, özel gün hediyelerinden pırlanta seçme rehberlerine kadar merak edilen tüm detayları, ilham veren içerikler ve uzman bakış açılarıyla bulacaksınız."
+  },
+  "productDetails": {
+    "sarmasik-inci-tanem": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Sarmaşık İnci",
+      "productTitle": "0,22 Karat Vintage Reina Pırlanta Yüzük",
+      "description": "Sevginin en güçlü sembolünü zarafetle buluşturur. Özenle seçilmiş pırlantalar ve usta işçilikle hazırlanan her yüzük; evlilikten yıldönümüne, özel anlardan kalıcı hatıralara kadar hayatınızdaki en anlamlı 'evet'lere eşlik etmek için tasarlandı. Zamansız tasarımlar, yıllar geçse de ilk günkü ışıltısını korur.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "baget-reina-yuzuk": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "0,49 Karat Pırlanta Yüzük",
+      "description": "Baget kesim pırlantaların geometrik zarafeti, modern çizgilerle buluşuyor. Her açıdan ışığı yakalayan özel tasarım, günlük şıklığınızı tamamlarken özel anlarda da göz kamaştırıcı bir etki yaratır.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Lotus Tektaş",
+      "productTitle": "0,34 Karat Lotus Tektaş Pırlanta Yüzük",
+      "description": "Lotus çiçeğinin zarif açılışından ilham alan bu tektaş yüzük, merkez pırlantayı benzersiz bir şekilde öne çıkarır. Yaprakların yumuşak kıvrımları, ışığın her açıdan dansını sergiler.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "sarmasik-inci-tanem-2": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Sarmaşık İnci",
+      "productTitle": "0,22 Karat Vintage Reina Pırlanta Yüzük",
+      "description": "Sevginin en güçlü sembolünü zarafetle buluşturur. Özenle seçilmiş pırlantalar ve usta işçilikle hazırlanan her yüzük; evlilikten yıldönümüne, özel anlardan kalıcı hatıralara kadar hayatınızdaki en anlamlı 'evet'lere eşlik etmek için tasarlandı.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "baget-reina-yuzuk-2": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "0,49 Karat Pırlanta Yüzük",
+      "description": "Baget kesim pırlantaların geometrik zarafeti, modern çizgilerle buluşuyor. Her açıdan ışığı yakalayan özel tasarım, günlük şıklığınızı tamamlarken özel anlarda da göz kamaştırıcı bir etki yaratır.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk-2": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Lotus Tektaş",
+      "productTitle": "0,34 Karat Lotus Tektaş Pırlanta Yüzük",
+      "description": "Lotus çiçeğinin zarif açılışından ilham alan bu tektaş yüzük, merkez pırlantayı benzersiz bir şekilde öne çıkarır. Yaprakların yumuşak kıvrımları, ışığın her açıdan dansını sergiler.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "sarmasik-inci-tanem-3": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Sarmaşık İnci",
+      "productTitle": "0,22 Karat Vintage Reina Pırlanta Yüzük",
+      "description": "Sevginin en güçlü sembolünü zarafetle buluşturur. Özenle seçilmiş pırlantalar ve usta işçilikle hazırlanan her yüzük; evlilikten yıldönümüne, özel anlardan kalıcı hatıralara kadar hayatınızdaki en anlamlı 'evet'lere eşlik etmek için tasarlandı.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "baget-reina-yuzuk-3": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "0,49 Karat Pırlanta Yüzük",
+      "description": "Baget kesim pırlantaların geometrik zarafeti, modern çizgilerle buluşuyor. Her açıdan ışığı yakalayan özel tasarım, günlük şıklığınızı tamamlarken özel anlarda da göz kamaştırıcı bir etki yaratır.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk-3": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Lotus Tektaş",
+      "productTitle": "0,34 Karat Lotus Tektaş Pırlanta Yüzük",
+      "description": "Lotus çiçeğinin zarif açılışından ilham alan bu tektaş yüzük, merkez pırlantayı benzersiz bir şekilde öne çıkarır. Yaprakların yumuşak kıvrımları, ışığın her açıdan dansını sergiler.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "baget-reina-yuzuk-4": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "0,49 Karat Pırlanta Yüzük",
+      "description": "Baget kesim pırlantaların geometrik zarafeti, modern çizgilerle buluşuyor. Her açıdan ışığı yakalayan özel tasarım, günlük şıklığınızı tamamlarken özel anlarda da göz kamaştırıcı bir etki yaratır.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk-4": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Lotus Tektaş",
+      "productTitle": "0,34 Karat Lotus Tektaş Pırlanta Yüzük",
+      "description": "Lotus çiçeğinin zarif açılışından ilham alan bu tektaş yüzük, merkez pırlantayı benzersiz bir şekilde öne çıkarır. Yaprakların yumuşak kıvrımları, ışığın her açıdan dansını sergiler.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "sarmasik-inci-tanem-4": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Sarmaşık İnci",
+      "productTitle": "0,22 Karat Vintage Reina Pırlanta Yüzük",
+      "description": "Sevginin en güçlü sembolünü zarafetle buluşturur. Özenle seçilmiş pırlantalar ve usta işçilikle hazırlanan her yüzük; evlilikten yıldönümüne, özel anlardan kalıcı hatıralara kadar hayatınızdaki en anlamlı 'evet'lere eşlik etmek için tasarlandı.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "damla-pirlanta-kolye": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Damla Pırlanta",
+      "productTitle": "0,30 Karat Damla Pırlanta Kolye",
+      "description": "Damla formundaki zarif tasarım, boynunuza doğal bir akış kazandırır. Merkez pırlanta, ışığı her açıdan yakalayarak büyüleyici bir parlaklık sunar.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "su-yolu-kolye": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Su Yolu",
+      "productTitle": "0,55 Karat Su Yolu Pırlanta Kolye",
+      "description": "Akan suyun zarafetinden ilham alan bu kolye, pırlantaların süzülüşünü yansıtır. Her bir taş, ışığın dansını sergilerken boynunuza eşsiz bir hareket katar.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "tektas-pirlanta-kolye": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Tektaş Pırlanta",
+      "productTitle": "0,25 Karat Tektaş Pırlanta Kolye",
+      "description": "Sadeliğin en zarif hali. Tek bir pırlantanın göz alıcı ışıltısı, minimalist tasarımla birleşerek zamansız bir şıklık sunar.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "anturaj-pirlanta-kolye": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Anturaj Pırlanta",
+      "productTitle": "0,45 Karat Anturaj Pırlanta Kolye",
+      "description": "Merkez taşı çevreleyen pırlantalar, ışığın büyüleyici dansını sergiler. Anturaj tasarım, görkemli görünümüyle özel anlarınıza değer katar.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "kalp-pirlanta-kolye": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Kalp Pırlanta",
+      "productTitle": "0,20 Karat Kalp Pırlanta Kolye",
+      "description": "Aşkın sembolü kalp formu, pırlantaların ışıltısıyla buluşuyor. Sevdiklerinize duyduğunuz duyguları en zarif şekilde ifade eden tasarım.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "infinity-pirlanta-kolye": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Infinity Pırlanta",
+      "productTitle": "0,35 Karat Infinity Pırlanta Kolye",
+      "description": "Sonsuzluk sembolünün zarif yorumu. Pırlantalarla süslenen infinity tasarım, sonsuz sevginizi temsil eder.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "su-yolu-bileklik": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Su Yolu",
+      "productTitle": "1,00 Karat Su Yolu Pırlanta Bileklik",
+      "description": "Akan suyun zarafetinden ilham alan tasarım, bileğinizde ışıltılı bir hareket yaratır. Her pırlanta, ışığın büyüleyici dansını sergiler.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "baget-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Baget Pırlanta",
+      "productTitle": "0,50 Karat Baget Pırlanta Bileklik",
+      "description": "Baget kesim pırlantaların geometrik zarafeti, modern çizgilerle buluşuyor. Bileğinize sofistike bir dokunuş katan tasarım.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "tenis-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Tenis Pırlanta",
+      "productTitle": "2,00 Karat Tenis Pırlanta Bileklik",
+      "description": "Klasik tenis bileklik tasarımı, sıralı pırlantalarıyla zamansız bir şıklık sunar. Her taş, ışığın büyüleyici oyununu sergiler.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "kelepce-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Kelepçe Pırlanta",
+      "productTitle": "0,75 Karat Kelepçe Pırlanta Bileklik",
+      "description": "Modern kelepçe tasarımı, pırlantaların ışıltısıyla buluşuyor. Bileğinizi saran zarif form, şık ve rahat kullanım sunar.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "zincir-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Zincir Pırlanta",
+      "productTitle": "0,30 Karat Zincir Pırlanta Bileklik",
+      "description": "İnce zincir üzerinde dans eden pırlantalar, minimalist zarafetin en güzel örneği. Günlük kullanıma uygun şıklık.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "charm-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Charm Pırlanta",
+      "productTitle": "0,40 Karat Charm Pırlanta Bileklik",
+      "description": "Şık charm detayları ve pırlantaların uyumu, bileğinize oyuncu bir hava katar. Her charm, ayrı bir hikaye anlatır.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "tektas-pirlanta-kupe": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Tektaş Pırlanta",
+      "productTitle": "0,50 Karat Tektaş Pırlanta Küpe",
+      "description": "Sadeliğin en zarif hali. Tek bir pırlantanın göz alıcı ışıltısı, yüzünüzü aydınlatır.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "anturaj-pirlanta-kupe": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Anturaj Pırlanta",
+      "productTitle": "0,70 Karat Anturaj Pırlanta Küpe",
+      "description": "Merkez taşı çevreleyen pırlantalar, görkemli bir ışıltı sunar. Özel anlarınız için mükemmel seçim.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "halka-pirlanta-kupe": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Halka Pırlanta",
+      "productTitle": "0,40 Karat Halka Pırlanta Küpe",
+      "description": "Klasik halka formunda pırlantaların dansı. Zamansız tasarım, her stile uyum sağlar.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "sallantili-pirlanta-kupe": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Sallantılı Pırlanta",
+      "productTitle": "0,60 Karat Sallantılı Pırlanta Küpe",
+      "description": "Hareket eden pırlantalar, her adımınızda ışıltılı bir dans sergiler. Göz alıcı tasarım, bakışları üzerinize çeker.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "civi-pirlanta-kupe": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Çivi Pırlanta",
+      "productTitle": "0,25 Karat Çivi Pırlanta Küpe",
+      "description": "Minimalist çivi tasarım, günlük kullanım için mükemmel. İnce zarif çizgiler, şıklığınızı tamamlar.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "damla-pirlanta-kupe": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Damla Pırlanta",
+      "productTitle": "0,55 Karat Damla Pırlanta Küpe",
+      "description": "Damla formunun zarafeti, pırlantaların ışıltısıyla buluşuyor. Yüzünüzü aydınlatan sofistike tasarım.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "gelin-pirlanta-set": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Gelin Pırlanta",
+      "productTitle": "3,00 Karat Gelin Pırlanta Set",
+      "description": "En özel gününüz için tasarlanan muhteşem set. Kolye, küpe ve yüzüğün mükemmel uyumu, gelin şıklığınızı tamamlar.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "klasik-pirlanta-set": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Klasik Pırlanta",
+      "productTitle": "1,50 Karat Klasik Pırlanta Set",
+      "description": "Zamansız klasik tasarım, her özel an için mükemmel. Kolye, küpe ve yüzüğün uyumlu bütünlüğü.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "modern-pirlanta-set": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Modern Pırlanta",
+      "productTitle": "2,00 Karat Modern Pırlanta Set",
+      "description": "Çağdaş çizgiler ve pırlantaların ışıltısı. Modern kadının şıklığını yansıtan cesur tasarım.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "vintage-pirlanta-set": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Vintage Pırlanta",
+      "productTitle": "1,75 Karat Vintage Pırlanta Set",
+      "description": "Nostaljik detaylar ve pırlantaların buluşması. Geçmişin zarafetini günümüze taşıyan özel tasarım.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "minimalist-pirlanta-set": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Minimalist Pırlanta",
+      "productTitle": "1,00 Karat Minimalist Pırlanta Set",
+      "description": "Az çoktur felsefesinin en zarif yorumu. Sade çizgiler ve pırlantaların ince dokunuşu.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "luks-pirlanta-set": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Lüks Pırlanta",
+      "productTitle": "4,00 Karat Lüks Pırlanta Set",
+      "description": "En seçkin pırlantaların görkemli buluşması. Lüksün ve zarafetin en yüksek noktası.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    }
+  },
+  "mucevherCategories": {
+    "yuzuk": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Aşkın En Değerli İmzası",
+      "heroSubtitle": "Zamana meydan okuyan pırlanta imzalar.",
+      "heroDescription": "Bu yüzük, eldeyken değilken de.\nBazen bakınca, bazen sadece hissedince…\nSöze gelmeyen bir yerden.\nYerine başka bir şey konmayan gibi.\nBirlikte kalan…",
+      "categoryTitle": "PIRLANTA YÜZÜKLERİMİZ",
+      "products": []
+    },
+    "kolye": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Zarafetin En Saf Hali",
+      "heroSubtitle": "Her bakışta ışıldayan tasarımlar.",
+      "heroDescription": "Bu kolye, bir bakışla başlayan şeyler için.\nYaklaştıkça hissedilen, adı konmadan kalan…\nGösterişten uzak, kalbe yakın.\nKorunmak istenen bir şeye benzer.\nHer an biraz daha…",
+      "categoryTitle": "PIRLANTA KOLYELERİMİZ",
+      "products": []
+    },
+    "bileklik": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Bileğinizde Işık",
+      "heroSubtitle": "Her harekette zarafet.",
+      "heroDescription": "Bu bileklik, günün içinde sessizce eşlik edenler gibi.\nHareket ettikçe fark edilen, durdukça var olan…\nGündelik hayata karışır.\nUnutturmadan, bastırmadan.\nFarkındalığı taze tutar gibi…",
+      "categoryTitle": "PIRLANTA BİLEKLİKLERİMİZ",
+      "products": []
+    },
+    "kupe": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Işıltının Dokunuşu",
+      "heroSubtitle": "Kulaklarınızda parıldayan zarafet.",
+      "heroDescription": "Bu küpeler, ilk anda değil zamanla.\nYakınlaştıkça, alıştıkça…\nHafif ama izi kalan bir his.\nSade, sessiz.\nBakışların arasında…",
+      "categoryTitle": "PIRLANTA KÜPELERİMİZ",
+      "products": []
+    },
+    "set": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Kusursuz Uyum",
+      "heroSubtitle": "Tamamlayıcı parçalarla bütünlük.",
+      "heroDescription": "Bu set, bir bütün arayanlar için.\nTek başına değil, birlikte anlam bulan…\nParçalar ayrı ayrı güzel,\nama yan yana geldiklerinde başka.\nTamamlanmış hissettiren gibi…",
+      "categoryTitle": "PIRLANTA SETLERİMİZ",
+      "products": []
+    }
+  },
+  "hediyeCategories": {
+    "ozel-gunler": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Özel Anlar İçin",
+      "heroSubtitle": "Unutulmaz hediyeler.",
+      "heroDescription": "Hayatınızın en özel anlarını kutlamak için tasarlanmış hediye seçenekleri. Nişan, düğün, yıldönümü veya herhangi bir özel gün için mükemmel seçimler.",
+      "categoryTitle": "ÖZEL GÜNLER HEDİYELERİ",
+      "products": []
+    },
+    "dogum-gunu": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Doğum Günü Işıltısı",
+      "heroSubtitle": "En güzel doğum günü hediyesi.",
+      "heroDescription": "Sevdiklerinizin doğum gününü özel kılacak hediye seçenekleri. Her yaşa ve tarza uygun pırlanta tasarımlar.",
+      "categoryTitle": "DOĞUM GÜNÜ HEDİYELERİ",
+      "products": []
+    },
+    "anneler-gunu": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Anneler İçin Özel",
+      "heroSubtitle": "En değerli kadına, en değerli hediye.",
+      "heroDescription": "Annenize olan sevginizi ifade edecek özel pırlanta tasarımlar. Zarif, anlamlı ve kalıcı hediyeler.",
+      "categoryTitle": "ANNELER GÜNÜ HEDİYELERİ",
+      "products": []
+    },
+    "kadinlar-gunu": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Kadınlara Özel",
+      "heroSubtitle": "Güçlü ve zarif kadınlara.",
+      "heroDescription": "Kadınlar gününde hayatınızdaki özel kadınlara anlamlı bir hediye verin. Şıklık ve zarafeti bir arada sunan tasarımlar.",
+      "categoryTitle": "KADINLAR GÜNÜ HEDİYELERİ",
+      "products": []
+    },
+    "yeni-dogan": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Minik Melekler İçin",
+      "heroSubtitle": "Yeni başlangıçlara özel hediyeler.",
+      "heroDescription": "Yeni doğan bebeklere ve ailelerine özel, anlamlı hediye seçenekleri. Hayata hoş geldin hediyesi olarak mükemmel.",
+      "categoryTitle": "YENİ DOĞAN HEDİYELERİ",
+      "products": []
+    },
+    "aksesuar": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Tamamlayıcı Dokunuşlar",
+      "heroSubtitle": "Stilinizi tamamlayın.",
+      "heroDescription": "Mücevher koleksiyonunuzu tamamlayacak aksesuarlar. Saç tokalarından mücevher kutularına özel seçenekler.",
+      "categoryTitle": "AKSESUARLAR",
+      "products": []
+    }
+  },
+  "erkekCategories": {
+    "tesbih": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Geleneksel Zarafet",
+      "heroSubtitle": "Her tanede huzur.",
+      "heroDescription": "Elde tutunca ilk fark edilen şey sessizlik.\nZaman biraz gevşiyor, düşünce yavaşlıyor.\nSayılar değil, aralar kalıyor.\nBakarken değil, dururken anlamlı.\nBir süre sonra fark edilmiyor bile…",
+      "categoryTitle": "TESBİH KOLEKSİYONU",
+      "products": []
+    },
+    "bileklik": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Erkek Şıklığı",
+      "heroSubtitle": "Bileğinizde güç ve zarafet.",
+      "heroDescription": "Göze gelmeden eşlik eden bir şey gibi.\nHareket ettikçe kendini belli ediyor.\nGünün içine karışıyor, geride kalmıyor.\nNe fazla, ne eksik.\nOradayken doğal…",
+      "categoryTitle": "ERKEK BİLEKLİKLERİ",
+      "products": []
+    },
+    "yuzuk": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Erkek Yüzükleri",
+      "heroSubtitle": "Güç ve karakterin simgesi.",
+      "heroDescription": "Ele baktıkça değişen bir his.\nBazen alışkanlık, bazen ağırlık gibi.\nSöze gelmeyen bir yerden.\nNe anlatmak istiyor, ne saklamak.\nSadece duruyor…",
+      "categoryTitle": "ERKEK YÜZÜKLERİ",
+      "products": []
+    },
+    "kol": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Erkek Kol",
+      "heroSubtitle": "Stil ve rahatlığın mükemmel birleşimi.",
+      "heroDescription": "Erkekler için tasarlanmış\nzaif ve konforlu kol ürünleri.",
+      "categoryTitle": "ERKEK KOL",
+      "products": []
+    }
+  },
+  "prelovedCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Preloved",
+    "heroSubtitle": "Zamanla değerinden hiçbir şey kaybetmeyen parçalar.",
+    "heroDescription": "Bazı mücevherler vardır;\nzamanla değerinden hiçbir şey kaybetmez.\nTasarımı, işçiliği ve duruşuyla hâlâ ilk günkü etkisini taşır.\n\nPreloved parçalar,\nözenle seçilmiş, özgünlüğü korunmuş\nve yeniden keşfedilmeyi bekleyen mücevherlerden oluşur.\n\nHer biri, geçmişinden gelen bir hikâyeyi\nbugünün zarafetiyle buluşturur.\nSeçkin, özel ve ulaşılabilir bir dengeyle…",
+    "categoryTitle": "PRELOVED KOLEKSİYONU",
+    "products": []
+  },
+  "newArrivalsCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Yeni Gelenler",
+    "heroSubtitle": "En yeni tasarımlar, ilk sizinle buluşuyor.",
+    "heroDescription": "Yeni başlangıçlar,\nyeni hikâyeler,\nyeni parıltılar…\n\nHer sezon, size özel olarak hazırladığımız\nen güncel tasarımlar bu koleksiyonda buluşuyor.\n\nTrendi takip etmek yerine,\nkendi stilinizi yaratmanız için\nilham veren parçalar.",
+    "categoryTitle": "YENİ GELENLER",
+    "products": []
+  },
+  "yuzukCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Yüzük",
+    "heroSubtitle": "Parmaklarınıza ışık katın.",
+    "heroDescription": "Her yüzük, bir hikâye anlatır.\nSizin hikâyenizi yansıtan\neşsiz tasarımlarımızı keşfedin.",
+    "categoryTitle": "YÜZÜK",
+    "products": []
+  },
+  "kolyeCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Kolye",
+    "heroSubtitle": "Zarafeti boynunuzda taşıyın.",
+    "heroDescription": "İnce işçilik ve özenle tasarlanmış\nkolyelerimiz, her anınıza\nışıltı katar.",
+    "categoryTitle": "KOLYE",
+    "products": []
+  },
+  "bileklikCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Bileklik",
+    "heroSubtitle": "Bileklerinize zarif bir dokunuş.",
+    "heroDescription": "Her bileklik, tarzınızı\ntamamlayan ince bir detaydır.\nKoleksiyonumuzu keşfedin.",
+    "categoryTitle": "BİLEKLİK",
+    "products": []
+  },
+  "kupeCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Küpe",
+    "heroSubtitle": "Yüzünüze ışıltı katın.",
+    "heroDescription": "Zarif küpelerimiz,\nher anınızı özel kılar.\nSizin için tasarlandı.",
+    "categoryTitle": "KÜPE",
+    "products": []
+  },
+  "setCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Set",
+    "heroSubtitle": "Uyumlu parçalar, kusursuz görünüm.",
+    "heroDescription": "Özenle bir araya getirilen\nmücevher setlerimiz,\ntarzınızı tamamlar.",
+    "categoryTitle": "SET",
+    "products": []
+  },
+  "gozumunNuruCategory": {
+    "heroImage": "/images/collection-menu-hero.jpg",
+    "heroTitle": "Gözümün Nuru",
+    "heroSubtitle": "Sevdiklerinize özel, anlam dolu tasarımlar.",
+    "heroDescription": "Gözümün Nuru koleksiyonu,\nsevgi ve değerin sembolü\nolarak tasarlandı.",
+    "categoryTitle": "GÖZÜMÜN NURU",
+    "products": []
+  },
+  "tesbihCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Tesbih",
+    "heroSubtitle": "Geleneksel zarafet, modern tasarım.",
+    "heroDescription": "El yapımı tesbihlerimiz,\nkalite ve estetiği\nbir arada sunar.",
+    "categoryTitle": "TESBİH",
+    "products": []
+  },
+  "erkekBileklikCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Erkek Bileklik",
+    "heroSubtitle": "Erkekler için özel tasarımlar.",
+    "heroDescription": "Maskülen ve şık bilekliklerimiz,\ntarzınızı tamamlar.",
+    "categoryTitle": "ERKEK BİLEKLİK",
+    "products": []
+  },
+  "erkekYuzukCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Erkek Yüzük",
+    "heroSubtitle": "Güç ve zarafetin buluşması.",
+    "heroDescription": "Erkekler için tasarlanmış\nşık ve kaliteli yüzükler.",
+    "categoryTitle": "ERKEK YÜZÜK",
+    "products": []
+  },
+  "erkekKolCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Erkek Kol",
+    "heroSubtitle": "Stil ve rahatlığın mükemmel birleşimi.",
+    "heroDescription": "Erkekler için tasarlanmış\nzaif ve konforlu kol ürünleri.",
+    "categoryTitle": "ERKEK KOL",
+    "products": []
+  },
+  "footer": {
+    "logo": "/images/1818-logo.svg",
+    "slogan": "Seninle güzelleşir her şey…",
+    "description": "Han Kuyumculuk, ışığın içinden doğan bu anlamı taşıyarak her kadının kalbinde özel bir yer bırakır; çünkü her ışıltının ardında unutulmaz bir hikâye vardır.",
+    "columns": [
+      {
+        "title": "HAN KUYUMCULUK",
+        "links": [
+          {
+            "text": "Hakkımızda",
+            "href": "/hakkimizda"
+          },
+          {
+            "text": "İletişim",
+            "href": "/iletisim"
+          },
+          {
+            "text": "Blog",
+            "href": "/blog"
+          }
+        ]
+      },
+      {
+        "title": "KOLEKSİYON",
+        "links": [
+          {
+            "text": "Gözümün Nuru",
+            "href": "/koleksiyon/gozumun-nuru"
+          }
+        ]
+      },
+      {
+        "title": "MÜŞTERİ HİZMETLERİ",
+        "links": [
+          {
+            "text": "Bakım ve Garanti",
+            "href": "/musteri-hizmetleri/bakim-garanti"
+          }
+        ]
+      },
+      {
+        "title": "YASAL",
+        "links": [
+          {
+            "text": "Çerez Politikası",
+            "href": "/yasal/cerez-politikasi"
+          }
+        ]
+      }
+    ],
+    "socialLinks": {
+      "instagram": "https://instagram.com/hankuyumculuk"
+    },
+    "copyright": "© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır"
+  }
+}

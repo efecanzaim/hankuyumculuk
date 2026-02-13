@@ -38,7 +38,7 @@
   "hero": {
     "slides": [
       {
-        "backgroundImage": "/images/hero-bg.jpg",
+        "backgroundImage": "/images/hero-bg.mp4",
         "title": "zarafet  sanatı",
         "subtitle": "EŞSIZ TASARIMLAR, ZAMANSIZ DEĞERLER",
         "ctaText": "MÜCEVHERLERİ KEŞFEDİN",
@@ -52,7 +52,7 @@
         "ctaLink": "/koleksiyon"
       },
       {
-        "backgroundImage": "/images/hero-bg3.jpg",
+        "backgroundImage": "/images/hero-bg3.mp4",
         "title": "özel  randevu",
         "subtitle": "SİZE ÖZEL BİR DENEYİM İÇİN",
         "ctaText": "RANDEVU OLUŞTURUN",
@@ -822,40 +822,7 @@
     "heroSubtitle": "Sevdiklerinize özel, anlam dolu tasarımlar.",
     "heroDescription": "Gözümün Nuru koleksiyonu,\nsevgi ve değerin sembolü\nolarak tasarlandı.",
     "categoryTitle": "GÖZÜMÜN NURU",
-    "products": [
-      {
-        "id": 1001,
-        "name": "Harmony Yüzük",
-        "subtitle": "Sevginin temeli",
-        "description": "Zamansız tasarım, modern zarif çizgiler...",
-        "image": "/images/products/product-1.jpg",
-        "category": "YÜZÜK"
-      },
-      {
-        "id": 1002,
-        "name": "Işık Bileklik",
-        "subtitle": "Bağlılığın sembolü",
-        "description": "Elinizde taşıdığınız sevgi, hareket ettikçe parıldayan...",
-        "image": "/images/products/product-2.jpg",
-        "category": "BİLEKLİK"
-      },
-      {
-        "id": 1003,
-        "name": "Yakınlık Kolye",
-        "subtitle": "Göğsüne yakın sevgi",
-        "description": "Kalbinize en yakın yerinde duran, anlam yüklü bir parça...",
-        "image": "/images/products/product-3.jpg",
-        "category": "KOLYE"
-      },
-      {
-        "id": 1004,
-        "name": "Değer Küpe",
-        "subtitle": "Yüze yakın söz",
-        "description": "Yüzün en güzel çerçevesini oluşturan, incelikli tasarım...",
-        "image": "/images/products/product-4.jpg",
-        "category": "KÜPE"
-      }
-    ]
+    "products": []
   },
   "tesbihCategory": {
     "heroImage": "/images/erkek-menu-hero.jpg",

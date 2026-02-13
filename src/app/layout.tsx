@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { PreviewProvider } from "@/contexts/PreviewContext";
+import { LocaleProvider } from "@/i18n/LocaleContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-  
+
   return (
     <html lang="tr">
       <head>
@@ -44,9 +45,11 @@ export default function RootLayout({
         }} />
       </head>
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
-        <PreviewProvider>
-          {children}
-        </PreviewProvider>
+        <LocaleProvider locale="tr">
+          <PreviewProvider locale="tr">
+            {children}
+          </PreviewProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

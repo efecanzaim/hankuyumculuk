@@ -3,12 +3,42 @@
  * Tüm İçerik API
  * Frontend için tüm site içeriğini tek seferde döndürür
  * Yeni veritabanı şemasına göre güncellenmiştir
+ * 
+ * Çoklu dil desteği:
+ * ?locale=tr (varsayılan), ?locale=en, ?locale=ru
  */
 
 require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     jsonResponse(['error' => 'Sadece GET metodu kabul edilir'], 405);
+}
+
+// Locale parametresini al (varsayılan: tr)
+$validLocales = ['tr', 'en', 'ru'];
+$locale = isset($_GET['locale']) ? strtolower($_GET['locale']) : 'tr';
+if (!in_array($locale, $validLocales)) {
+    $locale = 'tr';
+}
+
+/**
+ * Dile göre alan değerini döndürür
+ * Önce {field}_{locale} aranır, yoksa {field} döner
+ */
+function getLocalizedValue($row, $field, $locale) {
+    if ($locale === 'tr') {
+        return $row[$field] ?? '';
+    }
+    
+    $localizedField = $field . '_' . $locale;
+    
+    // Lokalize alan dolu ise onu döndür
+    if (isset($row[$localizedField]) && $row[$localizedField] !== null && $row[$localizedField] !== '') {
+        return $row[$localizedField];
+    }
+    
+    // Yoksa varsayılan (TR) değeri döndür
+    return $row[$field] ?? '';
 }
 
 $db = getDB();
@@ -76,11 +106,11 @@ try {
     foreach ($allCards as $card) {
         $formattedCard = [
             'id' => (int)($card['id'] ?? 0),
-            'title' => $card['title'] ?? '',
-            'subtitle' => $card['subtitle'] ?? '',
+            'title' => getLocalizedValue($card, 'title', $locale),
+            'subtitle' => getLocalizedValue($card, 'subtitle', $locale),
             'image' => $card['image'] ?? '',
             'link' => $card['link'] ?? '',
-            'buttonText' => $card['button_text'] ?? ''
+            'buttonText' => getLocalizedValue($card, 'button_text', $locale)
         ];
         if ($card['section_type'] === 'top') {
             $topCards[] = $formattedCard;
@@ -116,7 +146,7 @@ try {
             $linksByColumn[$colId] = [];
         }
         $linksByColumn[$colId][] = [
-            'text' => $link['text'],
+            'text' => getLocalizedValue($link, 'text', $locale),
             'href' => $link['url']
         ];
     }
@@ -125,7 +155,7 @@ try {
     $formattedColumns = [];
     foreach ($footerColumns as $column) {
         $formattedColumns[] = [
-            'title' => $column['title'],
+            'title' => getLocalizedValue($column, 'title', $locale),
             'links' => $linksByColumn[$column['id']] ?? []
         ];
     }
@@ -147,6 +177,31 @@ try {
         $socialLinks[$social['platform']] = $social['url'];
     }
     
+    // =====================================================
+    // ÇOKLU DİL SÜTUN KONTROLÜ
+    // =====================================================
+    $hasMultilangProducts = false;
+    $hasMultilangFeatured = false;
+    try {
+        $checkCol = $db->query("SHOW COLUMNS FROM products LIKE 'name_en'");
+        $hasMultilangProducts = $checkCol->rowCount() > 0;
+    } catch (Exception $e) {
+        $hasMultilangProducts = false;
+    }
+    try {
+        $checkCol = $db->query("SHOW COLUMNS FROM featured_products LIKE 'display_name_en'");
+        $hasMultilangFeatured = $checkCol->rowCount() > 0;
+    } catch (Exception $e) {
+        $hasMultilangFeatured = false;
+    }
+
+    $productMultilangCols = $hasMultilangProducts
+        ? ', p.name_en, p.name_ru, p.subtitle_en, p.subtitle_ru'
+        : '';
+    $productMultilangColsDirect = $hasMultilangProducts
+        ? ', name_en, name_ru, subtitle_en, subtitle_ru'
+        : '';
+
     // =====================================================
     // KATEGORİLER
     // =====================================================
@@ -170,14 +225,14 @@ try {
     if ($tableExists) {
         // category_products tablosu varsa, oradan al
         try {
-            $stmt = $db->query('
+            $stmt = $db->query("
                 SELECT cp.category_id, cp.product_id, cp.sort_order,
-                       p.id, p.slug, p.main_image, p.name, p.subtitle, p.is_active
+                       p.id, p.slug, p.main_image, p.name, p.subtitle, p.is_active{$productMultilangCols}
                 FROM category_products cp
                 INNER JOIN products p ON cp.product_id = p.id
                 WHERE cp.is_active = 1 AND p.is_active = 1
                 ORDER BY cp.category_id, cp.sort_order ASC
-            ');
+            ");
             $categoryProducts = $stmt->fetchAll();
             
             // Ürünleri kategorilere göre grupla
@@ -191,7 +246,11 @@ try {
                     'slug' => $cp['slug'] ?? '',
                     'main_image' => $cp['main_image'] ?? '',
                     'name' => $cp['name'] ?? '',
+                    'name_en' => $cp['name_en'] ?? '',
+                    'name_ru' => $cp['name_ru'] ?? '',
                     'subtitle' => $cp['subtitle'] ?? '',
+                    'subtitle_en' => $cp['subtitle_en'] ?? '',
+                    'subtitle_ru' => $cp['subtitle_ru'] ?? '',
                     'sort_order' => (int)$cp['sort_order']
                 ];
             }
@@ -205,12 +264,12 @@ try {
     // Eğer category_products tablosu yoksa veya boşsa, fallback olarak products tablosundan al
     if (!$tableExists || empty($productsByCategory)) {
         try {
-            $stmt = $db->query('
-                SELECT id, slug, main_image, name, subtitle, category_id, sort_order
+            $stmt = $db->query("
+                SELECT id, slug, main_image, name, subtitle, category_id, sort_order{$productMultilangColsDirect}
                 FROM products
                 WHERE is_active = 1 AND category_id IS NOT NULL
                 ORDER BY category_id, sort_order ASC
-            ');
+            ");
             $allProducts = $stmt->fetchAll();
             
             foreach ($allProducts as $p) {
@@ -224,7 +283,11 @@ try {
                         'slug' => $p['slug'] ?? '',
                         'main_image' => $p['main_image'] ?? '',
                         'name' => $p['name'] ?? '',
+                        'name_en' => $p['name_en'] ?? '',
+                        'name_ru' => $p['name_ru'] ?? '',
                         'subtitle' => $p['subtitle'] ?? '',
+                        'subtitle_en' => $p['subtitle_en'] ?? '',
+                        'subtitle_ru' => $p['subtitle_ru'] ?? '',
                         'sort_order' => (int)$p['sort_order']
                     ];
                 }
@@ -239,13 +302,13 @@ try {
     $categoriesByType = [];
     foreach ($categories as $category) {
         $catProducts = $productsByCategory[$category['id']] ?? [];
-        $formattedProducts = array_map(function($p) {
+        $formattedProducts = array_map(function($p) use ($locale) {
             return [
                 'id' => (int)$p['id'],
                 'slug' => $p['slug'] ?? '',
                 'image' => $p['main_image'] ?? '',
-                'name' => $p['name'] ?? '',
-                'subtitle' => $p['subtitle'] ?? '',
+                'name' => getLocalizedValue($p, 'name', $locale),
+                'subtitle' => getLocalizedValue($p, 'subtitle', $locale),
                 'link' => '/urun/' . ($p['slug'] ?? '')
             ];
         }, $catProducts);
@@ -253,12 +316,12 @@ try {
         $formattedCategory = [
             'id' => (int)$category['id'],
             'slug' => $category['slug'] ?? '',
-            'name' => $category['name'] ?? '',
+            'name' => getLocalizedValue($category, 'name', $locale),
             'heroImage' => $category['hero_image'] ?? '',
-            'heroTitle' => $category['hero_title'] ?? '',
-            'heroSubtitle' => $category['hero_subtitle'] ?? '',
-            'heroDescription' => $category['hero_description'] ?? '',
-            'categoryTitle' => $category['list_title'] ?? '',
+            'heroTitle' => getLocalizedValue($category, 'hero_title', $locale),
+            'heroSubtitle' => getLocalizedValue($category, 'hero_subtitle', $locale),
+            'heroDescription' => getLocalizedValue($category, 'hero_description', $locale),
+            'categoryTitle' => getLocalizedValue($category, 'list_title', $locale),
             'products' => $formattedProducts
         ];
         
@@ -272,21 +335,36 @@ try {
     // =====================================================
     // ÖNE ÇIKAN ÜRÜNLER (Ana sayfa için)
     // =====================================================
-    $stmt = $db->query('
-        SELECT fp.*, p.main_image, p.slug as product_slug, p.name as product_name, p.subtitle as product_subtitle
+    $featuredMultilangCols = '';
+    if ($hasMultilangProducts) {
+        $featuredMultilangCols .= ', p.name_en as product_name_en, p.name_ru as product_name_ru';
+        $featuredMultilangCols .= ', p.subtitle_en as product_subtitle_en, p.subtitle_ru as product_subtitle_ru';
+    }
+    if ($hasMultilangFeatured) {
+        $featuredMultilangCols .= ', fp.display_name_en, fp.display_name_ru, fp.display_category_en, fp.display_category_ru';
+    }
+    $stmt = $db->query("
+        SELECT fp.id, fp.product_id, fp.display_name, fp.display_category, fp.sort_order, fp.is_active,
+               p.main_image, p.slug as product_slug,
+               p.name as product_name, p.subtitle as product_subtitle{$featuredMultilangCols}
         FROM featured_products fp
         JOIN products p ON fp.product_id = p.id
         WHERE fp.is_active = 1 AND p.is_active = 1
         ORDER BY fp.sort_order ASC
-    ');
+    ");
     $featuredProducts = $stmt->fetchAll();
     
-    $formattedFeaturedProducts = array_map(function($fp) {
+    $formattedFeaturedProducts = array_map(function($fp) use ($locale) {
+        // Önce display_name'in locale versiyonunu, yoksa product_name'in locale versiyonunu al
+        $displayName = getLocalizedValue($fp, 'display_name', $locale);
+        if (empty($displayName)) {
+            $displayName = getLocalizedValue($fp, 'product_name', $locale);
+        }
         return [
             'id' => (int)($fp['id'] ?? 0),
             'image' => $fp['main_image'] ?? '',
-            'name' => $fp['display_name'] ?: ($fp['product_name'] ?? ''),
-            'category' => $fp['display_category'] ?? '',
+            'name' => $displayName,
+            'category' => getLocalizedValue($fp, 'display_category', $locale),
             'link' => '/urun/' . ($fp['product_slug'] ?? '')
         ];
     }, $featuredProducts);
@@ -297,7 +375,7 @@ try {
     $content = [
         // Top Banner
         'topBanner' => [
-            'text' => $topBanner['text'] ?? '',
+            'text' => getLocalizedValue($topBanner ?: [], 'text', $locale),
             'link' => $topBanner['link'] ?? '',
             'visible' => (bool)($topBanner['is_visible'] ?? false)
         ],
@@ -320,14 +398,14 @@ try {
         
         // Hero Slider
         'hero' => [
-            'slides' => array_map(function($slide) {
+            'slides' => array_map(function($slide) use ($locale) {
                 return [
                     'id' => (int)$slide['id'],
                     'backgroundImage' => $slide['background_media'] ?? '',
                     'mediaType' => $slide['media_type'] ?? 'image',
-                    'title' => $slide['title'] ?? '',
-                    'subtitle' => $slide['subtitle'] ?? '',
-                    'ctaText' => $slide['button_text'] ?? '',
+                    'title' => getLocalizedValue($slide, 'title', $locale),
+                    'subtitle' => getLocalizedValue($slide, 'subtitle', $locale),
+                    'ctaText' => getLocalizedValue($slide, 'button_text', $locale),
                     'ctaLink' => $slide['button_link'] ?? ''
                 ];
             }, $heroSlides)
@@ -336,10 +414,10 @@ try {
         // Trend Section
         'trendSection' => $trendSection ? [
             'leftImage' => $trendSection['left_image'] ?? '',
-            'leftTitle' => $trendSection['left_title'] ?? '',
+            'leftTitle' => getLocalizedValue($trendSection, 'left_title', $locale),
             'leftTitleLink' => $trendSection['left_link'] ?? '',
             'rightImage' => $trendSection['right_image'] ?? '',
-            'rightTitle' => $trendSection['right_title'] ?? '',
+            'rightTitle' => getLocalizedValue($trendSection, 'right_title', $locale),
             'rightTitleLink' => $trendSection['right_link'] ?? ''
         ] : null,
         
@@ -350,17 +428,17 @@ try {
         
         // Story Section
         'storySection' => $storySection ? [
-            'title' => $storySection['title'] ?? '',
-            'mainText' => $storySection['main_text'] ?? '',
-            'subText' => $storySection['sub_text'] ?? '',
-            'linkText' => $storySection['link_text'] ?? '',
+            'title' => getLocalizedValue($storySection, 'title', $locale),
+            'mainText' => getLocalizedValue($storySection, 'main_text', $locale),
+            'subText' => getLocalizedValue($storySection, 'sub_text', $locale),
+            'linkText' => getLocalizedValue($storySection, 'link_text', $locale),
             'linkUrl' => $storySection['link_url'] ?? ''
         ] : null,
         
         // Featured Products Section
         'featuredProductsSection' => $featuredSection ? [
-            'titlePart1' => $featuredSection['title_part1'] ?? 'SİZE ÖZEL',
-            'titlePart2' => $featuredSection['title_part2'] ?? 'ÜRÜNLERİMİZ',
+            'titlePart1' => getLocalizedValue($featuredSection, 'title_part1', $locale) ?: 'SİZE ÖZEL',
+            'titlePart2' => getLocalizedValue($featuredSection, 'title_part2', $locale) ?: 'ÜRÜNLERİMİZ',
             'bannerImage1' => $featuredSection['banner_image1'] ?? '/images/products/featured-large-1.jpg',
             'bannerImage2' => $featuredSection['banner_image2'] ?? '/images/products/featured-large-2.jpg'
         ] : [
@@ -375,38 +453,38 @@ try {
         
         // Special Design Section
         'specialDesignSection' => [
-            'titlePart1' => $specialSection['title_part1'] ?? 'KENDİNİZİ',
-            'titlePart2' => $specialSection['title_part2'] ?? 'ÖZEL HİSSEDİN',
+            'titlePart1' => getLocalizedValue($specialSection ?: [], 'title_part1', $locale) ?: 'KENDİNİZİ',
+            'titlePart2' => getLocalizedValue($specialSection ?: [], 'title_part2', $locale) ?: 'ÖZEL HİSSEDİN',
             'topCards' => $topCards,
             'bottomCards' => $bottomCards
         ],
         
         // Blog Section
         'blogSection' => $blogSection ? [
-            'title' => $blogSection['title'] ?? '',
-            'subtitle' => $blogSection['subtitle'] ?? '',
-            'description' => $blogSection['description'] ?? '',
-            'additionalText' => $blogSection['additional_text'] ?? '',
+            'title' => getLocalizedValue($blogSection, 'title', $locale),
+            'subtitle' => getLocalizedValue($blogSection, 'subtitle', $locale),
+            'description' => getLocalizedValue($blogSection, 'description', $locale),
+            'additionalText' => getLocalizedValue($blogSection, 'additional_text', $locale),
             'image' => $blogSection['image'] ?? '',
-            'linkText' => $blogSection['link_text'] ?? '',
+            'linkText' => getLocalizedValue($blogSection, 'link_text', $locale),
             'linkUrl' => $blogSection['link_url'] ?? ''
         ] : null,
         
         // Footer
         'footer' => [
             'logo' => $footerSettings['logo_image'] ?? '/images/1818-logo.svg',
-            'slogan' => $footerSettings['slogan'] ?? 'Seninle güzelleşir her şey…',
-            'copyright' => $footerSettings['copyright_text'] ?? '© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır',
+            'slogan' => getLocalizedValue($footerSettings, 'slogan', $locale) ?: 'Seninle güzelleşir her şey…',
+            'copyright' => getLocalizedValue($footerSettings, 'copyright_text', $locale) ?: '© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır',
             'columns' => $formattedColumns,
             'socialLinks' => $socialLinks
         ],
         
         // Contact
         'contact' => [
-            'address' => $contactInfo['address'] ?? '',
+            'address' => getLocalizedValue($contactInfo, 'address', $locale),
             'phone' => $contactInfo['phone'] ?? '',
             'email' => $contactInfo['email'] ?? '',
-            'workingHours' => $contactInfo['working_hours'] ?? '',
+            'workingHours' => getLocalizedValue($contactInfo, 'working_hours', $locale),
             'mapEmbed' => $contactInfo['map_embed'] ?? ''
         ],
         
@@ -415,6 +493,7 @@ try {
         'koleksiyonCategories' => $categoriesByType['koleksiyon'] ?? [],
         'hediyeCategories' => $categoriesByType['hediye'] ?? [],
         'erkekCategories' => $categoriesByType['erkek'] ?? [],
+        'gozumunNuruCategory' => $categoriesByType['koleksiyon']['gozumun-nuru'] ?? null,
         'prelovedCategory' => $categoriesByType['preloved']['preloved'] ?? null,
         'yatirimCategory' => $categoriesByType['yatirim']['yatirim'] ?? null,
         'ozelTasarimCategory' => $categoriesByType['ozel_tasarim']['ozel-tasarim'] ?? null,

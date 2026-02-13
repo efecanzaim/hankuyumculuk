@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { usePreviewContent } from "@/contexts/PreviewContext";
+import { useLocale } from "@/i18n/LocaleContext";
+import { useTranslation } from "@/i18n/useTranslation";
+import { getLocalizedPath } from "@/i18n/config";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import TrendSection from "@/components/TrendSection";
@@ -24,6 +27,8 @@ interface BlogPost {
 
 export default function HomePageClient() {
   const content = usePreviewContent();
+  const locale = useLocale();
+  const t = useTranslation(locale);
   const [latestBlog, setLatestBlog] = useState<BlogPost | null>(null);
 
   // En son blog yazısını yükle
@@ -32,7 +37,7 @@ export default function HomePageClient() {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       if (apiUrl) {
         try {
-          const response = await fetch(`${apiUrl}/api/blog.php?latest=1`);
+          const response = await fetch(`${apiUrl}/api/blog.php?latest=1&lang=${locale}`);
           if (response.ok) {
             const data = await response.json();
             if (data) {
@@ -45,7 +50,7 @@ export default function HomePageClient() {
       }
     };
     fetchLatestBlog();
-  }, []);
+  }, [locale]);
 
   return (
     <main>
@@ -110,8 +115,8 @@ export default function HomePageClient() {
         subtitle={content.blogSection?.subtitle}
         description={latestBlog?.excerpt || content.blogSection?.description}
         image={latestBlog?.image ? (process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}${latestBlog.image}` : latestBlog.image) : content.blogSection?.image}
-        linkText={latestBlog ? "Devamını Oku" : content.blogSection?.linkText}
-        linkHref={latestBlog ? `/blog/${latestBlog.slug}` : content.blogSection?.linkHref}
+        linkText={latestBlog ? t('common.readMore') : content.blogSection?.linkText}
+        linkHref={latestBlog ? `${getLocalizedPath('blog', locale)}/${latestBlog.slug}` : content.blogSection?.linkHref}
         additionalText={content.blogSection?.additionalText}
       />
 

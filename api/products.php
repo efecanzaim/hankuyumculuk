@@ -139,15 +139,21 @@ switch ($method) {
         $goldKarat = isset($data['gold_karat']) && $data['gold_karat'] !== '' ? (int)$data['gold_karat'] : null;
 
         $stmt = $db->prepare('
-            INSERT INTO products (category_id, slug, name, subtitle, description, main_image, banner_image, gallery_images, gold_weight, gold_karat, is_featured, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO products (category_id, slug, name, name_en, name_ru, subtitle, subtitle_en, subtitle_ru, description, description_en, description_ru, main_image, banner_image, gallery_images, gold_weight, gold_karat, is_featured, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $data['categoryId'] ?? $data['category_id'] ?? null,
             $slug,
             $data['name'],
+            $data['name_en'] ?? $data['nameEn'] ?? null,
+            $data['name_ru'] ?? $data['nameRu'] ?? null,
             $data['subtitle'] ?? null,
+            $data['subtitle_en'] ?? $data['subtitleEn'] ?? null,
+            $data['subtitle_ru'] ?? $data['subtitleRu'] ?? null,
             $data['description'] ?? null,
+            $data['description_en'] ?? $data['descriptionEn'] ?? null,
+            $data['description_ru'] ?? $data['descriptionRu'] ?? null,
             $data['mainImage'] ?? $data['main_image'] ?? $data['image'] ?? null,
             $data['bannerImage'] ?? $data['banner_image'] ?? null,
             $galleryImages,
@@ -215,6 +221,7 @@ switch ($method) {
         // Frontend'den gelen categoryName, categorySlug, link gibi formatlanmış alanlar burada yok
         $allowedDbFields = [
             'category_id', 'slug', 'name', 'subtitle', 'description',
+            'name_en', 'name_ru', 'subtitle_en', 'subtitle_ru', 'description_en', 'description_ru',
             'main_image', 'banner_image', 'gallery_images',
             'gold_weight', 'gold_karat',
             'is_featured', 'sort_order', 'is_active'
@@ -231,7 +238,13 @@ switch ($method) {
             'sortOrder' => 'sort_order',
             'isActive' => 'is_active',
             'goldWeight' => 'gold_weight',
-            'goldKarat' => 'gold_karat'
+            'goldKarat' => 'gold_karat',
+            'nameEn' => 'name_en',
+            'nameRu' => 'name_ru',
+            'subtitleEn' => 'subtitle_en',
+            'subtitleRu' => 'subtitle_ru',
+            'descriptionEn' => 'description_en',
+            'descriptionRu' => 'description_ru'
         ];
 
         // Taş bilgilerini ayır (ayrı tabloya kaydedilecek)

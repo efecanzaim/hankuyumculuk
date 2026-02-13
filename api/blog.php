@@ -91,8 +91,8 @@ switch ($method) {
         }
 
         $stmt = $db->prepare("
-            INSERT INTO blog_posts (title, slug, excerpt, content, image, author, status, published_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO blog_posts (title, title_en, title_ru, slug, excerpt, excerpt_en, excerpt_ru, content, content_en, content_ru, image, author, status, published_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         $status = $data['status'] ?? 'draft';
@@ -100,9 +100,15 @@ switch ($method) {
 
         $stmt->execute([
             $data['title'],
+            $data['title_en'] ?? null,
+            $data['title_ru'] ?? null,
             $slug,
             $data['excerpt'] ?? null,
+            $data['excerpt_en'] ?? null,
+            $data['excerpt_ru'] ?? null,
             $data['content'] ?? null,
+            $data['content_en'] ?? null,
+            $data['content_ru'] ?? null,
             $data['image'] ?? null,
             $data['author'] ?? 'Han Kuyumculuk',
             $status,
@@ -156,9 +162,15 @@ switch ($method) {
         $stmt = $db->prepare("
             UPDATE blog_posts SET
                 title = ?,
+                title_en = ?,
+                title_ru = ?,
                 slug = ?,
                 excerpt = ?,
+                excerpt_en = ?,
+                excerpt_ru = ?,
                 content = ?,
+                content_en = ?,
+                content_ru = ?,
                 image = ?,
                 author = ?,
                 status = ?,
@@ -168,9 +180,15 @@ switch ($method) {
 
         $stmt->execute([
             $data['title'] ?? $existing['title'],
+            $data['title_en'] ?? $existing['title_en'] ?? null,
+            $data['title_ru'] ?? $existing['title_ru'] ?? null,
             $slug,
             $data['excerpt'] ?? $existing['excerpt'],
+            $data['excerpt_en'] ?? $existing['excerpt_en'] ?? null,
+            $data['excerpt_ru'] ?? $existing['excerpt_ru'] ?? null,
             $data['content'] ?? $existing['content'],
+            $data['content_en'] ?? $existing['content_en'] ?? null,
+            $data['content_ru'] ?? $existing['content_ru'] ?? null,
             $data['image'] ?? $existing['image'],
             $data['author'] ?? $existing['author'],
             $status,

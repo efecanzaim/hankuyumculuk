@@ -120,18 +120,28 @@ switch ($method) {
         }
 
         $stmt = $db->prepare('
-            INSERT INTO categories (parent_type, name, slug, hero_image, hero_title, hero_subtitle, hero_description, list_title, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO categories (parent_type, name, name_en, name_ru, slug, hero_image, hero_title, hero_title_en, hero_title_ru, hero_subtitle, hero_subtitle_en, hero_subtitle_ru, hero_description, hero_description_en, hero_description_ru, list_title, list_title_en, list_title_ru, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $data['parentType'] ?? $data['parent_type'],
             $data['name'],
+            $data['name_en'] ?? null,
+            $data['name_ru'] ?? null,
             $slug,
             $data['heroImage'] ?? $data['hero_image'] ?? null,
             $data['heroTitle'] ?? $data['hero_title'] ?? null,
+            $data['hero_title_en'] ?? null,
+            $data['hero_title_ru'] ?? null,
             $data['heroSubtitle'] ?? $data['hero_subtitle'] ?? null,
+            $data['hero_subtitle_en'] ?? null,
+            $data['hero_subtitle_ru'] ?? null,
             $data['heroDescription'] ?? $data['hero_description'] ?? null,
+            $data['hero_description_en'] ?? null,
+            $data['hero_description_ru'] ?? null,
             $data['listTitle'] ?? $data['list_title'] ?? null,
+            $data['list_title_en'] ?? null,
+            $data['list_title_ru'] ?? null,
             $data['sortOrder'] ?? $data['sort_order'] ?? 0
         ]);
 
@@ -161,7 +171,17 @@ switch ($method) {
             'heroDescription' => 'hero_description',
             'listTitle' => 'list_title',
             'sortOrder' => 'sort_order',
-            'isActive' => 'is_active'
+            'isActive' => 'is_active',
+            'nameEn' => 'name_en',
+            'nameRu' => 'name_ru',
+            'heroTitleEn' => 'hero_title_en',
+            'heroTitleRu' => 'hero_title_ru',
+            'heroSubtitleEn' => 'hero_subtitle_en',
+            'heroSubtitleRu' => 'hero_subtitle_ru',
+            'heroDescriptionEn' => 'hero_description_en',
+            'heroDescriptionRu' => 'hero_description_ru',
+            'listTitleEn' => 'list_title_en',
+            'listTitleRu' => 'list_title_ru'
         ];
 
         $fields = [];

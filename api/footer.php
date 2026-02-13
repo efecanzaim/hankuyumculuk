@@ -30,13 +30,23 @@ switch ($method) {
                 // Footer ayarlarını güncelle
                 $stmt = $db->prepare('
                     UPDATE footer_settings SET
-                        logo_image = ?, slogan = ?, copyright_text = ?
+                        logo_image = ?, 
+                        slogan = ?, slogan_en = ?, slogan_ru = ?,
+                        copyright_text = ?, copyright_text_en = ?, copyright_text_ru = ?,
+                        description = ?, description_en = ?, description_ru = ?
                     WHERE id = 1
                 ');
                 $stmt->execute([
                     $data['logoImage'] ?? $data['logo_image'] ?? null,
                     $data['slogan'] ?? null,
-                    $data['copyrightText'] ?? $data['copyright_text'] ?? null
+                    $data['slogan_en'] ?? null,
+                    $data['slogan_ru'] ?? null,
+                    $data['copyrightText'] ?? $data['copyright_text'] ?? null,
+                    $data['copyright_text_en'] ?? $data['copyright_en'] ?? null,
+                    $data['copyright_text_ru'] ?? $data['copyright_ru'] ?? null,
+                    $data['description'] ?? null,
+                    $data['description_en'] ?? null,
+                    $data['description_ru'] ?? null
                 ]);
                 jsonResponse(['success' => true, 'message' => 'Footer ayarları güncellendi']);
                 break;

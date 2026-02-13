@@ -149,14 +149,50 @@ function saveSettingByKey($db, $key, $value) {
             return $stmt->execute($params);
 
         case 'special_design_section':
+            // Başlık kaydet
             $stmt = $db->query('SELECT id FROM homepage_special_section LIMIT 1');
             $params = [$value['titlePart1'] ?? '', $value['titlePart2'] ?? ''];
             if ($stmt->fetch()) {
                 $stmt = $db->prepare('UPDATE homepage_special_section SET title_part1=?, title_part2=? LIMIT 1');
-                return $stmt->execute($params);
+                $stmt->execute($params);
+            } else {
+                $stmt = $db->prepare('INSERT INTO homepage_special_section (title_part1, title_part2) VALUES (?,?)');
+                $stmt->execute($params);
             }
-            $stmt = $db->prepare('INSERT INTO homepage_special_section (title_part1, title_part2) VALUES (?,?)');
-            return $stmt->execute($params);
+
+            // Kartları kaydet - önce mevcut kartları temizle
+            $db->exec('DELETE FROM homepage_cards');
+
+            // Üst kartları ekle
+            $topCards = $value['topCards'] ?? [];
+            $insertStmt = $db->prepare('INSERT INTO homepage_cards (title, subtitle, image, link, button_text, section_type, sort_order, is_active) VALUES (?,?,?,?,?,?,?,1)');
+            foreach ($topCards as $i => $card) {
+                $insertStmt->execute([
+                    $card['title'] ?? '',
+                    $card['subtitle'] ?? '',
+                    $card['image'] ?? '',
+                    $card['link'] ?? '',
+                    $card['buttonText'] ?? '',
+                    'top',
+                    $i + 1
+                ]);
+            }
+
+            // Alt kartları ekle
+            $bottomCards = $value['bottomCards'] ?? [];
+            foreach ($bottomCards as $i => $card) {
+                $insertStmt->execute([
+                    $card['title'] ?? '',
+                    $card['subtitle'] ?? '',
+                    $card['image'] ?? '',
+                    $card['link'] ?? '',
+                    $card['buttonText'] ?? '',
+                    'bottom',
+                    $i + 1
+                ]);
+            }
+
+            return true;
 
         case 'blog_section':
             $stmt = $db->query('SELECT id FROM homepage_blog_section LIMIT 1');
@@ -192,7 +228,25 @@ function saveSettingByKey($db, $key, $value) {
             // Hero slides güncelle
             $slides = $value['slides'] ?? [];
 
+            // Gönderilen slide ID'lerini topla
+            $sentIds = [];
             foreach ($slides as $slide) {
+                if (!empty($slide['id'])) {
+                    $sentIds[] = (int)$slide['id'];
+                }
+            }
+
+            // Listede olmayan slide'ları sil
+            if (!empty($sentIds)) {
+                $placeholders = implode(',', array_fill(0, count($sentIds), '?'));
+                $stmt = $db->prepare("DELETE FROM hero_slides WHERE id NOT IN ($placeholders)");
+                $stmt->execute($sentIds);
+            } else {
+                // Hiç ID yoksa tümünü sil (hepsi yeni eklenecek)
+                $db->exec('DELETE FROM hero_slides');
+            }
+
+            foreach ($slides as $index => $slide) {
                 $id = $slide['id'] ?? null;
                 $backgroundMedia = $slide['backgroundImage'] ?? $slide['backgroundMedia'] ?? '';
                 $mediaType = $slide['mediaType'] ?? 'image';
@@ -200,15 +254,16 @@ function saveSettingByKey($db, $key, $value) {
                 $subtitle = $slide['subtitle'] ?? '';
                 $buttonText = $slide['ctaText'] ?? $slide['buttonText'] ?? '';
                 $buttonLink = $slide['ctaLink'] ?? $slide['buttonLink'] ?? '';
+                $sortOrder = $index + 1;
 
                 if ($id) {
                     // Mevcut slide'ı güncelle
-                    $stmt = $db->prepare('UPDATE hero_slides SET background_media=?, media_type=?, title=?, subtitle=?, button_text=?, button_link=? WHERE id=?');
-                    $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink, $id]);
+                    $stmt = $db->prepare('UPDATE hero_slides SET background_media=?, media_type=?, title=?, subtitle=?, button_text=?, button_link=?, sort_order=? WHERE id=?');
+                    $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink, $sortOrder, $id]);
                 } else {
                     // Yeni slide ekle
-                    $stmt = $db->prepare('INSERT INTO hero_slides (background_media, media_type, title, subtitle, button_text, button_link, is_active) VALUES (?,?,?,?,?,?,1)');
-                    $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink]);
+                    $stmt = $db->prepare('INSERT INTO hero_slides (background_media, media_type, title, subtitle, button_text, button_link, sort_order, is_active) VALUES (?,?,?,?,?,?,?,1)');
+                    $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink, $sortOrder]);
                 }
             }
             return true;

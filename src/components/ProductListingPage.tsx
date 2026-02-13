@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { getAssetPath } from "@/utils/paths";
+import { useTranslation } from "@/i18n/useTranslation";
+import { getLocalizedPath } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 
 interface Product {
   id: number;
@@ -22,6 +25,7 @@ interface ProductListingPageProps {
   products: Product[];
   totalProducts: number;
   appointmentSubject?: string;
+  locale?: Locale;
 }
 
 export default function ProductListingPage({
@@ -33,7 +37,9 @@ export default function ProductListingPage({
   products,
   totalProducts,
   appointmentSubject = "diger",
+  locale = 'tr',
 }: ProductListingPageProps) {
+  const t = useTranslation(locale);
   const [visibleProducts, setVisibleProducts] = useState(9);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -83,7 +89,7 @@ export default function ProductListingPage({
           <div className="flex items-center justify-between mb-[20px]">
             {/* Product Count */}
             <p className="text-[13px] font-medium text-[#2f3237] shrink-0">
-              {totalProducts} Ürün bulunmaktadır
+              {t('common.productsFound', { count: String(totalProducts) })}
             </p>
 
             {/* Separator Line with Active Indicator - Hidden on mobile */}
@@ -94,7 +100,7 @@ export default function ProductListingPage({
 
             {/* Filter Button */}
             <button className="text-[13px] font-medium text-[#2f3237] hover:opacity-70 transition-opacity shrink-0">
-              Ürünleri filtrele
+              {t('common.filterProducts')}
             </button>
           </div>
         </div>
@@ -149,7 +155,7 @@ export default function ProductListingPage({
                 disabled={isLoading}
                 className="bg-dark text-light font-light text-[13px] leading-[15px] px-[60px] py-[18px] hover:bg-[#3d4147] transition-colors disabled:opacity-50"
               >
-                {isLoading ? "YÜKLENİYOR..." : "ÜRÜNLERİ YÜKLE"}
+                {isLoading ? t('common.loadingProducts') : t('common.loadProducts')}
               </button>
             </div>
           )}
@@ -163,17 +169,16 @@ export default function ProductListingPage({
             className="text-[28px] md:text-[40px] leading-[36px] md:leading-[50px] text-white mb-6"
             style={{ fontFamily: 'var(--font-faculty-glyphic)' }}
           >
-            Size Özel Bir Deneyim İçin
+            {t('productListing.appointmentTitle')}
           </h2>
           <p className="text-[16px] md:text-[18px] leading-[26px] md:leading-[30px] text-white/70 mb-10 max-w-[600px] mx-auto">
-            Uzman ekibimizle birebir görüşme için randevu oluşturun. 
-            Size en uygun parçayı birlikte keşfedelim.
+            {t('productListing.appointmentDesc')}
           </p>
           <Link
-            href={`/randevu?subject=${appointmentSubject}`}
+            href={`${getLocalizedPath('appointment', locale)}?subject=${appointmentSubject}`}
             className="inline-block bg-white text-[#2f3237] text-[13px] tracking-[0.15em] font-medium px-12 py-5 hover:bg-[#f5f5f5] transition-colors uppercase"
           >
-            Randevu Oluşturun
+            {t('productListing.appointmentButton')}
           </Link>
         </div>
       </section>

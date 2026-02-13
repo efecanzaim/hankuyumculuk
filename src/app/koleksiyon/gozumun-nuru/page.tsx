@@ -10,6 +10,7 @@ import { getAssetPath } from "@/utils/paths";
 export default function GozumunNuruPage() {
   const content = useContent();
   const category = content.gozumunNuruCategory;
+  const products = (category?.products || []) as Array<{ id: number; name: string; subtitle: string; image: string; link?: string; slug?: string }>;
 
   return (
     <>
@@ -182,12 +183,12 @@ export default function GozumunNuruPage() {
           </div>
 
           {/* Products Grid */}
-          {category.products.length > 0 ? (
+          {products.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {category.products.map((product) => (
+              {products.map((product) => (
                 <Link
                   key={product.id}
-                  href={`/urun/${product.id}`}
+                  href={product.link || `/urun/${product.slug || product.id}`}
                   className="group"
                 >
                   <div className="space-y-6">

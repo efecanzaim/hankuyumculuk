@@ -1,0 +1,914 @@
+{
+  "topBanner": {
+    "text": "We will be with you very soon... Follow us for our new collections!",
+    "visible": true
+  },
+  "header": {
+    "logo": "/images/logo.png",
+    "logoAlt": "Han Kuyumculuk",
+    "topLinks": [
+      {
+        "text": "About Us",
+        "href": "/en/about"
+      },
+      {
+        "text": "Blog",
+        "href": "/en/blog"
+      }
+    ],
+    "mainNav": [
+      {
+        "text": "JEWELRY",
+        "href": "/en/jewelry"
+      },
+      {
+        "text": "COLLECTION",
+        "href": "/en/collection"
+      },
+      {
+        "text": "FOR YOU",
+        "href": "/en/for-you"
+      },
+      {
+        "text": "GIFTS",
+        "href": "/en/gifts"
+      }
+    ]
+  },
+  "hero": {
+    "slides": [
+      {
+        "backgroundImage": "/images/hero-bg.mp4",
+        "title": "the art  of elegance",
+        "subtitle": "UNIQUE DESIGNS, TIMELESS VALUES",
+        "ctaText": "DISCOVER JEWELRY",
+        "ctaLink": "/en/jewelry"
+      },
+      {
+        "backgroundImage": "/images/hero-bg2.mp4",
+        "title": "an eternal  tale",
+        "subtitle": "EVERY PIECE HOLDS A STORY",
+        "ctaText": "DISCOVER COLLECTIONS",
+        "ctaLink": "/en/collection"
+      },
+      {
+        "backgroundImage": "/images/hero-bg3.mp4",
+        "title": "private  appointment",
+        "subtitle": "FOR AN EXPERIENCE TAILORED TO YOU",
+        "ctaText": "BOOK AN APPOINTMENT",
+        "ctaLink": "/en/appointment"
+      },
+      {
+        "backgroundImage": "/images/hero-bg4.mp4",
+        "title": "exquisite  artistry",
+        "subtitle": "DESIGNS EXCLUSIVELY FOR YOU",
+        "ctaText": "EXCLUSIVELY YOURS",
+        "ctaLink": "/en/custom-design"
+      }
+    ]
+  },
+  "trendSection": {
+    "leftImage": "/images/trend-left.jpg",
+    "rightImage": "/images/trend-right.jpg",
+    "leftTitle": "Discover Our Designs",
+    "rightTitle": "Discover Our Collection",
+    "leftLink": "/en/jewelry/rings",
+    "rightLink": "/en/collection/light-of-my-eyes",
+    "leftTitleLink": "/en/jewelry/rings",
+    "rightTitleLink": "/en/collection/light-of-my-eyes"
+  },
+  "parallaxSection": {
+    "backgroundImage": "/images/parallax-bg.jpg"
+  },
+  "storySection": {
+    "title": "A Story of Elegance",
+    "mainText": "Han Kuyumculuk represents much more than a diamond; it is a symbol that transforms the person you value, the special moments shared, and the feelings from the heart into light.\n\nHan Kuyumculuk, carrying this meaning born from light, leaves a special place in every woman's heart; because behind every sparkle lies an unforgettable story.",
+    "subText": "",
+    "linkText": "The Story Where Light Turns to Love",
+    "linkHref": "/en/about"
+  },
+  "featuredProductsSection": {
+    "titlePart1": "EXCLUSIVELY",
+    "titlePart2": "FOR YOU",
+    "bannerImage1": "/images/products/featured-large-1.jpg",
+    "bannerImage2": "/images/products/featured-large-2.jpg"
+  },
+  "featuredProducts": [
+    {
+      "id": 1,
+      "image": "/images/products/product-1.jpg",
+      "name": "Harmony Diamond Ring 0.55 Carat",
+      "category": "DIAMOND RING",
+      "link": "/en/product/harmony-pirlanta-yuzuk"
+    },
+    {
+      "id": 2,
+      "image": "/images/products/product-2.jpg",
+      "name": "Su Yolu Bracelet 1.00 Carat Diamond",
+      "category": "DIAMOND BRACELET",
+      "link": "/en/product/su-yolu-bileklik"
+    },
+    {
+      "id": 3,
+      "image": "/images/products/product-3.jpg",
+      "name": "Yakamoz Diamond Bracelet 0.10 Carat",
+      "category": "DIAMOND BRACELET",
+      "link": "/en/product/yakamoz-bileklik"
+    },
+    {
+      "id": 4,
+      "image": "/images/products/product-4.jpg",
+      "name": "Baguette Diamond Bracelet 0.31 Carat",
+      "category": "DIAMOND BRACELET",
+      "link": "/en/product/baget-bileklik"
+    }
+  ],
+  "categoryCards": [
+    {
+      "id": 1,
+      "image": "/images/categories/mucevher.jpg",
+      "title": "JEWELRY",
+      "link": "/en/jewelry"
+    },
+    {
+      "id": 2,
+      "image": "/images/categories/koleksiyon.jpg",
+      "title": "COLLECTIONS",
+      "link": "/en/collection"
+    },
+    {
+      "id": 3,
+      "image": "/images/categories/ozel-tasarim.jpg",
+      "title": "FOR YOU",
+      "link": "/en/for-you"
+    }
+  ],
+  "specialDesignSection": {
+    "titlePart1": "FEEL",
+    "titlePart2": "EXTRAORDINARY",
+    "topCards": [
+      {
+        "title": "GIFTS",
+        "image": "/images/categories/mucevher-card.jpg",
+        "link": "/en/gifts/dogum-gunu",
+        "buttonText": "DISCOVER"
+      },
+      {
+        "title": "FOR MEN",
+        "image": "/images/categories/koleksiyon-card.jpg",
+        "link": "/en/men/prayer-beads",
+        "buttonText": "DISCOVER"
+      },
+      {
+        "title": "CUSTOM DESIGN",
+        "image": "/images/categories/ozel-tasarim-card.jpg",
+        "link": "/en/custom-design",
+        "buttonText": "DISCOVER"
+      }
+    ],
+    "bottomCards": [
+      {
+        "title": "PRELOVED",
+        "subtitle": "Illuminate your style with\nnew season diamond designs.",
+        "image": "/images/promo/goz-alici.jpg",
+        "link": "/en/preloved",
+        "buttonText": "EXPLORE PRODUCTS"
+      },
+      {
+        "title": "BOOK AN APPOINTMENT",
+        "subtitle": "Schedule an appointment for\na bespoke experience; we will be expecting you.",
+        "image": "/images/promo/yeni-gelenler.jpg",
+        "link": "/en/appointment",
+        "buttonText": "MAKE AN APPOINTMENT"
+      }
+    ]
+  },
+  "investmentSection": {
+    "title": "FROM TODAY\nTO TOMORROW\nWITH CONFIDENCE",
+    "leftImage": "/images/investment.jpg",
+    "rightImage": "/images/investment-product.jpg",
+    "description": "Shape your future with confidence through certified investment-grade gold products. Every gram represents a steadfast step forward.",
+    "ctaText": "INVESTMENT PRODUCTS",
+    "link": "/en/investment"
+  },
+  "blogSection": {
+    "title": "The Story of Diamonds,\nThe Inspiration of Elegance",
+    "subtitle": "HAN BLOG",
+    "description": "The Light of My Eyes Blog is crafted for those who believe that a diamond is not merely a jewel, but a bearer of meaning, emotion, and story.",
+    "image": "/images/blog-featured.jpg",
+    "linkText": "read more",
+    "linkHref": "/en/blog/pirlanta-hikayeleri",
+    "additionalText": "In this space, you will find all the details you have been curious about, from rings to necklaces, from special occasion gifts to diamond selection guides, presented through inspiring content and expert perspectives."
+  },
+  "productDetails": {
+    "sarmasik-inci-tanem": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Sarmasik Inci",
+      "productTitle": "0.22 Carat Vintage Reina Diamond Ring",
+      "description": "Uniting the most powerful symbol of love with elegance. Every ring, crafted with meticulously selected diamonds and masterful artisanship, is designed to accompany the most meaningful 'yes' moments in your life, from weddings to anniversaries, from special occasions to lasting memories. Timeless designs preserve their original brilliance even as the years pass.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "baget-reina-yuzuk": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "0.49 Carat Diamond Ring",
+      "description": "The geometric elegance of baguette-cut diamonds meets modern lines. This distinctive design captures light from every angle, complementing your everyday sophistication while creating a dazzling effect on special occasions.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Lotus Solitaire",
+      "productTitle": "0.34 Carat Lotus Solitaire Diamond Ring",
+      "description": "Inspired by the graceful unfolding of a lotus blossom, this solitaire ring showcases the center diamond in a truly unique manner. The gentle curves of the petals present a captivating dance of light from every angle.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "sarmasik-inci-tanem-2": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Sarmasik Inci",
+      "productTitle": "0.22 Carat Vintage Reina Diamond Ring",
+      "description": "Uniting the most powerful symbol of love with elegance. Every ring, crafted with meticulously selected diamonds and masterful artisanship, is designed to accompany the most meaningful 'yes' moments in your life, from weddings to anniversaries, from special occasions to lasting memories.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "baget-reina-yuzuk-2": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "0.49 Carat Diamond Ring",
+      "description": "The geometric elegance of baguette-cut diamonds meets modern lines. This distinctive design captures light from every angle, complementing your everyday sophistication while creating a dazzling effect on special occasions.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk-2": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Lotus Solitaire",
+      "productTitle": "0.34 Carat Lotus Solitaire Diamond Ring",
+      "description": "Inspired by the graceful unfolding of a lotus blossom, this solitaire ring showcases the center diamond in a truly unique manner. The gentle curves of the petals present a captivating dance of light from every angle.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "sarmasik-inci-tanem-3": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Sarmasik Inci",
+      "productTitle": "0.22 Carat Vintage Reina Diamond Ring",
+      "description": "Uniting the most powerful symbol of love with elegance. Every ring, crafted with meticulously selected diamonds and masterful artisanship, is designed to accompany the most meaningful 'yes' moments in your life, from weddings to anniversaries, from special occasions to lasting memories.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "baget-reina-yuzuk-3": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "0.49 Carat Diamond Ring",
+      "description": "The geometric elegance of baguette-cut diamonds meets modern lines. This distinctive design captures light from every angle, complementing your everyday sophistication while creating a dazzling effect on special occasions.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk-3": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Lotus Solitaire",
+      "productTitle": "0.34 Carat Lotus Solitaire Diamond Ring",
+      "description": "Inspired by the graceful unfolding of a lotus blossom, this solitaire ring showcases the center diamond in a truly unique manner. The gentle curves of the petals present a captivating dance of light from every angle.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "baget-reina-yuzuk-4": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "0.49 Carat Diamond Ring",
+      "description": "The geometric elegance of baguette-cut diamonds meets modern lines. This distinctive design captures light from every angle, complementing your everyday sophistication while creating a dazzling effect on special occasions.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk-4": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Lotus Solitaire",
+      "productTitle": "0.34 Carat Lotus Solitaire Diamond Ring",
+      "description": "Inspired by the graceful unfolding of a lotus blossom, this solitaire ring showcases the center diamond in a truly unique manner. The gentle curves of the petals present a captivating dance of light from every angle.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "sarmasik-inci-tanem-4": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Sarmasik Inci",
+      "productTitle": "0.22 Carat Vintage Reina Diamond Ring",
+      "description": "Uniting the most powerful symbol of love with elegance. Every ring, crafted with meticulously selected diamonds and masterful artisanship, is designed to accompany the most meaningful 'yes' moments in your life, from weddings to anniversaries, from special occasions to lasting memories.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "damla-pirlanta-kolye": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Damla Diamond",
+      "productTitle": "0.30 Carat Teardrop Diamond Necklace",
+      "description": "The graceful teardrop design lends a natural flow to your neckline. The center diamond captures light from every angle, offering an enchanting brilliance.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "su-yolu-kolye": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Su Yolu",
+      "productTitle": "0.55 Carat Su Yolu Diamond Necklace",
+      "description": "Inspired by the elegance of flowing water, this necklace reflects the graceful cascade of diamonds. Each stone presents a mesmerizing dance of light while lending an exquisite sense of movement to your neckline.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "tektas-pirlanta-kolye": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Solitaire Diamond",
+      "productTitle": "0.25 Carat Solitaire Diamond Necklace",
+      "description": "The most elegant expression of simplicity. The captivating brilliance of a single diamond, united with minimalist design, offers timeless sophistication.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "anturaj-pirlanta-kolye": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Halo Diamond",
+      "productTitle": "0.45 Carat Halo Diamond Necklace",
+      "description": "Diamonds encircling the center stone present a mesmerizing dance of light. The halo design adds distinction to your most special moments with its magnificent presence.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "kalp-pirlanta-kolye": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Heart Diamond",
+      "productTitle": "0.20 Carat Heart Diamond Necklace",
+      "description": "The heart, the universal symbol of love, meets the brilliance of diamonds. A design that expresses your feelings for your loved ones in the most elegant manner.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "infinity-pirlanta-kolye": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Infinity Diamond",
+      "productTitle": "0.35 Carat Infinity Diamond Necklace",
+      "description": "An elegant interpretation of the infinity symbol. The infinity design adorned with diamonds represents your everlasting love.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "su-yolu-bileklik": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Su Yolu",
+      "productTitle": "1.00 Carat Su Yolu Diamond Bracelet",
+      "description": "A design inspired by the elegance of flowing water, creating a luminous movement on your wrist. Every diamond presents a mesmerizing dance of light.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "baget-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Baguette Diamond",
+      "productTitle": "0.50 Carat Baguette Diamond Bracelet",
+      "description": "The geometric elegance of baguette-cut diamonds meets modern lines. A design that lends a sophisticated touch to your wrist.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "tenis-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Tennis Diamond",
+      "productTitle": "2.00 Carat Tennis Diamond Bracelet",
+      "description": "The classic tennis bracelet design offers timeless sophistication with its sequence of diamonds. Each stone presents a captivating play of light.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "kelepce-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Cuff Diamond",
+      "productTitle": "0.75 Carat Cuff Diamond Bracelet",
+      "description": "A modern cuff design meets the brilliance of diamonds. The elegant form that embraces your wrist offers both sophistication and comfort.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "zincir-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Chain Diamond",
+      "productTitle": "0.30 Carat Chain Diamond Bracelet",
+      "description": "Diamonds dancing upon a delicate chain, the finest example of minimalist elegance. Sophistication suited for everyday wear.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "charm-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Charm Diamond",
+      "productTitle": "0.40 Carat Charm Diamond Bracelet",
+      "description": "The harmony of refined charm details and diamonds lends a playful air to your wrist. Each charm tells its own story.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "tektas-pirlanta-kupe": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Solitaire Diamond",
+      "productTitle": "0.50 Carat Solitaire Diamond Earrings",
+      "description": "The most elegant expression of simplicity. The captivating brilliance of a single diamond illuminates your face.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "anturaj-pirlanta-kupe": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Halo Diamond",
+      "productTitle": "0.70 Carat Halo Diamond Earrings",
+      "description": "Diamonds encircling the center stone offer a magnificent brilliance. The perfect choice for your most special occasions.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "halka-pirlanta-kupe": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Hoop Diamond",
+      "productTitle": "0.40 Carat Hoop Diamond Earrings",
+      "description": "A dance of diamonds in the classic hoop form. A timeless design that complements every style.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "sallantili-pirlanta-kupe": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Drop Diamond",
+      "productTitle": "0.60 Carat Drop Diamond Earrings",
+      "description": "Dancing diamonds present a luminous display with your every step. The captivating design draws all eyes to you.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "civi-pirlanta-kupe": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Stud Diamond",
+      "productTitle": "0.25 Carat Stud Diamond Earrings",
+      "description": "A minimalist stud design, perfect for everyday wear. Refined, elegant lines complete your sophistication.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "damla-pirlanta-kupe": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Teardrop Diamond",
+      "productTitle": "0.55 Carat Teardrop Diamond Earrings",
+      "description": "The elegance of the teardrop form meets the brilliance of diamonds. A sophisticated design that illuminates your face.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "gelin-pirlanta-set": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Bridal Diamond",
+      "productTitle": "3.00 Carat Bridal Diamond Set",
+      "description": "A magnificent set designed for your most special day. The perfect harmony of necklace, earrings, and ring completes your bridal elegance.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "klasik-pirlanta-set": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Classic Diamond",
+      "productTitle": "1.50 Carat Classic Diamond Set",
+      "description": "A timeless classic design, perfect for every special occasion. The harmonious unity of necklace, earrings, and ring.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "modern-pirlanta-set": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Modern Diamond",
+      "productTitle": "2.00 Carat Modern Diamond Set",
+      "description": "Contemporary lines and the brilliance of diamonds. A bold design that reflects the modern woman's elegance.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "vintage-pirlanta-set": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Vintage Diamond",
+      "productTitle": "1.75 Carat Vintage Diamond Set",
+      "description": "The union of nostalgic details and diamonds. A distinctive design that brings the elegance of the past into the present.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "minimalist-pirlanta-set": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Minimalist Diamond",
+      "productTitle": "1.00 Carat Minimalist Diamond Set",
+      "description": "The most elegant interpretation of the 'less is more' philosophy. Clean lines and the delicate touch of diamonds.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "luks-pirlanta-set": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Luxury Diamond",
+      "productTitle": "4.00 Carat Luxury Diamond Set",
+      "description": "A magnificent gathering of the finest diamonds. The pinnacle of luxury and elegance.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    }
+  },
+  "mucevherCategories": {
+    "yuzuk": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Love's Most Precious Signature",
+      "heroSubtitle": "Diamond signatures that defy time.",
+      "heroDescription": "This ring, even when not on the hand.\nSometimes when you look, sometimes when you simply feel...\nFrom a place beyond words.\nLike something irreplaceable.\nThat which stays...",
+      "categoryTitle": "OUR DIAMOND RINGS",
+      "products": []
+    },
+    "kolye": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "The Purest Form of Elegance",
+      "heroSubtitle": "Designs that sparkle with every glance.",
+      "heroDescription": "This necklace, for things that begin with a single look.\nFelt as you draw closer, lingering unnamed...\nFar from ostentation, close to the heart.\nLike something you wish to protect.\nA little more, with every moment...",
+      "categoryTitle": "OUR DIAMOND NECKLACES",
+      "products": []
+    },
+    "bileklik": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Light on Your Wrist",
+      "heroSubtitle": "Elegance in every movement.",
+      "heroDescription": "This bracelet, like those that silently accompany you through the day.\nNoticed with movement, present in stillness...\nIt blends into everyday life.\nWithout letting you forget, without pressing.\nAs if keeping awareness fresh...",
+      "categoryTitle": "OUR DIAMOND BRACELETS",
+      "products": []
+    },
+    "kupe": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "A Touch of Radiance",
+      "heroSubtitle": "Shimmering elegance by your ears.",
+      "heroDescription": "These earrings, not at first, but with time.\nAs you draw closer, as you grow accustomed...\nLight, yet leaving a lasting impression.\nSimple, quiet.\nBetween the glances...",
+      "categoryTitle": "OUR DIAMOND EARRINGS",
+      "products": []
+    },
+    "set": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Flawless Harmony",
+      "heroSubtitle": "Completeness through complementary pieces.",
+      "heroDescription": "This set, for those seeking wholeness.\nFinding meaning not alone, but together...\nThe pieces are beautiful individually,\nbut something else entirely when side by side.\nAs if feeling complete...",
+      "categoryTitle": "OUR DIAMOND SETS",
+      "products": []
+    }
+  },
+  "hediyeCategories": {
+    "ozel-gunler": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "For Special Moments",
+      "heroSubtitle": "Unforgettable gifts.",
+      "heroDescription": "Gift selections designed to celebrate life's most precious moments. Perfect choices for engagements, weddings, anniversaries, or any special occasion.",
+      "categoryTitle": "SPECIAL OCCASION GIFTS",
+      "products": []
+    },
+    "dogum-gunu": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Birthday Brilliance",
+      "heroSubtitle": "The finest birthday gift.",
+      "heroDescription": "Gift selections to make your loved ones' birthdays truly special. Diamond designs suited to every age and style.",
+      "categoryTitle": "BIRTHDAY GIFTS",
+      "products": []
+    },
+    "anneler-gunu": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "For Mothers, With Love",
+      "heroSubtitle": "The most precious gift for the most precious woman.",
+      "heroDescription": "Distinctive diamond designs to express your love for your mother. Elegant, meaningful, and enduring gifts.",
+      "categoryTitle": "MOTHER'S DAY GIFTS",
+      "products": []
+    },
+    "kadinlar-gunu": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "For Women",
+      "heroSubtitle": "For strong and elegant women.",
+      "heroDescription": "Give the special women in your life a meaningful gift on Women's Day. Designs that unite sophistication and elegance.",
+      "categoryTitle": "WOMEN'S DAY GIFTS",
+      "products": []
+    },
+    "yeni-dogan": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "For Little Angels",
+      "heroSubtitle": "Gifts for new beginnings.",
+      "heroDescription": "Meaningful gift selections specially curated for newborn babies and their families. The perfect welcome-to-the-world gift.",
+      "categoryTitle": "NEWBORN GIFTS",
+      "products": []
+    },
+    "aksesuar": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Finishing Touches",
+      "heroSubtitle": "Complete your style.",
+      "heroDescription": "Accessories to complement your jewelry collection. Distinctive selections from hair clips to jewelry boxes.",
+      "categoryTitle": "ACCESSORIES",
+      "products": []
+    }
+  },
+  "erkekCategories": {
+    "tesbih": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Traditional Elegance",
+      "heroSubtitle": "Serenity in every bead.",
+      "heroDescription": "The first thing you notice when you hold it is the silence.\nTime relaxes a little, thought slows down.\nNot the counts, but the pauses remain.\nMeaningful not when you look, but when you pause.\nAfter a while, you do not even notice it...",
+      "categoryTitle": "PRAYER BEADS COLLECTION",
+      "products": []
+    },
+    "bileklik": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Masculine Elegance",
+      "heroSubtitle": "Strength and grace on your wrist.",
+      "heroDescription": "Like something that accompanies without drawing attention.\nMaking itself known with each movement.\nBlending into the day, never falling behind.\nNeither too much, nor too little.\nNatural when it is there...",
+      "categoryTitle": "MEN'S BRACELETS",
+      "products": []
+    },
+    "yuzuk": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Men's Rings",
+      "heroSubtitle": "A symbol of strength and character.",
+      "heroDescription": "A feeling that changes each time you look at your hand.\nSometimes habit, sometimes like a weight.\nFrom a place beyond words.\nNeither wanting to tell, nor to hide.\nSimply there...",
+      "categoryTitle": "MEN'S RINGS",
+      "products": []
+    },
+    "kol": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Men's Cuff",
+      "heroSubtitle": "The perfect union of style and comfort.",
+      "heroDescription": "Elegant and comfortable cuff pieces\ndesigned for men.",
+      "categoryTitle": "MEN'S CUFF",
+      "products": []
+    }
+  },
+  "prelovedCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Preloved",
+    "heroSubtitle": "Pieces that never lose their value with time.",
+    "heroDescription": "There are certain jewels\nthat never lose their value with time.\nWith their design, craftsmanship, and presence, they still carry the impact of the very first day.\n\nPreloved pieces\nconsist of carefully selected, authenticity-preserved\njewels awaiting rediscovery.\n\nEach one unites a story from its past\nwith the elegance of today.\nDistinguished, unique, and within reach...",
+    "categoryTitle": "PRELOVED COLLECTION",
+    "products": []
+  },
+  "newArrivalsCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "New Arrivals",
+    "heroSubtitle": "The newest designs, introduced to you first.",
+    "heroDescription": "New beginnings,\nnew stories,\nnew brilliance...\n\nEvery season, the most current designs\nprepared exclusively for you come together in this collection.\n\nRather than following trends,\npieces that inspire you\nto create your own style.",
+    "categoryTitle": "NEW ARRIVALS",
+    "products": []
+  },
+  "yuzukCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Rings",
+    "heroSubtitle": "Adorn your fingers with light.",
+    "heroDescription": "Every ring tells a story.\nDiscover our unique designs\nthat reflect your story.",
+    "categoryTitle": "RINGS",
+    "products": []
+  },
+  "kolyeCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Necklaces",
+    "heroSubtitle": "Wear elegance around your neck.",
+    "heroDescription": "Our necklaces, crafted with\nmeticulous artisanship and care,\nadd brilliance to every moment.",
+    "categoryTitle": "NECKLACES",
+    "products": []
+  },
+  "bileklikCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Bracelets",
+    "heroSubtitle": "An elegant touch to your wrist.",
+    "heroDescription": "Every bracelet is a refined detail\nthat complements your style.\nDiscover our collection.",
+    "categoryTitle": "BRACELETS",
+    "products": []
+  },
+  "kupeCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Earrings",
+    "heroSubtitle": "Add radiance to your face.",
+    "heroDescription": "Our elegant earrings\nmake every moment special.\nDesigned for you.",
+    "categoryTitle": "EARRINGS",
+    "products": []
+  },
+  "setCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Sets",
+    "heroSubtitle": "Harmonious pieces, flawless appearance.",
+    "heroDescription": "Our jewelry sets,\nthoughtfully brought together,\ncomplete your style.",
+    "categoryTitle": "SETS",
+    "products": []
+  },
+  "gozumunNuruCategory": {
+    "heroImage": "/images/collection-menu-hero.jpg",
+    "heroTitle": "Gözümün Nuru",
+    "heroSubtitle": "Designs filled with meaning, crafted for your loved ones.",
+    "heroDescription": "Gözümün Nuru collection\nwas designed as a symbol\nof love and value.",
+    "categoryTitle": "GÖZÜMÜN NURU",
+    "products": []
+  },
+  "tesbihCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Prayer Beads",
+    "heroSubtitle": "Traditional elegance, modern design.",
+    "heroDescription": "Our handcrafted prayer beads\noffer quality and aesthetics\nin perfect harmony.",
+    "categoryTitle": "PRAYER BEADS",
+    "products": []
+  },
+  "erkekBileklikCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Men's Bracelets",
+    "heroSubtitle": "Designs crafted exclusively for men.",
+    "heroDescription": "Our masculine and refined bracelets\ncomplete your style.",
+    "categoryTitle": "MEN'S BRACELETS",
+    "products": []
+  },
+  "erkekYuzukCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Men's Rings",
+    "heroSubtitle": "Where strength meets elegance.",
+    "heroDescription": "Refined and distinguished rings\ndesigned for men.",
+    "categoryTitle": "MEN'S RINGS",
+    "products": []
+  },
+  "erkekKolCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Men's Cuff",
+    "heroSubtitle": "The perfect union of style and comfort.",
+    "heroDescription": "Elegant and comfortable cuff pieces\ndesigned for men.",
+    "categoryTitle": "MEN'S CUFF",
+    "products": []
+  },
+  "footer": {
+    "logo": "/images/1818-logo.svg",
+    "slogan": "Everything turns beautiful, with You...",
+    "description": "Han Kuyumculuk carries this meaning born from the heart of light, leaving a special place in every woman's heart; for behind every sparkle lies an unforgettable story.",
+    "columns": [
+      {
+        "title": "HAN KUYUMCULUK",
+        "links": [
+          {
+            "text": "About Us",
+            "href": "/en/about"
+          },
+          {
+            "text": "Contact",
+            "href": "/en/contact"
+          },
+          {
+            "text": "Blog",
+            "href": "/en/blog"
+          }
+        ]
+      },
+      {
+        "title": "COLLECTION",
+        "links": [
+          {
+            "text": "Light of My Eyes",
+            "href": "/en/collection/light-of-my-eyes"
+          }
+        ]
+      },
+      {
+        "title": "CUSTOMER SERVICE",
+        "links": [
+          {
+            "text": "Care & Warranty",
+            "href": "/en/customer-service/care-warranty"
+          }
+        ]
+      },
+      {
+        "title": "LEGAL",
+        "links": [
+          {
+            "text": "Cookie Policy",
+            "href": "/en/legal/cookie-policy"
+          }
+        ]
+      }
+    ],
+    "socialLinks": {
+      "instagram": "https://instagram.com/hankuyumculuk"
+    },
+    "copyright": "\u00a9 2025 Han Kuyumculuk, All Rights Reserved"
+  }
+}

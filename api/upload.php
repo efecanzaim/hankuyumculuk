@@ -41,7 +41,9 @@ $allowedTypes = [
     'image/png' => 'png',
     'image/gif' => 'gif',
     'image/webp' => 'webp',
-    'video/mp4' => 'mp4'
+    'video/mp4' => 'mp4',
+    'video/webm' => 'webm',
+    'video/ogg' => 'ogg'
 ];
 
 // Dosya türü kontrolü
@@ -50,13 +52,15 @@ $mimeType = finfo_file($finfo, $file['tmp_name']);
 finfo_close($finfo);
 
 if (!isset($allowedTypes[$mimeType])) {
-    jsonResponse(['error' => 'Geçersiz dosya türü. Sadece JPG, PNG, GIF, WebP ve MP4 kabul edilir.'], 400);
+    jsonResponse(['error' => 'Geçersiz dosya türü. Sadece JPG, PNG, GIF, WebP, MP4, WebM ve OGG kabul edilir.'], 400);
 }
 
-// Dosya boyutu kontrolü (max 10MB)
-$maxSize = 10 * 1024 * 1024;
+// Dosya boyutu kontrolü (video: max 100MB, görsel: max 10MB)
+$isVideo = str_starts_with($mimeType, 'video/');
+$maxSize = $isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+$maxLabel = $isVideo ? '100MB' : '10MB';
 if ($file['size'] > $maxSize) {
-    jsonResponse(['error' => 'Dosya boyutu 10MB\'dan büyük olamaz.'], 400);
+    jsonResponse(['error' => "Dosya boyutu {$maxLabel}'dan büyük olamaz."], 400);
 }
 
 // Yükleme klasörünü oluştur

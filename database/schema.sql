@@ -448,9 +448,9 @@ INSERT INTO top_banner (text, is_visible) VALUES
 
 -- Hero Slides
 INSERT INTO hero_slides (background_media, media_type, title, subtitle, button_text, button_link, sort_order) VALUES
-('/images/hero-bg.jpg', 'image', 'zarafet  sanatı', 'EŞSIZ TASARIMLAR, ZAMANSIZ DEĞERLER', 'MÜCEVHERLERİ KEŞFEDİN', '/mucevher', 1),
+('/images/hero-bg.mp4', 'video', 'zarafet  sanatı', 'EŞSIZ TASARIMLAR, ZAMANSIZ DEĞERLER', 'MÜCEVHERLERİ KEŞFEDİN', '/mucevher', 1),
 ('/images/hero-bg2.mp4', 'video', 'sonsuz masal', 'HER PARÇADA BİR HİKÂYE SAKLANIYOR', 'KOLEKSİYONLARI KEŞFEDİN', '/koleksiyon', 2),
-('/images/hero-bg3.jpg', 'image', 'özel  randevu', 'SİZE ÖZEL BİR DENEYİM İÇİN', 'RANDEVU OLUŞTURUN', '/randevu', 3),
+('/images/hero-bg3.mp4', 'video', 'özel  randevu', 'SİZE ÖZEL BİR DENEYİM İÇİN', 'RANDEVU OLUŞTURUN', '/randevu', 3),
 ('/images/hero-bg4.mp4', 'video', 'nadide  sanat', 'SADECE SİZE ÖZEL TASARIMLAR', 'SİZE ÖZEL', '/ozel-tasarim', 4);
 
 -- Trend bölümü

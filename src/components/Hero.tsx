@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { getAssetPath } from "@/utils/paths";
 
 interface Slide {
@@ -18,17 +18,52 @@ interface HeroProps {
 
 export default function Hero({ slides }: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const resetAutoPlay = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 10000);
+  }, [slides.length]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 10000); // 10 seconds interval
-
-    return () => clearInterval(interval);
-  }, [slides.length]);
+    resetAutoPlay();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [resetAutoPlay]);
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
+    resetAutoPlay();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    const threshold = 50;
+
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        // Sola kaydırma - sonraki slide
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      } else {
+        // Sağa kaydırma - önceki slide
+        setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+      }
+      resetAutoPlay();
+    }
   };
 
   const isVideo = (src: string | undefined) => {
@@ -42,7 +77,12 @@ export default function Hero({ slides }: HeroProps) {
   }
 
   return (
-    <section className="relative h-[600px] md:h-screen overflow-hidden">
+    <section
+      className="relative h-[600px] md:h-screen overflow-hidden"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Background Images/Videos */}
       {slides.map((s, index) => {
         const bgImage = s.backgroundImage || '';

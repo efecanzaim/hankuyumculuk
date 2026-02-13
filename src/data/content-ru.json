@@ -1,0 +1,914 @@
+{
+  "topBanner": {
+    "text": "Совсем скоро мы будем с вами... Следите за нашими новыми коллекциями!",
+    "visible": true
+  },
+  "header": {
+    "logo": "/images/logo.png",
+    "logoAlt": "Han Kuyumculuk",
+    "topLinks": [
+      {
+        "text": "О нас",
+        "href": "/ru/o-nas"
+      },
+      {
+        "text": "Блог",
+        "href": "/ru/blog"
+      }
+    ],
+    "mainNav": [
+      {
+        "text": "ЮВЕЛИРНЫЕ ИЗДЕЛИЯ",
+        "href": "/ru/yuvelirnye-izdeliya"
+      },
+      {
+        "text": "КОЛЛЕКЦИЯ",
+        "href": "/ru/kollektsiya"
+      },
+      {
+        "text": "ИНДИВИДУАЛЬНЫЙ ДИЗАЙН",
+        "href": "/ru/individualnyy-dizayn"
+      },
+      {
+        "text": "ПОДАРКИ",
+        "href": "/ru/podarki"
+      }
+    ]
+  },
+  "hero": {
+    "slides": [
+      {
+        "backgroundImage": "/images/hero-bg.mp4",
+        "title": "искусство  изящества",
+        "subtitle": "УНИКАЛЬНЫЕ ДИЗАЙНЫ, ВЕЧНЫЕ ЦЕННОСТИ",
+        "ctaText": "ОТКРОЙТЕ ЮВЕЛИРНЫЕ ИЗДЕЛИЯ",
+        "ctaLink": "/ru/yuvelirnye-izdeliya"
+      },
+      {
+        "backgroundImage": "/images/hero-bg2.mp4",
+        "title": "бесконечная  сказка",
+        "subtitle": "В КАЖДОМ ИЗДЕЛИИ СКРЫТА СВОЯ ИСТОРИЯ",
+        "ctaText": "ОТКРОЙТЕ КОЛЛЕКЦИИ",
+        "ctaLink": "/ru/kollektsiya"
+      },
+      {
+        "backgroundImage": "/images/hero-bg3.mp4",
+        "title": "персональная  встреча",
+        "subtitle": "ДЛЯ ЭКСКЛЮЗИВНОГО ВПЕЧАТЛЕНИЯ",
+        "ctaText": "ЗАПИШИТЕСЬ НА ПРИЁМ",
+        "ctaLink": "/ru/zapis"
+      },
+      {
+        "backgroundImage": "/images/hero-bg4.mp4",
+        "title": "редкое  искусство",
+        "subtitle": "ДИЗАЙНЫ, СОЗДАННЫЕ ТОЛЬКО ДЛЯ ВАС",
+        "ctaText": "ТОЛЬКО ДЛЯ ВАС",
+        "ctaLink": "/ru/individualnyy-dizayn"
+      }
+    ]
+  },
+  "trendSection": {
+    "leftImage": "/images/trend-left.jpg",
+    "rightImage": "/images/trend-right.jpg",
+    "leftTitle": "Откройте наши дизайны",
+    "rightTitle": "Откройте нашу коллекцию",
+    "leftLink": "/ru/yuvelirnye-izdeliya/koltsa",
+    "rightLink": "/ru/kollektsiya/svet-moikh-glaz",
+    "leftTitleLink": "/ru/yuvelirnye-izdeliya/koltsa",
+    "rightTitleLink": "/ru/kollektsiya/svet-moikh-glaz"
+  },
+  "parallaxSection": {
+    "backgroundImage": "/images/parallax-bg.jpg"
+  },
+  "storySection": {
+    "title": "История Элегантности",
+    "mainText": "Han Kuyumculuk представляет собой гораздо больше, чем бриллиант; это символ, превращающий дорогого вам человека, разделённые особые моменты и чувства от сердца в свет.\n\nHan Kuyumculuk, неся этот смысл, рождённый из света, оставляет особое место в сердце каждой женщины; ведь за каждым сиянием скрывается незабываемая история.",
+    "subText": "",
+    "linkText": "История, Где Свет Становится Любовью",
+    "linkHref": "/ru/o-nas"
+  },
+  "featuredProductsSection": {
+    "titlePart1": "СПЕЦИАЛЬНО",
+    "titlePart2": "ДЛЯ ВАС",
+    "bannerImage1": "/images/products/featured-large-1.jpg",
+    "bannerImage2": "/images/products/featured-large-2.jpg"
+  },
+  "featuredProducts": [
+    {
+      "id": 1,
+      "image": "/images/products/product-1.jpg",
+      "name": "Harmony Бриллиантовое кольцо 0,55 карат",
+      "category": "БРИЛЛИАНТОВОЕ КОЛЬЦО",
+      "link": "/ru/tovar/harmony-pirlanta-yuzuk"
+    },
+    {
+      "id": 2,
+      "image": "/images/products/product-2.jpg",
+      "name": "Su Yolu Браслет 1,00 карат бриллиант",
+      "category": "БРИЛЛИАНТОВЫЙ БРАСЛЕТ",
+      "link": "/ru/tovar/su-yolu-bileklik"
+    },
+    {
+      "id": 3,
+      "image": "/images/products/product-3.jpg",
+      "name": "Yakamoz Бриллиантовый браслет 0,10 карат",
+      "category": "БРИЛЛИАНТОВЫЙ БРАСЛЕТ",
+      "link": "/ru/tovar/yakamoz-bileklik"
+    },
+    {
+      "id": 4,
+      "image": "/images/products/product-4.jpg",
+      "name": "Baget Бриллиантовый браслет 0,31 карат",
+      "category": "БРИЛЛИАНТОВЫЙ БРАСЛЕТ",
+      "link": "/ru/tovar/baget-bileklik"
+    }
+  ],
+  "categoryCards": [
+    {
+      "id": 1,
+      "image": "/images/categories/mucevher.jpg",
+      "title": "ЮВЕЛИРНЫЕ ИЗДЕЛИЯ",
+      "link": "/ru/yuvelirnye-izdeliya"
+    },
+    {
+      "id": 2,
+      "image": "/images/categories/koleksiyon.jpg",
+      "title": "КОЛЛЕКЦИИ",
+      "link": "/ru/kollektsiya"
+    },
+    {
+      "id": 3,
+      "image": "/images/categories/ozel-tasarim.jpg",
+      "title": "ИНДИВИДУАЛЬНЫЙ ДИЗАЙН",
+      "link": "/ru/individualnyy-dizayn"
+    }
+  ],
+  "specialDesignSection": {
+    "titlePart1": "ПОЧУВСТВУЙТЕ",
+    "titlePart2": "СЕБЯ ОСОБЕННОЙ",
+    "topCards": [
+      {
+        "title": "ПОДАРКИ",
+        "image": "/images/categories/mucevher-card.jpg",
+        "link": "/ru/podarki/dogum-gunu",
+        "buttonText": "ОТКРОЙТЕ"
+      },
+      {
+        "title": "ДЛЯ МУЖЧИН",
+        "image": "/images/categories/koleksiyon-card.jpg",
+        "link": "/ru/muzhskiye/chotki",
+        "buttonText": "ОТКРОЙТЕ"
+      },
+      {
+        "title": "ИНДИВИДУАЛЬНЫЙ ДИЗАЙН",
+        "image": "/images/categories/ozel-tasarim-card.jpg",
+        "link": "/ru/individualnyy-dizayn",
+        "buttonText": "ОТКРОЙТЕ"
+      }
+    ],
+    "bottomCards": [
+      {
+        "title": "PRELOVED",
+        "subtitle": "Осветите свой стиль\nновыми бриллиантовыми дизайнами сезона.",
+        "image": "/images/promo/goz-alici.jpg",
+        "link": "/ru/preloved",
+        "buttonText": "СМОТРЕТЬ ИЗДЕЛИЯ"
+      },
+      {
+        "title": "ЗАПИШИТЕСЬ НА ПРИЁМ",
+        "subtitle": "Запишитесь на приём для\nэксклюзивного впечатления — мы будем вас ждать.",
+        "image": "/images/promo/yeni-gelenler.jpg",
+        "link": "/ru/zapis",
+        "buttonText": "ЗАПИСАТЬСЯ"
+      }
+    ]
+  },
+  "investmentSection": {
+    "title": "ОТ СЕГОДНЯ\nК БУДУЩЕМУ\nС УВЕРЕННОСТЬЮ",
+    "leftImage": "/images/investment.jpg",
+    "rightImage": "/images/investment-product.jpg",
+    "description": "Формируйте своё будущее с уверенностью благодаря сертифицированным инвестиционным золотым изделиям. Каждый грамм — это надёжный шаг.",
+    "ctaText": "ИНВЕСТИЦИОННЫЕ ИЗДЕЛИЯ",
+    "link": "/ru/investitsii"
+  },
+  "blogSection": {
+    "title": "История бриллианта,\nвдохновение изящества",
+    "subtitle": "БЛОГ HAN",
+    "description": "Блог «Свет моих глаз» создан для тех, кто верит, что бриллиант — это не просто украшение, а ценность, несущая в себе смысл, чувства и историю.",
+    "image": "/images/blog-featured.jpg",
+    "linkText": "продолжение статьи",
+    "linkHref": "/ru/blog/pirlanta-hikayeleri",
+    "additionalText": "Здесь вы найдёте все интересующие детали — от колец до колье, от подарков к особым дням до руководств по выбору бриллиантов — в сопровождении вдохновляющего контента и экспертных мнений."
+  },
+  "productDetails": {
+    "sarmasik-inci-tanem": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Sarmasik Inci",
+      "productTitle": "Бриллиантовое кольцо Vintage Reina 0,22 карат",
+      "description": "Соединяет самый сильный символ любви с изяществом. Каждое кольцо, созданное из тщательно отобранных бриллиантов и мастерской работы, предназначено сопровождать самые значимые «да» в вашей жизни — от свадьбы до годовщины, от особых моментов до вечных воспоминаний. Вечные дизайны сохраняют своё первоначальное сияние даже спустя годы.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "baget-reina-yuzuk": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "Бриллиантовое кольцо 0,49 карат",
+      "description": "Геометрическое изящество бриллиантов огранки «багет» встречается с современными линиями. Эксклюзивный дизайн, улавливающий свет с любого ракурса, дополняет вашу повседневную элегантность и создаёт ослепительный эффект в особые моменты.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Lotus Tektas",
+      "productTitle": "Бриллиантовое кольцо-солитер Lotus 0,34 карат",
+      "description": "Это кольцо-солитер, вдохновлённое изящным раскрытием цветка лотоса, уникальным образом выделяет центральный бриллиант. Мягкие изгибы лепестков демонстрируют танец света с каждого ракурса.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "sarmasik-inci-tanem-2": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Sarmasik Inci",
+      "productTitle": "Бриллиантовое кольцо Vintage Reina 0,22 карат",
+      "description": "Соединяет самый сильный символ любви с изяществом. Каждое кольцо, созданное из тщательно отобранных бриллиантов и мастерской работы, предназначено сопровождать самые значимые «да» в вашей жизни — от свадьбы до годовщины, от особых моментов до вечных воспоминаний.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "baget-reina-yuzuk-2": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "Бриллиантовое кольцо 0,49 карат",
+      "description": "Геометрическое изящество бриллиантов огранки «багет» встречается с современными линиями. Эксклюзивный дизайн, улавливающий свет с любого ракурса, дополняет вашу повседневную элегантность и создаёт ослепительный эффект в особые моменты.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk-2": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Lotus Tektas",
+      "productTitle": "Бриллиантовое кольцо-солитер Lotus 0,34 карат",
+      "description": "Это кольцо-солитер, вдохновлённое изящным раскрытием цветка лотоса, уникальным образом выделяет центральный бриллиант. Мягкие изгибы лепестков демонстрируют танец света с каждого ракурса.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "sarmasik-inci-tanem-3": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Sarmasik Inci",
+      "productTitle": "Бриллиантовое кольцо Vintage Reina 0,22 карат",
+      "description": "Соединяет самый сильный символ любви с изяществом. Каждое кольцо, созданное из тщательно отобранных бриллиантов и мастерской работы, предназначено сопровождать самые значимые «да» в вашей жизни — от свадьбы до годовщины, от особых моментов до вечных воспоминаний.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "baget-reina-yuzuk-3": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "Бриллиантовое кольцо 0,49 карат",
+      "description": "Геометрическое изящество бриллиантов огранки «багет» встречается с современными линиями. Эксклюзивный дизайн, улавливающий свет с любого ракурса, дополняет вашу повседневную элегантность и создаёт ослепительный эффект в особые моменты.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk-3": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Lotus Tektas",
+      "productTitle": "Бриллиантовое кольцо-солитер Lotus 0,34 карат",
+      "description": "Это кольцо-солитер, вдохновлённое изящным раскрытием цветка лотоса, уникальным образом выделяет центральный бриллиант. Мягкие изгибы лепестков демонстрируют танец света с каждого ракурса.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "baget-reina-yuzuk-4": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Baget Reina",
+      "productTitle": "Бриллиантовое кольцо 0,49 карат",
+      "description": "Геометрическое изящество бриллиантов огранки «багет» встречается с современными линиями. Эксклюзивный дизайн, улавливающий свет с любого ракурса, дополняет вашу повседневную элегантность и создаёт ослепительный эффект в особые моменты.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "lotus-tektas-yuzuk-4": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Lotus Tektas",
+      "productTitle": "Бриллиантовое кольцо-солитер Lotus 0,34 карат",
+      "description": "Это кольцо-солитер, вдохновлённое изящным раскрытием цветка лотоса, уникальным образом выделяет центральный бриллиант. Мягкие изгибы лепестков демонстрируют танец света с каждого ракурса.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "sarmasik-inci-tanem-4": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Sarmasik Inci",
+      "productTitle": "Бриллиантовое кольцо Vintage Reina 0,22 карат",
+      "description": "Соединяет самый сильный символ любви с изяществом. Каждое кольцо, созданное из тщательно отобранных бриллиантов и мастерской работы, предназначено сопровождать самые значимые «да» в вашей жизни — от свадьбы до годовщины, от особых моментов до вечных воспоминаний.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "damla-pirlanta-kolye": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Damla Pirlanta",
+      "productTitle": "Колье с бриллиантом в форме капли 0,30 карат",
+      "description": "Изящный дизайн в форме капли придаёт вашей шее естественную плавность. Центральный бриллиант улавливает свет с каждого ракурса, создавая чарующее сияние.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "su-yolu-kolye": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Su Yolu",
+      "productTitle": "Бриллиантовое колье Su Yolu 0,55 карат",
+      "description": "Это колье, вдохновлённое изяществом текущей воды, отражает плавное движение бриллиантов. Каждый камень демонстрирует танец света, придавая вашей шее неповторимую динамику.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "tektas-pirlanta-kolye": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Tektas Pirlanta",
+      "productTitle": "Колье-солитер с бриллиантом 0,25 карат",
+      "description": "Самое изящное воплощение простоты. Ослепительное сияние одного бриллианта в сочетании с минималистичным дизайном дарит вечную элегантность.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "anturaj-pirlanta-kolye": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Anturaj Pirlanta",
+      "productTitle": "Бриллиантовое колье Анутраж 0,45 карат",
+      "description": "Бриллианты, обрамляющие центральный камень, демонстрируют завораживающий танец света. Дизайн антуража своим великолепным видом придаёт ценность вашим особым моментам.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "kalp-pirlanta-kolye": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Kalp Pirlanta",
+      "productTitle": "Бриллиантовое колье «Сердце» 0,20 карат",
+      "description": "Форма сердца — символ любви — встречается с сиянием бриллиантов. Дизайн, выражающий ваши чувства к близким самым изящным образом.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "infinity-pirlanta-kolye": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Infinity Pirlanta",
+      "productTitle": "Бриллиантовое колье Infinity 0,35 карат",
+      "description": "Изящная интерпретация символа бесконечности. Дизайн Infinity, украшенный бриллиантами, олицетворяет вашу бесконечную любовь.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "su-yolu-bileklik": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Su Yolu",
+      "productTitle": "Бриллиантовый браслет Su Yolu 1,00 карат",
+      "description": "Дизайн, вдохновлённый изяществом текущей воды, создаёт сверкающее движение на вашем запястье. Каждый бриллиант демонстрирует завораживающий танец света.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "baget-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Baget Pirlanta",
+      "productTitle": "Бриллиантовый браслет огранки «багет» 0,50 карат",
+      "description": "Геометрическое изящество бриллиантов огранки «багет» встречается с современными линиями. Дизайн, придающий вашему запястью утончённый штрих.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "tenis-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Tenis Pirlanta",
+      "productTitle": "Теннисный бриллиантовый браслет 2,00 карат",
+      "description": "Классический дизайн теннисного браслета с последовательно расположенными бриллиантами дарит вечную элегантность. Каждый камень демонстрирует завораживающую игру света.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "kelepce-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Kelepce Pirlanta",
+      "productTitle": "Бриллиантовый браслет-манжета 0,75 карат",
+      "description": "Современный дизайн манжеты встречается с сиянием бриллиантов. Изящная форма, обнимающая ваше запястье, обеспечивает стильное и комфортное ношение.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "zincir-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Zincir Pirlanta",
+      "productTitle": "Цепочный бриллиантовый браслет 0,30 карат",
+      "description": "Бриллианты, танцующие на тонкой цепочке — прекраснейший пример минималистичного изящества. Элегантность, подходящая для повседневного ношения.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "charm-pirlanta-bileklik": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Charm Pirlanta",
+      "productTitle": "Бриллиантовый браслет с подвесками 0,40 карат",
+      "description": "Гармония изящных подвесок и бриллиантов придаёт вашему запястью игривый характер. Каждая подвеска рассказывает свою историю.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "tektas-pirlanta-kupe": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Tektas Pirlanta",
+      "productTitle": "Серьги-солитер с бриллиантом 0,50 карат",
+      "description": "Самое изящное воплощение простоты. Ослепительное сияние одного бриллианта озаряет ваше лицо.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "anturaj-pirlanta-kupe": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Anturaj Pirlanta",
+      "productTitle": "Бриллиантовые серьги Антураж 0,70 карат",
+      "description": "Бриллианты, обрамляющие центральный камень, дарят великолепное сияние. Идеальный выбор для ваших особых моментов.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "halka-pirlanta-kupe": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Halka Pirlanta",
+      "productTitle": "Бриллиантовые серьги-кольца 0,40 карат",
+      "description": "Танец бриллиантов в классической форме колец. Вечный дизайн, гармонирующий с любым стилем.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "sallantili-pirlanta-kupe": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Sallantili Pirlanta",
+      "productTitle": "Подвижные бриллиантовые серьги 0,60 карат",
+      "description": "Бриллианты в движении демонстрируют сверкающий танец с каждым вашим шагом. Ослепительный дизайн, притягивающий все взгляды.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "civi-pirlanta-kupe": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Civi Pirlanta",
+      "productTitle": "Бриллиантовые серьги-гвоздики 0,25 карат",
+      "description": "Минималистичный дизайн-гвоздик идеален для повседневного ношения. Тонкие изящные линии дополняют вашу элегантность.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "damla-pirlanta-kupe": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Damla Pirlanta",
+      "productTitle": "Бриллиантовые серьги в форме капли 0,55 карат",
+      "description": "Изящество формы капли встречается с сиянием бриллиантов. Утончённый дизайн, озаряющий ваше лицо.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "gelin-pirlanta-set": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Gelin Pirlanta",
+      "productTitle": "Свадебный бриллиантовый комплект 3,00 карат",
+      "description": "Великолепный комплект, созданный для вашего самого особенного дня. Идеальная гармония колье, серёг и кольца завершает образ невесты.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "klasik-pirlanta-set": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Klasik Pirlanta",
+      "productTitle": "Классический бриллиантовый комплект 1,50 карат",
+      "description": "Вечный классический дизайн, идеальный для любого особого момента. Гармоничная целостность колье, серёг и кольца.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    },
+    "modern-pirlanta-set": {
+      "mainImage": "/images/products/product-3.jpg",
+      "productName": "Modern Pirlanta",
+      "productTitle": "Современный бриллиантовый комплект 2,00 карат",
+      "description": "Современные линии и сияние бриллиантов. Смелый дизайн, отражающий элегантность современной женщины.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg"
+      ]
+    },
+    "vintage-pirlanta-set": {
+      "mainImage": "/images/products/product-4.jpg",
+      "productName": "Vintage Pirlanta",
+      "productTitle": "Винтажный бриллиантовый комплект 1,75 карат",
+      "description": "Встреча ностальгических деталей и бриллиантов. Эксклюзивный дизайн, переносящий изящество прошлого в наши дни.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-4.jpg",
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg"
+      ]
+    },
+    "minimalist-pirlanta-set": {
+      "mainImage": "/images/products/product-1.jpg",
+      "productName": "Minimalist Pirlanta",
+      "productTitle": "Минималистичный бриллиантовый комплект 1,00 карат",
+      "description": "Самое изящное воплощение философии «меньше — значит больше». Лаконичные линии и тонкие акценты бриллиантов.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-1.jpg",
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg"
+      ]
+    },
+    "luks-pirlanta-set": {
+      "mainImage": "/images/products/product-2.jpg",
+      "productName": "Luks Pirlanta",
+      "productTitle": "Люксовый бриллиантовый комплект 4,00 карат",
+      "description": "Великолепная встреча самых изысканных бриллиантов. Высшая точка роскоши и изящества.",
+      "bannerImage": "/images/hero-bg.jpg",
+      "galleryImages": [
+        "/images/products/product-2.jpg",
+        "/images/products/product-3.jpg",
+        "/images/products/product-4.jpg"
+      ]
+    }
+  },
+  "mucevherCategories": {
+    "yuzuk": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Самая ценная подпись любви",
+      "heroSubtitle": "Бриллиантовые подписи, бросающие вызов времени.",
+      "heroDescription": "Это кольцо — и когда на руке, и когда нет.\nИногда когда смотришь, иногда просто чувствуешь...\nОт того, что не выразить словами.\nКак то, что ничем не заменить.\nОстаётся рядом...",
+      "categoryTitle": "НАШИ БРИЛЛИАНТОВЫЕ КОЛЬЦА",
+      "products": []
+    },
+    "kolye": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Чистейшее воплощение изящества",
+      "heroSubtitle": "Дизайны, сияющие с каждым взглядом.",
+      "heroDescription": "Это колье — для того, что начинается с одного взгляда.\nЧто чувствуется по мере приближения, что остаётся без имени...\nДалеко от показного, близко к сердцу.\nПохоже на то, что хочется сберечь.\nС каждым мгновением всё больше...",
+      "categoryTitle": "НАШИ БРИЛЛИАНТОВЫЕ КОЛЬЕ",
+      "products": []
+    },
+    "bileklik": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Свет на вашем запястье",
+      "heroSubtitle": "Изящество в каждом движении.",
+      "heroDescription": "Этот браслет — как то, что тихо сопровождает в течение дня.\nЗаметный в движении, существующий в покое...\nВплетается в повседневность.\nНе забывая, не подавляя.\nСловно сохраняя осознанность...",
+      "categoryTitle": "НАШИ БРИЛЛИАНТОВЫЕ БРАСЛЕТЫ",
+      "products": []
+    },
+    "kupe": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Прикосновение сияния",
+      "heroSubtitle": "Изящество, сверкающее у ваших ушей.",
+      "heroDescription": "Эти серьги — не сразу, а со временем.\nПо мере сближения, по мере привыкания...\nЛёгкое, но оставляющее след чувство.\nПросто, тихо.\nМежду взглядами...",
+      "categoryTitle": "НАШИ БРИЛЛИАНТОВЫЕ СЕРЬГИ",
+      "products": []
+    },
+    "set": {
+      "heroImage": "/images/mucevher-menu-hero.jpg",
+      "heroTitle": "Безупречная гармония",
+      "heroSubtitle": "Целостность из дополняющих элементов.",
+      "heroDescription": "Этот комплект — для тех, кто ищет целое.\nЧто обретает смысл не по отдельности, а вместе...\nКаждый элемент прекрасен сам по себе,\nно рядом — совершенно иначе.\nСловно чувство завершённости...",
+      "categoryTitle": "НАШИ БРИЛЛИАНТОВЫЕ КОМПЛЕКТЫ",
+      "products": []
+    }
+  },
+  "hediyeCategories": {
+    "ozel-gunler": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Для особых моментов",
+      "heroSubtitle": "Незабываемые подарки.",
+      "heroDescription": "Подарочные варианты, созданные для празднования самых особенных моментов вашей жизни. Идеальный выбор для помолвки, свадьбы, годовщины или любого другого особого дня.",
+      "categoryTitle": "ПОДАРКИ К ОСОБЫМ СОБЫТИЯМ",
+      "products": []
+    },
+    "dogum-gunu": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Сияние дня рождения",
+      "heroSubtitle": "Самый красивый подарок на день рождения.",
+      "heroDescription": "Подарочные варианты, которые сделают день рождения ваших близких особенным. Бриллиантовые дизайны, подходящие для любого возраста и стиля.",
+      "categoryTitle": "ПОДАРКИ НА ДЕНЬ РОЖДЕНИЯ",
+      "products": []
+    },
+    "anneler-gunu": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Особенное для мам",
+      "heroSubtitle": "Самый ценный подарок — самой дорогой женщине.",
+      "heroDescription": "Эксклюзивные бриллиантовые дизайны, выражающие вашу любовь к маме. Изящные, значимые и вечные подарки.",
+      "categoryTitle": "ПОДАРКИ КО ДНЮ МАТЕРИ",
+      "products": []
+    },
+    "kadinlar-gunu": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Для женщин",
+      "heroSubtitle": "Сильным и изящным женщинам.",
+      "heroDescription": "Подарите значимый подарок особенным женщинам в вашей жизни в Международный женский день. Дизайны, сочетающие элегантность и изящество.",
+      "categoryTitle": "ПОДАРКИ К ЖЕНСКОМУ ДНЮ",
+      "products": []
+    },
+    "yeni-dogan": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Для маленьких ангелов",
+      "heroSubtitle": "Особые подарки к новым началам.",
+      "heroDescription": "Особенные и значимые подарочные варианты для новорождённых и их семей. Идеальны в качестве подарка «Добро пожаловать в мир».",
+      "categoryTitle": "ПОДАРКИ ДЛЯ НОВОРОЖДЁННЫХ",
+      "products": []
+    },
+    "aksesuar": {
+      "heroImage": "/images/hediye-menu-hero.jpg",
+      "heroTitle": "Завершающие штрихи",
+      "heroSubtitle": "Дополните свой стиль.",
+      "heroDescription": "Аксессуары, которые дополнят вашу ювелирную коллекцию. Эксклюзивный выбор от заколок для волос до шкатулок для драгоценностей.",
+      "categoryTitle": "АКСЕССУАРЫ",
+      "products": []
+    }
+  },
+  "erkekCategories": {
+    "tesbih": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Традиционное изящество",
+      "heroSubtitle": "Умиротворение в каждой бусине.",
+      "heroDescription": "Первое, что замечаешь, взяв в руку — тишина.\nВремя немного замедляется, мысли успокаиваются.\nОстаются не числа, а паузы.\nЗначимо не когда смотришь, а когда замираешь.\nЧерез какое-то время даже не замечаешь...",
+      "categoryTitle": "КОЛЛЕКЦИЯ ЧЁТОК",
+      "products": []
+    },
+    "bileklik": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Мужская элегантность",
+      "heroSubtitle": "Сила и изящество на вашем запястье.",
+      "heroDescription": "Как то, что сопровождает, не привлекая внимания.\nПроявляется в движении.\nВплетается в течение дня, не отстаёт.\nНе много, не мало.\nЕстественно, когда на месте...",
+      "categoryTitle": "МУЖСКИЕ БРАСЛЕТЫ",
+      "products": []
+    },
+    "yuzuk": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Мужские кольца",
+      "heroSubtitle": "Символ силы и характера.",
+      "heroDescription": "Ощущение, меняющееся с каждым взглядом на руку.\nИногда привычка, иногда как тяжесть.\nОт того, что не выразить словами.\nНе хочет ни рассказать, ни скрыть.\nПросто есть...",
+      "categoryTitle": "МУЖСКИЕ КОЛЬЦА",
+      "products": []
+    },
+    "kol": {
+      "heroImage": "/images/erkek-menu-hero.jpg",
+      "heroTitle": "Мужские запонки",
+      "heroSubtitle": "Идеальное сочетание стиля и комфорта.",
+      "heroDescription": "Изящные и комфортные изделия\nдля мужчин.",
+      "categoryTitle": "МУЖСКИЕ ЗАПОНКИ",
+      "products": []
+    }
+  },
+  "prelovedCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Preloved",
+    "heroSubtitle": "Изделия, не теряющие своей ценности со временем.",
+    "heroDescription": "Есть украшения,\nкоторые со временем не теряют ничего из своей ценности.\nСвоим дизайном, мастерством и характером\nони по-прежнему несут в себе первоначальное впечатление.\n\nPreloved изделия\nсостоят из тщательно отобранных, сохранивших свою подлинность\nукрашений, ожидающих нового открытия.\n\nКаждое из них соединяет историю\nиз своего прошлого с изяществом настоящего.\nИзысканно, особенно и доступно...",
+    "categoryTitle": "КОЛЛЕКЦИЯ PRELOVED",
+    "products": []
+  },
+  "newArrivalsCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Новинки",
+    "heroSubtitle": "Новейшие дизайны — первыми для вас.",
+    "heroDescription": "Новые начала,\nновые истории,\nновое сияние...\n\nКаждый сезон самые актуальные дизайны,\nсозданные специально для вас,\nсобраны в этой коллекции.\n\nИзделия, вдохновляющие вас\nсоздавать собственный стиль,\nа не следовать за трендами.",
+    "categoryTitle": "НОВИНКИ",
+    "products": []
+  },
+  "yuzukCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Кольца",
+    "heroSubtitle": "Подарите свет вашим пальцам.",
+    "heroDescription": "Каждое кольцо рассказывает свою историю.\nОткройте наши уникальные дизайны,\nотражающие вашу историю.",
+    "categoryTitle": "КОЛЬЦА",
+    "products": []
+  },
+  "kolyeCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Колье",
+    "heroSubtitle": "Носите изящество на шее.",
+    "heroDescription": "Наши колье, созданные с тонким мастерством\nи вниманием к деталям,\nдарят сияние каждому вашему мгновению.",
+    "categoryTitle": "КОЛЬЕ",
+    "products": []
+  },
+  "bileklikCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Браслеты",
+    "heroSubtitle": "Изящное прикосновение к вашим запястьям.",
+    "heroDescription": "Каждый браслет — тонкая деталь,\nдополняющая ваш стиль.\nОткройте нашу коллекцию.",
+    "categoryTitle": "БРАСЛЕТЫ",
+    "products": []
+  },
+  "kupeCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Серьги",
+    "heroSubtitle": "Подарите сияние вашему лицу.",
+    "heroDescription": "Наши изящные серьги\nделают каждый ваш момент особенным.\nСозданы специально для вас.",
+    "categoryTitle": "СЕРЬГИ",
+    "products": []
+  },
+  "setCategory": {
+    "heroImage": "/images/mucevher-menu-hero.jpg",
+    "heroTitle": "Комплекты",
+    "heroSubtitle": "Гармоничные элементы, безупречный образ.",
+    "heroDescription": "Наши ювелирные комплекты,\nтщательно подобранные,\nзавершают ваш стиль.",
+    "categoryTitle": "КОМПЛЕКТЫ",
+    "products": []
+  },
+  "gozumunNuruCategory": {
+    "heroImage": "/images/collection-menu-hero.jpg",
+    "heroTitle": "Свет моих глаз",
+    "heroSubtitle": "Дизайны, полные смысла, для ваших любимых.",
+    "heroDescription": "Коллекция «Свет моих глаз»\nсоздана как символ\nлюбви и ценности.",
+    "categoryTitle": "СВЕТ МОИХ ГЛАЗ",
+    "products": []
+  },
+  "tesbihCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Чётки",
+    "heroSubtitle": "Традиционное изящество, современный дизайн.",
+    "heroDescription": "Наши чётки ручной работы\nсочетают в себе качество\nи эстетику.",
+    "categoryTitle": "ЧЁТКИ",
+    "products": []
+  },
+  "erkekBileklikCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Мужские браслеты",
+    "heroSubtitle": "Эксклюзивные дизайны для мужчин.",
+    "heroDescription": "Наши мужественные и стильные браслеты\nдополняют ваш образ.",
+    "categoryTitle": "МУЖСКИЕ БРАСЛЕТЫ",
+    "products": []
+  },
+  "erkekYuzukCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Мужские кольца",
+    "heroSubtitle": "Встреча силы и изящества.",
+    "heroDescription": "Стильные и качественные кольца,\nсозданные для мужчин.",
+    "categoryTitle": "МУЖСКИЕ КОЛЬЦА",
+    "products": []
+  },
+  "erkekKolCategory": {
+    "heroImage": "/images/erkek-menu-hero.jpg",
+    "heroTitle": "Мужские запонки",
+    "heroSubtitle": "Идеальное сочетание стиля и комфорта.",
+    "heroDescription": "Изящные и комфортные изделия,\nсозданные для мужчин.",
+    "categoryTitle": "МУЖСКИЕ ЗАПОНКИ",
+    "products": []
+  },
+  "footer": {
+    "logo": "/images/1818-logo.svg",
+    "slogan": "С Тобой всё становится прекрасным...",
+    "description": "Han Kuyumculuk, неся этот смысл, рождённый из света, оставляет особое место в сердце каждой женщины; ведь за каждым сиянием скрывается незабываемая история.",
+    "columns": [
+      {
+        "title": "HAN KUYUMCULUK",
+        "links": [
+          {
+            "text": "О нас",
+            "href": "/ru/o-nas"
+          },
+          {
+            "text": "Контакты",
+            "href": "/ru/kontakt"
+          },
+          {
+            "text": "Блог",
+            "href": "/ru/blog"
+          }
+        ]
+      },
+      {
+        "title": "КОЛЛЕКЦИЯ",
+        "links": [
+          {
+            "text": "Свет моих глаз",
+            "href": "/ru/kollektsiya/svet-moikh-glaz"
+          }
+        ]
+      },
+      {
+        "title": "ОБСЛУЖИВАНИЕ КЛИЕНТОВ",
+        "links": [
+          {
+            "text": "Уход и гарантия",
+            "href": "/ru/obsluzhivaniye/ukhod-garantiya"
+          }
+        ]
+      },
+      {
+        "title": "ЮРИДИЧЕСКОЕ",
+        "links": [
+          {
+            "text": "Политика cookie",
+            "href": "/ru/yuridicheskoye/cookie-politika"
+          }
+        ]
+      }
+    ],
+    "socialLinks": {
+      "instagram": "https://instagram.com/hankuyumculuk"
+    },
+    "copyright": "\u00a9 2025 Han Kuyumculuk, Все права защищены"
+  }
+}
