@@ -78,6 +78,10 @@ export default function HomePageClient() {
         rightLink={content.trendSection?.rightLink}
         leftTitleLink={content.trendSection?.leftTitleLink}
         rightTitleLink={content.trendSection?.rightTitleLink}
+        leftImagePosition={content.trendSection?.leftImagePosition}
+        leftImageScale={content.trendSection?.leftImageScale}
+        rightImagePosition={content.trendSection?.rightImagePosition}
+        rightImageScale={content.trendSection?.rightImageScale}
       />
 
       {/* Parallax Section */}
@@ -88,8 +92,6 @@ export default function HomePageClient() {
         title={content.storySection?.title}
         mainText={content.storySection?.mainText}
         subText={content.storySection?.subText}
-        linkText={content.storySection?.linkText}
-        linkHref={content.storySection?.linkHref}
       />
 
       {/* Featured Products */}

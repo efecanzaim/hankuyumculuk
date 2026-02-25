@@ -106,17 +106,38 @@ function saveSettingByKey($db, $key, $value) {
 
         case 'trend_section':
             $stmt = $db->query('SELECT id FROM homepage_trend_section LIMIT 1');
-            $params = [
-                $value['leftImage'] ?? '', $value['leftTitle'] ?? '', $value['leftTitleLink'] ?? '',
-                $value['rightImage'] ?? '', $value['rightTitle'] ?? '', $value['rightTitleLink'] ?? ''
-            ];
-            
-            if ($stmt->fetch()) {
-                $stmt = $db->prepare('UPDATE homepage_trend_section SET left_image=?, left_title=?, left_link=?, right_image=?, right_title=?, right_link=? LIMIT 1');
+            // Konum/zoom sütunları var mı kontrol et
+            $hasAdjustCols = false;
+            try {
+                $checkCol = $db->query("SHOW COLUMNS FROM homepage_trend_section LIKE 'left_image_position'");
+                $hasAdjustCols = $checkCol->rowCount() > 0;
+            } catch (Exception $e) {}
+
+            if ($hasAdjustCols) {
+                $params = [
+                    $value['leftImage'] ?? '', $value['leftTitle'] ?? '', $value['leftTitleLink'] ?? '',
+                    $value['leftImagePosition'] ?? '50% 50%', $value['leftImageScale'] ?? 1,
+                    $value['rightImage'] ?? '', $value['rightTitle'] ?? '', $value['rightTitleLink'] ?? '',
+                    $value['rightImagePosition'] ?? '50% 50%', $value['rightImageScale'] ?? 1
+                ];
+                if ($stmt->fetch()) {
+                    $stmt = $db->prepare('UPDATE homepage_trend_section SET left_image=?, left_title=?, left_link=?, left_image_position=?, left_image_scale=?, right_image=?, right_title=?, right_link=?, right_image_position=?, right_image_scale=? LIMIT 1');
+                    return $stmt->execute($params);
+                }
+                $stmt = $db->prepare('INSERT INTO homepage_trend_section (left_image, left_title, left_link, left_image_position, left_image_scale, right_image, right_title, right_link, right_image_position, right_image_scale) VALUES (?,?,?,?,?,?,?,?,?,?)');
+                return $stmt->execute($params);
+            } else {
+                $params = [
+                    $value['leftImage'] ?? '', $value['leftTitle'] ?? '', $value['leftTitleLink'] ?? '',
+                    $value['rightImage'] ?? '', $value['rightTitle'] ?? '', $value['rightTitleLink'] ?? ''
+                ];
+                if ($stmt->fetch()) {
+                    $stmt = $db->prepare('UPDATE homepage_trend_section SET left_image=?, left_title=?, left_link=?, right_image=?, right_title=?, right_link=? LIMIT 1');
+                    return $stmt->execute($params);
+                }
+                $stmt = $db->prepare('INSERT INTO homepage_trend_section (left_image, left_title, left_link, right_image, right_title, right_link) VALUES (?,?,?,?,?,?)');
                 return $stmt->execute($params);
             }
-            $stmt = $db->prepare('INSERT INTO homepage_trend_section (left_image, left_title, left_link, right_image, right_title, right_link) VALUES (?,?,?,?,?,?)');
-            return $stmt->execute($params);
 
         case 'parallax_section':
             $bg = $value['backgroundImage'] ?? '';
@@ -163,11 +184,22 @@ function saveSettingByKey($db, $key, $value) {
             // Kartları kaydet - önce mevcut kartları temizle
             $db->exec('DELETE FROM homepage_cards');
 
+            // Konum/zoom sütunları var mı kontrol et
+            $hasCardAdjustCols = false;
+            try {
+                $checkCol = $db->query("SHOW COLUMNS FROM homepage_cards LIKE 'image_position'");
+                $hasCardAdjustCols = $checkCol->rowCount() > 0;
+            } catch (Exception $e) {}
+
             // Üst kartları ekle
             $topCards = $value['topCards'] ?? [];
-            $insertStmt = $db->prepare('INSERT INTO homepage_cards (title, subtitle, image, link, button_text, section_type, sort_order, is_active) VALUES (?,?,?,?,?,?,?,1)');
+            if ($hasCardAdjustCols) {
+                $insertStmt = $db->prepare('INSERT INTO homepage_cards (title, subtitle, image, link, button_text, section_type, sort_order, is_active, image_position, image_scale) VALUES (?,?,?,?,?,?,?,1,?,?)');
+            } else {
+                $insertStmt = $db->prepare('INSERT INTO homepage_cards (title, subtitle, image, link, button_text, section_type, sort_order, is_active) VALUES (?,?,?,?,?,?,?,1)');
+            }
             foreach ($topCards as $i => $card) {
-                $insertStmt->execute([
+                $params = [
                     $card['title'] ?? '',
                     $card['subtitle'] ?? '',
                     $card['image'] ?? '',
@@ -175,13 +207,18 @@ function saveSettingByKey($db, $key, $value) {
                     $card['buttonText'] ?? '',
                     'top',
                     $i + 1
-                ]);
+                ];
+                if ($hasCardAdjustCols) {
+                    $params[] = $card['imagePosition'] ?? '50% 50%';
+                    $params[] = $card['imageScale'] ?? 1;
+                }
+                $insertStmt->execute($params);
             }
 
             // Alt kartları ekle
             $bottomCards = $value['bottomCards'] ?? [];
             foreach ($bottomCards as $i => $card) {
-                $insertStmt->execute([
+                $params = [
                     $card['title'] ?? '',
                     $card['subtitle'] ?? '',
                     $card['image'] ?? '',
@@ -189,7 +226,12 @@ function saveSettingByKey($db, $key, $value) {
                     $card['buttonText'] ?? '',
                     'bottom',
                     $i + 1
-                ]);
+                ];
+                if ($hasCardAdjustCols) {
+                    $params[] = $card['imagePosition'] ?? '50% 50%';
+                    $params[] = $card['imageScale'] ?? 1;
+                }
+                $insertStmt->execute($params);
             }
 
             return true;
@@ -216,12 +258,22 @@ function saveSettingByKey($db, $key, $value) {
 
         case 'contact':
             $stmt = $db->query('SELECT id FROM contact_info LIMIT 1');
-            $params = [$value['address'] ?? '', $value['phone'] ?? '', $value['email'] ?? '', $value['workingHours'] ?? '', $value['mapEmbed'] ?? ''];
+            $params = [
+                $value['address'] ?? '', 
+                $value['phone'] ?? '', 
+                $value['email'] ?? '', 
+                $value['workingHours'] ?? '', 
+                $value['mapEmbed'] ?? '',
+                $value['instagram1'] ?? '@gozumunnuru.antalya',
+                $value['instagram1Url'] ?? 'https://www.instagram.com/gozumunnuru.antalya',
+                $value['instagram2'] ?? '@hankuyumculuk_',
+                $value['instagram2Url'] ?? 'https://www.instagram.com/hankuyumculuk_'
+            ];
             if ($stmt->fetch()) {
-                $stmt = $db->prepare('UPDATE contact_info SET address=?, phone=?, email=?, working_hours=?, map_embed=? LIMIT 1');
+                $stmt = $db->prepare('UPDATE contact_info SET address=?, phone=?, email=?, working_hours=?, map_embed=?, instagram1=?, instagram1_url=?, instagram2=?, instagram2_url=? LIMIT 1');
                 return $stmt->execute($params);
             }
-            $stmt = $db->prepare('INSERT INTO contact_info (address, phone, email, working_hours, map_embed) VALUES (?,?,?,?,?)');
+            $stmt = $db->prepare('INSERT INTO contact_info (address, phone, email, working_hours, map_embed, instagram1, instagram1_url, instagram2, instagram2_url) VALUES (?,?,?,?,?,?,?,?,?)');
             return $stmt->execute($params);
 
         case 'hero':

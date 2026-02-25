@@ -168,18 +168,20 @@ export default function ProductDetailPage({
       </section>
 
       {/* Banner Image Section */}
-      <section className="py-[40px] md:py-[60px]">
-        <div className="max-w-[1430px] mx-auto px-6 md:px-8">
-          <div className="relative w-full h-[250px] md:h-[505px]">
-            <Image
-              src={getAssetPath(bannerImage)}
-              alt={productName}
-              fill
-              className="object-cover"
-            />
+      {bannerImage && (
+        <section className="py-[40px] md:py-[60px]">
+          <div className="max-w-[1430px] mx-auto px-6 md:px-8">
+            <div className="relative w-full h-[250px] md:h-[505px]">
+              <Image
+                src={getAssetPath(bannerImage)}
+                alt={productName}
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Gallery Slider Section */}
       <section className="py-[60px] md:py-[100px] overflow-hidden">

@@ -33,7 +33,8 @@ import {
   FiTrash2,
   FiEdit3,
   FiPackage,
-  FiFileText
+  FiFileText,
+  FiMaximize2
 } from "react-icons/fi";
 import initialContent from "@/data/content.json";
 import initialContentEn from "@/data/content-en.json";
@@ -68,7 +69,11 @@ interface Product {
   description_en?: string;
   description_ru?: string;
   image: string;
+  imagePosition?: string;
+  imageScale?: number;
   banner_image: string;
+  bannerImagePosition?: string;
+  bannerImageScale?: number;
   gallery_images: string[];
   sort_order: number;
   is_active: boolean;
@@ -100,6 +105,7 @@ interface Category {
   list_title_en?: string;
   list_title_ru?: string;
   sort_order?: number;
+  content?: string;
 }
 
 // API URL - Production'da PHP API kullanılacak
@@ -317,6 +323,18 @@ export default function AdminPanel() {
   const [loadingAboutPage, setLoadingAboutPage] = useState(false);
   const [aboutValues, setAboutValues] = useState<any[]>([]);
   const [loadingAboutValues, setLoadingAboutValues] = useState(false);
+
+  // Hediye sayfası state
+  const [hediyePage, setHediyePage] = useState<any>(null);
+  const [loadingHediyePage, setLoadingHediyePage] = useState(false);
+
+  // Size Özel (Özel Tasarım) sayfası state
+  const [ozelTasarimPage, setOzelTasarimPage] = useState<any>(null);
+  const [loadingOzelTasarimPage, setLoadingOzelTasarimPage] = useState(false);
+
+  // Gözümün Nuru ek bölümler state
+  const [gnSections, setGnSections] = useState<any>(null);
+  const [loadingGnSections, setLoadingGnSections] = useState(false);
 
   // Blog yönetimi state
   interface BlogPost {
@@ -686,6 +704,8 @@ export default function AdminPanel() {
           { key: "special_design_section", value: content?.specialDesignSection },
           { key: "blog_section", value: content?.blogSection },
           { key: "footer", value: content?.footer },
+          { key: "contact", value: content?.contact },
+          { key: "menu_images", value: content?.menuImages },
           // Kategori sayfaları
           { key: "yuzuk_category", value: content?.yuzukCategory },
           { key: "kolye_category", value: content?.kolyeCategory },
@@ -798,12 +818,18 @@ export default function AdminPanel() {
               const flatCategories: Category[] = [];
               Object.entries(categoriesData).forEach(([parentType, cats]) => {
                 if (Array.isArray(cats)) {
-                  cats.forEach((cat: { id: number; name: string; slug: string; parentType?: string }) => {
+                  cats.forEach((cat: any) => {
                     flatCategories.push({
                       id: cat.id,
                       name: cat.name,
                       slug: cat.slug,
                       parent_type: cat.parentType || parentType,
+                      hero_image: cat.heroImage,
+                      hero_title: cat.heroTitle,
+                      hero_subtitle: cat.heroSubtitle,
+                      hero_description: cat.heroDescription,
+                      list_title: cat.listTitle,
+                      content: cat.content,
                     });
                   });
                 }
@@ -1311,6 +1337,8 @@ export default function AdminPanel() {
             slug: data.slug || "hakkimizda",
             title: data.title || "Hakkımızda",
             heroImage: data.heroImage || "/images/about-hero.jpg",
+            heroImagePosition: data.heroImagePosition || "50% 50%",
+            heroImageScale: data.heroImageScale || 1,
             heroTitle: data.heroTitle || "Hakkımızda | Han Kuyumculuk",
             heroParagraph2: data.heroParagraph2 || "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaatten öte; disiplin, süreklilik ve sorumluluk anlayışıyla ele alan köklü bir üreticidir. Kuruluşundan bu yana tasarımdan üretime uzanan tüm süreçlerinde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır.\n\nİstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek Han'ın karakterini oluşturur. Bugün farklı markalar altında vitrinlerde yer alan birçok mücevher tasarımının arkasında Han imzası bulunur; çoğu zaman adı görünmeden, işçiliği ve detay diliyle kendini belli eder.\n\nTüm koleksiyonlar; pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip, alanında uzman ve istikrarlı ekipler tarafından geliştirilir. Üretimde süreklilik, Han için yalnızca hacim değil; hammaddeden son sunuma kadar standartların titizlikle korunması anlamına gelir.\n\nBugün Han Kuyumculuk;\n• Gücünü yıllara dayanan üretim tecrübesinden,\n• Güvenilirliğini uzman ve istikrarlı ekibinden,\n• Kimliğini ise pırlantada söz sahibi olma kararlılığından alır.\n\nHan, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
             valuesTitle: data.valuesTitle || "Vizyonumuz"
@@ -1322,6 +1350,8 @@ export default function AdminPanel() {
             slug: "hakkimizda",
             title: "Hakkımızda",
             heroImage: "/images/about-hero.jpg",
+            heroImagePosition: "50% 50%",
+            heroImageScale: 1,
             heroTitle: "Hakkımızda | Han Kuyumculuk",
             heroParagraph2: "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaatten öte; disiplin, süreklilik ve sorumluluk anlayışıyla ele alan köklü bir üreticidir. Kuruluşundan bu yana tasarımdan üretime uzanan tüm süreçlerinde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır.\n\nİstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek Han'ın karakterini oluşturur. Bugün farklı markalar altında vitrinlerde yer alan birçok mücevher tasarımının arkasında Han imzası bulunur; çoğu zaman adı görünmeden, işçiliği ve detay diliyle kendini belli eder.\n\nTüm koleksiyonlar; pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip, alanında uzman ve istikrarlı ekipler tarafından geliştirilir. Üretimde süreklilik, Han için yalnızca hacim değil; hammaddeden son sunuma kadar standartların titizlikle korunması anlamına gelir.\n\nBugün Han Kuyumculuk;\n• Gücünü yıllara dayanan üretim tecrübesinden,\n• Güvenilirliğini uzman ve istikrarlı ekibinden,\n• Kimliğini ise pırlantada söz sahibi olma kararlılığından alır.\n\nHan, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
             valuesTitle: "Vizyonumuz"
@@ -1334,6 +1364,8 @@ export default function AdminPanel() {
           slug: "hakkimizda",
           title: "Hakkımızda",
           heroImage: "/images/about-hero.jpg",
+          heroImagePosition: "50% 50%",
+          heroImageScale: 1,
           heroTitle: "Hakkımızda | Han Kuyumculuk",
           heroParagraph2: "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaatten öte; disiplin, süreklilik ve sorumluluk anlayışıyla ele alan köklü bir üreticidir. Kuruluşundan bu yana tasarımdan üretime uzanan tüm süreçlerinde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır.\n\nİstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek Han'ın karakterini oluşturur. Bugün farklı markalar altında vitrinlerde yer alan birçok mücevher tasarımının arkasında Han imzası bulunur; çoğu zaman adı görünmeden, işçiliği ve detay diliyle kendini belli eder.\n\nTüm koleksiyonlar; pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip, alanında uzman ve istikrarlı ekipler tarafından geliştirilir. Üretimde süreklilik, Han için yalnızca hacim değil; hammaddeden son sunuma kadar standartların titizlikle korunması anlamına gelir.\n\nBugün Han Kuyumculuk;\n• Gücünü yıllara dayanan üretim tecrübesinden,\n• Güvenilirliğini uzman ve istikrarlı ekibinden,\n• Kimliğini ise pırlantada söz sahibi olma kararlılığından alır.\n\nHan, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
           valuesTitle: "Vizyonumuz"
@@ -1347,6 +1379,8 @@ export default function AdminPanel() {
         slug: "hakkimizda",
         title: "Hakkımızda",
         heroImage: "/images/about-hero.jpg",
+        heroImagePosition: "50% 50%",
+        heroImageScale: 1,
         heroTitle: "Hakkımızda | Han Kuyumculuk",
         heroParagraph2: "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaatten öte; disiplin, süreklilik ve sorumluluk anlayışıyla ele alan köklü bir üreticidir. Kuruluşundan bu yana tasarımdan üretime uzanan tüm süreçlerinde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır.\n\nİstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek Han'ın karakterini oluşturur. Bugün farklı markalar altında vitrinlerde yer alan birçok mücevher tasarımının arkasında Han imzası bulunur; çoğu zaman adı görünmeden, işçiliği ve detay diliyle kendini belli eder.\n\nTüm koleksiyonlar; pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip, alanında uzman ve istikrarlı ekipler tarafından geliştirilir. Üretimde süreklilik, Han için yalnızca hacim değil; hammaddeden son sunuma kadar standartların titizlikle korunması anlamına gelir.\n\nBugün Han Kuyumculuk;\n• Gücünü yıllara dayanan üretim tecrübesinden,\n• Güvenilirliğini uzman ve istikrarlı ekibinden,\n• Kimliğini ise pırlantada söz sahibi olma kararlılığından alır.\n\nHan, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
         valuesTitle: "Vizyonumuz"
@@ -1363,26 +1397,29 @@ export default function AdminPanel() {
     setSaving(true);
     try {
       if (API_URL) {
-        const method = aboutPage.id ? "PUT" : "POST";
-        const body = aboutPage.id 
-          ? { ...aboutPage, id: aboutPage.id }
-          : { ...aboutPage };
+        // Her zaman PUT kullan - API slug ile sayfayı bulup güncelleyecek veya oluşturacak
+        const body = {
+          ...aboutPage,
+          title: aboutPage.title || "Hakkımızda",
+          slug: aboutPage.slug || "hakkimizda",
+        };
 
         const response = await fetch(`${API_URL}/api/pages.php`, {
-          method,
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify(body),
         });
 
-        if (response.ok) {
-          const data = await response.json();
+        const data = await response.json();
+
+        if (response.ok && data.success !== false && !data.error) {
           setMessage({ type: "success", text: "Hakkımızda sayfası kaydedildi!" });
           if (data.id) {
             setAboutPage({ ...aboutPage, id: data.id });
           }
         } else {
-          throw new Error("Sayfa kaydedilemedi");
+          throw new Error(data.error || "Sayfa kaydedilemedi");
         }
       } else {
         // Development: Local state'e kaydet
@@ -1390,7 +1427,346 @@ export default function AdminPanel() {
       }
     } catch (error) {
       console.error("Hakkımızda sayfası kaydetme hatası:", error);
-      setMessage({ type: "error", text: "Sayfa kaydedilemedi!" });
+      setMessage({ type: "error", text: error instanceof Error ? error.message : "Sayfa kaydedilemedi!" });
+    }
+    setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
+  // Hediye sayfasını yükle
+  const defaultHediyeSections = {
+    philosophyTitle1: "Bir teşekkür,",
+    philosophyTitle2: "bir kutlama",
+    philosophyText: "\"iyi ki varsın\" demenin en kalıcı hâli…\n\nHan'da hediye,\nyalnızca bir mücevher seçimi değil;\nduyulmuş, düşünülmüş ve anlam yüklenmiş bir jesttir.",
+    splitImage: "/images/trend-left.jpg",
+    splitTitle: "Değer\nverdiğini göster",
+    splitText1: "Değer verdiğini, düşündüğünü\nve özen gösterdiğini göstermenin\nen açık yoludur.",
+    splitText2: "Anneler Günü'nde minneti,\nKadınlar Günü'nde zarafeti,\nSevgililer Günü'nde bağı,\nyıl dönümlerinde ortak bir hikâyeyi anlatır.",
+    categoriesTitle: "Kategorilerimiz",
+    categoriesSubtitle: "Seçilmiş, düşünülmüş ve\nuzun vadeli bir değerin ifadesi",
+    categories: [
+      { title: "Yüzük", description: "Biçiminin içinde anlam", image: "/images/products/product-1.jpg", href: "/mucevher/yuzuk" },
+      { title: "Kolye", description: "Göğsüne yakın sevgi", image: "/images/products/product-2.jpg", href: "/mucevher/kolye" },
+      { title: "Bileklik", description: "Hareketiyle hikâye", image: "/images/products/product-3.jpg", href: "/mucevher/bileklik" },
+      { title: "Küpe", description: "Yüze yakın söz", image: "/images/products/product-4.jpg", href: "/mucevher/kupe" },
+    ],
+    darkBgImage: "/images/parallax-bg.jpg",
+    darkText1: "Her parça;\nzamansız tasarımı, dengeli oranları ve ustalıklı işçiliğiyle\nverildiği ana değer katar.",
+    darkText2: "Gösterişten çok dengeye,\nabartıdan çok ustalığa,\ngeçicilikten çok kalıcılığa odaklanır.",
+    darkText3: "Çünkü bazı hediyeler,\nkutudan çıktığı an değil,\nyıllar sonra bile hatırlandığında anlam kazanır…",
+    ctaSmallTitle: "Peki Sen?",
+    ctaTitle: "Kimin hayatında iz bırakmak istiyorsun",
+    ctaSubtitle: "Seçilmiş, düşünülmüş ve\nuzun vadeli bir değerin ifadesi",
+  };
+
+  // Size Özel sayfası varsayılan bölüm verileri
+  const defaultOzelTasarimSections = {
+    heroSubtitle: "Han Kuyumculuk",
+    heroTitle: "Size Özel",
+    heroDesc: "Her şey sizi dinlemekle başlıyor.",
+    scrollText: "Keşfedin",
+    philosophyQuote1: "Gerçek değer,",
+    philosophyQuote2: "kişiye ait olanda saklıdır.",
+    philosophyText: "Size özel olan,\nhazır kalıplara sığmaz.\nBir ölçüden fazlasıdır;\nbir duruştur, bir ihtiyaçtır, bir hikâyedir.",
+    splitImage: "/images/trend-left.jpg",
+    splitTitle: "Dinlenmeyi\nbeklersiniz.",
+    splitText1: "Söylediklerinizin anlaşılmasını,\nanlatmak istediklerinizin\ndikkatle ele alınmasını istersiniz.",
+    splitText2: "Detay ararsınız.\nHer çizginin, her dokunun\nsizinle bir bağ kurmasını beklersiniz.",
+    processTitle: "Özgürlük İstersiniz",
+    processSubtitle: "Seçeneklerin sizi sınırlamamasını,\naksine size alan açmasını beklersiniz.",
+    steps: [
+      { label: "İlk Adım", title: "Anlama", desc: "Mücevher, biçim almadan önce sizi anlamakla başlar.\nBeklentiler, duygular ve size ait hikâye bu aşamada netleşir.\nHalinizi, niyenizi, anlatmak istediğinizi duygunuzu dinleriz." },
+      { label: "İkinci Adım", title: "Şekillendirme", desc: "Ölçüler, dokular ve detaylar, yavaş yavaş belirir.\nBu aşama bir karar değil, bir keşiftir.\nParça kendini bulana kadar çalışılır.\nBu aşamada, sizin beklentileriniz ile bizim teknik bilgimiz\nve yıllara dayanan üretim tecrübemiz bir araya gelir.\nTasarım, bu evrede gerçek karakterini kazanır." },
+      { label: "Üçüncü Adım", title: "Üretim", desc: "Tasarım netleştiğinde, usta ellerde,\neşsiz bir parça olarak hayata geçer.\nBeklenti ve istekleriniz tam olarak karşılık bulana dek\nsüreç titizlikle devam eder." },
+      { label: "Son Adım", title: "Tamamlanma", desc: "Ortaya çıkan mücevher, artık yalnızca bir tasarım değil,\nsize ait bir iz haline gelir.\nTamamlanma, beklentileriniz eksiksiz karşılandığında gerçekleşir." },
+    ],
+    darkBgImage: "/images/parallax-bg.jpg",
+    darkTitle: "Ve Sonunda...",
+    darkText1: "Size ait olduğunu hissettiren",
+    darkText1Cursive: "bir parça beklersiniz.",
+    darkText2: "Başkasına değil,\ntam olarak size yakışan.",
+    ctaTitle1: "İşte bu yüzden",
+    ctaTitle2: 'Han "Size Özel"',
+    ctaDesc: "Dinleyen, anlayan ve sizin için şekillenen\nbir ustalık yaklaşımı sunar.",
+    ctaButtonText: "RANDEVU OLUŞTURUN",
+    ctaButtonLink: "/randevu?subject=size-ozel",
+    galleryImages: [
+      "/images/products/product-1.jpg",
+      "/images/products/product-2.jpg",
+      "/images/products/product-3.jpg"
+    ],
+  };
+
+  const loadHediyePage = async () => {
+    setLoadingHediyePage(true);
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/pages.php?slug=hediye`, {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          let sections = defaultHediyeSections;
+          try {
+            if (data.content) sections = { ...defaultHediyeSections, ...JSON.parse(data.content) };
+          } catch { /* use defaults */ }
+          setHediyePage({
+            id: data.id || null,
+            slug: data.slug || "hediye",
+            title: data.title || "Hediye",
+            heroImage: data.heroImage || "/images/hediye-menu-hero.jpg",
+            heroTitle: data.heroTitle || "Hediye",
+            heroSubtitle: data.heroSubtitle || "Kalplerde bir iz olarak kalan özel günler vardır",
+            sections,
+          });
+        } else {
+          setHediyePage({
+            id: null, slug: "hediye", title: "Hediye",
+            heroImage: "/images/hediye-menu-hero.jpg", heroTitle: "Hediye",
+            heroSubtitle: "Kalplerde bir iz olarak kalan özel günler vardır",
+            sections: defaultHediyeSections,
+          });
+        }
+      } else {
+        setHediyePage({
+          id: null, slug: "hediye", title: "Hediye",
+          heroImage: "/images/hediye-menu-hero.jpg", heroTitle: "Hediye",
+          heroSubtitle: "Kalplerde bir iz olarak kalan özel günler vardır",
+          sections: defaultHediyeSections,
+        });
+      }
+    } catch (error) {
+      console.error("Hediye sayfası yükleme hatası:", error);
+      setHediyePage({
+        id: null, slug: "hediye", title: "Hediye",
+        heroImage: "/images/hediye-menu-hero.jpg", heroTitle: "Hediye",
+        heroSubtitle: "Kalplerde bir iz olarak kalan özel günler vardır",
+        sections: defaultHediyeSections,
+      });
+    } finally {
+      setLoadingHediyePage(false);
+    }
+  };
+
+  // Hediye sayfasını kaydet
+  const saveHediyePage = async () => {
+    if (!hediyePage) return;
+
+    setSaving(true);
+    try {
+      if (API_URL) {
+        const { sections, ...rest } = hediyePage;
+        const body = {
+          ...rest,
+          title: rest.title || "Hediye",
+          slug: rest.slug || "hediye",
+          content: JSON.stringify(sections || {}),
+        };
+
+        const response = await fetch(`${API_URL}/api/pages.php`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(body),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success !== false && !data.error) {
+          setMessage({ type: "success", text: "Hediye sayfası kaydedildi!" });
+          if (data.id) {
+            setHediyePage({ ...hediyePage, id: data.id });
+          }
+        } else {
+          throw new Error(data.error || "Sayfa kaydedilemedi");
+        }
+      } else {
+        setMessage({ type: "success", text: "Hediye sayfası kaydedildi (local)!" });
+      }
+    } catch (error) {
+      console.error("Hediye sayfası kaydetme hatası:", error);
+      setMessage({ type: "error", text: error instanceof Error ? error.message : "Sayfa kaydedilemedi!" });
+    }
+    setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
+  // Size Özel (Özel Tasarım) sayfasını yükle
+  const loadOzelTasarimPage = async () => {
+    setLoadingOzelTasarimPage(true);
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/pages.php?slug=ozel-tasarim`, {
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          let sections = defaultOzelTasarimSections;
+          try {
+            if (data.content) sections = { ...defaultOzelTasarimSections, ...JSON.parse(data.content) };
+          } catch { /* use defaults */ }
+          setOzelTasarimPage({
+            id: data.id || null,
+            slug: data.slug || "ozel-tasarim",
+            title: data.title || "Size Özel",
+            heroImage: data.heroImage || "/images/categories/ozel-tasarim-card.jpg",
+            sections,
+          });
+        } else {
+          setOzelTasarimPage({
+            id: null, slug: "ozel-tasarim", title: "Size Özel",
+            heroImage: "/images/categories/ozel-tasarim-card.jpg",
+            sections: defaultOzelTasarimSections,
+          });
+        }
+      } else {
+        setOzelTasarimPage({
+          id: null, slug: "ozel-tasarim", title: "Size Özel",
+          heroImage: "/images/categories/ozel-tasarim-card.jpg",
+          sections: defaultOzelTasarimSections,
+        });
+      }
+    } catch (error) {
+      console.error("Size Özel sayfası yükleme hatası:", error);
+      setOzelTasarimPage({
+        id: null, slug: "ozel-tasarim", title: "Size Özel",
+        heroImage: "/images/categories/ozel-tasarim-card.jpg",
+        sections: defaultOzelTasarimSections,
+      });
+    } finally {
+      setLoadingOzelTasarimPage(false);
+    }
+  };
+
+  // Size Özel sayfasını kaydet
+  const saveOzelTasarimPage = async () => {
+    if (!ozelTasarimPage) return;
+
+    setSaving(true);
+    try {
+      if (API_URL) {
+        const { sections, ...rest } = ozelTasarimPage;
+        const body = {
+          ...rest,
+          title: rest.title || "Size Özel",
+          slug: rest.slug || "ozel-tasarim",
+          content: JSON.stringify(sections || {}),
+        };
+
+        const response = await fetch(`${API_URL}/api/pages.php`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(body),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success !== false && !data.error) {
+          setMessage({ type: "success", text: "Size Özel sayfası kaydedildi!" });
+          if (data.id) {
+            setOzelTasarimPage({ ...ozelTasarimPage, id: data.id });
+          }
+        } else {
+          throw new Error(data.error || "Sayfa kaydedilemedi");
+        }
+      } else {
+        setMessage({ type: "success", text: "Size Özel sayfası kaydedildi (local)!" });
+      }
+    } catch (error) {
+      console.error("Size Özel sayfası kaydetme hatası:", error);
+      setMessage({ type: "error", text: error instanceof Error ? error.message : "Sayfa kaydedilemedi!" });
+    }
+    setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
+  // Gözümün Nuru ek bölümler
+  const defaultGnSections = {
+    philosophyQuote1: "\"Sen benim hayatımı güzelleştiren biri değilsin;",
+    philosophyQuote2: "hayatımı anlamlı kılan yerdesin.\"",
+    philosophyText: "Gözümün Nuru,\ndeğerini yitirmeyen bir yakınlıktan doğdu.\nRuhun penceresinden süzülen aydınlık bir bağdan…",
+    splitImage: "/images/trend-right.jpg",
+    splitTitle: "Her detay\nbir bağ",
+    splitText1: "Bu koleksiyondaki her parça,\nbirine duyulan saf sevginin,\nkoruma içgüdüsünün\nve vazgeçilmez olma hissinin manevi yansımasıdır.",
+    splitText2: "Her dokunuş, her detay;\nkoruyan, saran, tamamlayan emek harcanmış\nbir bağın izini taşır.",
+    collectionTitle: "Koleksiyonu Keşfet",
+    collectionSubtitle: "Işık saçmaktan daha çok;\nait olmak için…",
+    darkBgImage: "/images/parallax-bg.jpg",
+    darkText1: "Gösterişten ziyade,\nhissettirmeye odaklı tasarlandı.",
+    darkText2: "Han mücevherleri,",
+    darkText2Cursive: "özel hissettirmek için var olur.",
+    darkText3: "Bu çok özel birinin hikâyesi…\nPeki Sen neresindesin?",
+    ctaSmallTitle: "Seçilmiş",
+    ctaTitle: "Düşünülmüş ve Uzun Vadeli Bir Değer",
+    ctaSubtitle: "Seçilmiş, düşünülmüş ve\nuzun vadeli bir değerin ifadesi",
+  };
+
+  const loadGnSections = async () => {
+    setLoadingGnSections(true);
+    try {
+      const cat = categories.find(c => c.slug === "gozumun-nuru" && c.parent_type === "koleksiyon");
+      if (cat?.content) {
+        try {
+          setGnSections({ ...defaultGnSections, ...JSON.parse(cat.content) });
+        } catch {
+          setGnSections({ ...defaultGnSections });
+        }
+      } else if (API_URL) {
+        // Fetch directly from API to get content field
+        const response = await fetch(`${API_URL}/api/categories.php?slug=gozumun-nuru`, { credentials: "include" });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.content) {
+            try {
+              setGnSections({ ...defaultGnSections, ...JSON.parse(data.content) });
+            } catch {
+              setGnSections({ ...defaultGnSections });
+            }
+          } else {
+            setGnSections({ ...defaultGnSections });
+          }
+        } else {
+          setGnSections({ ...defaultGnSections });
+        }
+      } else {
+        setGnSections({ ...defaultGnSections });
+      }
+    } catch (error) {
+      console.error("Gözümün Nuru bölümleri yükleme hatası:", error);
+      setGnSections({ ...defaultGnSections });
+    } finally {
+      setLoadingGnSections(false);
+    }
+  };
+
+  const saveGnSections = async () => {
+    if (!gnSections) return;
+    setSaving(true);
+    try {
+      const cat = categories.find(c => c.slug === "gozumun-nuru" && c.parent_type === "koleksiyon");
+      if (cat && API_URL) {
+        const response = await fetch(`${API_URL}/api/categories.php`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ id: cat.id, content: JSON.stringify(gnSections) }),
+        });
+        if (response.ok) {
+          setMessage({ type: "success", text: "Gözümün Nuru bölümleri kaydedildi!" });
+          // Update local categories state
+          setCategories(prev => prev.map(c =>
+            c.id === cat.id ? { ...c, content: JSON.stringify(gnSections) } : c
+          ));
+        } else {
+          throw new Error("Kaydedilemedi");
+        }
+      } else {
+        setMessage({ type: "success", text: "Gözümün Nuru bölümleri kaydedildi (local)!" });
+      }
+    } catch (error) {
+      console.error("Gözümün Nuru kaydetme hatası:", error);
+      setMessage({ type: "error", text: "Bölümler kaydedilemedi!" });
     }
     setSaving(false);
     setTimeout(() => setMessage({ type: "", text: "" }), 3000);
@@ -1843,6 +2219,27 @@ export default function AdminPanel() {
     }
   }, [activeSection]);
 
+  // Hediye sayfasına geçildiğinde yükle
+  useEffect(() => {
+    if (activeSection === "hediye-sayfa") {
+      loadHediyePage();
+    }
+  }, [activeSection]);
+
+  // Size Özel sayfasına geçildiğinde yükle
+  useEffect(() => {
+    if (activeSection === "ozel-tasarim-sayfa") {
+      loadOzelTasarimPage();
+    }
+  }, [activeSection]);
+
+  // Gözümün Nuru sayfasına geçildiğinde ek bölümleri yükle
+  useEffect(() => {
+    if (activeSection === "koleksiyon-gozumun-nuru") {
+      loadGnSections();
+    }
+  }, [activeSection, categories]);
+
   // Kategori sayfasına geçildiğinde kategori-ürün ilişkisini yükle
   useEffect(() => {
     const categoryMap: Record<string, number> = {
@@ -1880,6 +2277,7 @@ export default function AdminPanel() {
         { key: "anasayfa-ozel-urunler", label: "Size Özel Ürünlerimiz" },
         { key: "anasayfa-ozel", label: "Özel Tasarım Kartları" },
         { key: "anasayfa-blog", label: "Blog Bölümü" },
+        { key: "anasayfa-menu-gorselleri", label: "Menü Görselleri" },
       ]
     },
     {
@@ -1918,7 +2316,7 @@ export default function AdminPanel() {
         { key: "erkek-tesbih", label: "Tesbih" },
         { key: "erkek-bileklik", label: "Bileklik" },
         { key: "erkek-yuzuk", label: "Yüzük" },
-        { key: "erkek-kol", label: "Kol" },
+        { key: "erkek-kol", label: "Kol Düğmesi" },
       ]
     },
     {
@@ -2189,6 +2587,20 @@ export default function AdminPanel() {
                               updateField("hero", "slides", updated);
                             }}
                             folder="hero"
+                            objectPosition={(s.imagePosition as string) || "50% 50%"}
+                            onObjectPositionChange={(v) => {
+                              const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
+                              const updated = [...slides];
+                              updated[index] = { ...s, imagePosition: v };
+                              updateField("hero", "slides", updated);
+                            }}
+                            objectScale={(s.imageScale as number) || 1}
+                            onObjectScaleChange={(v) => {
+                              const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
+                              const updated = [...slides];
+                              updated[index] = { ...s, imageScale: v };
+                              updateField("hero", "slides", updated);
+                            }}
                           />
                           <InputField
                             label={`Başlık ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
@@ -2252,6 +2664,16 @@ export default function AdminPanel() {
                   <div className="space-y-4">
                     <div className="p-3 bg-[#d4af37]/10 rounded-lg">
                       <p className="text-[#d4af37] text-xs font-medium mb-3">Sol Taraf</p>
+                      <ImageField
+                        label="Görsel"
+                        value={(content?.trendSection as Record<string, unknown>)?.leftImage as string || ""}
+                        onChange={(v) => updateField("trendSection", "leftImage", v)}
+                        folder="trend"
+                        objectPosition={(content?.trendSection as Record<string, unknown>)?.leftImagePosition as string || "50% 50%"}
+                        onObjectPositionChange={(v) => updateField("trendSection", "leftImagePosition", v)}
+                        objectScale={(content?.trendSection as Record<string, unknown>)?.leftImageScale as number || 1}
+                        onObjectScaleChange={(v) => updateField("trendSection", "leftImageScale", v)}
+                      />
                       <InputField
                         label={`Başlık ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
                         value={getLocalizedValue("trendSection", "leftTitle") as string || ""}
@@ -2260,12 +2682,22 @@ export default function AdminPanel() {
                       />
                       <InputField
                         label="Link"
-                        value={getLocalizedValue("trendSection", "leftLink") as string || ""}
-                        onChange={(v) => updateField("trendSection", "leftLink", v)}
+                        value={getLocalizedValue("trendSection", "leftTitleLink") as string || ""}
+                        onChange={(v) => updateField("trendSection", "leftTitleLink", v)}
                       />
                     </div>
                     <div className="p-3 bg-blue-500/10 rounded-lg">
                       <p className="text-blue-400 text-xs font-medium mb-3">Sağ Taraf</p>
+                      <ImageField
+                        label="Görsel"
+                        value={(content?.trendSection as Record<string, unknown>)?.rightImage as string || ""}
+                        onChange={(v) => updateField("trendSection", "rightImage", v)}
+                        folder="trend"
+                        objectPosition={(content?.trendSection as Record<string, unknown>)?.rightImagePosition as string || "50% 50%"}
+                        onObjectPositionChange={(v) => updateField("trendSection", "rightImagePosition", v)}
+                        objectScale={(content?.trendSection as Record<string, unknown>)?.rightImageScale as number || 1}
+                        onObjectScaleChange={(v) => updateField("trendSection", "rightImageScale", v)}
+                      />
                       <InputField
                         label={`Başlık ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
                         value={getLocalizedValue("trendSection", "rightTitle") as string || ""}
@@ -2274,8 +2706,8 @@ export default function AdminPanel() {
                       />
                       <InputField
                         label="Link"
-                        value={getLocalizedValue("trendSection", "rightLink") as string || ""}
-                        onChange={(v) => updateField("trendSection", "rightLink", v)}
+                        value={getLocalizedValue("trendSection", "rightTitleLink") as string || ""}
+                        onChange={(v) => updateField("trendSection", "rightTitleLink", v)}
                       />
                     </div>
                   </div>
@@ -2508,6 +2940,20 @@ export default function AdminPanel() {
                                 updateField("specialDesignSection", "topCards", updated);
                               }}
                               folder="categories"
+                              objectPosition={(c.imagePosition as string) || "50% 50%"}
+                              onObjectPositionChange={(v) => {
+                                const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                const updated = [...topCards];
+                                updated[index] = { ...c, imagePosition: v };
+                                updateField("specialDesignSection", "topCards", updated);
+                              }}
+                              objectScale={(c.imageScale as number) || 1}
+                              onObjectScaleChange={(v) => {
+                                const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                const updated = [...topCards];
+                                updated[index] = { ...c, imageScale: v };
+                                updateField("specialDesignSection", "topCards", updated);
+                              }}
                             />
                             <InputField
                               label="Link"
@@ -2607,6 +3053,20 @@ export default function AdminPanel() {
                                 updateField("specialDesignSection", "bottomCards", updated);
                               }}
                               folder="promo"
+                              objectPosition={(c.imagePosition as string) || "50% 50%"}
+                              onObjectPositionChange={(v) => {
+                                const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                const updated = [...bottomCards];
+                                updated[index] = { ...c, imagePosition: v };
+                                updateField("specialDesignSection", "bottomCards", updated);
+                              }}
+                              objectScale={(c.imageScale as number) || 1}
+                              onObjectScaleChange={(v) => {
+                                const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                const updated = [...bottomCards];
+                                updated[index] = { ...c, imageScale: v };
+                                updateField("specialDesignSection", "bottomCards", updated);
+                              }}
                             />
                             <InputField
                               label="Link"
@@ -2657,7 +3117,60 @@ export default function AdminPanel() {
                     label="Açıklama"
                     value={(content.blogSection as Record<string, unknown>)?.description as string || ""}
                     onChange={(v) => updateField("blogSection", "description", v)}
+                    maxLength={120}
                   />
+                </Section>
+              )}
+
+              {/* MENÜ GÖRSELLERİ */}
+              {activeSection === "anasayfa-menu-gorselleri" && (
+                <Section title="Menü Görselleri" subtitle="Dropdown menülerde gösterilen görseller">
+                  <div className="space-y-6">
+                    {/* Mücevher */}
+                    <div className="p-3 bg-[#d4af37]/10 rounded-lg space-y-3">
+                      <p className="text-[#d4af37] text-xs font-medium">Mücevher Menüsü</p>
+                      <ImageField
+                        label="Hero Görsel (Sağ Taraf)"
+                        value={(content.menuImages as Record<string, unknown>)?.mucevherHero as string || ""}
+                        onChange={(v) => updateField("menuImages", "mucevherHero", v)}
+                        folder="menu"
+                        objectPosition={(content.menuImages as Record<string, unknown>)?.mucevherHeroPosition as string || "50% 50%"}
+                        onObjectPositionChange={(v) => updateField("menuImages", "mucevherHeroPosition", v)}
+                        objectScale={(content.menuImages as Record<string, unknown>)?.mucevherHeroScale as number || 1}
+                        onObjectScaleChange={(v) => updateField("menuImages", "mucevherHeroScale", v)}
+                      />
+                    </div>
+
+                    {/* Koleksiyon */}
+                    <div className="p-3 bg-blue-500/10 rounded-lg space-y-3">
+                      <p className="text-blue-400 text-xs font-medium">Koleksiyon Menüsü</p>
+                      <ImageField
+                        label="Hero Görsel (Sağ Taraf)"
+                        value={(content.menuImages as Record<string, unknown>)?.koleksiyonHero as string || ""}
+                        onChange={(v) => updateField("menuImages", "koleksiyonHero", v)}
+                        folder="menu"
+                        objectPosition={(content.menuImages as Record<string, unknown>)?.koleksiyonHeroPosition as string || "50% 50%"}
+                        onObjectPositionChange={(v) => updateField("menuImages", "koleksiyonHeroPosition", v)}
+                        objectScale={(content.menuImages as Record<string, unknown>)?.koleksiyonHeroScale as number || 1}
+                        onObjectScaleChange={(v) => updateField("menuImages", "koleksiyonHeroScale", v)}
+                      />
+                    </div>
+
+                    {/* Erkeklere Özel */}
+                    <div className="p-3 bg-green-500/10 rounded-lg space-y-3">
+                      <p className="text-green-400 text-xs font-medium">Erkeklere Özel Menüsü</p>
+                      <ImageField
+                        label="Hero Görsel (Sağ Taraf)"
+                        value={(content.menuImages as Record<string, unknown>)?.erkekHero as string || ""}
+                        onChange={(v) => updateField("menuImages", "erkekHero", v)}
+                        folder="menu"
+                        objectPosition={(content.menuImages as Record<string, unknown>)?.erkekHeroPosition as string || "50% 50%"}
+                        onObjectPositionChange={(v) => updateField("menuImages", "erkekHeroPosition", v)}
+                        objectScale={(content.menuImages as Record<string, unknown>)?.erkekHeroScale as number || 1}
+                        onObjectScaleChange={(v) => updateField("menuImages", "erkekHeroScale", v)}
+                      />
+                    </div>
+                  </div>
                 </Section>
               )}
 
@@ -2858,12 +3371,20 @@ export default function AdminPanel() {
                             value={editingProduct.image}
                             onChange={(v) => setEditingProduct({ ...editingProduct, image: v })}
                             folder="products"
+                            objectPosition={editingProduct.imagePosition || "50% 50%"}
+                            onObjectPositionChange={(v) => setEditingProduct({ ...editingProduct, imagePosition: v })}
+                            objectScale={editingProduct.imageScale || 1}
+                            onObjectScaleChange={(v) => setEditingProduct({ ...editingProduct, imageScale: v })}
                           />
                           <ImageField
                             label="Banner Görseli (1 adet)"
                             value={editingProduct.banner_image}
                             onChange={(v) => setEditingProduct({ ...editingProduct, banner_image: v })}
                             folder="products"
+                            objectPosition={editingProduct.bannerImagePosition || "50% 50%"}
+                            onObjectPositionChange={(v) => setEditingProduct({ ...editingProduct, bannerImagePosition: v })}
+                            objectScale={editingProduct.bannerImageScale || 1}
+                            onObjectScaleChange={(v) => setEditingProduct({ ...editingProduct, bannerImageScale: v })}
                           />
                           <GalleryImagesField
                             label="Galeri Görselleri (Slider - Birden fazla)"
@@ -3213,12 +3734,20 @@ export default function AdminPanel() {
                       value={newProduct.image}
                       onChange={(v) => setNewProduct({ ...newProduct, image: v })}
                       folder="products"
+                      objectPosition={newProduct.imagePosition || "50% 50%"}
+                      onObjectPositionChange={(v) => setNewProduct({ ...newProduct, imagePosition: v })}
+                      objectScale={newProduct.imageScale || 1}
+                      onObjectScaleChange={(v) => setNewProduct({ ...newProduct, imageScale: v })}
                     />
                     <ImageField
                       label="Banner Görseli (1 adet)"
                       value={newProduct.banner_image}
                       onChange={(v) => setNewProduct({ ...newProduct, banner_image: v })}
                       folder="products"
+                      objectPosition={(newProduct as any).bannerImagePosition || "50% 50%"}
+                      onObjectPositionChange={(v) => setNewProduct({ ...newProduct, bannerImagePosition: v } as any)}
+                      objectScale={(newProduct as any).bannerImageScale || 1}
+                      onObjectScaleChange={(v) => setNewProduct({ ...newProduct, bannerImageScale: v } as any)}
                     />
                     <GalleryImagesField
                       label="Galeri Görselleri (Slider - Birden fazla)"
@@ -3801,6 +4330,7 @@ export default function AdminPanel() {
                                 label="Özet"
                                 value={editingBlogPost.excerpt}
                                 onChange={(v) => setEditingBlogPost({ ...editingBlogPost, excerpt: v })}
+                                maxLength={120}
                               />
                               <TextareaField
                                 label="İçerik"
@@ -3822,6 +4352,7 @@ export default function AdminPanel() {
                                 value={editingBlogPost.excerpt_en || ''}
                                 onChange={(v) => setEditingBlogPost({ ...editingBlogPost, excerpt_en: v })}
                                 placeholder={editingBlogPost.excerpt}
+                                maxLength={120}
                               />
                               <TextareaField
                                 label="İçerik (EN)"
@@ -3844,6 +4375,7 @@ export default function AdminPanel() {
                                 value={editingBlogPost.excerpt_ru || ''}
                                 onChange={(v) => setEditingBlogPost({ ...editingBlogPost, excerpt_ru: v })}
                                 placeholder={editingBlogPost.excerpt}
+                                maxLength={120}
                               />
                               <TextareaField
                                 label="İçerik (RU)"
@@ -3877,6 +4409,10 @@ export default function AdminPanel() {
                             label="Kapak Görseli"
                             value={editingBlogPost.image}
                             onChange={(v) => setEditingBlogPost({ ...editingBlogPost, image: v })}
+                            objectPosition={(editingBlogPost as any).imagePosition || "50% 50%"}
+                            onObjectPositionChange={(v) => setEditingBlogPost({ ...editingBlogPost, imagePosition: v } as any)}
+                            objectScale={(editingBlogPost as any).imageScale || 1}
+                            onObjectScaleChange={(v) => setEditingBlogPost({ ...editingBlogPost, imageScale: v } as any)}
                           />
                           <div>
                             <label className="block text-xs font-medium text-gray-400 mb-2">Durum</label>
@@ -3941,6 +4477,7 @@ export default function AdminPanel() {
                           value={newBlogPost.excerpt}
                           onChange={(v) => setNewBlogPost({ ...newBlogPost, excerpt: v })}
                           placeholder="Kısa özet (ana sayfada görünür)"
+                          maxLength={120}
                         />
                         <TextareaField
                           label="İçerik"
@@ -3962,6 +4499,7 @@ export default function AdminPanel() {
                           value={newBlogPost.excerpt_en || ''}
                           onChange={(v) => setNewBlogPost({ ...newBlogPost, excerpt_en: v })}
                           placeholder={newBlogPost.excerpt || "English excerpt"}
+                          maxLength={120}
                         />
                         <TextareaField
                           label="İçerik (EN)"
@@ -3984,6 +4522,7 @@ export default function AdminPanel() {
                           value={newBlogPost.excerpt_ru || ''}
                           onChange={(v) => setNewBlogPost({ ...newBlogPost, excerpt_ru: v })}
                           placeholder={newBlogPost.excerpt || "Краткое описание"}
+                          maxLength={120}
                         />
                         <TextareaField
                           label="İçerik (RU)"
@@ -4017,6 +4556,10 @@ export default function AdminPanel() {
                       label="Kapak Görseli"
                       value={newBlogPost.image}
                       onChange={(v) => setNewBlogPost({ ...newBlogPost, image: v })}
+                      objectPosition={(newBlogPost as any).imagePosition || "50% 50%"}
+                      onObjectPositionChange={(v) => setNewBlogPost({ ...newBlogPost, imagePosition: v } as any)}
+                      objectScale={(newBlogPost as any).imageScale || 1}
+                      onObjectScaleChange={(v) => setNewBlogPost({ ...newBlogPost, imageScale: v } as any)}
                     />
                     <div>
                       <label className="block text-xs font-medium text-gray-400 mb-2">Durum</label>
@@ -4182,38 +4725,349 @@ export default function AdminPanel() {
 
               {/* KOLEKSİYON KATEGORİLERİ */}
               {activeSection === "koleksiyon-gozumun-nuru" && (
-                <CategorySection
-                  title="Gözümün Nuru"
-                  categoryKey="gozumun-nuru"
-                  parentType="koleksiyon"
-                  content={content}
-                  categories={categories}
-                  onUpdate={(field, value) => {
-                    const cat = categories.find(c => c.slug === "gozumun-nuru" && c.parent_type === "koleksiyon");
-                    updateCategory(cat?.id || null, field, value, "gozumun-nuru", "koleksiyon");
-                  }}
-                  products={products}
-                  categoryProducts={categoryProducts}
-                  loadingCategoryProducts={loadingCategoryProducts}
-                  onProductToggle={(categoryId, productId) => {
-                    const current = categoryProducts[categoryId] || [];
-                    const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
-                    setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
-                  }}
-                  onSave={(categoryId) => {
-                    const productIds = categoryProducts[categoryId] || [];
-                    saveCategoryProducts(categoryId, productIds);
-                  }}
-                  contentLang={contentLang}
-                  onLangChange={setContentLang}
-                />
+                <div className="space-y-6">
+                  <CategorySection
+                    title="Gözümün Nuru"
+                    categoryKey="gozumun-nuru"
+                    parentType="koleksiyon"
+                    content={content}
+                    categories={categories}
+                    onUpdate={(field, value) => {
+                      const cat = categories.find(c => c.slug === "gozumun-nuru" && c.parent_type === "koleksiyon");
+                      updateCategory(cat?.id || null, field, value, "gozumun-nuru", "koleksiyon");
+                    }}
+                    products={products}
+                    categoryProducts={categoryProducts}
+                    loadingCategoryProducts={loadingCategoryProducts}
+                    onProductToggle={(categoryId, productId) => {
+                      const current = categoryProducts[categoryId] || [];
+                      const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                      setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                    }}
+                    onSave={(categoryId) => {
+                      const productIds = categoryProducts[categoryId] || [];
+                      saveCategoryProducts(categoryId, productIds);
+                    }}
+                    contentLang={contentLang}
+                    onLangChange={setContentLang}
+                  />
+
+                  {/* Ek Bölümler */}
+                  {loadingGnSections ? (
+                    <div className="text-center py-8 text-gray-500">Bölümler yükleniyor...</div>
+                  ) : gnSections ? (
+                    <>
+                      <Section title="Felsefe Bölümü" subtitle="Alıntı ve açıklama metinleri">
+                        <InputField
+                          label="Alıntı Satır 1"
+                          value={gnSections.philosophyQuote1 || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, philosophyQuote1: v })}
+                        />
+                        <InputField
+                          label="Alıntı Satır 2 (italik)"
+                          value={gnSections.philosophyQuote2 || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, philosophyQuote2: v })}
+                        />
+                        <TextareaField
+                          label="Felsefe Metni"
+                          value={gnSections.philosophyText || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, philosophyText: v })}
+                          rows={4}
+                        />
+                      </Section>
+
+                      <Section title="Görsel + Metin Bölümü" subtitle="Sol görsel, sağ metin alanı">
+                        <ImageField
+                          label="Sol Görsel"
+                          value={gnSections.splitImage || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, splitImage: v })}
+                          folder="categories"
+                          objectPosition={gnSections.splitImagePosition || "50% 50%"}
+                          onObjectPositionChange={(v: string) => setGnSections({ ...gnSections, splitImagePosition: v })}
+                          objectScale={gnSections.splitImageScale || 1}
+                          onObjectScaleChange={(v: number) => setGnSections({ ...gnSections, splitImageScale: v })}
+                        />
+                        <InputField
+                          label="Başlık"
+                          value={gnSections.splitTitle || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, splitTitle: v })}
+                        />
+                        <TextareaField
+                          label="Metin 1"
+                          value={gnSections.splitText1 || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, splitText1: v })}
+                          rows={4}
+                        />
+                        <TextareaField
+                          label="Metin 2"
+                          value={gnSections.splitText2 || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, splitText2: v })}
+                          rows={3}
+                        />
+                      </Section>
+
+                      <Section title="Koleksiyon Başlıkları" subtitle="Ürün listesi üst başlıkları">
+                        <InputField
+                          label="Bölüm Başlığı"
+                          value={gnSections.collectionTitle || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, collectionTitle: v })}
+                        />
+                        <InputField
+                          label="Bölüm Alt Başlığı"
+                          value={gnSections.collectionSubtitle || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, collectionSubtitle: v })}
+                        />
+                      </Section>
+
+                      <Section title="Koyu Arkaplan Bölümü" subtitle="Arka planlı metin alanı">
+                        <ImageField
+                          label="Arkaplan Görseli"
+                          value={gnSections.darkBgImage || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, darkBgImage: v })}
+                          folder="categories"
+                          objectPosition={gnSections.darkBgImagePosition || "50% 50%"}
+                          onObjectPositionChange={(v: string) => setGnSections({ ...gnSections, darkBgImagePosition: v })}
+                          objectScale={gnSections.darkBgImageScale || 1}
+                          onObjectScaleChange={(v: number) => setGnSections({ ...gnSections, darkBgImageScale: v })}
+                        />
+                        <TextareaField
+                          label="Metin 1"
+                          value={gnSections.darkText1 || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, darkText1: v })}
+                          rows={2}
+                        />
+                        <InputField
+                          label="Metin 2"
+                          value={gnSections.darkText2 || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, darkText2: v })}
+                        />
+                        <InputField
+                          label="Metin 2 İtalik Kısmı"
+                          value={gnSections.darkText2Cursive || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, darkText2Cursive: v })}
+                        />
+                        <TextareaField
+                          label="Metin 3"
+                          value={gnSections.darkText3 || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, darkText3: v })}
+                          rows={2}
+                        />
+                      </Section>
+
+                      <Section title="CTA Bölümü" subtitle="Sayfanın alt kısmı - çağrı butonu">
+                        <InputField
+                          label="Küçük Başlık (italik)"
+                          value={gnSections.ctaSmallTitle || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, ctaSmallTitle: v })}
+                        />
+                        <InputField
+                          label="Ana Başlık"
+                          value={gnSections.ctaTitle || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, ctaTitle: v })}
+                        />
+                        <InputField
+                          label="Alt Metin"
+                          value={gnSections.ctaSubtitle || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, ctaSubtitle: v })}
+                        />
+                      </Section>
+
+                      <div className="flex justify-end">
+                        <button
+                          onClick={saveGnSections}
+                          disabled={saving}
+                          className="px-6 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c4a030] transition-colors disabled:opacity-50"
+                        >
+                          {saving ? "Kaydediliyor..." : "Bölümleri Kaydet"}
+                        </button>
+                      </div>
+                    </>
+                  ) : null}
+                </div>
               )}
 
               {/* HEDİYE KATEGORİLERİ */}
               {activeSection === "hediye-sayfa" && (
-                <Section title="Hediye" subtitle="Hediye sayfası içeriği">
-                  <p className="text-gray-500 text-sm">Bu sayfa ana hediye sayfası olarak gösterilmektedir.</p>
-                </Section>
+                <div className="space-y-6">
+                  {loadingHediyePage ? (
+                    <div className="text-center py-8 text-gray-500">Yükleniyor...</div>
+                  ) : hediyePage ? (
+                    <>
+                      <Section title="Hero Bölümü" subtitle="Hediye sayfası üst kısmı">
+                        <InputField
+                          label="Hero Başlık"
+                          value={hediyePage.heroTitle || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, heroTitle: v })}
+                        />
+                        <InputField
+                          label="Hero Alt Başlık"
+                          value={hediyePage.heroSubtitle || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, heroSubtitle: v })}
+                        />
+                        <ImageField
+                          label="Hero Görsel"
+                          value={hediyePage.heroImage || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, heroImage: v })}
+                          folder="pages"
+                          objectPosition={hediyePage.heroImagePosition || "50% 50%"}
+                          onObjectPositionChange={(v: string) => setHediyePage({ ...hediyePage, heroImagePosition: v })}
+                          objectScale={hediyePage.heroImageScale || 1}
+                          onObjectScaleChange={(v: number) => setHediyePage({ ...hediyePage, heroImageScale: v })}
+                        />
+                      </Section>
+
+                      <Section title="Felsefe Bölümü" subtitle="Hediye felsefesi metinleri">
+                        <InputField
+                          label="Başlık Satır 1"
+                          value={hediyePage.sections?.philosophyTitle1 || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, philosophyTitle1: v } })}
+                        />
+                        <InputField
+                          label="Başlık Satır 2 (italik)"
+                          value={hediyePage.sections?.philosophyTitle2 || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, philosophyTitle2: v } })}
+                        />
+                        <TextareaField
+                          label="Felsefe Metni"
+                          value={hediyePage.sections?.philosophyText || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, philosophyText: v } })}
+                          rows={5}
+                        />
+                      </Section>
+
+                      <Section title="Görsel + Metin Bölümü" subtitle="Sol görsel, sağ metin alanı">
+                        <ImageField
+                          label="Sol Görsel"
+                          value={hediyePage.sections?.splitImage || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitImage: v } })}
+                          folder="pages"
+                          objectPosition={hediyePage.sections?.splitImagePosition || "50% 50%"}
+                          onObjectPositionChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitImagePosition: v } })}
+                          objectScale={hediyePage.sections?.splitImageScale || 1}
+                          onObjectScaleChange={(v: number) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitImageScale: v } })}
+                        />
+                        <InputField
+                          label="Başlık"
+                          value={hediyePage.sections?.splitTitle || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitTitle: v } })}
+                        />
+                        <TextareaField
+                          label="Metin 1"
+                          value={hediyePage.sections?.splitText1 || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitText1: v } })}
+                          rows={3}
+                        />
+                        <TextareaField
+                          label="Metin 2"
+                          value={hediyePage.sections?.splitText2 || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitText2: v } })}
+                          rows={3}
+                        />
+                      </Section>
+
+                      <Section title="Kategoriler Bölümü" subtitle="Kategori başlığı ve kartları">
+                        <InputField
+                          label="Bölüm Başlığı"
+                          value={hediyePage.sections?.categoriesTitle || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, categoriesTitle: v } })}
+                        />
+                        <InputField
+                          label="Bölüm Alt Başlığı"
+                          value={hediyePage.sections?.categoriesSubtitle || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, categoriesSubtitle: v } })}
+                        />
+                        {[0, 1, 2, 3].map((i) => {
+                          const cats = hediyePage.sections?.categories || [];
+                          const cat = cats[i] || { title: "", description: "", image: "", href: "" };
+                          const updateCat = (field: string, value: string) => {
+                            const updated = [...(hediyePage.sections?.categories || [{}, {}, {}, {}])];
+                            updated[i] = { ...updated[i], [field]: value };
+                            setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, categories: updated } });
+                          };
+                          return (
+                            <div key={i} className="border border-[#2a2a2a] rounded-lg p-4 space-y-3">
+                              <p className="text-sm font-medium text-[#d4af37]">Kategori {i + 1}</p>
+                              <InputField label="Başlık" value={cat.title || ""} onChange={(v: string) => updateCat("title", v)} />
+                              <InputField label="Açıklama" value={cat.description || ""} onChange={(v: string) => updateCat("description", v)} />
+                              <InputField label="Link" value={cat.href || ""} onChange={(v: string) => updateCat("href", v)} />
+                              <ImageField
+                                label="Görsel"
+                                value={cat.image || ""}
+                                onChange={(v: string) => updateCat("image", v)}
+                                folder="pages"
+                                objectPosition={cat.imagePosition || "50% 50%"}
+                                onObjectPositionChange={(v: string) => updateCat("imagePosition", v)}
+                                objectScale={cat.imageScale || 1}
+                                onObjectScaleChange={(v: number) => updateCat("imageScale", String(v))}
+                              />
+                            </div>
+                          );
+                        })}
+                      </Section>
+
+                      <Section title="Koyu Arkaplan Bölümü" subtitle="Arka planlı metin alanı">
+                        <ImageField
+                          label="Arkaplan Görseli"
+                          value={hediyePage.sections?.darkBgImage || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkBgImage: v } })}
+                          folder="pages"
+                          objectPosition={hediyePage.sections?.darkBgImagePosition || "50% 50%"}
+                          onObjectPositionChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkBgImagePosition: v } })}
+                          objectScale={hediyePage.sections?.darkBgImageScale || 1}
+                          onObjectScaleChange={(v: number) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkBgImageScale: v } })}
+                        />
+                        <TextareaField
+                          label="Metin 1"
+                          value={hediyePage.sections?.darkText1 || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkText1: v } })}
+                          rows={3}
+                        />
+                        <TextareaField
+                          label="Metin 2 (vurgulu)"
+                          value={hediyePage.sections?.darkText2 || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkText2: v } })}
+                          rows={3}
+                        />
+                        <TextareaField
+                          label="Metin 3"
+                          value={hediyePage.sections?.darkText3 || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkText3: v } })}
+                          rows={3}
+                        />
+                      </Section>
+
+                      <Section title="CTA Bölümü" subtitle="Sayfanın alt kısmı - çağrı butonu">
+                        <InputField
+                          label="Küçük Başlık"
+                          value={hediyePage.sections?.ctaSmallTitle || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, ctaSmallTitle: v } })}
+                        />
+                        <InputField
+                          label="Ana Başlık"
+                          value={hediyePage.sections?.ctaTitle || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, ctaTitle: v } })}
+                        />
+                        <InputField
+                          label="Alt Metin"
+                          value={hediyePage.sections?.ctaSubtitle || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, ctaSubtitle: v } })}
+                        />
+                      </Section>
+
+                      <div className="flex justify-end">
+                        <button
+                          onClick={saveHediyePage}
+                          disabled={saving}
+                          className="px-6 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c4a030] transition-colors disabled:opacity-50"
+                        >
+                          {saving ? "Kaydediliyor..." : "Kaydet"}
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi.</div>
+                  )}
+                </div>
               )}
 
               {/* ERKEKLERE ÖZEL KATEGORİLERİ */}
@@ -4328,9 +5182,208 @@ export default function AdminPanel() {
 
               {/* SİZE ÖZEL (ÖZEL TASARIM) */}
               {activeSection === "ozel-tasarim-sayfa" && (
-                <Section title="Size Özel" subtitle="Özel tasarım sayfası içeriği">
-                  <p className="text-gray-500 text-sm">Bu sayfa özel tasarım bileşeni kullanmaktadır.</p>
-                </Section>
+                <div className="space-y-6">
+                  {loadingOzelTasarimPage ? (
+                    <div className="text-center py-8 text-gray-500">Yükleniyor...</div>
+                  ) : ozelTasarimPage ? (
+                    <>
+                      <Section title="Hero Bölümü" subtitle="Sayfa üst kısmı (tam ekran görsel)">
+                        <ImageField
+                          label="Hero Arkaplan Görseli"
+                          value={ozelTasarimPage.heroImage || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, heroImage: v })}
+                          folder="pages"
+                        />
+                        <InputField
+                          label="Üst Yazı (küçük)"
+                          value={ozelTasarimPage.sections?.heroSubtitle || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, heroSubtitle: v } })}
+                        />
+                        <InputField
+                          label="Ana Başlık"
+                          value={ozelTasarimPage.sections?.heroTitle || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, heroTitle: v } })}
+                        />
+                        <InputField
+                          label="Alt Metin"
+                          value={ozelTasarimPage.sections?.heroDesc || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, heroDesc: v } })}
+                        />
+                        <InputField
+                          label="Scroll Indicator Metni"
+                          value={ozelTasarimPage.sections?.scrollText || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, scrollText: v } })}
+                        />
+                      </Section>
+
+                      <Section title="Felsefe Bölümü" subtitle="Philosophy section metinleri">
+                        <InputField
+                          label="Alıntı Satır 1"
+                          value={ozelTasarimPage.sections?.philosophyQuote1 || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, philosophyQuote1: v } })}
+                        />
+                        <InputField
+                          label="Alıntı Satır 2 (italik)"
+                          value={ozelTasarimPage.sections?.philosophyQuote2 || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, philosophyQuote2: v } })}
+                        />
+                        <TextareaField
+                          label="Felsefe Metni"
+                          value={ozelTasarimPage.sections?.philosophyText || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, philosophyText: v } })}
+                          rows={5}
+                        />
+                      </Section>
+
+                      <Section title="Görsel + Metin Bölümü" subtitle="Split section (sol görsel, sağ metin)">
+                        <ImageField
+                          label="Sol Görsel"
+                          value={ozelTasarimPage.sections?.splitImage || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, splitImage: v } })}
+                          folder="pages"
+                        />
+                        <InputField
+                          label="Başlık"
+                          value={ozelTasarimPage.sections?.splitTitle || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, splitTitle: v } })}
+                        />
+                        <TextareaField
+                          label="Metin 1"
+                          value={ozelTasarimPage.sections?.splitText1 || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, splitText1: v } })}
+                          rows={4}
+                        />
+                        <TextareaField
+                          label="Metin 2"
+                          value={ozelTasarimPage.sections?.splitText2 || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, splitText2: v } })}
+                          rows={4}
+                        />
+                      </Section>
+
+                      <Section title="Süreç Bölümü" subtitle="4 adımlık timeline">
+                        <InputField
+                          label="Bölüm Başlığı"
+                          value={ozelTasarimPage.sections?.processTitle || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, processTitle: v } })}
+                        />
+                        <TextareaField
+                          label="Bölüm Alt Başlığı"
+                          value={ozelTasarimPage.sections?.processSubtitle || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, processSubtitle: v } })}
+                          rows={2}
+                        />
+                        {[0, 1, 2, 3].map((i) => {
+                          const steps = ozelTasarimPage.sections?.steps || [];
+                          const step = steps[i] || { label: "", title: "", desc: "" };
+                          const updateStep = (field: string, value: string) => {
+                            const updated = [...(ozelTasarimPage.sections?.steps || [{}, {}, {}, {}])];
+                            updated[i] = { ...updated[i], [field]: value };
+                            setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, steps: updated } });
+                          };
+                          return (
+                            <div key={i} className="border border-[#2a2a2a] rounded-lg p-4 space-y-3">
+                              <p className="text-sm font-medium text-[#d4af37]">Adım {i + 1}</p>
+                              <InputField label="Etiket (örn: İlk Adım)" value={step.label || ""} onChange={(v: string) => updateStep("label", v)} />
+                              <InputField label="Başlık" value={step.title || ""} onChange={(v: string) => updateStep("title", v)} />
+                              <TextareaField label="Açıklama" value={step.desc || ""} onChange={(v: string) => updateStep("desc", v)} rows={4} />
+                            </div>
+                          );
+                        })}
+                      </Section>
+
+                      <Section title="Koyu Arkaplan Bölümü" subtitle="Dark background section">
+                        <ImageField
+                          label="Arkaplan Görseli"
+                          value={ozelTasarimPage.sections?.darkBgImage || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkBgImage: v } })}
+                          folder="pages"
+                        />
+                        <InputField
+                          label="Başlık"
+                          value={ozelTasarimPage.sections?.darkTitle || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkTitle: v } })}
+                        />
+                        <InputField
+                          label="Metin 1"
+                          value={ozelTasarimPage.sections?.darkText1 || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkText1: v } })}
+                        />
+                        <InputField
+                          label="Metin 1 Devamı (italik)"
+                          value={ozelTasarimPage.sections?.darkText1Cursive || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkText1Cursive: v } })}
+                        />
+                        <TextareaField
+                          label="Metin 2"
+                          value={ozelTasarimPage.sections?.darkText2 || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkText2: v } })}
+                          rows={3}
+                        />
+                      </Section>
+
+                      <Section title="CTA Bölümü" subtitle="Sayfanın alt kısmı - çağrı butonu">
+                        <InputField
+                          label="Başlık 1 (italik)"
+                          value={ozelTasarimPage.sections?.ctaTitle1 || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaTitle1: v } })}
+                        />
+                        <InputField
+                          label="Başlık 2"
+                          value={ozelTasarimPage.sections?.ctaTitle2 || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaTitle2: v } })}
+                        />
+                        <TextareaField
+                          label="Açıklama"
+                          value={ozelTasarimPage.sections?.ctaDesc || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaDesc: v } })}
+                          rows={3}
+                        />
+                        <InputField
+                          label="Buton Metni"
+                          value={ozelTasarimPage.sections?.ctaButtonText || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaButtonText: v } })}
+                        />
+                        <InputField
+                          label="Buton Linki"
+                          value={ozelTasarimPage.sections?.ctaButtonLink || ""}
+                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaButtonLink: v } })}
+                        />
+                      </Section>
+
+                      <Section title="Galeri Bölümü" subtitle="3 görsel yan yana">
+                        {[0, 1, 2].map((i) => {
+                          const gImages = ozelTasarimPage.sections?.galleryImages || [];
+                          return (
+                            <ImageField
+                              key={i}
+                              label={`Görsel ${i + 1}`}
+                              value={gImages[i] || ""}
+                              onChange={(v: string) => {
+                                const updated = [...(ozelTasarimPage.sections?.galleryImages || ["", "", ""])];
+                                updated[i] = v;
+                                setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, galleryImages: updated } });
+                              }}
+                              folder="pages"
+                            />
+                          );
+                        })}
+                      </Section>
+
+                      <div className="flex justify-end">
+                        <button
+                          onClick={saveOzelTasarimPage}
+                          disabled={saving}
+                          className="px-6 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c4a030] transition-colors disabled:opacity-50"
+                        >
+                          {saving ? "Kaydediliyor..." : "Kaydet"}
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi.</div>
+                  )}
+                </div>
               )}
 
               {/* PRELOVED */}
@@ -4388,6 +5441,10 @@ export default function AdminPanel() {
                           value={aboutPage.heroImage || ""}
                           onChange={(v) => setAboutPage({ ...aboutPage, heroImage: v })}
                           folder="pages"
+                          objectPosition={aboutPage.heroImagePosition || "50% 50%"}
+                          onObjectPositionChange={(v: string) => setAboutPage({ ...aboutPage, heroImagePosition: v })}
+                          objectScale={aboutPage.heroImageScale || 1}
+                          onObjectScaleChange={(v: number) => setAboutPage({ ...aboutPage, heroImageScale: v })}
                         />
                       </Section>
 
@@ -4459,6 +5516,18 @@ export default function AdminPanel() {
                                         setAboutValues(updated);
                                       }}
                                       folder="pages"
+                                      objectPosition={value.imagePosition || "50% 50%"}
+                                      onObjectPositionChange={(v) => {
+                                        const updated = [...aboutValues];
+                                        updated[index] = { ...updated[index], imagePosition: v };
+                                        setAboutValues(updated);
+                                      }}
+                                      objectScale={value.imageScale || 1}
+                                      onObjectScaleChange={(v) => {
+                                        const updated = [...aboutValues];
+                                        updated[index] = { ...updated[index], imageScale: v };
+                                        setAboutValues(updated);
+                                      }}
                                     />
                                     <div className="flex justify-end">
                                       <button
@@ -4511,10 +5580,11 @@ export default function AdminPanel() {
 
               {activeSection === "iletisim-bilgiler" && (
                 <Section title="İletişim Bilgileri" subtitle="İletişim sayfası içeriği">
-                  <InputField
+                  <TextareaField
                     label="Adres"
                     value={(content.contact as Record<string, unknown>)?.address as string || ""}
                     onChange={(v) => updateField("contact", "address", v)}
+                    rows={3}
                   />
                   <InputField
                     label="Telefon"
@@ -4530,6 +5600,40 @@ export default function AdminPanel() {
                     label="Çalışma Saatleri"
                     value={(content.contact as Record<string, unknown>)?.workingHours as string || ""}
                     onChange={(v) => updateField("contact", "workingHours", v)}
+                  />
+                  <InputField
+                    label="Instagram 1 (kullanıcı adı)"
+                    value={(content.contact as Record<string, unknown>)?.instagram1 as string || "@gozumunnuru.antalya"}
+                    onChange={(v) => updateField("contact", "instagram1", v)}
+                  />
+                  <InputField
+                    label="Instagram 1 URL"
+                    value={(content.contact as Record<string, unknown>)?.instagram1Url as string || "https://www.instagram.com/gozumunnuru.antalya"}
+                    onChange={(v) => updateField("contact", "instagram1Url", v)}
+                  />
+                  <InputField
+                    label="Instagram 2 (kullanıcı adı)"
+                    value={(content.contact as Record<string, unknown>)?.instagram2 as string || "@hankuyumculuk_"}
+                    onChange={(v) => updateField("contact", "instagram2", v)}
+                  />
+                  <InputField
+                    label="Instagram 2 URL"
+                    value={(content.contact as Record<string, unknown>)?.instagram2Url as string || "https://www.instagram.com/hankuyumculuk_"}
+                    onChange={(v) => updateField("contact", "instagram2Url", v)}
+                  />
+                  <InputField
+                    label="Google Maps Embed URL veya iframe kodu"
+                    value={(content.contact as Record<string, unknown>)?.mapEmbed as string || ""}
+                    onChange={(v) => {
+                      // iframe HTML yapıştırılmışsa src URL'sini çıkar
+                      let url = v;
+                      if (v.includes('<iframe')) {
+                        const srcMatch = v.match(/src=["']([^"']+)["']/);
+                        if (srcMatch) url = srcMatch[1];
+                      }
+                      updateField("contact", "mapEmbed", url);
+                    }}
+                    placeholder="Google Maps'ten kopyaladığınız embed URL veya iframe kodu"
                   />
                 </Section>
               )}
@@ -4994,14 +6098,24 @@ function ImageUploadField({ label, value, onChange, folder = "categories" }: { l
   );
 }
 
-function InputField({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+function InputField({ label, value, onChange, placeholder, maxLength }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; maxLength?: number }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-400 mb-2">{label}</label>
+      <div className="flex items-center justify-between mb-2">
+        <label className="block text-xs font-medium text-gray-400">{label}</label>
+        {maxLength && (
+          <span className={`text-xs ${(value?.length || 0) > maxLength ? 'text-red-400' : 'text-gray-500'}`}>
+            {value?.length || 0}/{maxLength}
+          </span>
+        )}
+      </div>
       <input
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          if (maxLength && e.target.value.length > maxLength) return;
+          onChange(e.target.value);
+        }}
         placeholder={placeholder}
         className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-600 focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
       />
@@ -5009,13 +6123,23 @@ function InputField({ label, value, onChange, placeholder }: { label: string; va
   );
 }
 
-function TextareaField({ label, value, onChange, rows = 4, placeholder }: { label: string; value: string; onChange: (v: string) => void; rows?: number; placeholder?: string }) {
+function TextareaField({ label, value, onChange, rows = 4, placeholder, maxLength }: { label: string; value: string; onChange: (v: string) => void; rows?: number; placeholder?: string; maxLength?: number }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-400 mb-2">{label}</label>
+      <div className="flex items-center justify-between mb-2">
+        <label className="block text-xs font-medium text-gray-400">{label}</label>
+        {maxLength && (
+          <span className={`text-xs ${(value?.length || 0) > maxLength ? 'text-red-400' : 'text-gray-500'}`}>
+            {value?.length || 0}/{maxLength}
+          </span>
+        )}
+      </div>
       <textarea
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          if (maxLength && e.target.value.length > maxLength) return;
+          onChange(e.target.value);
+        }}
         rows={rows}
         placeholder={placeholder}
         className="w-full bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-600 focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none resize-none"
@@ -5041,16 +6165,59 @@ function ImageField({
   label,
   value,
   onChange,
-  folder = "uploads"
+  folder = "uploads",
+  objectPosition,
+  onObjectPositionChange,
+  objectScale,
+  onObjectScaleChange,
 }: {
   label: string;
   value: string;
   onChange: (url: string) => void;
   folder?: string;
+  objectPosition?: string;
+  onObjectPositionChange?: (pos: string) => void;
+  objectScale?: number;
+  onObjectScaleChange?: (scale: number) => void;
 }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showAdjust, setShowAdjust] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef<HTMLDivElement>(null);
+  const dragStartRef = useRef({ x: 0, y: 0, posX: 50, posY: 50 });
+
+  const posX = objectPosition ? parseFloat(objectPosition.split(' ')[0]) : 50;
+  const posY = objectPosition ? parseFloat(objectPosition.split(' ')[1] || '50') : 50;
+  const scale = objectScale ?? 1;
+  const hasAdjustProps = !!(onObjectPositionChange || onObjectScaleChange);
+
+  const handleDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    dragStartRef.current = { x: e.clientX, y: e.clientY, posX, posY };
+  }, [posX, posY]);
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const handleMove = (e: MouseEvent) => {
+      if (!dragRef.current) return;
+      const rect = dragRef.current.getBoundingClientRect();
+      const dx = ((e.clientX - dragStartRef.current.x) / rect.width) * 100;
+      const dy = ((e.clientY - dragStartRef.current.y) / rect.height) * 100;
+      const newX = Math.min(100, Math.max(0, dragStartRef.current.posX - dx));
+      const newY = Math.min(100, Math.max(0, dragStartRef.current.posY - dy));
+      onObjectPositionChange?.(`${Math.round(newX)}% ${Math.round(newY)}%`);
+    };
+    const handleUp = () => setIsDragging(false);
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseup', handleUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseup', handleUp);
+    };
+  }, [isDragging, onObjectPositionChange]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -5154,15 +6321,88 @@ function ImageField({
                 src={value.startsWith("data:") ? value : (API_URL ? `${API_URL}${value}` : value)}
                 alt="Önizleme"
                 className="w-full h-32 object-cover rounded-lg border border-[#2a2a2a]"
+                style={hasAdjustProps ? { objectPosition: `${posX}% ${posY}%` } : undefined}
               />
             )}
-            <button
-              type="button"
-              onClick={() => onChange("")}
-              className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {hasAdjustProps && !(value.endsWith('.mp4') || value.endsWith('.webm') || value.endsWith('.ogg')) && (
+                <button
+                  type="button"
+                  onClick={() => setShowAdjust(!showAdjust)}
+                  className={`p-1.5 ${showAdjust ? 'bg-[#d4af37] text-black' : 'bg-[#2a2a2a] text-white'} rounded-lg`}
+                  title="Görseli Ayarla"
+                >
+                  <FiMaximize2 size={14} />
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => { onChange(""); setShowAdjust(false); }}
+                className="p-1.5 bg-red-500 text-white rounded-lg"
+              >
+                <FiX size={14} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Görsel Ayarlama Paneli */}
+        {showAdjust && value && hasAdjustProps && !(value.endsWith('.mp4') || value.endsWith('.webm') || value.endsWith('.ogg')) && (
+          <div className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[#d4af37] text-xs font-medium">Görsel Ayarları</span>
+              <button
+                type="button"
+                onClick={() => {
+                  onObjectPositionChange?.('50% 50%');
+                  onObjectScaleChange?.(1);
+                }}
+                className="text-gray-500 text-xs hover:text-white transition-colors"
+              >
+                Sıfırla
+              </button>
+            </div>
+            {/* Sürüklenebilir Önizleme */}
+            <div
+              ref={dragRef}
+              className="relative w-full h-48 rounded-lg overflow-hidden border border-[#3a3a3a] cursor-grab active:cursor-grabbing select-none"
+              onMouseDown={handleDragStart}
             >
-              <FiX size={14} />
-            </button>
+              <img
+                src={value.startsWith("data:") ? value : (API_URL ? `${API_URL}${value}` : value)}
+                alt="Ayarla"
+                className="w-full h-full object-cover pointer-events-none"
+                style={{ objectPosition: `${posX}% ${posY}%`, transform: `scale(${scale})` }}
+                draggable={false}
+              />
+              {/* Crosshair göstergesi */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/20" />
+                <div className="absolute top-1/2 left-0 right-0 h-px bg-white/20" />
+              </div>
+              <div className="absolute bottom-2 left-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded">
+                Konum: {Math.round(posX)}% {Math.round(posY)}%
+              </div>
+            </div>
+
+            {/* Yakınlaştırma */}
+            {onObjectScaleChange && (
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400 text-xs">Yakınlaştırma</span>
+                  <span className="text-white text-xs">{Math.round(scale * 100)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="2"
+                  step="0.05"
+                  value={scale}
+                  onChange={(e) => onObjectScaleChange(parseFloat(e.target.value))}
+                  className="w-full h-1.5 bg-[#2a2a2a] rounded-lg appearance-none cursor-pointer accent-[#d4af37]"
+                />
+              </div>
+            )}
           </div>
         )}
 

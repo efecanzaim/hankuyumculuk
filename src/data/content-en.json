@@ -75,7 +75,11 @@
     "leftLink": "/en/jewelry/rings",
     "rightLink": "/en/collection/light-of-my-eyes",
     "leftTitleLink": "/en/jewelry/rings",
-    "rightTitleLink": "/en/collection/light-of-my-eyes"
+    "rightTitleLink": "/en/collection/light-of-my-eyes",
+    "leftImagePosition": "50% 50%",
+    "leftImageScale": 1,
+    "rightImagePosition": "50% 50%",
+    "rightImageScale": 1
   },
   "parallaxSection": {
     "backgroundImage": "/images/parallax-bg.jpg"
@@ -83,9 +87,7 @@
   "storySection": {
     "title": "A Story of Elegance",
     "mainText": "Han Kuyumculuk represents much more than a diamond; it is a symbol that transforms the person you value, the special moments shared, and the feelings from the heart into light.\n\nHan Kuyumculuk, carrying this meaning born from light, leaves a special place in every woman's heart; because behind every sparkle lies an unforgettable story.",
-    "subText": "",
-    "linkText": "The Story Where Light Turns to Love",
-    "linkHref": "/en/about"
+    "subText": ""
   },
   "featuredProductsSection": {
     "titlePart1": "EXCLUSIVELY",
@@ -753,10 +755,10 @@
     },
     "kol": {
       "heroImage": "/images/erkek-menu-hero.jpg",
-      "heroTitle": "Men's Cuff",
-      "heroSubtitle": "The perfect union of style and comfort.",
-      "heroDescription": "Elegant and comfortable cuff pieces\ndesigned for men.",
-      "categoryTitle": "MEN'S CUFF",
+      "heroTitle": "Men's Cufflinks",
+      "heroSubtitle": "The perfect union of style and elegance.",
+      "heroDescription": "Elegant and stylish cufflinks\ndesigned for men.",
+      "categoryTitle": "MEN'S CUFFLINKS",
       "products": []
     }
   },
@@ -822,6 +824,7 @@
     "heroSubtitle": "Designs filled with meaning, crafted for your loved ones.",
     "heroDescription": "Gözümün Nuru collection\nwas designed as a symbol\nof love and value.",
     "categoryTitle": "GÖZÜMÜN NURU",
+    "content": null,
     "products": []
   },
   "tesbihCategory": {
@@ -850,10 +853,10 @@
   },
   "erkekKolCategory": {
     "heroImage": "/images/erkek-menu-hero.jpg",
-    "heroTitle": "Men's Cuff",
-    "heroSubtitle": "The perfect union of style and comfort.",
-    "heroDescription": "Elegant and comfortable cuff pieces\ndesigned for men.",
-    "categoryTitle": "MEN'S CUFF",
+    "heroTitle": "Men's Cufflinks",
+    "heroSubtitle": "The perfect union of style and elegance.",
+    "heroDescription": "Elegant and stylish cufflinks\ndesigned for men.",
+    "categoryTitle": "MEN'S CUFFLINKS",
     "products": []
   },
   "footer": {
@@ -907,7 +910,7 @@
       }
     ],
     "socialLinks": {
-      "instagram": "https://instagram.com/hankuyumculuk"
+      "instagram": "https://www.instagram.com/hankuyumculuk_"
     },
     "copyright": "\u00a9 2025 Han Kuyumculuk, All Rights Reserved"
   }

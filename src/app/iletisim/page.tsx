@@ -1,12 +1,79 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useContent } from "@/hooks/useContent";
+import { getAssetPath } from "@/utils/paths";
 import { FiMapPin, FiPhone, FiMail, FiClock, FiInstagram } from "react-icons/fi";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+
+// Varsayılan değerler
+const defaultContact = {
+  address: "Liman Mahallesi, Akdeniz Bulvarı\nNo: 257 Fenix Center\nKonyaaltı/Antalya",
+  phone: "+90 (242) 212 34 56",
+  email: "info@hankuyumculuk.com",
+  workingHours: "Haftanın Her Günü: 10:00 - 20:00",
+  instagram1: "@gozumunnuru.antalya",
+  instagram1Url: "https://www.instagram.com/gozumunnuru.antalya",
+  instagram2: "@hankuyumculuk_",
+  instagram2Url: "https://www.instagram.com/hankuyumculuk_",
+  mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3192.8477013417514!2d30.602089575529437!3d36.84612336511002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c39303a734f60f%3A0xe343a4fa77583d88!2sFenix%20Center%20AVM!5e0!3m2!1str!2str!4v1768831178229!5m2!1str!2str",
+};
+
+interface ContactData {
+  address?: string;
+  phone?: string;
+  email?: string;
+  workingHours?: string;
+  instagram1?: string;
+  instagram1Url?: string;
+  instagram2?: string;
+  instagram2Url?: string;
+  mapEmbed?: string;
+}
 
 export default function IletisimPage() {
   const content = useContent();
+  const [contactData, setContactData] = useState<ContactData>({});
+  
+  useEffect(() => {
+    // API'den iletişim bilgilerini yükle
+    if (API_URL) {
+      fetch(`${API_URL}/api/content.php`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.contact) {
+            setContactData(data.contact);
+          }
+        })
+        .catch(err => console.error("İletişim bilgileri yüklenemedi:", err));
+    }
+  }, []);
+  
+  // Admin'den gelen veya varsayılan iletişim bilgileri
+  // Boş string gelen alanları filtrele ki defaultContact değerleri geçerli olsun
+  const filteredContactData = Object.fromEntries(
+    Object.entries(contactData).filter(([, v]) => v !== '' && v !== null && v !== undefined)
+  );
+  const contact = {
+    ...defaultContact,
+    ...filteredContactData,
+  };
+
+  // Sadece Google Maps embed URL'si kabul et, aksi halde default kullan
+  // Eğer tam iframe HTML'i yapıştırılmışsa, src attribute'undan URL'yi çıkar
+  let mapUrl = contact.mapEmbed || '';
+  if (mapUrl.includes('<iframe')) {
+    const srcMatch = mapUrl.match(/src=["']([^"']+)["']/);
+    if (srcMatch) mapUrl = srcMatch[1];
+  }
+  const safeMapEmbed = mapUrl.includes('google.com/maps/embed') 
+    ? mapUrl 
+    : defaultContact.mapEmbed;
+  
   return (
     <>
       <Header
@@ -45,8 +112,15 @@ export default function IletisimPage() {
                     Bize Ulaşın
                   </h2>
                   <p className="text-[#6b7280] text-lg leading-relaxed mb-8">
-                    Han Kuyumculuk olarak, size en iyi hizmeti sunmak için buradayız. 
-                    Sorularınız, önerileriniz veya özel tasarım talepleriniz için 
+                    <Image
+                      src={getAssetPath("/images/han-logo.svg")}
+                      alt="Han Kuyumculuk"
+                      width={38}
+                      height={14}
+                      style={{ filter: 'brightness(0) opacity(0.58)', display: 'inline', verticalAlign: 'middle', margin: '0 2px' }}
+                    />
+                    {' '}olarak, size en iyi hizmeti sunmak için buradayız.
+                    Sorularınız, önerileriniz veya özel tasarım talepleriniz için
                     bizimle iletişime geçebilirsiniz.
                   </p>
                 </div>
@@ -60,10 +134,8 @@ export default function IletisimPage() {
                     </div>
                     <div>
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">Adres</h3>
-                      <p className="text-[#6b7280] leading-relaxed">
-                        Liman Mahallesi, Akdeniz Bulvarı<br />
-                        No: 257 Fenix Center<br />
-                        Konyaaltı/Antalya
+                      <p className="text-[#6b7280] leading-relaxed whitespace-pre-line">
+                        {contact.address}
                       </p>
                     </div>
                   </div>
@@ -76,10 +148,10 @@ export default function IletisimPage() {
                     <div>
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">Telefon</h3>
                       <a 
-                        href="tel:+902422123456" 
+                        href={`tel:${contact.phone.replace(/[^+\d]/g, '')}`}
                         className="text-[#6b7280] hover:text-[#d4af37] transition-colors"
                       >
-                        +90 (242) 212 34 56
+                        {contact.phone}
                       </a>
                     </div>
                   </div>
@@ -92,10 +164,10 @@ export default function IletisimPage() {
                     <div>
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">E-posta</h3>
                       <a 
-                        href="mailto:info@hankuyumculuk.com" 
+                        href={`mailto:${contact.email}`}
                         className="text-[#6b7280] hover:text-[#d4af37] transition-colors"
                       >
-                        info@hankuyumculuk.com
+                        {contact.email}
                       </a>
                     </div>
                   </div>
@@ -107,8 +179,8 @@ export default function IletisimPage() {
                     </div>
                     <div>
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">Çalışma Saatleri</h3>
-                      <p className="text-[#6b7280]">
-                        Haftanın Her Günü: 10:00 - 20:00
+                      <p className="text-[#6b7280] whitespace-pre-line">
+                        {contact.workingHours}
                       </p>
                     </div>
                   </div>
@@ -122,20 +194,20 @@ export default function IletisimPage() {
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">Instagram</h3>
                       <div className="flex flex-col gap-1">
                         <a 
-                          href="https://www.instagram.com/gozumunnuru.antalya" 
+                          href={contact.instagram1Url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[#6b7280] hover:text-[#d4af37] transition-colors"
                         >
-                          @gozumunnuru.antalya
+                          {contact.instagram1}
                         </a>
                         <a 
-                          href="https://www.instagram.com/hankuyumculuk_" 
+                          href={contact.instagram2Url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[#6b7280] hover:text-[#d4af37] transition-colors"
                         >
-                          @hankuyumculuk_
+                          {contact.instagram2}
                         </a>
                       </div>
                     </div>
@@ -158,7 +230,7 @@ export default function IletisimPage() {
                 <div className="bg-white p-2 shadow-lg">
                   <div className="aspect-4/3 w-full">
                     <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3192.8477013417514!2d30.602089575529437!3d36.84612336511002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c39303a734f60f%3A0xe343a4fa77583d88!2sFenix%20Center%20AVM!5e0!3m2!1str!2str!4v1768831178229!5m2!1str!2str"
+                      src={safeMapEmbed}
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
@@ -203,7 +275,7 @@ export default function IletisimPage() {
         <section className="lg:hidden">
           <div className="h-[300px] w-full">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3192.8477013417514!2d30.602089575529437!3d36.84612336511002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c39303a734f60f%3A0xe343a4fa77583d88!2sFenix%20Center%20AVM!5e0!3m2!1str!2str!4v1768831178229!5m2!1str!2str"
+              src={safeMapEmbed}
               width="100%"
               height="100%"
               style={{ border: 0 }}

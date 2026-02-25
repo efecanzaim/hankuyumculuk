@@ -7,6 +7,8 @@ import { getAssetPath } from "@/utils/paths";
 interface TopCard {
   title: string;
   image: string;
+  imagePosition?: string;
+  imageScale?: number;
   link: string;
   buttonText: string;
 }
@@ -15,6 +17,8 @@ interface BottomCard {
   title: string;
   subtitle: string;
   image: string;
+  imagePosition?: string;
+  imageScale?: number;
   link: string;
   buttonText: string;
 }
@@ -65,6 +69,7 @@ export default function SpecialDesignSection({
                     alt={card.title}
                     fill
                     className="object-cover"
+                    style={{ objectPosition: card.imagePosition || '50% 50%', transform: card.imageScale && card.imageScale !== 1 ? `scale(${card.imageScale})` : undefined }}
                   />
                 </div>
 
@@ -97,6 +102,7 @@ export default function SpecialDesignSection({
                     alt={card.title}
                     fill
                     className="object-cover"
+                    style={{ objectPosition: card.imagePosition || '50% 50%', transform: card.imageScale && card.imageScale !== 1 ? `scale(${card.imageScale})` : undefined }}
                   />
                 </div>
 
@@ -131,6 +137,7 @@ export default function SpecialDesignSection({
                     alt={card.title}
                     fill
                     className="object-cover"
+                    style={{ objectPosition: card.imagePosition || '50% 50%', transform: card.imageScale && card.imageScale !== 1 ? `scale(${card.imageScale})` : undefined }}
                   />
                 </div>
 

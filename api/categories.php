@@ -120,8 +120,8 @@ switch ($method) {
         }
 
         $stmt = $db->prepare('
-            INSERT INTO categories (parent_type, name, name_en, name_ru, slug, hero_image, hero_title, hero_title_en, hero_title_ru, hero_subtitle, hero_subtitle_en, hero_subtitle_ru, hero_description, hero_description_en, hero_description_ru, list_title, list_title_en, list_title_ru, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO categories (parent_type, name, name_en, name_ru, slug, hero_image, hero_title, hero_title_en, hero_title_ru, hero_subtitle, hero_subtitle_en, hero_subtitle_ru, hero_description, hero_description_en, hero_description_ru, content, list_title, list_title_en, list_title_ru, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $data['parentType'] ?? $data['parent_type'],
@@ -139,6 +139,7 @@ switch ($method) {
             $data['heroDescription'] ?? $data['hero_description'] ?? null,
             $data['hero_description_en'] ?? null,
             $data['hero_description_ru'] ?? null,
+            $data['content'] ?? null,
             $data['listTitle'] ?? $data['list_title'] ?? null,
             $data['list_title_en'] ?? null,
             $data['list_title_ru'] ?? null,
@@ -244,6 +245,7 @@ function formatCategory($category) {
         'heroSubtitle' => $category['hero_subtitle'],
         'heroDescription' => $category['hero_description'],
         'listTitle' => $category['list_title'],
+        'content' => $category['content'] ?? null,
         'sortOrder' => (int)$category['sort_order']
     ];
 }

@@ -13,6 +13,11 @@ require_once 'auth.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $db = getDB();
 
+// Debug: Versiyon kontrolü
+if (isset($_GET['version'])) {
+    jsonResponse(['version' => '2026-02-18-v3', 'method' => $method, 'time' => date('Y-m-d H:i:s')]);
+}
+
 switch ($method) {
     case 'GET':
         $slug = $_GET['slug'] ?? null;
@@ -70,13 +75,15 @@ switch ($method) {
         }
 
         $stmt = $db->prepare('
-            INSERT INTO pages (slug, title, hero_image, hero_title, hero_subtitle, content, values_title, meta_title, meta_description)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO pages (slug, title, hero_image, hero_image_position, hero_image_scale, hero_title, hero_subtitle, content, values_title, meta_title, meta_description)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $slug,
             $data['title'],
             $data['heroImage'] ?? $data['hero_image'] ?? null,
+            $data['heroImagePosition'] ?? $data['hero_image_position'] ?? '50% 50%',
+            $data['heroImageScale'] ?? $data['hero_image_scale'] ?? 1.0,
             $data['heroTitle'] ?? $data['hero_title'] ?? null,
             $data['heroSubtitle'] ?? $data['hero_subtitle'] ?? null,
             $data['content'] ?? null,
@@ -95,46 +102,115 @@ switch ($method) {
 
         $data = getJsonBody();
 
-        if (empty($data['id'])) {
-            jsonResponse(['error' => 'Sayfa ID gerekli'], 400);
+        // ID veya slug ile sayfa bul
+        $id = $data['id'] ?? null;
+        $slug = $data['slug'] ?? null;
+
+        if (empty($id) && empty($slug)) {
+            jsonResponse(['error' => 'Sayfa ID veya slug gerekli'], 400);
         }
 
-        $id = $data['id'];
+        // Slug ile ID bul (ID yoksa)
+        if (empty($id) && !empty($slug)) {
+            $stmt = $db->prepare('SELECT id FROM pages WHERE slug = ?');
+            $stmt->execute([$slug]);
+            $page = $stmt->fetch();
+            if ($page) {
+                $id = $page['id'];
+            } else {
+                // Sayfa yoksa oluştur
+                try {
+                    $stmt = $db->prepare('
+                        INSERT INTO pages (slug, title, hero_image, hero_title, content, values_title)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    ');
+                    $stmt->execute([
+                        $slug,
+                        $data['title'] ?? 'Hakkımızda',
+                        $data['heroImage'] ?? null,
+                        $data['heroTitle'] ?? null,
+                        $data['heroParagraph2'] ?? $data['content'] ?? null,
+                        $data['valuesTitle'] ?? 'Vizyonumuz'
+                    ]);
+                    $insertId = $db->lastInsertId();
+                    jsonResponse(['success' => true, 'id' => $insertId, 'slug' => $slug, 'message' => 'Sayfa oluşturuldu']);
+                } catch (PDOException $e) {
+                    jsonResponse(['error' => 'Veritabanı hatası: ' . $e->getMessage()], 500);
+                }
+                break;
+            }
+        }
 
         // Alanları maple (camelCase -> snake_case)
         $fieldMap = [
+            'title' => 'title',
             'heroImage' => 'hero_image',
             'heroTitle' => 'hero_title',
             'heroSubtitle' => 'hero_subtitle',
+            'heroParagraph2' => 'content',
+            'content' => 'content',
             'valuesTitle' => 'values_title',
             'metaTitle' => 'meta_title',
             'metaDescription' => 'meta_description',
             'isActive' => 'is_active'
         ];
 
+        // Veritabanında hangi sütunlar var kontrol et
+        try {
+            $colStmt = $db->query('SHOW COLUMNS FROM pages');
+            $existingColumns = array_column($colStmt->fetchAll(), 'Field');
+        } catch (PDOException $e) {
+            $existingColumns = ['id','slug','title','hero_image','hero_title','hero_subtitle','content','values_title','meta_title','meta_description','is_active'];
+        }
+
+        // hero_image_position ve hero_image_scale varsa ekle
+        if (in_array('hero_image_position', $existingColumns)) {
+            $fieldMap['heroImagePosition'] = 'hero_image_position';
+        }
+        if (in_array('hero_image_scale', $existingColumns)) {
+            $fieldMap['heroImageScale'] = 'hero_image_scale';
+        }
+
         $fields = [];
         $values = [];
 
         foreach ($data as $key => $value) {
-            if ($key === 'id') continue;
+            // id ve slug'ı atla
+            if ($key === 'id' || $key === 'slug') continue;
+            
+            // Sadece fieldMap'te olan alanları güncelle
+            if (!isset($fieldMap[$key])) continue;
 
-            // camelCase ise snake_case'e çevir
-            $dbField = $fieldMap[$key] ?? $key;
+            $dbField = $fieldMap[$key];
+            
+            // Aynı DB sütunu zaten eklenmişse atla (content çakışması)
+            $alreadyAdded = false;
+            foreach ($fields as $f) {
+                if ($f === "$dbField = ?") { $alreadyAdded = true; break; }
+            }
+            if ($alreadyAdded) continue;
+
+            // Sütun DB'de var mı kontrol et
+            if (!in_array($dbField, $existingColumns)) continue;
+
             $fields[] = "$dbField = ?";
             $values[] = $value;
         }
 
         if (empty($fields)) {
-            jsonResponse(['error' => 'Güncellenecek alan yok'], 400);
+            jsonResponse(['error' => 'Güncellenecek alan yok. Gönderilen anahtarlar: ' . implode(', ', array_keys($data))], 400);
         }
 
         $values[] = $id;
         $sql = 'UPDATE pages SET ' . implode(', ', $fields) . ' WHERE id = ?';
 
-        $stmt = $db->prepare($sql);
-        $stmt->execute($values);
-
-        jsonResponse(['success' => true, 'message' => 'Sayfa güncellendi']);
+        try {
+            $stmt = $db->prepare($sql);
+            $stmt->execute($values);
+            jsonResponse(['success' => true, 'id' => $id, 'message' => 'Sayfa güncellendi']);
+        } catch (PDOException $e) {
+            jsonResponse(['error' => 'Veritabanı hatası: ' . $e->getMessage() . ' SQL: ' . $sql], 500);
+        }
         break;
 
     case 'DELETE':
@@ -166,8 +242,11 @@ function formatPage($page) {
         'slug' => $page['slug'],
         'title' => $page['title'],
         'heroImage' => $page['hero_image'],
+        'heroImagePosition' => $page['hero_image_position'] ?? '50% 50%',
+        'heroImageScale' => isset($page['hero_image_scale']) ? (float)$page['hero_image_scale'] : 1.0,
         'heroTitle' => $page['hero_title'],
         'heroSubtitle' => $page['hero_subtitle'],
+        'heroParagraph2' => $page['content'],
         'content' => $page['content'],
         'valuesTitle' => $page['values_title'] ?? 'Vizyonumuz',
         'metaTitle' => $page['meta_title'],

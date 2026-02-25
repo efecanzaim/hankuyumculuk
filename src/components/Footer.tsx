@@ -3,6 +3,28 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getAssetPath } from "@/utils/paths";
+import { useLocale } from "@/i18n/LocaleContext";
+
+function renderWithLogo(text: string | undefined, logoHeight: number = 18) {
+  if (!text) return text;
+  const logoWidth = Math.round(logoHeight * (110 / 41));
+  const parts = text.split(/Han[\s\u00A0]+Kuyumculuk/);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) => (
+    <span key={i}>
+      {part}
+      {i < parts.length - 1 && (
+        <Image
+          src={getAssetPath("/images/han-logo.svg")}
+          alt="Han Kuyumculuk"
+          width={logoWidth}
+          height={logoHeight}
+          style={{ filter: 'brightness(0)', display: 'inline', verticalAlign: 'middle', margin: '0 3px' }}
+        />
+      )}
+    </span>
+  ));
+}
 
 interface FooterColumn {
   title: string;
@@ -19,6 +41,13 @@ interface FooterProps {
 }
 
 export default function Footer({ logo, slogan, description, columns, copyright, socialLinks }: FooterProps) {
+  const locale = useLocale();
+  const sloganSvg = locale === 'en'
+    ? '/footer-slogan-en.svg'
+    : locale === 'ru'
+      ? '/footer-slogan-ru.svg'
+      : '/footer-slogan.svg';
+
   return (
     <>
       {/* Separator Line with Logo - Outside footer */}
@@ -80,15 +109,19 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
           {/* Description - Shown first on mobile */}
           <div className="text-center max-w-[420px] md:max-w-[708px] mx-auto px-2 md:px-6">
             <p className="font-light text-[20px] leading-[30px] text-[#2f3237]">
-              {description}
+              {renderWithLogo(description, 18)}
             </p>
           </div>
 
           {/* Slogan */}
           <div className="text-center mt-[20px] md:mt-[10px]">
-            <p className="text-[35px] leading-[normal] tracking-[0.05em] text-[#2f3237]" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>
-              {slogan}
-            </p>
+            <Image
+              src={getAssetPath(sloganSvg)}
+              alt={slogan}
+              width={600}
+              height={90}
+              className="inline-block"
+            />
           </div>
 
           {/* Footer Columns */}
@@ -117,7 +150,7 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
           {/* Copyright */}
           <div className="text-center mt-[40px] md:mt-[60px] pb-[30px] md:pb-[40px]">
             <p className="font-normal text-[10px] leading-[normal] text-[#2f3237]">
-              {copyright}
+              {renderWithLogo(copyright, 9)}
             </p>
           </div>
         </div>

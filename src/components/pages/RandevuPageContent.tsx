@@ -237,12 +237,15 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
 
           {/* Content */}
           <div className="relative z-10 text-center px-6">
-            <p
-              className="text-[14px] tracking-[0.3em] text-white/60 mb-4 uppercase"
-              style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
-            >
-              Han Kuyumculuk
-            </p>
+            <div className="mb-4">
+              <Image
+                src="/images/han-logo.svg"
+                alt="Han Kuyumculuk"
+                width={76}
+                height={28}
+                className="inline-block"
+              />
+            </div>
             <h1
               className="text-[44px] md:text-[60px] leading-[1.1] text-white mb-6"
               style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}

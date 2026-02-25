@@ -14,6 +14,8 @@ interface AboutPageProps {
   heroTitle: string;
   heroParagraph2: string;
   heroImage: string;
+  heroImagePosition?: string;
+  heroImageScale?: number;
   valuesTitle: string;
   values: Value[];
   aboutContent?: string; // Yeni eklenen Hakkımızda metni
@@ -23,6 +25,8 @@ export default function AboutPage({
   heroTitle,
   heroParagraph2,
   heroImage,
+  heroImagePosition = "50% 50%",
+  heroImageScale = 1,
   valuesTitle,
   values,
   aboutContent,
@@ -55,6 +59,10 @@ export default function AboutPage({
                 alt={heroTitle}
                 fill
                 className="object-cover"
+                style={{
+                  objectPosition: heroImagePosition,
+                  transform: `scale(${heroImageScale})`
+                }}
                 priority
               />
             </div>

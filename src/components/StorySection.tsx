@@ -1,16 +1,34 @@
 "use client";
 
-import Link from "next/link";
+import Image from "next/image";
+
+function renderWithLogo(text: string, logoHeight: number = 18) {
+  const logoWidth = Math.round(logoHeight * (110 / 41));
+  const parts = text.split(/Han[\s\u00A0]+Kuyumculuk/);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) => (
+    <span key={i}>
+      {part}
+      {i < parts.length - 1 && (
+        <Image
+          src="/images/han-logo.svg"
+          alt="Han Kuyumculuk"
+          width={logoWidth}
+          height={logoHeight}
+          style={{ filter: 'brightness(0)', display: 'inline', verticalAlign: 'middle', margin: '0 3px' }}
+        />
+      )}
+    </span>
+  ));
+}
 
 interface StorySectionProps {
   title: string;
   mainText: string;
   subText: string;
-  linkText: string;
-  linkHref: string;
 }
 
-export default function StorySection({ title, mainText, subText, linkText, linkHref = "#" }: StorySectionProps) {
+export default function StorySection({ title, mainText, subText }: StorySectionProps) {
   // Split text by double newlines to create paragraphs
   const mainParagraphs = mainText.split("\n\n").filter(p => p.trim());
   const subParagraphs = subText.split("\n\n").filter(p => p.trim());
@@ -28,7 +46,7 @@ export default function StorySection({ title, mainText, subText, linkText, linkH
           <div className="mb-6 md:mb-10">
             {mainParagraphs.map((para, idx) => (
               <p key={idx} className="text-[20px] md:text-[20px] leading-[20px] md:leading-[32px] font-light text-[#2f3237] mb-4 max-w-[420px] md:max-w-none mx-auto">
-                {para}
+                {renderWithLogo(para, 18)}
               </p>
             ))}
           </div>
@@ -37,18 +55,11 @@ export default function StorySection({ title, mainText, subText, linkText, linkH
           <div className="mb-4 md:mb-8">
             {subParagraphs.map((para, idx) => (
               <p key={idx} className="text-[15px] md:text-[15px] leading-[20px] font-light text-[#2f3237] max-w-[420px] md:max-w-[710px] mx-auto mb-4">
-                {para}
+                {renderWithLogo(para, 13)}
               </p>
             ))}
           </div>
 
-          {/* Link */}
-          <Link
-            href={linkHref}
-            className="text-[15px] leading-[30px] font-bold text-[#2f3237] underline hover:opacity-70 transition-opacity inline-block"
-          >
-            {linkText}
-          </Link>
         </div>
       </div>
 

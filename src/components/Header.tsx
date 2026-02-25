@@ -9,6 +9,7 @@ import { useLocale } from "@/i18n/LocaleContext";
 import { useTranslation } from "@/i18n/useTranslation";
 import { getLocalizedPath } from "@/i18n/config";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useContent } from "@/hooks/useContent";
 
 interface HeaderProps {
   logo: string;
@@ -24,6 +25,8 @@ interface HeaderProps {
 export default function Header({ logo, logoAlt, mainNav, isTransparent = false, isBlogPage = false, bannerText, bannerVisible = true }: HeaderProps) {
   const locale = useLocale();
   const t = useTranslation();
+  const content = useContent(locale);
+  const menuImages = (content as Record<string, unknown>)?.menuImages as Record<string, string> | undefined;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topBannerVisible, setTopBannerVisible] = useState(bannerVisible);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -132,7 +135,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                     textClassName={`text-[11px] font-normal whitespace-nowrap ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   />
                   <Link
-                    href="https://www.instagram.com/gozumunnuru.antalya"
+                    href="https://www.instagram.com/hankuyumculuk_"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`hover:opacity-70 transition-opacity shrink-0 ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
@@ -181,6 +184,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             <Link
               href={lp('preloved')}
               className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              onMouseEnter={() => setActiveMenu(null)}
             >
               {t('header.nav.preloved')}
             </Link>
@@ -188,6 +192,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             <Link
               href={lp('custom-design')}
               className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              onMouseEnter={() => setActiveMenu(null)}
             >
               {t('header.nav.custom')}
             </Link>
@@ -195,6 +200,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             <Link
               href={lp('gifts')}
               className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+              onMouseEnter={() => setActiveMenu(null)}
             >
               {t('header.nav.gifts')}
             </Link>
@@ -250,7 +256,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             </div>
 
             <Link
-              href="https://www.instagram.com/gozumunnuru.antalya"
+              href="https://www.instagram.com/hankuyumculuk_"
               target="_blank"
               rel="noopener noreferrer"
               className={`w-[30px] flex justify-end ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
@@ -295,7 +301,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               </div>
 
               <Link
-                href="https://www.instagram.com/gozumunnuru.antalya"
+                href="https://www.instagram.com/hankuyumculuk_"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#2f3237] w-[30px] flex justify-end"
@@ -505,14 +511,27 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             <div className="hidden lg:block absolute right-0 top-0 w-[50%] h-full">
               <Image
                 src={getAssetPath(
-                  activeMenu === 'mucevher' ? "/images/mucevher-menu-hero.jpg" :
-                  activeMenu === 'koleksiyon' ? "/images/collection-menu-hero.jpg" :
+                  activeMenu === 'mucevher' ? (menuImages?.mucevherHero || "/images/mucevher-menu-hero.jpg") :
+                  activeMenu === 'koleksiyon' ? (menuImages?.koleksiyonHero || "/images/collection-menu-hero.jpg") :
                   activeMenu === 'hediye' ? "/images/hediye-menu-hero.jpg" :
-                  "/images/erkek-menu-hero.jpg"
+                  (menuImages?.erkekHero || "/images/erkek-menu-hero.jpg")
                 )}
                 alt="Menu Hero"
                 fill
                 className="object-cover"
+                style={{
+                  objectPosition: (
+                    activeMenu === 'mucevher' ? menuImages?.mucevherHeroPosition :
+                    activeMenu === 'koleksiyon' ? menuImages?.koleksiyonHeroPosition :
+                    activeMenu === 'erkek' ? menuImages?.erkekHeroPosition : undefined
+                  ) || '50% 50%',
+                  transform: (() => {
+                    const s = activeMenu === 'mucevher' ? menuImages?.mucevherHeroScale :
+                              activeMenu === 'koleksiyon' ? menuImages?.koleksiyonHeroScale :
+                              activeMenu === 'erkek' ? menuImages?.erkekHeroScale : undefined;
+                    return s && Number(s) !== 1 ? `scale(${s})` : undefined;
+                  })()
+                }}
               />
             </div>
           </div>

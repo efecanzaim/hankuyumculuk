@@ -82,6 +82,8 @@ export default function ProductCategoryPageContent({ locale, pageId }: ProductCa
     name: string;
     subtitle: string;
     link: string;
+    imagePosition?: string;
+    imageScale?: number;
   }>) || [];
 
   // Localize product links

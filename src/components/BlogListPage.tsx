@@ -18,6 +18,13 @@ interface BlogPost {
   published_at: string;
 }
 
+function truncateText(text: string, maxLength: number): string {
+  if (!text || text.length <= maxLength) return text;
+  const truncated = text.substring(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(" ");
+  return (lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated) + "...";
+}
+
 export default function BlogListPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -154,7 +161,7 @@ export default function BlogListPage() {
                 className="text-[18px] leading-[28px] md:text-[30px] md:leading-[40px] font-light text-[#2f3237] text-center mb-[20px] md:mb-[30px]"
                 style={{ fontFamily: "var(--font-bw-modelica), sans-serif" }}
               >
-                {featuredPost.excerpt}
+                {truncateText(featuredPost.excerpt, 150)}
               </p>
               <div className="flex flex-col items-center gap-[15px]">
                 <span
@@ -259,7 +266,7 @@ export default function BlogListPage() {
                           className="text-[14px] leading-[22px] md:text-[15px] md:leading-[25px] font-light text-[#2f3237] max-w-full md:max-w-[350px] mb-[15px] md:mb-[20px]"
                           style={{ fontFamily: "var(--font-bw-modelica), sans-serif" }}
                         >
-                          {post.excerpt}
+                          {truncateText(post.excerpt, 100)}
                         </p>
 
                         {/* Read More Link */}

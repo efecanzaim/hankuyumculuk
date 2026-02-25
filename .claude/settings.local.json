@@ -13,7 +13,14 @@
       "Bash(node -e:*)",
       "Bash(curl:*)",
       "Bash(python:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(git -C \"c:/Users/demas/Desktop/hankuyumculuk\" log --oneline --all -- src/components/ProductListingPage.tsx)",
+      "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" log --oneline -- src/components/ProductListingPage.tsx)",
+      "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" show HEAD~1:src/components/ProductListingPage.tsx)",
+      "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" log --oneline -10)",
+      "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" show 830a110:src/components/ProductListingPage.tsx)",
+      "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" show HEAD:src/components/ProductListingPage.tsx)",
+      "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" show HEAD:src/components/pages/ProductCategoryPageContent.tsx)"
     ]
   }
 }

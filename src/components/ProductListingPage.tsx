@@ -14,6 +14,8 @@ interface Product {
   name: string;
   subtitle: string;
   link: string;
+  imagePosition?: string;
+  imageScale?: number;
 }
 
 interface ProductListingPageProps {
@@ -117,17 +119,19 @@ export default function ProductListingPage({
                 className="group block"
               >
                 {/* Product Image */}
-                <div 
-                  className="relative aspect-square w-full overflow-hidden bg-[#ffffff]"
-                  style={{
-                    boxShadow: 'inset 0 0 40px 20px rgba(252, 252, 252, 0.8)'
-                  }}
+                <div
+                  className="relative aspect-square w-full overflow-hidden bg-[#fafafa]"
                 >
                   <Image
                     src={getAssetPath(product.image)}
                     alt={product.name}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    style={{
+                      objectPosition: product.imagePosition || '50% 50%',
+                      transform: `scale(${product.imageScale || 1})`,
+                      mixBlendMode: 'darken'
+                    }}
                   />
                 </div>
 

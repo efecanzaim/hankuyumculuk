@@ -109,6 +109,8 @@ try {
             'title' => getLocalizedValue($card, 'title', $locale),
             'subtitle' => getLocalizedValue($card, 'subtitle', $locale),
             'image' => $card['image'] ?? '',
+            'imagePosition' => $card['image_position'] ?? '50% 50%',
+            'imageScale' => (float)($card['image_scale'] ?? 1),
             'link' => $card['link'] ?? '',
             'buttonText' => getLocalizedValue($card, 'button_text', $locale)
         ];
@@ -322,6 +324,7 @@ try {
             'heroSubtitle' => getLocalizedValue($category, 'hero_subtitle', $locale),
             'heroDescription' => getLocalizedValue($category, 'hero_description', $locale),
             'categoryTitle' => getLocalizedValue($category, 'list_title', $locale),
+            'content' => $category['content'] ?? null,
             'products' => $formattedProducts
         ];
         
@@ -415,10 +418,16 @@ try {
         'trendSection' => $trendSection ? [
             'leftImage' => $trendSection['left_image'] ?? '',
             'leftTitle' => getLocalizedValue($trendSection, 'left_title', $locale),
+            'leftLink' => $trendSection['left_link'] ?? '',
             'leftTitleLink' => $trendSection['left_link'] ?? '',
+            'leftImagePosition' => $trendSection['left_image_position'] ?? '50% 50%',
+            'leftImageScale' => (float)($trendSection['left_image_scale'] ?? 1),
             'rightImage' => $trendSection['right_image'] ?? '',
             'rightTitle' => getLocalizedValue($trendSection, 'right_title', $locale),
-            'rightTitleLink' => $trendSection['right_link'] ?? ''
+            'rightLink' => $trendSection['right_link'] ?? '',
+            'rightTitleLink' => $trendSection['right_link'] ?? '',
+            'rightImagePosition' => $trendSection['right_image_position'] ?? '50% 50%',
+            'rightImageScale' => (float)($trendSection['right_image_scale'] ?? 1),
         ] : null,
         
         // Parallax Section
@@ -485,7 +494,11 @@ try {
             'phone' => $contactInfo['phone'] ?? '',
             'email' => $contactInfo['email'] ?? '',
             'workingHours' => getLocalizedValue($contactInfo, 'working_hours', $locale),
-            'mapEmbed' => $contactInfo['map_embed'] ?? ''
+            'mapEmbed' => $contactInfo['map_embed'] ?? '',
+            'instagram1' => $contactInfo['instagram1'] ?? '@gozumunnuru.antalya',
+            'instagram1Url' => $contactInfo['instagram1_url'] ?? 'https://www.instagram.com/gozumunnuru.antalya',
+            'instagram2' => $contactInfo['instagram2'] ?? '@hankuyumculuk_',
+            'instagram2Url' => $contactInfo['instagram2_url'] ?? 'https://www.instagram.com/hankuyumculuk_'
         ],
         
         // Kategoriler (content.json formatında)
@@ -497,7 +510,19 @@ try {
         'prelovedCategory' => $categoriesByType['preloved']['preloved'] ?? null,
         'yatirimCategory' => $categoriesByType['yatirim']['yatirim'] ?? null,
         'ozelTasarimCategory' => $categoriesByType['ozel_tasarim']['ozel-tasarim'] ?? null,
-        
+
+        // Menü Görselleri
+        'menuImages' => (function() use ($db) {
+            try {
+                $stmt = $db->prepare("SELECT setting_value FROM general_settings WHERE setting_key = 'menu_images'");
+                $stmt->execute();
+                $row = $stmt->fetch();
+                return $row ? json_decode($row['setting_value'], true) : null;
+            } catch (Exception $e) {
+                return null;
+            }
+        })(),
+
         // Meta bilgiler
         '_meta' => [
             'generatedAt' => date('c'),

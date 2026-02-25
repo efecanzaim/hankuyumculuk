@@ -13,6 +13,10 @@ interface TrendSectionProps {
   rightLink: string;
   leftTitleLink: string;
   rightTitleLink: string;
+  leftImagePosition?: string;
+  leftImageScale?: number;
+  rightImagePosition?: string;
+  rightImageScale?: number;
 }
 
 export default function TrendSection({
@@ -23,7 +27,11 @@ export default function TrendSection({
   leftLink = "#",
   rightLink = "#",
   leftTitleLink = "#",
-  rightTitleLink = "#"
+  rightTitleLink = "#",
+  leftImagePosition,
+  leftImageScale,
+  rightImagePosition,
+  rightImageScale,
 }: TrendSectionProps) {
   return (
     <section className="py-8 md:py-20 bg-white">
@@ -41,6 +49,7 @@ export default function TrendSection({
                   fill
                   className="object-cover"
                   sizes="334px"
+                  style={{ objectPosition: leftImagePosition || '50% 50%', transform: leftImageScale && leftImageScale !== 1 ? `scale(${leftImageScale})` : undefined }}
                 />
               </div>
 
@@ -74,6 +83,7 @@ export default function TrendSection({
                   fill
                   className="object-cover"
                   sizes="334px"
+                  style={{ objectPosition: rightImagePosition || '50% 50%', transform: rightImageScale && rightImageScale !== 1 ? `scale(${rightImageScale})` : undefined }}
                 />
               </div>
 
@@ -111,6 +121,7 @@ export default function TrendSection({
                 fill
                 className="object-cover"
                 sizes="50vw"
+                style={{ objectPosition: leftImagePosition || '50% 50%', transform: leftImageScale && leftImageScale !== 1 ? `scale(${leftImageScale})` : undefined }}
               />
             </div>
 
@@ -144,6 +155,7 @@ export default function TrendSection({
                 fill
                 className="object-cover"
                 sizes="50vw"
+                style={{ objectPosition: rightImagePosition || '50% 50%', transform: rightImageScale && rightImageScale !== 1 ? `scale(${rightImageScale})` : undefined }}
               />
             </div>
 

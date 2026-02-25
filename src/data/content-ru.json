@@ -75,7 +75,11 @@
     "leftLink": "/ru/yuvelirnye-izdeliya/koltsa",
     "rightLink": "/ru/kollektsiya/svet-moikh-glaz",
     "leftTitleLink": "/ru/yuvelirnye-izdeliya/koltsa",
-    "rightTitleLink": "/ru/kollektsiya/svet-moikh-glaz"
+    "rightTitleLink": "/ru/kollektsiya/svet-moikh-glaz",
+    "leftImagePosition": "50% 50%",
+    "leftImageScale": 1,
+    "rightImagePosition": "50% 50%",
+    "rightImageScale": 1
   },
   "parallaxSection": {
     "backgroundImage": "/images/parallax-bg.jpg"
@@ -83,9 +87,7 @@
   "storySection": {
     "title": "История Элегантности",
     "mainText": "Han Kuyumculuk представляет собой гораздо больше, чем бриллиант; это символ, превращающий дорогого вам человека, разделённые особые моменты и чувства от сердца в свет.\n\nHan Kuyumculuk, неся этот смысл, рождённый из света, оставляет особое место в сердце каждой женщины; ведь за каждым сиянием скрывается незабываемая история.",
-    "subText": "",
-    "linkText": "История, Где Свет Становится Любовью",
-    "linkHref": "/ru/o-nas"
+    "subText": ""
   },
   "featuredProductsSection": {
     "titlePart1": "СПЕЦИАЛЬНО",
@@ -822,6 +824,7 @@
     "heroSubtitle": "Дизайны, полные смысла, для ваших любимых.",
     "heroDescription": "Коллекция «Свет моих глаз»\nсоздана как символ\nлюбви и ценности.",
     "categoryTitle": "СВЕТ МОИХ ГЛАЗ",
+    "content": null,
     "products": []
   },
   "tesbihCategory": {
@@ -907,7 +910,7 @@
       }
     ],
     "socialLinks": {
-      "instagram": "https://instagram.com/hankuyumculuk"
+      "instagram": "https://www.instagram.com/hankuyumculuk_"
     },
     "copyright": "\u00a9 2025 Han Kuyumculuk, Все права защищены"
   }

@@ -75,7 +75,11 @@
     "leftLink": "/mucevher/yuzuk",
     "rightLink": "/koleksiyon/gozumun-nuru",
     "leftTitleLink": "/mucevher/yuzuk",
-    "rightTitleLink": "/koleksiyon/gozumun-nuru"
+    "rightTitleLink": "/koleksiyon/gozumun-nuru",
+    "leftImagePosition": "50% 50%",
+    "leftImageScale": 1,
+    "rightImagePosition": "50% 50%",
+    "rightImageScale": 1
   },
   "parallaxSection": {
     "backgroundImage": "/images/parallax-bg.jpg"
@@ -83,9 +87,7 @@
   "storySection": {
     "title": "Hakkımızda | Han Kuyumculuk",
     "mainText": "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaat değil; bir disiplin, bir süreklilik ve bir sorumluluk olarak gören köklü bir üretici kuruluştur.\n\nKuruluşundan bu yana geçen yıllar boyunca Han Kuyumculuk, tasarımdan üretime uzanan tüm süreçlerde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır. İstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek markanın karakterini oluşturur.\n\nBugün vitrinlerde görülen, farklı markalar altında sunulan birçok mücevher tasarımının arkasında Han imzası bulunmaktadır. Han Kuyumculuk, çoğu zaman adı görünmeden; ancak işçiliği, oranı ve detay diliyle kendini belli eden bir üretici olarak sektörde güçlü bir yer edinmiştir.",
-    "subText": "Han, üretici kimliğiyle var olur. Tüm koleksiyonlar; alanında uzun yıllar deneyim kazanmış, her biri kendi uzmanlık alanında söz sahibi ekipler tarafından geliştirilir. Pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip uzman kadro, her parçayı teknik doğruluk kadar estetik dengeyle de ele alır. Bu yaklaşım, Han Kuyumculuk'un pırlantada güvenilen ve referans alınan bir marka olarak konumlanmasını sağlamıştır.\n\nÜretimde süreklilik, Han için yalnızca hacim değil; standartların korunması anlamına gelir. Kullanılan hammaddeden işçilik detaylarına, kalite kontrolden son sunuma kadar tüm aşamalar sistematik bir yapı içinde yürütülür. Bu yapı, yıllar içinde edinilen deneyimin kurumsal hafızaya dönüşmüş halidir.\n\nHan Kuyumculuk, hızlı trendlerin peşinden gitmek yerine zamansızlığı esas alır. Tasarımlar; dönemsel etkilerden bağımsız, uzun yıllar değerini koruyacak bir estetik anlayışla şekillendirilir. Bu yaklaşım, markanın hem üretici hem de tasarımcı kimliğinin doğal bir sonucudur. Han, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
-    "linkText": "Tam Hakkımızda Sayfasını Ziyaret Et",
-    "linkHref": "/hakkimizda"
+    "subText": "Han, üretici kimliğiyle var olur. Tüm koleksiyonlar; alanında uzun yıllar deneyim kazanmış, her biri kendi uzmanlık alanında söz sahibi ekipler tarafından geliştirilir. Pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip uzman kadro, her parçayı teknik doğruluk kadar estetik dengeyle de ele alır. Bu yaklaşım, Han Kuyumculuk'un pırlantada güvenilen ve referans alınan bir marka olarak konumlanmasını sağlamıştır.\n\nÜretimde süreklilik, Han için yalnızca hacim değil; standartların korunması anlamına gelir. Kullanılan hammaddeden işçilik detaylarına, kalite kontrolden son sunuma kadar tüm aşamalar sistematik bir yapı içinde yürütülür. Bu yapı, yıllar içinde edinilen deneyimin kurumsal hafızaya dönüşmüş halidir.\n\nHan Kuyumculuk, hızlı trendlerin peşinden gitmek yerine zamansızlığı esas alır. Tasarımlar; dönemsel etkilerden bağımsız, uzun yıllar değerini koruyacak bir estetik anlayışla şekillendirilir. Bu yaklaşım, markanın hem üretici hem de tasarımcı kimliğinin doğal bir sonucudur. Han, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir."
   },
   "featuredProductsSection": {
     "titlePart1": "SİZE ÖZEL",
@@ -753,10 +755,10 @@
     },
     "kol": {
       "heroImage": "/images/erkek-menu-hero.jpg",
-      "heroTitle": "Erkek Kol",
+      "heroTitle": "Erkek Kol Düğmesi",
       "heroSubtitle": "Stil ve rahatlığın mükemmel birleşimi.",
-      "heroDescription": "Erkekler için tasarlanmış\nzaif ve konforlu kol ürünleri.",
-      "categoryTitle": "ERKEK KOL",
+      "heroDescription": "Erkekler için tasarlanmış\nzarif ve şık kol düğmesi ürünleri.",
+      "categoryTitle": "ERKEK KOL DÜĞMESİ",
       "products": []
     }
   },
@@ -822,6 +824,7 @@
     "heroSubtitle": "Sevdiklerinize özel, anlam dolu tasarımlar.",
     "heroDescription": "Gözümün Nuru koleksiyonu,\nsevgi ve değerin sembolü\nolarak tasarlandı.",
     "categoryTitle": "GÖZÜMÜN NURU",
+    "content": null,
     "products": []
   },
   "tesbihCategory": {
@@ -850,10 +853,10 @@
   },
   "erkekKolCategory": {
     "heroImage": "/images/erkek-menu-hero.jpg",
-    "heroTitle": "Erkek Kol",
+    "heroTitle": "Erkek Kol Düğmesi",
     "heroSubtitle": "Stil ve rahatlığın mükemmel birleşimi.",
-    "heroDescription": "Erkekler için tasarlanmış\nzaif ve konforlu kol ürünleri.",
-    "categoryTitle": "ERKEK KOL",
+    "heroDescription": "Erkekler için tasarlanmış\nzarif ve şık kol düğmesi ürünleri.",
+    "categoryTitle": "ERKEK KOL DÜĞMESİ",
     "products": []
   },
   "footer": {
@@ -907,7 +910,7 @@
       }
     ],
     "socialLinks": {
-      "instagram": "https://instagram.com/hankuyumculuk"
+      "instagram": "https://www.instagram.com/hankuyumculuk_"
     },
     "copyright": "© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır"
   }

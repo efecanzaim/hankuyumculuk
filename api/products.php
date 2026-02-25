@@ -139,8 +139,8 @@ switch ($method) {
         $goldKarat = isset($data['gold_karat']) && $data['gold_karat'] !== '' ? (int)$data['gold_karat'] : null;
 
         $stmt = $db->prepare('
-            INSERT INTO products (category_id, slug, name, name_en, name_ru, subtitle, subtitle_en, subtitle_ru, description, description_en, description_ru, main_image, banner_image, gallery_images, gold_weight, gold_karat, is_featured, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO products (category_id, slug, name, name_en, name_ru, subtitle, subtitle_en, subtitle_ru, description, description_en, description_ru, main_image, banner_image, gallery_images, image_position, image_scale, gold_weight, gold_karat, is_featured, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $data['categoryId'] ?? $data['category_id'] ?? null,
@@ -157,6 +157,8 @@ switch ($method) {
             $data['mainImage'] ?? $data['main_image'] ?? $data['image'] ?? null,
             $data['bannerImage'] ?? $data['banner_image'] ?? null,
             $galleryImages,
+            $data['imagePosition'] ?? $data['image_position'] ?? '50% 50%',
+            $data['imageScale'] ?? $data['image_scale'] ?? 1,
             $goldWeight,
             $goldKarat,
             $data['isFeatured'] ?? $data['is_featured'] ?? 0,
@@ -223,6 +225,7 @@ switch ($method) {
             'category_id', 'slug', 'name', 'subtitle', 'description',
             'name_en', 'name_ru', 'subtitle_en', 'subtitle_ru', 'description_en', 'description_ru',
             'main_image', 'banner_image', 'gallery_images',
+            'image_position', 'image_scale',
             'gold_weight', 'gold_karat',
             'is_featured', 'sort_order', 'is_active'
         ];
@@ -234,6 +237,8 @@ switch ($method) {
             'image' => 'main_image', // image alias'ı da main_image'e map edilebilir
             'bannerImage' => 'banner_image',
             'galleryImages' => 'gallery_images',
+            'imagePosition' => 'image_position',
+            'imageScale' => 'image_scale',
             'isFeatured' => 'is_featured',
             'sortOrder' => 'sort_order',
             'isActive' => 'is_active',
@@ -466,6 +471,10 @@ function formatProduct($product) {
         'banner_image' => $product['banner_image'],
         'galleryImages' => $galleryImages,
         'gallery_images' => $galleryImages ?? [],
+        'imagePosition' => $product['image_position'] ?? '50% 50%',
+        'image_position' => $product['image_position'] ?? '50% 50%',
+        'imageScale' => $product['image_scale'] ? (float)$product['image_scale'] : 1,
+        'image_scale' => $product['image_scale'] ? (float)$product['image_scale'] : 1,
         'gold_weight' => $product['gold_weight'] ?? null,
         'gold_karat' => $product['gold_karat'] ?? null,
         'stones' => $stones,
