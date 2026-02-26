@@ -32,7 +32,7 @@ switch ($method) {
 
                 // Ürünleri de getir
                 if ($withProducts) {
-                    $stmt2 = $db->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY sort_order ASC');
+                    $stmt2 = $db->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY CASE WHEN sort_order = 0 THEN 999999 ELSE sort_order END ASC, name ASC');
                     $stmt2->execute([$category['id']]);
                     $products = $stmt2->fetchAll();
                     $formatted['products'] = array_map('formatCategoryProduct', $products);
@@ -52,7 +52,7 @@ switch ($method) {
                 $formatted = formatCategory($category);
 
                 // Kategoriye ait ürünleri de getir
-                $stmt2 = $db->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY sort_order ASC');
+                $stmt2 = $db->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY CASE WHEN sort_order = 0 THEN 999999 ELSE sort_order END ASC, name ASC');
                 $stmt2->execute([$category['id']]);
                 $products = $stmt2->fetchAll();
                 $formatted['products'] = array_map('formatCategoryProduct', $products);

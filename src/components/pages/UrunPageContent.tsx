@@ -66,5 +66,5 @@ export default function UrunPageContent({ locale }: UrunPageContentProps) {
     );
   }
 
-  return <ProductPageClient slug={slug} initialProduct={null} />;
+  return <ProductPageClient slug={slug} initialProduct={null} locale={locale} />;
 }

@@ -233,7 +233,7 @@ try {
                 FROM category_products cp
                 INNER JOIN products p ON cp.product_id = p.id
                 WHERE cp.is_active = 1 AND p.is_active = 1
-                ORDER BY cp.category_id, cp.sort_order ASC
+                ORDER BY cp.category_id, CASE WHEN cp.sort_order = 0 THEN 999999 ELSE cp.sort_order END ASC, p.name ASC
             ");
             $categoryProducts = $stmt->fetchAll();
             
@@ -270,7 +270,7 @@ try {
                 SELECT id, slug, main_image, name, subtitle, category_id, sort_order{$productMultilangColsDirect}
                 FROM products
                 WHERE is_active = 1 AND category_id IS NOT NULL
-                ORDER BY category_id, sort_order ASC
+                ORDER BY category_id, CASE WHEN sort_order = 0 THEN 999999 ELSE sort_order END ASC, name ASC
             ");
             $allProducts = $stmt->fetchAll();
             

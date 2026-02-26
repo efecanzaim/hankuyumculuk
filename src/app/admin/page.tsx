@@ -58,6 +58,7 @@ interface Product {
   id?: number;
   category_id: number | null;
   categories?: number[]; // Çoklu kategori seçimi için
+  category_sort_orders?: Record<number, number>; // Kategori bazlı sıralama: { categoryId: sortOrder }
   slug?: string;
   name: string;
   name_en?: string;
@@ -3420,42 +3421,66 @@ export default function AdminPanel() {
                             </p>
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-400 mb-2">Kategoriler</label>
-                            <div className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 max-h-48 overflow-y-auto">
+                            <label className="block text-xs font-medium text-gray-400 mb-2">Kategoriler ve Sıralama</label>
+                            <div className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 max-h-64 overflow-y-auto">
                               {categories.length === 0 ? (
                                 <p className="text-gray-500 text-xs">Kategori yükleniyor...</p>
                               ) : (
                                 <div className="space-y-2">
-                                  {categories.map((cat) => (
-                                    <label
-                                      key={cat.id}
-                                      className="flex items-center gap-2 cursor-pointer hover:bg-[#1a1a1a] p-1.5 rounded"
-                                    >
-                                      <input
-                                        type="checkbox"
-                                        checked={(editingProduct.categories || []).includes(cat.id)}
-                                        onChange={(e) => {
-                                          const currentCategories = editingProduct.categories || [];
-                                          const newCategories = e.target.checked
-                                            ? [...currentCategories, cat.id]
-                                            : currentCategories.filter(id => id !== cat.id);
-                                          setEditingProduct({
-                                            ...editingProduct,
-                                            categories: newCategories,
-                                            category_id: newCategories.length > 0 ? newCategories[0] : null // İlk kategoriyi ana kategori olarak belirle
-                                          });
-                                        }}
-                                        className="w-4 h-4 text-[#d4af37] bg-[#1a1a1a] border-[#2a2a2a] rounded focus:ring-2 focus:ring-[#d4af37]"
-                                      />
-                                      <span className="text-sm text-white">{cat.name}</span>
-                                      <span className="text-xs text-gray-500">({cat.parent_type})</span>
-                                    </label>
-                                  ))}
+                                  {categories.map((cat) => {
+                                    const isChecked = (editingProduct.categories || []).includes(cat.id);
+                                    const sortOrders = editingProduct.category_sort_orders || {};
+                                    return (
+                                      <div key={cat.id} className="flex items-center gap-2 hover:bg-[#1a1a1a] p-1.5 rounded">
+                                        <input
+                                          type="checkbox"
+                                          checked={isChecked}
+                                          onChange={(e) => {
+                                            const currentCategories = editingProduct.categories || [];
+                                            const currentSortOrders = { ...(editingProduct.category_sort_orders || {}) };
+                                            const newCategories = e.target.checked
+                                              ? [...currentCategories, cat.id]
+                                              : currentCategories.filter(id => id !== cat.id);
+                                            if (!e.target.checked) {
+                                              delete currentSortOrders[cat.id];
+                                            }
+                                            setEditingProduct({
+                                              ...editingProduct,
+                                              categories: newCategories,
+                                              category_sort_orders: currentSortOrders,
+                                              category_id: newCategories.length > 0 ? newCategories[0] : null
+                                            });
+                                          }}
+                                          className="w-4 h-4 text-[#d4af37] bg-[#1a1a1a] border-[#2a2a2a] rounded focus:ring-2 focus:ring-[#d4af37] shrink-0"
+                                        />
+                                        <span className="text-sm text-white flex-1 min-w-0">{cat.name}</span>
+                                        <span className="text-xs text-gray-500 shrink-0">({cat.parent_type})</span>
+                                        {isChecked && (
+                                          <input
+                                            type="number"
+                                            min="0"
+                                            value={sortOrders[cat.id] || 0}
+                                            onChange={(e) => {
+                                              const newSortOrders = { ...(editingProduct.category_sort_orders || {}) };
+                                              newSortOrders[cat.id] = parseInt(e.target.value) || 0;
+                                              setEditingProduct({
+                                                ...editingProduct,
+                                                category_sort_orders: newSortOrders
+                                              });
+                                            }}
+                                            placeholder="Sıra"
+                                            title="Sıralama (0 = varsayılan, küçük sayı önce görünür)"
+                                            className="w-16 bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1 text-white text-xs text-center focus:ring-1 focus:ring-[#d4af37] focus:border-transparent outline-none shrink-0"
+                                          />
+                                        )}
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               )}
                             </div>
                             <p className="text-gray-500 text-xs mt-1">
-                              {(editingProduct.categories || []).length} kategori seçildi
+                              {(editingProduct.categories || []).length} kategori seçildi — Sıra numarası: 0 = varsayılan (sonda), küçük sayı önce görünür
                             </p>
                           </div>
 
@@ -3783,42 +3808,66 @@ export default function AdminPanel() {
                       </p>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-400 mb-2">Kategoriler</label>
-                      <div className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 max-h-48 overflow-y-auto">
+                      <label className="block text-xs font-medium text-gray-400 mb-2">Kategoriler ve Sıralama</label>
+                      <div className="bg-[#0f0f0f] border border-[#2a2a2a] rounded-lg p-3 max-h-64 overflow-y-auto">
                         {categories.length === 0 ? (
                           <p className="text-gray-500 text-xs">Kategori yükleniyor...</p>
                         ) : (
                           <div className="space-y-2">
-                            {categories.map((cat) => (
-                              <label
-                                key={cat.id}
-                                className="flex items-center gap-2 cursor-pointer hover:bg-[#1a1a1a] p-1.5 rounded"
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={(newProduct.categories || []).includes(cat.id)}
-                                  onChange={(e) => {
-                                    const currentCategories = newProduct.categories || [];
-                                    const newCategories = e.target.checked
-                                      ? [...currentCategories, cat.id]
-                                      : currentCategories.filter(id => id !== cat.id);
-                                    setNewProduct({
-                                      ...newProduct,
-                                      categories: newCategories,
-                                      category_id: newCategories.length > 0 ? newCategories[0] : null // İlk kategoriyi ana kategori olarak belirle
-                                    });
-                                  }}
-                                  className="w-4 h-4 text-[#d4af37] bg-[#1a1a1a] border-[#2a2a2a] rounded focus:ring-2 focus:ring-[#d4af37]"
-                                />
-                                <span className="text-sm text-white">{cat.name}</span>
-                                <span className="text-xs text-gray-500">({cat.parent_type})</span>
-                              </label>
-                            ))}
+                            {categories.map((cat) => {
+                              const isChecked = (newProduct.categories || []).includes(cat.id);
+                              const sortOrders = newProduct.category_sort_orders || {};
+                              return (
+                                <div key={cat.id} className="flex items-center gap-2 hover:bg-[#1a1a1a] p-1.5 rounded">
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={(e) => {
+                                      const currentCategories = newProduct.categories || [];
+                                      const currentSortOrders = { ...(newProduct.category_sort_orders || {}) };
+                                      const newCategories = e.target.checked
+                                        ? [...currentCategories, cat.id]
+                                        : currentCategories.filter(id => id !== cat.id);
+                                      if (!e.target.checked) {
+                                        delete currentSortOrders[cat.id];
+                                      }
+                                      setNewProduct({
+                                        ...newProduct,
+                                        categories: newCategories,
+                                        category_sort_orders: currentSortOrders,
+                                        category_id: newCategories.length > 0 ? newCategories[0] : null
+                                      });
+                                    }}
+                                    className="w-4 h-4 text-[#d4af37] bg-[#1a1a1a] border-[#2a2a2a] rounded focus:ring-2 focus:ring-[#d4af37] shrink-0"
+                                  />
+                                  <span className="text-sm text-white flex-1 min-w-0">{cat.name}</span>
+                                  <span className="text-xs text-gray-500 shrink-0">({cat.parent_type})</span>
+                                  {isChecked && (
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={sortOrders[cat.id] || 0}
+                                      onChange={(e) => {
+                                        const newSortOrders = { ...(newProduct.category_sort_orders || {}) };
+                                        newSortOrders[cat.id] = parseInt(e.target.value) || 0;
+                                        setNewProduct({
+                                          ...newProduct,
+                                          category_sort_orders: newSortOrders
+                                        });
+                                      }}
+                                      placeholder="Sıra"
+                                      title="Sıralama (0 = varsayılan, küçük sayı önce görünür)"
+                                      className="w-16 bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1 text-white text-xs text-center focus:ring-1 focus:ring-[#d4af37] focus:border-transparent outline-none shrink-0"
+                                    />
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
                       </div>
                       <p className="text-gray-500 text-xs mt-1">
-                        {(newProduct.categories || []).length} kategori seçildi
+                        {(newProduct.categories || []).length} kategori seçildi — Sıra numarası: 0 = varsayılan (sonda), küçük sayı önce görünür
                       </p>
                     </div>
                     {/* SERTİFİKA BİLGİLERİ */}
@@ -4001,12 +4050,6 @@ export default function AdminPanel() {
                       </div>
                     </div>
 
-                    <InputField
-                      label="Sıralama"
-                      value={String(newProduct.sort_order)}
-                      onChange={(v) => setNewProduct({ ...newProduct, sort_order: parseInt(v) || 0 })}
-                      placeholder="0"
-                    />
                     <div className="pt-4">
                       <button
                         onClick={handleAddProduct}

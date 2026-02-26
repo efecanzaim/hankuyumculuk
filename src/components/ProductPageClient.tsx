@@ -5,6 +5,7 @@ import ProductDetailPage from "@/components/ProductDetailPage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useContent } from "@/hooks/useContent";
+import type { Locale } from "@/i18n/config";
 
 interface Stone {
   id?: number;
@@ -20,22 +21,29 @@ interface Product {
   id: number;
   slug: string;
   name: string;
+  name_en?: string;
+  name_ru?: string;
   subtitle: string;
+  subtitle_en?: string;
+  subtitle_ru?: string;
   description: string;
+  description_en?: string;
+  description_ru?: string;
   mainImage: string;
   image: string;
   bannerImage: string;
   banner_image: string;
   galleryImages: string[];
   gallery_images: string[];
-  gold_weight?: number | string | null; // API'den number, form'dan string gelebilir
-  gold_karat?: number | string | null; // API'den number, form'dan string gelebilir
+  gold_weight?: number | string | null;
+  gold_karat?: number | string | null;
   stones?: Stone[];
 }
 
 interface ProductPageClientProps {
   slug: string;
   initialProduct?: Product | null;
+  locale?: Locale;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
@@ -85,8 +93,19 @@ const demoProduct: Product = {
   ],
 };
 
-export default function ProductPageClient({ slug, initialProduct }: ProductPageClientProps) {
-  const content = useContent();
+// Locale'e göre doğru alanı seç
+function getLocalizedField(product: Product, field: 'name' | 'subtitle' | 'description', locale: Locale): string {
+  if (locale === 'tr') return product[field] || '';
+  const localizedKey = `${field}_${locale}` as keyof Product;
+  const localizedValue = product[localizedKey];
+  if (localizedValue && typeof localizedValue === 'string' && localizedValue.trim() !== '') {
+    return localizedValue;
+  }
+  return product[field] || '';
+}
+
+export default function ProductPageClient({ slug, initialProduct, locale = 'tr' }: ProductPageClientProps) {
+  const content = useContent(locale);
   
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -257,9 +276,9 @@ export default function ProductPageClient({ slug, initialProduct }: ProductPageC
       />
       <ProductDetailPage
         mainImage={product.mainImage || product.image || ""}
-        productName={product.name}
-        productTitle={product.subtitle}
-        description={product.description}
+        productName={getLocalizedField(product, 'name', locale)}
+        productTitle={getLocalizedField(product, 'subtitle', locale)}
+        description={getLocalizedField(product, 'description', locale)}
         bannerImage={product.bannerImage || product.banner_image || ""}
         galleryImages={product.galleryImages || product.gallery_images || []}
         goldWeight={product.gold_weight}

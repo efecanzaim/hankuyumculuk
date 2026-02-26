@@ -93,7 +93,7 @@ switch ($method) {
                 $params[] = $categoryId;
             }
 
-            $sql .= ' ORDER BY p.sort_order ASC';
+            $sql .= ' ORDER BY CASE WHEN p.sort_order = 0 THEN 999999 ELSE p.sort_order END ASC, p.name ASC';
 
             $stmt = $db->prepare($sql);
             $stmt->execute($params);
@@ -194,12 +194,15 @@ switch ($method) {
 
         // Çoklu kategori ilişkilerini ekle (varsa)
         if (!empty($data['categories']) && is_array($data['categories'])) {
+            $categorySortOrders = $data['category_sort_orders'] ?? $data['categorySortOrders'] ?? [];
             $catStmt = $db->prepare('
                 INSERT INTO category_products (category_id, product_id, sort_order, is_active)
-                VALUES (?, ?, 0, 1)
+                VALUES (?, ?, ?, 1)
             ');
             foreach ($data['categories'] as $categoryId) {
-                $catStmt->execute([$categoryId, $insertId]);
+                $catIdStr = (string)$categoryId;
+                $sortOrder = isset($categorySortOrders[$catIdStr]) ? (int)$categorySortOrders[$catIdStr] : (isset($categorySortOrders[$categoryId]) ? (int)$categorySortOrders[$categoryId] : 0);
+                $catStmt->execute([$categoryId, $insertId, $sortOrder]);
             }
         }
 
@@ -265,6 +268,11 @@ switch ($method) {
             $categories = $data['categories'];
             unset($data['categories']);
         }
+
+        // category_sort_orders'ı ayır (category_products tablosunda kullanılacak)
+        $categorySortOrders = $data['category_sort_orders'] ?? $data['categorySortOrders'] ?? [];
+        unset($data['category_sort_orders']);
+        unset($data['categorySortOrders']);
 
         $fields = [];
         $values = [];
@@ -354,6 +362,7 @@ switch ($method) {
 
         // Kategori ilişkilerini güncelle (varsa)
         if ($categories !== null && is_array($categories)) {
+
             // Mevcut kategori ilişkilerini sil
             $deleteCatStmt = $db->prepare('DELETE FROM category_products WHERE product_id = ?');
             $deleteCatStmt->execute([$id]);
@@ -362,10 +371,12 @@ switch ($method) {
             if (!empty($categories)) {
                 $catStmt = $db->prepare('
                     INSERT INTO category_products (category_id, product_id, sort_order, is_active)
-                    VALUES (?, ?, 0, 1)
+                    VALUES (?, ?, ?, 1)
                 ');
                 foreach ($categories as $categoryId) {
-                    $catStmt->execute([$categoryId, $id]);
+                    $catIdStr = (string)$categoryId;
+                    $sortOrder = isset($categorySortOrders[$catIdStr]) ? (int)$categorySortOrders[$catIdStr] : (isset($categorySortOrders[$categoryId]) ? (int)$categorySortOrders[$categoryId] : 0);
+                    $catStmt->execute([$categoryId, $id, $sortOrder]);
                 }
             }
         }
@@ -441,14 +452,16 @@ function formatProduct($product) {
         }
     }
 
-    // Çoklu kategori ilişkilerini getir
+    // Çoklu kategori ilişkilerini ve sıralamalarını getir
     $categories = [];
+    $categorySortOrders = [];
     if (!empty($product['id'])) {
-        $catStmt = $db->prepare('SELECT category_id FROM category_products WHERE product_id = ? AND is_active = 1');
+        $catStmt = $db->prepare('SELECT category_id, sort_order FROM category_products WHERE product_id = ? AND is_active = 1');
         $catStmt->execute([$product['id']]);
         $catData = $catStmt->fetchAll();
         foreach ($catData as $cat) {
             $categories[] = (int)$cat['category_id'];
+            $categorySortOrders[(string)$cat['category_id']] = (int)$cat['sort_order'];
         }
     }
 
@@ -457,14 +470,21 @@ function formatProduct($product) {
         'categoryId' => $product['category_id'] ? (int)$product['category_id'] : null,
         'category_id' => $product['category_id'] ? (int)$product['category_id'] : null,
         'categories' => $categories,
+        'category_sort_orders' => (object)$categorySortOrders,
         'categoryName' => $product['category_name'] ?? null,
         'categorySlug' => $product['category_slug'] ?? null,
         'parentType' => $product['parent_type'] ?? null,
         'parent_type' => $product['parent_type'] ?? null,
         'slug' => $product['slug'],
         'name' => $product['name'],
+        'name_en' => $product['name_en'] ?? '',
+        'name_ru' => $product['name_ru'] ?? '',
         'subtitle' => $product['subtitle'],
+        'subtitle_en' => $product['subtitle_en'] ?? '',
+        'subtitle_ru' => $product['subtitle_ru'] ?? '',
         'description' => $product['description'],
+        'description_en' => $product['description_en'] ?? '',
+        'description_ru' => $product['description_ru'] ?? '',
         'mainImage' => $product['main_image'],
         'image' => $product['main_image'],
         'bannerImage' => $product['banner_image'],

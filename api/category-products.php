@@ -26,7 +26,7 @@ switch ($method) {
             FROM category_products cp
             INNER JOIN products p ON cp.product_id = p.id
             WHERE cp.category_id = ? AND cp.is_active = 1
-            ORDER BY cp.sort_order ASC, p.name ASC
+            ORDER BY CASE WHEN cp.sort_order = 0 THEN 999999 ELSE cp.sort_order END ASC, p.name ASC
         ');
         $stmt->execute([$categoryId]);
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
