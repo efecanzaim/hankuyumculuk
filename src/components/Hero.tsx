@@ -160,6 +160,30 @@ export default function Hero({ slides }: HeroProps) {
             />
           ))}
         </div>
+
+        {/* Desktop Arrow Navigation */}
+        {slides.length > 1 && (
+          <>
+            <button
+              onClick={() => goToSlide((currentSlide - 1 + slides.length) % slides.length)}
+              className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center border border-white/50 text-white hover:bg-white/20 transition-colors duration-300"
+              aria-label="Önceki"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <button
+              onClick={() => goToSlide((currentSlide + 1) % slides.length)}
+              className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 items-center justify-center border border-white/50 text-white hover:bg-white/20 transition-colors duration-300"
+              aria-label="Sonraki"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </>
+        )}
       </div>
     </section>
   );

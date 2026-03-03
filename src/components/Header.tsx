@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useCallback, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { getAssetPath } from "@/utils/paths";
 import { Instagram, X } from "lucide-react";
 import { useLocale } from "@/i18n/LocaleContext";
@@ -26,6 +27,9 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
   const locale = useLocale();
   const t = useTranslation();
   const content = useContent(locale);
+  const pathname = usePathname();
+  const router = useRouter();
+  const isHomePage = pathname === '/' || pathname === `/${locale}` || pathname === `/${locale}/`;
   const menuImages = (content as Record<string, unknown>)?.menuImages as Record<string, string> | undefined;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topBannerVisible, setTopBannerVisible] = useState(bannerVisible);
@@ -227,18 +231,33 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
         {/* Mobile Header */}
         <div className={`lg:hidden ${isTransparent ? 'bg-transparent' : 'bg-white'}`}>
           <div className="flex items-center justify-between px-4 py-4">
-            <button
-              onClick={toggleMobileMenu}
-              className={`w-[30px] ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
-            >
-              {mobileMenuOpen ? (
-                <X size={24} />
-              ) : (
-                <svg className="w-[21px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 21 15">
-                  <path strokeLinecap="round" strokeWidth={1.5} d="M0 1h21M0 7.5h21M0 14h21" />
-                </svg>
+            <div className="flex items-center gap-3 w-[30px]">
+              {!isHomePage && (
+                <button
+                  onClick={() => router.back()}
+                  className={`${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                  aria-label="Geri"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
               )}
-            </button>
+              {isHomePage && (
+                <button
+                  onClick={toggleMobileMenu}
+                  className={`${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
+                >
+                  {mobileMenuOpen ? (
+                    <X size={24} />
+                  ) : (
+                    <svg className="w-[21px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 21 15">
+                      <path strokeLinecap="round" strokeWidth={1.5} d="M0 1h21M0 7.5h21M0 14h21" />
+                    </svg>
+                  )}
+                </button>
+              )}
+            </div>
 
             <div className="flex items-center gap-4 flex-1 justify-center">
               <div className={`w-[76px] h-px ${isTransparent ? 'bg-white/50' : 'bg-primary'}`} />

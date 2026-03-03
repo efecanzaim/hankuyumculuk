@@ -88,22 +88,17 @@ export default function ProductListingPage({
       <section className="py-[60px] md:py-[80px]">
         <div className="max-w-[1430px] mx-auto px-6 md:px-8">
           {/* Filter Bar */}
-          <div className="flex items-center justify-between mb-[20px]">
+          <div className="flex items-center mb-[20px] relative">
             {/* Product Count */}
             <p className="text-[13px] font-medium text-[#2f3237] shrink-0">
               {t('common.productsFound', { count: String(totalProducts) })}
             </p>
 
-            {/* Separator Line with Active Indicator - Hidden on mobile */}
-            <div className="hidden md:block flex-1 mx-8 relative">
-              <div className="w-full h-px bg-primary" />
-              <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[350px] h-[2px] bg-[#2f3237]" />
-            </div>
+            {/* Gray separator line - Hidden on mobile */}
+            <div className="hidden md:block flex-1 mx-8 h-px bg-primary" />
 
-            {/* Filter Button */}
-            <button className="text-[13px] font-medium text-[#2f3237] hover:opacity-70 transition-opacity shrink-0">
-              {t('common.filterProducts')}
-            </button>
+            {/* Dark indicator centered on full container - Hidden on mobile */}
+            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[350px] h-[2px] bg-[#2f3237]" />
           </div>
         </div>
       </section>

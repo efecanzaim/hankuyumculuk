@@ -327,6 +327,10 @@ CREATE TABLE IF NOT EXISTS contact_info (
     email VARCHAR(100),
     working_hours VARCHAR(255),
     map_embed TEXT COMMENT 'Google Maps embed kodu',
+    instagram1 VARCHAR(100) DEFAULT '@gozumunnuru.antalya',
+    instagram1_url VARCHAR(255) DEFAULT 'https://www.instagram.com/gozumunnuru.antalya',
+    instagram2 VARCHAR(100) DEFAULT '@hankuyumculuk_',
+    instagram2_url VARCHAR(255) DEFAULT 'https://www.instagram.com/hankuyumculuk_',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

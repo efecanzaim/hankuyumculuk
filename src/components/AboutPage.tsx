@@ -4,6 +4,48 @@ import Image from "next/image";
 import Link from "next/link";
 import { getAssetPath } from "@/utils/paths";
 
+const HanLogo = () => (
+  <svg
+    viewBox="0 0 110 41"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="inline-block align-middle mx-[0.15em]"
+    style={{ height: '0.75em', width: 'auto' }}
+  >
+    <path d="M9.2847 0H0V12.7349H9.2847V0Z" fill="currentColor"/>
+    <path d="M31.292 0H22.0073V12.7349H31.292V0Z" fill="currentColor"/>
+    <path d="M31.292 28.2651H22.0073V41H31.292V28.2651Z" fill="currentColor"/>
+    <path d="M9.2847 28.2651H0V41H9.2847V28.2651Z" fill="currentColor"/>
+    <path d="M31.292 14.3907H0V15.7099H31.292V14.3907Z" fill="currentColor"/>
+    <path d="M31.292 17.1247H0V18.4439H31.292V17.1247Z" fill="currentColor"/>
+    <path d="M31.292 19.8404H0V21.1596H31.292V19.8404Z" fill="currentColor"/>
+    <path d="M31.292 22.5743H0V23.8935H31.292V22.5743Z" fill="currentColor"/>
+    <path d="M31.292 25.3106H0V26.6298H31.292V25.3106Z" fill="currentColor"/>
+    <path d="M88.3033 13.6674H79.0254V41H88.3033V13.6674Z" fill="currentColor"/>
+    <path d="M110.003 13.6674H100.725V41H110.003V13.6674Z" fill="currentColor"/>
+    <path d="M110 0H79.0254V1.50117H110V0Z" fill="currentColor"/>
+    <path d="M110 2.70437H79.0254V4.20553H110V2.70437Z" fill="currentColor"/>
+    <path d="M110 5.40647H79.0254V6.70748H110V5.40647Z" fill="currentColor"/>
+    <path d="M110 8.1859H79.0254V9.41185H110V8.1859Z" fill="currentColor"/>
+    <path d="M110 10.863H79.0254V12.164H110V10.863Z" fill="currentColor"/>
+    <path d="M40.1711 28.7632L39.5615 30.0824H53.2132L52.4994 28.7632H40.1711Z" fill="currentColor"/>
+    <path d="M38.9109 31.4972L38.3013 32.8164H54.6928L53.979 31.4972H38.9109Z" fill="currentColor"/>
+    <path d="M37.6532 34.2243L37.0459 35.5458H56.1705L55.4544 34.2243H37.6532Z" fill="currentColor"/>
+    <path d="M36.3954 36.9514L35.7881 38.2729H57.6458L56.9319 36.9514H36.3954Z" fill="currentColor"/>
+    <path d="M58.4072 39.6808H35.1399L34.5303 41H59.1233L58.4072 39.6808Z" fill="currentColor"/>
+    <path d="M75.7868 41L54.7971 0C52.932 3.66193 51.0306 7.3921 49.1247 11.1291L40.8213 27.3462H53.8702L61.3419 40.9977H75.7845L75.7868 41Z" fill="currentColor"/>
+  </svg>
+);
+
+const renderWithLogo = (text: string) => {
+  const parts = text.split(/(Han Kuyumculuk|Han)/g);
+  return parts.map((part, i) =>
+    (part === 'Han Kuyumculuk' || part === 'Han')
+      ? <HanLogo key={i} />
+      : part
+  );
+};
+
 interface Value {
   title: string;
   description: string;
@@ -47,7 +89,7 @@ export default function AboutPage({
               {/* Main Content */}
               <div className="text-[14px] md:text-[15px] leading-[24px] md:leading-[28px] font-light text-[#2f3237] text-justify max-w-[700px] mx-auto px-4 md:px-8 mb-12 md:mb-16">
                 {heroParagraph2.split('\n\n').filter(p => p.trim()).map((para, idx) => (
-                  <p key={idx} className="mb-5 last:mb-0">{para}</p>
+                  <p key={idx} className="mb-5 last:mb-0">{renderWithLogo(para)}</p>
                 ))}
               </div>
             </div>

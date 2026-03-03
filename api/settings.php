@@ -257,24 +257,63 @@ function saveSettingByKey($db, $key, $value) {
             return $stmt->execute($params);
 
         case 'contact':
+            // Instagram sütunlarının varlığını kontrol et, yoksa ekle
+            $hasInstagramCols = false;
+            try {
+                $checkCol = $db->query("SHOW COLUMNS FROM contact_info LIKE 'instagram1'");
+                $hasInstagramCols = $checkCol->rowCount() > 0;
+            } catch (Exception $e) {}
+
+            if (!$hasInstagramCols) {
+                try {
+                    $db->exec("ALTER TABLE contact_info
+                        ADD COLUMN instagram1 VARCHAR(100) DEFAULT '@gozumunnuru.antalya' AFTER map_embed,
+                        ADD COLUMN instagram1_url VARCHAR(255) DEFAULT 'https://www.instagram.com/gozumunnuru.antalya' AFTER instagram1,
+                        ADD COLUMN instagram2 VARCHAR(100) DEFAULT '@hankuyumculuk_' AFTER instagram1_url,
+                        ADD COLUMN instagram2_url VARCHAR(255) DEFAULT 'https://www.instagram.com/hankuyumculuk_' AFTER instagram2");
+                    $hasInstagramCols = true;
+                } catch (Exception $e) {
+                    error_log('contact_info instagram columns migration failed: ' . $e->getMessage());
+                }
+            }
+
             $stmt = $db->query('SELECT id FROM contact_info LIMIT 1');
-            $params = [
-                $value['address'] ?? '', 
-                $value['phone'] ?? '', 
-                $value['email'] ?? '', 
-                $value['workingHours'] ?? '', 
-                $value['mapEmbed'] ?? '',
-                $value['instagram1'] ?? '@gozumunnuru.antalya',
-                $value['instagram1Url'] ?? 'https://www.instagram.com/gozumunnuru.antalya',
-                $value['instagram2'] ?? '@hankuyumculuk_',
-                $value['instagram2Url'] ?? 'https://www.instagram.com/hankuyumculuk_'
-            ];
-            if ($stmt->fetch()) {
-                $stmt = $db->prepare('UPDATE contact_info SET address=?, phone=?, email=?, working_hours=?, map_embed=?, instagram1=?, instagram1_url=?, instagram2=?, instagram2_url=? LIMIT 1');
+            $existing = $stmt->fetch();
+
+            if ($hasInstagramCols) {
+                $params = [
+                    $value['address'] ?? '',
+                    $value['phone'] ?? '',
+                    $value['email'] ?? '',
+                    $value['workingHours'] ?? '',
+                    $value['mapEmbed'] ?? '',
+                    $value['instagram1'] ?? '@gozumunnuru.antalya',
+                    $value['instagram1Url'] ?? 'https://www.instagram.com/gozumunnuru.antalya',
+                    $value['instagram2'] ?? '@hankuyumculuk_',
+                    $value['instagram2Url'] ?? 'https://www.instagram.com/hankuyumculuk_'
+                ];
+                if ($existing) {
+                    $stmt = $db->prepare('UPDATE contact_info SET address=?, phone=?, email=?, working_hours=?, map_embed=?, instagram1=?, instagram1_url=?, instagram2=?, instagram2_url=? LIMIT 1');
+                    return $stmt->execute($params);
+                }
+                $stmt = $db->prepare('INSERT INTO contact_info (address, phone, email, working_hours, map_embed, instagram1, instagram1_url, instagram2, instagram2_url) VALUES (?,?,?,?,?,?,?,?,?)');
+                return $stmt->execute($params);
+            } else {
+                // Instagram sütunları eklenemedi, temel alanları kaydet
+                $params = [
+                    $value['address'] ?? '',
+                    $value['phone'] ?? '',
+                    $value['email'] ?? '',
+                    $value['workingHours'] ?? '',
+                    $value['mapEmbed'] ?? ''
+                ];
+                if ($existing) {
+                    $stmt = $db->prepare('UPDATE contact_info SET address=?, phone=?, email=?, working_hours=?, map_embed=? LIMIT 1');
+                    return $stmt->execute($params);
+                }
+                $stmt = $db->prepare('INSERT INTO contact_info (address, phone, email, working_hours, map_embed) VALUES (?,?,?,?,?)');
                 return $stmt->execute($params);
             }
-            $stmt = $db->prepare('INSERT INTO contact_info (address, phone, email, working_hours, map_embed, instagram1, instagram1_url, instagram2, instagram2_url) VALUES (?,?,?,?,?,?,?,?,?)');
-            return $stmt->execute($params);
 
         case 'hero':
             // Hero slides güncelle
