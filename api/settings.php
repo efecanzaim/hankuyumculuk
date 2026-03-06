@@ -389,6 +389,7 @@ function saveSettingByKey($db, $key, $value) {
         case 'tesbih_category':
         case 'erkek_bileklik_category':
         case 'erkek_yuzuk_category':
+        case 'erkek_kol_category':
         case 'ozel_tasarim_page':
         case 'preloved_page':
         case 'yatirim_page':

@@ -13,6 +13,23 @@ require_once 'auth.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $db = getDB();
 
+// Eksik varsayılan kategorileri otomatik oluştur
+try {
+    $defaultCategories = [
+        ['name' => 'Kol Düğmesi', 'slug' => 'kol', 'parent_type' => 'erkek', 'sort_order' => 4],
+    ];
+    foreach ($defaultCategories as $cat) {
+        $check = $db->prepare('SELECT id FROM categories WHERE slug = ? AND parent_type = ?');
+        $check->execute([$cat['slug'], $cat['parent_type']]);
+        if (!$check->fetch()) {
+            $db->prepare('INSERT INTO categories (name, slug, parent_type, sort_order, is_active) VALUES (?, ?, ?, ?, 1)')
+               ->execute([$cat['name'], $cat['slug'], $cat['parent_type'], $cat['sort_order']]);
+        }
+    }
+} catch (Exception $e) {
+    error_log('Auto-create categories error: ' . $e->getMessage());
+}
+
 switch ($method) {
     case 'GET':
         // Kategorileri getir
