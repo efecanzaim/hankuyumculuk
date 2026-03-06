@@ -13,6 +13,18 @@ require_once 'auth.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $db = getDB();
 
+// Auto-migration: banner_image_position ve banner_image_scale yoksa ekle
+try {
+    $checkCol = $db->query("SHOW COLUMNS FROM products LIKE 'banner_image_position'");
+    if ($checkCol->rowCount() === 0) {
+        $db->exec("ALTER TABLE products
+            ADD COLUMN banner_image_position VARCHAR(50) DEFAULT '50% 50%' AFTER banner_image,
+            ADD COLUMN banner_image_scale DECIMAL(3,2) DEFAULT 1.00 AFTER banner_image_position");
+    }
+} catch (Exception $e) {
+    error_log('products banner_image_position migration error: ' . $e->getMessage());
+}
+
 switch ($method) {
     case 'GET':
         // Ürünleri getir
@@ -139,8 +151,8 @@ switch ($method) {
         $goldKarat = isset($data['gold_karat']) && $data['gold_karat'] !== '' ? (int)$data['gold_karat'] : null;
 
         $stmt = $db->prepare('
-            INSERT INTO products (category_id, slug, name, name_en, name_ru, subtitle, subtitle_en, subtitle_ru, description, description_en, description_ru, main_image, banner_image, gallery_images, image_position, image_scale, gold_weight, gold_karat, is_featured, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO products (category_id, slug, name, name_en, name_ru, subtitle, subtitle_en, subtitle_ru, description, description_en, description_ru, main_image, banner_image, banner_image_position, banner_image_scale, gallery_images, image_position, image_scale, gold_weight, gold_karat, is_featured, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $data['categoryId'] ?? $data['category_id'] ?? null,
@@ -156,6 +168,8 @@ switch ($method) {
             $data['description_ru'] ?? $data['descriptionRu'] ?? null,
             $data['mainImage'] ?? $data['main_image'] ?? $data['image'] ?? null,
             $data['bannerImage'] ?? $data['banner_image'] ?? null,
+            $data['bannerImagePosition'] ?? $data['banner_image_position'] ?? '50% 50%',
+            $data['bannerImageScale'] ?? $data['banner_image_scale'] ?? 1,
             $galleryImages,
             $data['imagePosition'] ?? $data['image_position'] ?? '50% 50%',
             $data['imageScale'] ?? $data['image_scale'] ?? 1,
@@ -229,6 +243,7 @@ switch ($method) {
             'name_en', 'name_ru', 'subtitle_en', 'subtitle_ru', 'description_en', 'description_ru',
             'main_image', 'banner_image', 'gallery_images',
             'image_position', 'image_scale',
+            'banner_image_position', 'banner_image_scale',
             'gold_weight', 'gold_karat',
             'is_featured', 'sort_order', 'is_active'
         ];
@@ -242,6 +257,8 @@ switch ($method) {
             'galleryImages' => 'gallery_images',
             'imagePosition' => 'image_position',
             'imageScale' => 'image_scale',
+            'bannerImagePosition' => 'banner_image_position',
+            'bannerImageScale' => 'banner_image_scale',
             'isFeatured' => 'is_featured',
             'sortOrder' => 'sort_order',
             'isActive' => 'is_active',
@@ -489,6 +506,10 @@ function formatProduct($product) {
         'image' => $product['main_image'],
         'bannerImage' => $product['banner_image'],
         'banner_image' => $product['banner_image'],
+        'bannerImagePosition' => $product['banner_image_position'] ?? '50% 50%',
+        'banner_image_position' => $product['banner_image_position'] ?? '50% 50%',
+        'bannerImageScale' => $product['banner_image_scale'] ? (float)$product['banner_image_scale'] : 1,
+        'banner_image_scale' => $product['banner_image_scale'] ? (float)$product['banner_image_scale'] : 1,
         'galleryImages' => $galleryImages,
         'gallery_images' => $galleryImages ?? [],
         'imagePosition' => $product['image_position'] ?? '50% 50%',

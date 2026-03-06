@@ -50,6 +50,8 @@ interface Value {
   title: string;
   description: string;
   image: string;
+  imagePosition?: string;
+  imageScale?: number;
 }
 
 interface AboutPageProps {
@@ -141,6 +143,10 @@ export default function AboutPage({
                     alt={values[0]?.title}
                     fill
                     className="object-cover"
+                    style={{
+                      objectPosition: values[0]?.imagePosition || '50% 50%',
+                      transform: values[0]?.imageScale && values[0].imageScale !== 1 ? `scale(${values[0].imageScale})` : undefined,
+                    }}
                   />
                 </div>
               </div>
@@ -153,6 +159,10 @@ export default function AboutPage({
                     alt={values[1]?.title}
                     fill
                     className="object-cover"
+                    style={{
+                      objectPosition: values[1]?.imagePosition || '50% 50%',
+                      transform: values[1]?.imageScale && values[1].imageScale !== 1 ? `scale(${values[1].imageScale})` : undefined,
+                    }}
                   />
                 </div>
                 <div className="flex items-center justify-center text-center px-6 md:px-0 order-1 md:order-2">
@@ -185,6 +195,10 @@ export default function AboutPage({
                     alt={values[2]?.title}
                     fill
                     className="object-cover"
+                    style={{
+                      objectPosition: values[2]?.imagePosition || '50% 50%',
+                      transform: values[2]?.imageScale && values[2].imageScale !== 1 ? `scale(${values[2].imageScale})` : undefined,
+                    }}
                   />
                 </div>
               </div>
@@ -197,6 +211,10 @@ export default function AboutPage({
                     alt={values[3]?.title}
                     fill
                     className="object-cover"
+                    style={{
+                      objectPosition: values[3]?.imagePosition || '50% 50%',
+                      transform: values[3]?.imageScale && values[3].imageScale !== 1 ? `scale(${values[3].imageScale})` : undefined,
+                    }}
                   />
                 </div>
                 <div className="flex items-center justify-center text-center px-6 md:px-0 order-1 md:order-2">

@@ -20,6 +20,17 @@ export default function GozumunNuruPageContent({ locale }: GozumunNuruPageConten
   const category = content.gozumunNuruCategory;
   const products = (category?.products || []) as Array<{ id: number; name: string; subtitle: string; image: string; link?: string; slug?: string }>;
 
+  // Admin'den kaydedilen bölüm içerikleri (categories.content JSON)
+  const gnSections = (() => {
+    try { return category?.content ? JSON.parse(category.content as string) : {}; } catch { return {}; }
+  })();
+  const splitImage = gnSections.splitImage || "/images/trend-right.jpg";
+  const splitImagePosition = gnSections.splitImagePosition || "50% 50%";
+  const splitImageScale = gnSections.splitImageScale || 1;
+  const darkBgImage = gnSections.darkBgImage || "/images/parallax-bg.jpg";
+  const darkBgImagePosition = gnSections.darkBgImagePosition || "50% 50%";
+  const darkBgImageScale = gnSections.darkBgImageScale || 1;
+
   return (
     <>
       <Header
@@ -54,8 +65,8 @@ export default function GozumunNuruPageContent({ locale }: GozumunNuruPageConten
             {t('collection.brand')}
           </p>
           <h1
-            className="text-[50px] md:text-[80px] lg:text-[100px] leading-[1.05] text-white mb-10"
-            style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
+            className="text-[28px] md:text-[40px] lg:text-[52px] leading-[1.05] text-white mb-10 lowercase"
+            style={{ fontFamily: 'Buljirya, cursive' }}
           >
             {t('collection.title')}
           </h1>
@@ -112,10 +123,14 @@ export default function GozumunNuruPageContent({ locale }: GozumunNuruPageConten
           {/* Left - Image */}
           <div className="lg:w-1/2 relative h-[450px] lg:h-auto">
             <Image
-              src={getAssetPath("/images/trend-right.jpg")}
+              src={getAssetPath(splitImage)}
               alt={t('collection.title')}
               fill
               className="object-cover"
+              style={{
+                objectPosition: splitImagePosition,
+                transform: splitImageScale !== 1 ? `scale(${splitImageScale})` : undefined,
+              }}
             />
           </div>
 
@@ -230,10 +245,14 @@ export default function GozumunNuruPageContent({ locale }: GozumunNuruPageConten
         {/* Background */}
         <div className="absolute inset-0">
           <Image
-            src={getAssetPath("/images/parallax-bg.jpg")}
+            src={getAssetPath(darkBgImage)}
             alt="Background"
             fill
             className="object-cover"
+            style={{
+              objectPosition: darkBgImagePosition,
+              transform: darkBgImageScale !== 1 ? `scale(${darkBgImageScale})` : undefined,
+            }}
           />
           <div className="absolute inset-0 bg-[#2f3237]/90" />
         </div>

@@ -5646,22 +5646,22 @@ export default function AdminPanel() {
                   />
                   <InputField
                     label="Instagram 1 (kullanıcı adı)"
-                    value={(content.contact as Record<string, unknown>)?.instagram1 as string || "@gozumunnuru.antalya"}
+                    value={(content.contact as Record<string, unknown>)?.instagram1 as string ?? ""}
                     onChange={(v) => updateField("contact", "instagram1", v)}
                   />
                   <InputField
                     label="Instagram 1 URL"
-                    value={(content.contact as Record<string, unknown>)?.instagram1Url as string || "https://www.instagram.com/gozumunnuru.antalya"}
+                    value={(content.contact as Record<string, unknown>)?.instagram1Url as string ?? ""}
                     onChange={(v) => updateField("contact", "instagram1Url", v)}
                   />
                   <InputField
                     label="Instagram 2 (kullanıcı adı)"
-                    value={(content.contact as Record<string, unknown>)?.instagram2 as string || "@hankuyumculuk_"}
+                    value={(content.contact as Record<string, unknown>)?.instagram2 as string ?? ""}
                     onChange={(v) => updateField("contact", "instagram2", v)}
                   />
                   <InputField
                     label="Instagram 2 URL"
-                    value={(content.contact as Record<string, unknown>)?.instagram2Url as string || "https://www.instagram.com/hankuyumculuk_"}
+                    value={(content.contact as Record<string, unknown>)?.instagram2Url as string ?? ""}
                     onChange={(v) => updateField("contact", "instagram2Url", v)}
                   />
                   <InputField

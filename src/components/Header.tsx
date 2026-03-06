@@ -367,7 +367,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                   </button>
                   <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'max-h-[300px]' : 'max-h-0'}`}>
                     <div className="flex flex-col items-center py-2">
-                      <Link href={lp('collection/light-of-my-eyes')} className="py-2 text-[18px] text-[#5b5b5b] leading-[45px]" onClick={toggleMobileMenu}>{t('header.submenu.lightOfMyEyes')}</Link>
+                      <Link href={lp('collection/light-of-my-eyes')} className="py-2 text-[18px] text-[#5b5b5b] leading-[45px] lowercase" style={{ fontFamily: 'Buljirya, cursive' }} onClick={toggleMobileMenu}>{t('header.submenu.lightOfMyEyes')}</Link>
                     </div>
                   </div>
                 </div>
@@ -497,7 +497,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               {activeMenu === 'koleksiyon' && (
                 <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
                   <Link href={lp('collection/light-of-my-eyes')} className="group flex items-center gap-4 hover:font-bold transition-all">
-                    {t('header.submenu.lightOfMyEyes')}
+                    <span className="lowercase" style={{ fontFamily: 'Buljirya, cursive' }}>{t('header.submenu.lightOfMyEyes')}</span>
                     <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </div>

@@ -20,6 +20,8 @@ interface ProductDetailPageProps {
   productTitle: string;
   description: string;
   bannerImage: string;
+  bannerImagePosition?: string;
+  bannerImageScale?: number;
   galleryImages: string[];
   goldWeight?: number | string | null;
   goldKarat?: number | string | null;
@@ -32,6 +34,8 @@ export default function ProductDetailPage({
   productTitle,
   description,
   bannerImage,
+  bannerImagePosition,
+  bannerImageScale,
   galleryImages,
   goldWeight,
   goldKarat,
@@ -177,6 +181,10 @@ export default function ProductDetailPage({
                 alt={productName}
                 fill
                 className="object-cover"
+                style={{
+                  objectPosition: bannerImagePosition || '50% 50%',
+                  transform: bannerImageScale && bannerImageScale !== 1 ? `scale(${bannerImageScale})` : undefined,
+                }}
               />
             </div>
           </div>

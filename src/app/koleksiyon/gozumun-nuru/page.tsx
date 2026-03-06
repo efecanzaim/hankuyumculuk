@@ -82,7 +82,7 @@ export default function GozumunNuruPage() {
             />
             <span>Koleksiyonu</span>
           </p>
-          <h1 className="text-[50px] md:text-[80px] lg:text-[100px] leading-[1.05] text-white mb-10" style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}>
+          <h1 className="text-[28px] md:text-[40px] lg:text-[52px] leading-[1.05] text-white mb-10 lowercase" style={{ fontFamily: 'Buljirya, cursive' }}>
             {category?.heroTitle || "Gözümün Nuru"}
           </h1>
           <div className="w-[80px] h-px bg-primary mx-auto mb-10" />

@@ -18,6 +18,12 @@ export default function HediyePageContent({ locale }: HediyePageContentProps) {
   const content = useContent(locale);
   const t = useTranslation(locale);
 
+  // Admin'den kaydedilen hediye sayfası verileri
+  const hediyePage = (content as Record<string, unknown>).hediyePage as { heroImage?: string; heroImagePosition?: string; heroImageScale?: number } | undefined;
+  const heroImage = hediyePage?.heroImage || "/images/hediye-menu-hero.jpg";
+  const heroImagePosition = hediyePage?.heroImagePosition || "50% 50%";
+  const heroImageScale = hediyePage?.heroImageScale || 1;
+
   const categories = [
     {
       title: t('gifts.catRing'),
@@ -61,11 +67,15 @@ export default function HediyePageContent({ locale }: HediyePageContentProps) {
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
-            src={getAssetPath("/images/hediye-menu-hero.jpg")}
+            src={getAssetPath(heroImage)}
             alt={t('gifts.title')}
             fill
             className="object-cover"
             priority
+            style={{
+              objectPosition: heroImagePosition,
+              transform: heroImageScale !== 1 ? `scale(${heroImageScale})` : undefined,
+            }}
           />
           <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/70" />
         </div>

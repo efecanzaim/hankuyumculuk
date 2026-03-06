@@ -20,7 +20,10 @@
       "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" log --oneline -10)",
       "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" show 830a110:src/components/ProductListingPage.tsx)",
       "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" show HEAD:src/components/ProductListingPage.tsx)",
-      "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" show HEAD:src/components/pages/ProductCategoryPageContent.tsx)"
+      "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" show HEAD:src/components/pages/ProductCategoryPageContent.tsx)",
+      "Bash(grep -rn \"objectPosition\\\\|imagePosition\" src/components/*.tsx)",
+      "Bash(grep -rn \"imagePosition\\\\|heroImagePosition\" src/components/pages/*.tsx)",
+      "Bash(grep -n \"splitImagePosition\\\\|darkBgImagePosition\" src/components/pages/*.tsx)"
     ]
   }
 }

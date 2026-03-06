@@ -33,6 +33,10 @@ interface Product {
   image: string;
   bannerImage: string;
   banner_image: string;
+  bannerImagePosition?: string;
+  bannerImageScale?: number;
+  imagePosition?: string;
+  imageScale?: number;
   galleryImages: string[];
   gallery_images: string[];
   gold_weight?: number | string | null;
@@ -280,6 +284,8 @@ export default function ProductPageClient({ slug, initialProduct, locale = 'tr' 
         productTitle={getLocalizedField(product, 'subtitle', locale)}
         description={getLocalizedField(product, 'description', locale)}
         bannerImage={product.bannerImage || product.banner_image || ""}
+        bannerImagePosition={product.bannerImagePosition}
+        bannerImageScale={product.bannerImageScale}
         galleryImages={product.galleryImages || product.gallery_images || []}
         goldWeight={product.gold_weight}
         goldKarat={product.gold_karat}

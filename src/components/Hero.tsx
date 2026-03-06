@@ -10,36 +10,74 @@ interface Slide {
   subtitle: string;
   ctaText: string;
   ctaLink: string;
+  imagePosition?: string;
+  imageScale?: number;
 }
 
 interface HeroProps {
   slides: Slide[];
 }
 
+const isVideo = (src: string | undefined) =>
+  !!src && /\.(mp4|webm|ogg)$/i.test(src);
+
 export default function Hero({ slides }: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [showContent, setShowContent] = useState(false);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const currentSlideRef = useRef(0);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const resetAutoPlay = useCallback(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 10000);
-  }, [slides.length]);
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+  }, []);
 
-  useEffect(() => {
-    resetAutoPlay();
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [resetAutoPlay]);
-
-  const goToSlide = (index: number) => {
+  const goToSlide = useCallback((index: number) => {
+    clearTimer();
+    currentSlideRef.current = index;
     setCurrentSlide(index);
-    resetAutoPlay();
-  };
+    setShowContent(false);
+  }, [clearTimer]);
+
+  const goToNext = useCallback(() => {
+    goToSlide((currentSlideRef.current + 1) % slides.length);
+  }, [goToSlide, slides.length]);
+
+  // Video bittiğinde: içeriği göster, 5s sonra sonraki slide'a geç
+  const handleVideoEnded = useCallback((index: number) => {
+    if (index !== currentSlideRef.current) return;
+    setShowContent(true);
+    timerRef.current = setTimeout(goToNext, 5000);
+  }, [goToNext]);
+
+  // Slide değiştiğinde video kontrolü ve görsel slide için zamanlayıcı
+  useEffect(() => {
+    clearTimer();
+
+    // Video kontrolü: aktif olanı başlat, diğerlerini durdur
+    videoRefs.current.forEach((video, i) => {
+      if (!video) return;
+      if (i === currentSlide) {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+        video.currentTime = 0;
+      }
+    });
+
+    // Görsel slide ise içeriği hemen göster, 10s sonra geç
+    const bgImage = slides[currentSlide]?.backgroundImage || '';
+    if (!isVideo(bgImage)) {
+      setShowContent(true);
+      timerRef.current = setTimeout(goToNext, 10000);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSlide]);
+
+  useEffect(() => () => clearTimer(), [clearTimer]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -52,29 +90,13 @@ export default function Hero({ slides }: HeroProps) {
 
   const handleTouchEnd = () => {
     const diff = touchStartX.current - touchEndX.current;
-    const threshold = 50;
-
-    if (Math.abs(diff) > threshold) {
-      if (diff > 0) {
-        // Sola kaydırma - sonraki slide
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-      } else {
-        // Sağa kaydırma - önceki slide
-        setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-      }
-      resetAutoPlay();
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goToSlide((currentSlide + 1) % slides.length);
+      else goToSlide((currentSlide - 1 + slides.length) % slides.length);
     }
   };
 
-  const isVideo = (src: string | undefined) => {
-    if (!src) return false;
-    return src.endsWith('.mp4') || src.endsWith('.webm') || src.endsWith('.ogg');
-  };
-
-  // Eğer slides yoksa veya boşsa, hiçbir şey gösterme
-  if (!slides || slides.length === 0) {
-    return null;
-  }
+  if (!slides || slides.length === 0) return null;
 
   return (
     <section
@@ -87,34 +109,38 @@ export default function Hero({ slides }: HeroProps) {
       {slides.map((s, index) => {
         const bgImage = s.backgroundImage || '';
         return (
-        <div
-          key={index}
-          className="absolute inset-0"
-          style={{
-            opacity: index === currentSlide ? 1 : 0,
-            transition: "opacity 1.5s ease-in-out",
-            zIndex: index === currentSlide ? 1 : 0,
-          }}
-        >
-          {isVideo(bgImage) ? (
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover"
-            >
-              <source src={getAssetPath(bgImage)} type="video/mp4" />
-            </video>
-          ) : bgImage ? (
-            <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-              style={{ backgroundImage: `url(${getAssetPath(bgImage)})` }}
-            />
-          ) : null}
-        </div>
-      )})}
-
+          <div
+            key={index}
+            className="absolute inset-0"
+            style={{
+              opacity: index === currentSlide ? 1 : 0,
+              transition: "opacity 1.5s ease-in-out",
+              zIndex: index === currentSlide ? 1 : 0,
+            }}
+          >
+            {isVideo(bgImage) ? (
+              <video
+                ref={(el) => { videoRefs.current[index] = el; }}
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+                onEnded={() => handleVideoEnded(index)}
+              >
+                <source src={getAssetPath(bgImage)} type="video/mp4" />
+              </video>
+            ) : bgImage ? (
+              <div
+                className="absolute inset-0 bg-cover bg-no-repeat"
+                style={{
+                  backgroundImage: `url(${getAssetPath(bgImage)})`,
+                  backgroundPosition: s.imagePosition || 'center',
+                  transform: s.imageScale && s.imageScale !== 1 ? `scale(${s.imageScale})` : undefined,
+                }}
+              />
+            ) : null}
+          </div>
+        );
+      })}
 
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-linear-to-b from-[#2f3237]/50 via-transparent to-transparent z-2" />
@@ -131,18 +157,37 @@ export default function Hero({ slides }: HeroProps) {
               pointerEvents: index === currentSlide ? "auto" : "none",
             }}
           >
-            <h1 className="font-title text-[40px] leading-[40px] md:text-[70px] md:leading-[100px] text-center mb-4 md:mb-6 tracking-wide whitespace-pre-line">
-              {slide.title}
-            </h1>
-            <p className="text-[15px] leading-[30px] md:text-[20px] md:leading-[30px] font-light tracking-wide mb-6 md:mb-8 text-center max-w-[280px] md:max-w-2xl uppercase">
-              {slide.subtitle}
-            </p>
-            <Link
-              href={slide.ctaLink || "#"}
-              className="border border-white w-[250px] h-[50px] flex items-center justify-center text-[15px] font-light tracking-wide hover:bg-white hover:text-[#2f3237] transition-colors duration-300 text-center"
+            {/* Video oynarken gizli, video bitince 5s bekleme sırasında animasyonla belirir */}
+            <div
+              className="flex flex-col items-center"
+              style={{
+                opacity: index === currentSlide && showContent ? 1 : 0,
+                transform: index === currentSlide && showContent ? 'translateY(0)' : 'translateY(28px)',
+                transition: index === currentSlide
+                  ? 'opacity 1s ease 0.15s, transform 1s ease 0.15s'
+                  : 'none',
+              }}
             >
-              {slide.ctaText}
-            </Link>
+              <h1
+                className="font-title text-[40px] leading-[40px] md:text-[70px] md:leading-[100px] text-center mb-4 md:mb-6 tracking-wide whitespace-pre-line"
+                style={{ textShadow: '0 2px 12px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.9)' }}
+              >
+                {slide.title}
+              </h1>
+              <p
+                className="text-[15px] leading-[30px] md:text-[20px] md:leading-[30px] font-light tracking-wide mb-6 md:mb-8 text-center max-w-[280px] md:max-w-2xl uppercase"
+                style={{ textShadow: '0 1px 8px rgba(0,0,0,0.8)' }}
+              >
+                {slide.subtitle}
+              </p>
+              <Link
+                href={slide.ctaLink || "#"}
+                className="border border-white w-[250px] h-[50px] flex items-center justify-center text-[15px] font-light tracking-wide hover:bg-white hover:text-[#2f3237] transition-colors duration-300 text-center"
+                style={{ textShadow: '0 1px 6px rgba(0,0,0,0.8)' }}
+              >
+                {slide.ctaText}
+              </Link>
+            </div>
           </div>
         ))}
 

@@ -229,7 +229,7 @@ try {
         try {
             $stmt = $db->query("
                 SELECT cp.category_id, cp.product_id, cp.sort_order,
-                       p.id, p.slug, p.main_image, p.name, p.subtitle, p.is_active{$productMultilangCols}
+                       p.id, p.slug, p.main_image, p.name, p.subtitle, p.is_active, p.image_position, p.image_scale{$productMultilangCols}
                 FROM category_products cp
                 INNER JOIN products p ON cp.product_id = p.id
                 WHERE cp.is_active = 1 AND p.is_active = 1
@@ -253,7 +253,9 @@ try {
                     'subtitle' => $cp['subtitle'] ?? '',
                     'subtitle_en' => $cp['subtitle_en'] ?? '',
                     'subtitle_ru' => $cp['subtitle_ru'] ?? '',
-                    'sort_order' => (int)$cp['sort_order']
+                    'sort_order' => (int)$cp['sort_order'],
+                    'image_position' => $cp['image_position'] ?? '50% 50%',
+                    'image_scale' => (float)($cp['image_scale'] ?? 1),
                 ];
             }
         } catch (PDOException $e) {
@@ -267,7 +269,7 @@ try {
     if (!$tableExists || empty($productsByCategory)) {
         try {
             $stmt = $db->query("
-                SELECT id, slug, main_image, name, subtitle, category_id, sort_order{$productMultilangColsDirect}
+                SELECT id, slug, main_image, name, subtitle, category_id, sort_order, image_position, image_scale{$productMultilangColsDirect}
                 FROM products
                 WHERE is_active = 1 AND category_id IS NOT NULL
                 ORDER BY category_id, CASE WHEN sort_order = 0 THEN 999999 ELSE sort_order END ASC, name ASC
@@ -290,7 +292,9 @@ try {
                         'subtitle' => $p['subtitle'] ?? '',
                         'subtitle_en' => $p['subtitle_en'] ?? '',
                         'subtitle_ru' => $p['subtitle_ru'] ?? '',
-                        'sort_order' => (int)$p['sort_order']
+                        'sort_order' => (int)$p['sort_order'],
+                        'image_position' => $p['image_position'] ?? '50% 50%',
+                        'image_scale' => (float)($p['image_scale'] ?? 1),
                     ];
                 }
             }
@@ -311,7 +315,9 @@ try {
                 'image' => $p['main_image'] ?? '',
                 'name' => getLocalizedValue($p, 'name', $locale),
                 'subtitle' => getLocalizedValue($p, 'subtitle', $locale),
-                'link' => '/urun/' . ($p['slug'] ?? '')
+                'link' => '/urun/' . ($p['slug'] ?? ''),
+                'imagePosition' => $p['image_position'] ?? '50% 50%',
+                'imageScale' => (float)($p['image_scale'] ?? 1),
             ];
         }, $catProducts);
         
@@ -409,7 +415,9 @@ try {
                     'title' => getLocalizedValue($slide, 'title', $locale),
                     'subtitle' => getLocalizedValue($slide, 'subtitle', $locale),
                     'ctaText' => getLocalizedValue($slide, 'button_text', $locale),
-                    'ctaLink' => $slide['button_link'] ?? ''
+                    'ctaLink' => $slide['button_link'] ?? '',
+                    'imagePosition' => $slide['image_position'] ?? '50% 50%',
+                    'imageScale' => isset($slide['image_scale']) ? (float)$slide['image_scale'] : 1.0,
                 ];
             }, $heroSlides)
         ],
@@ -495,10 +503,10 @@ try {
             'email' => $contactInfo['email'] ?? '',
             'workingHours' => getLocalizedValue($contactInfo, 'working_hours', $locale),
             'mapEmbed' => $contactInfo['map_embed'] ?? '',
-            'instagram1' => $contactInfo['instagram1'] ?? '@gozumunnuru.antalya',
-            'instagram1Url' => $contactInfo['instagram1_url'] ?? 'https://www.instagram.com/gozumunnuru.antalya',
-            'instagram2' => $contactInfo['instagram2'] ?? '@hankuyumculuk_',
-            'instagram2Url' => $contactInfo['instagram2_url'] ?? 'https://www.instagram.com/hankuyumculuk_'
+            'instagram1' => $contactInfo['instagram1'] ?? '',
+            'instagram1Url' => $contactInfo['instagram1_url'] ?? '',
+            'instagram2' => $contactInfo['instagram2'] ?? '',
+            'instagram2Url' => $contactInfo['instagram2_url'] ?? ''
         ],
         
         // Kategoriler (content.json formatında)
@@ -510,6 +518,28 @@ try {
         'prelovedCategory' => $categoriesByType['preloved']['preloved'] ?? null,
         'yatirimCategory' => $categoriesByType['yatirim']['yatirim'] ?? null,
         'ozelTasarimCategory' => $categoriesByType['ozel_tasarim']['ozel-tasarim'] ?? null,
+
+        // Hediye ve Hakkımızda sayfaları (pages tablosundan)
+        'hediyePage' => (function() use ($db) {
+            try {
+                $stmt = $db->prepare('SELECT * FROM pages WHERE slug = ? AND is_active = 1 LIMIT 1');
+                $stmt->execute(['hediye']);
+                $p = $stmt->fetch();
+                if (!$p) return null;
+                $sections = [];
+                if (!empty($p['content'])) {
+                    $sections = json_decode($p['content'], true) ?: [];
+                }
+                return [
+                    'heroImage' => $p['hero_image'] ?? '',
+                    'heroImagePosition' => $p['hero_image_position'] ?? '50% 50%',
+                    'heroImageScale' => isset($p['hero_image_scale']) ? (float)$p['hero_image_scale'] : 1.0,
+                    'sections' => $sections,
+                ];
+            } catch (Exception $e) {
+                return null;
+            }
+        })(),
 
         // Menü Görselleri
         'menuImages' => (function() use ($db) {

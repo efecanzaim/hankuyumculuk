@@ -65,13 +65,13 @@ export default function ProductListingPage({
             src={getAssetPath(heroImage)}
             alt={categoryTitle}
             fill
-            className="object-cover"
+            className="object-cover object-top md:object-center"
             priority
           />
         </div>
         
         {/* White Info Box - Overlapping the image */}
-        <div className="relative mx-auto w-[calc(100%-48px)] md:w-full max-w-[1190px] bg-white px-6 md:px-[120px] py-[40px] md:py-[80px] -mt-[200px] md:-mt-[200px] z-10">
+        <div className="relative mx-auto w-[calc(100%-48px)] md:w-full max-w-[1190px] bg-white px-6 md:px-[120px] py-[40px] md:py-[80px] md:-mt-[200px] z-10">
           {/* Hero Subtitle */}
           <h2 className="text-[20px] md:text-[30px] leading-[30px] text-[#2f3237] text-center mb-4" style={{ fontFamily: 'var(--font-faculty-glyphic)' }}>
             {heroSubtitle}

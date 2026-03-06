@@ -287,10 +287,10 @@ function saveSettingByKey($db, $key, $value) {
                     $value['email'] ?? '',
                     $value['workingHours'] ?? '',
                     $value['mapEmbed'] ?? '',
-                    $value['instagram1'] ?? '@gozumunnuru.antalya',
-                    $value['instagram1Url'] ?? 'https://www.instagram.com/gozumunnuru.antalya',
-                    $value['instagram2'] ?? '@hankuyumculuk_',
-                    $value['instagram2Url'] ?? 'https://www.instagram.com/hankuyumculuk_'
+                    $value['instagram1'] ?? '',
+                    $value['instagram1Url'] ?? '',
+                    $value['instagram2'] ?? '',
+                    $value['instagram2Url'] ?? ''
                 ];
                 if ($existing) {
                     $stmt = $db->prepare('UPDATE contact_info SET address=?, phone=?, email=?, working_hours=?, map_embed=?, instagram1=?, instagram1_url=?, instagram2=?, instagram2_url=? LIMIT 1');
@@ -317,6 +317,18 @@ function saveSettingByKey($db, $key, $value) {
 
         case 'hero':
             // Hero slides güncelle
+            // Auto-migration: image_position ve image_scale kolonlarını ekle (yoksa)
+            try {
+                $checkCol = $db->query("SHOW COLUMNS FROM hero_slides LIKE 'image_position'");
+                if ($checkCol->rowCount() === 0) {
+                    $db->exec("ALTER TABLE hero_slides
+                        ADD COLUMN image_position VARCHAR(50) DEFAULT '50% 50%' AFTER sort_order,
+                        ADD COLUMN image_scale DECIMAL(3,2) DEFAULT 1.00 AFTER image_position");
+                }
+            } catch (Exception $e) {
+                error_log('hero_slides migration error: ' . $e->getMessage());
+            }
+
             $slides = $value['slides'] ?? [];
 
             // Gönderilen slide ID'lerini topla
@@ -346,15 +358,17 @@ function saveSettingByKey($db, $key, $value) {
                 $buttonText = $slide['ctaText'] ?? $slide['buttonText'] ?? '';
                 $buttonLink = $slide['ctaLink'] ?? $slide['buttonLink'] ?? '';
                 $sortOrder = $index + 1;
+                $imagePosition = $slide['imagePosition'] ?? '50% 50%';
+                $imageScale = (float)($slide['imageScale'] ?? 1);
 
                 if ($id) {
                     // Mevcut slide'ı güncelle
-                    $stmt = $db->prepare('UPDATE hero_slides SET background_media=?, media_type=?, title=?, subtitle=?, button_text=?, button_link=?, sort_order=? WHERE id=?');
-                    $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink, $sortOrder, $id]);
+                    $stmt = $db->prepare('UPDATE hero_slides SET background_media=?, media_type=?, title=?, subtitle=?, button_text=?, button_link=?, sort_order=?, image_position=?, image_scale=? WHERE id=?');
+                    $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink, $sortOrder, $imagePosition, $imageScale, $id]);
                 } else {
                     // Yeni slide ekle
-                    $stmt = $db->prepare('INSERT INTO hero_slides (background_media, media_type, title, subtitle, button_text, button_link, sort_order, is_active) VALUES (?,?,?,?,?,?,?,1)');
-                    $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink, $sortOrder]);
+                    $stmt = $db->prepare('INSERT INTO hero_slides (background_media, media_type, title, subtitle, button_text, button_link, sort_order, image_position, image_scale, is_active) VALUES (?,?,?,?,?,?,?,?,?,1)');
+                    $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink, $sortOrder, $imagePosition, $imageScale]);
                 }
             }
             return true;
