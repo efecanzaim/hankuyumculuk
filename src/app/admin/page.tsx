@@ -46,6 +46,7 @@ type ContentType = Record<string, unknown>;
 interface ProductStone {
   id?: number;
   stone_type: string;
+  product_type?: string | null;
   carat: string | number; // API'den number, form'dan string gelebilir
   quantity: number;
   color: string;
@@ -81,6 +82,7 @@ interface Product {
   // Sertifika Bilgileri
   gold_weight?: string | number; // Form'da string, API'den number gelebilir
   gold_karat?: string | number; // Form'da string, API'den number gelebilir
+  product_type?: string | null;
   stones?: ProductStone[];
 }
 
@@ -3552,7 +3554,27 @@ export default function AdminPanel() {
                                           <FiTrash2 size={14} />
                                         </button>
                                       </div>
-                                      <div className="grid grid-cols-3 gap-2">
+                                      <div className="grid grid-cols-4 gap-2">
+                                        <div>
+                                          <label className="block text-[10px] text-gray-500 mb-1">Ürün Türü</label>
+                                          <select
+                                            value={stone.product_type || ""}
+                                            onChange={(e) => {
+                                              const newStones = [...(editingProduct.stones || [])];
+                                              newStones[idx] = { ...stone, product_type: e.target.value || null };
+                                              setEditingProduct({ ...editingProduct, stones: newStones });
+                                            }}
+                                            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                          >
+                                            <option value="">Seçin</option>
+                                            <option value="Yüzük">Yüzük</option>
+                                            <option value="Kolye">Kolye</option>
+                                            <option value="Küpe">Küpe</option>
+                                            <option value="Bileklik">Bileklik</option>
+                                            <option value="Set">Set</option>
+                                            <option value="Tesbih">Tesbih</option>
+                                          </select>
+                                        </div>
                                         <div>
                                           <label className="block text-[10px] text-gray-500 mb-1">Taş Türü</label>
                                           <select
@@ -3938,7 +3960,27 @@ export default function AdminPanel() {
                                     <FiTrash2 size={14} />
                                   </button>
                                 </div>
-                                <div className="grid grid-cols-3 gap-2">
+                                <div className="grid grid-cols-4 gap-2">
+                                  <div>
+                                    <label className="block text-[10px] text-gray-500 mb-1">Ürün Türü</label>
+                                    <select
+                                      value={stone.product_type || ""}
+                                      onChange={(e) => {
+                                        const newStones = [...(newProduct.stones || [])];
+                                        newStones[idx] = { ...stone, product_type: e.target.value || null };
+                                        setNewProduct({ ...newProduct, stones: newStones });
+                                      }}
+                                      className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
+                                    >
+                                      <option value="">Seçin</option>
+                                      <option value="Yüzük">Yüzük</option>
+                                      <option value="Kolye">Kolye</option>
+                                      <option value="Küpe">Küpe</option>
+                                      <option value="Bileklik">Bileklik</option>
+                                      <option value="Set">Set</option>
+                                      <option value="Tesbih">Tesbih</option>
+                                    </select>
+                                  </div>
                                   <div>
                                     <label className="block text-[10px] text-gray-500 mb-1">Taş Türü</label>
                                     <select
@@ -4793,6 +4835,7 @@ export default function AdminPanel() {
                     }}
                     contentLang={contentLang}
                     onLangChange={setContentLang}
+                    hideSubtitle={true}
                   />
 
                   {/* Ek Bölümler */}
@@ -4847,6 +4890,12 @@ export default function AdminPanel() {
                           onChange={(v: string) => setGnSections({ ...gnSections, splitText2: v })}
                           rows={3}
                         />
+                        <TextareaField
+                          label="Metin 3"
+                          value={gnSections.darkText3 || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, darkText3: v })}
+                          rows={2}
+                        />
                       </Section>
 
                       <Section title="Koleksiyon Başlıkları" subtitle="Ürün listesi üst başlıkları">
@@ -4873,12 +4922,6 @@ export default function AdminPanel() {
                           objectScale={gnSections.darkBgImageScale || 1}
                           onObjectScaleChange={(v: number) => setGnSections({ ...gnSections, darkBgImageScale: v })}
                         />
-                        <TextareaField
-                          label="Metin 1"
-                          value={gnSections.darkText1 || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, darkText1: v })}
-                          rows={2}
-                        />
                         <InputField
                           label="Metin 2"
                           value={gnSections.darkText2 || ""}
@@ -4888,12 +4931,6 @@ export default function AdminPanel() {
                           label="Metin 2 İtalik Kısmı"
                           value={gnSections.darkText2Cursive || ""}
                           onChange={(v: string) => setGnSections({ ...gnSections, darkText2Cursive: v })}
-                        />
-                        <TextareaField
-                          label="Metin 3"
-                          value={gnSections.darkText3 || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, darkText3: v })}
-                          rows={2}
                         />
                       </Section>
 
@@ -5835,7 +5872,8 @@ function CategorySection({
   onProductToggle,
   onSave,
   contentLang,
-  onLangChange
+  onLangChange,
+  hideSubtitle = false,
 }: {
   title: string;
   categoryKey: string;
@@ -5850,6 +5888,7 @@ function CategorySection({
   onSave?: (categoryId: number) => void;
   contentLang: 'tr' | 'en' | 'ru';
   onLangChange: (lang: 'tr' | 'en' | 'ru') => void;
+  hideSubtitle?: boolean;
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const category = categories.find(c => c.slug === categoryKey && c.parent_type === parentType);
@@ -5911,12 +5950,14 @@ function CategorySection({
           onChange={(v) => onUpdate(getFieldName("hero_title"), v)}
           placeholder={getPlaceholder("hero_title")}
         />
-        <InputFieldSimple
-          label={getFieldLabel("Hero Alt Başlık")}
-          value={getFieldValue("hero_subtitle") || (contentLang === 'tr' ? (categoryData?.heroSubtitle as string) || "" : "")}
-          onChange={(v) => onUpdate(getFieldName("hero_subtitle"), v)}
-          placeholder={getPlaceholder("hero_subtitle")}
-        />
+        {!hideSubtitle && (
+          <InputFieldSimple
+            label={getFieldLabel("Hero Alt Başlık")}
+            value={getFieldValue("hero_subtitle") || (contentLang === 'tr' ? (categoryData?.heroSubtitle as string) || "" : "")}
+            onChange={(v) => onUpdate(getFieldName("hero_subtitle"), v)}
+            placeholder={getPlaceholder("hero_subtitle")}
+          />
+        )}
         <TextareaFieldSimple
           label={getFieldLabel("Hero Açıklama")}
           value={getFieldValue("hero_description") || (contentLang === 'tr' ? (categoryData?.heroDescription as string) || "" : "")}

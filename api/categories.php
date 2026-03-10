@@ -13,6 +13,16 @@ require_once 'auth.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $db = getDB();
 
+// content kolonu yoksa ekle (migration)
+try {
+    $cols = $db->query("SHOW COLUMNS FROM categories LIKE 'content'")->fetchAll();
+    if (empty($cols)) {
+        $db->exec("ALTER TABLE categories ADD COLUMN content LONGTEXT AFTER hero_description");
+    }
+} catch (Exception $e) {
+    error_log('Migration content column error: ' . $e->getMessage());
+}
+
 // Eksik varsayılan kategorileri otomatik oluştur
 try {
     $defaultCategories = [

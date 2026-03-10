@@ -7,6 +7,7 @@ import { getAssetPath } from "@/utils/paths";
 interface Stone {
   id?: number;
   stone_type: string;
+  product_type?: string | null;
   carat: number | string | null;
   quantity: number;
   color?: string;
@@ -309,7 +310,8 @@ export default function ProductDetailPage({
                 {stones && stones.length > 0 && (
                   <div className="mb-[40px]">
                     {/* Tablo Başlıkları */}
-                    <div className="grid grid-cols-6 gap-4 mb-[20px]">
+                    <div className={`grid ${stones.some(s => s.product_type) ? 'grid-cols-7' : 'grid-cols-6'} gap-4 mb-[20px]`}>
+                      {stones.some(s => s.product_type) && <div />}
                       <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
                         Taş
                       </div>
@@ -336,7 +338,12 @@ export default function ProductDetailPage({
                     {/* Taş Satırları */}
                     {stones.map((stone, index) => (
                       <div key={index}>
-                        <div className="grid grid-cols-6 gap-4 mb-[20px]">
+                        <div className={`grid ${stones.some(s => s.product_type) ? 'grid-cols-7' : 'grid-cols-6'} gap-4 mb-[20px]`}>
+                          {stones.some(s => s.product_type) && (
+                            <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                              {stone.product_type || ''}
+                            </div>
+                          )}
                           <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
                             {stone.stone_type}
                           </div>

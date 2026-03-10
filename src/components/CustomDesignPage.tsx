@@ -127,16 +127,6 @@ export default function CustomDesignPage() {
           </p>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-          <span 
-            className="text-[11px] tracking-[0.2em] text-white/50 uppercase"
-            style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
-          >
-            {s.scrollText}
-          </span>
-          <div className="w-px h-[40px] bg-white/30 animate-pulse" />
-        </div>
       </section>
 
       {/* Philosophy Section - Elegant Split Layout */}

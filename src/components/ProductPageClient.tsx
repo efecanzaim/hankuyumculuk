@@ -41,6 +41,7 @@ interface Product {
   gallery_images: string[];
   gold_weight?: number | string | null;
   gold_karat?: number | string | null;
+  product_type?: string | null;
   stones?: Stone[];
 }
 

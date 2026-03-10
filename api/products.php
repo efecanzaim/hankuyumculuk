@@ -25,6 +25,16 @@ try {
     error_log('products banner_image_position migration error: ' . $e->getMessage());
 }
 
+// Auto-migration: product_stones.product_type yoksa ekle
+try {
+    $checkPT = $db->query("SHOW COLUMNS FROM product_stones LIKE 'product_type'");
+    if ($checkPT->rowCount() === 0) {
+        $db->exec("ALTER TABLE product_stones ADD COLUMN product_type VARCHAR(50) DEFAULT NULL AFTER stone_type");
+    }
+} catch (Exception $e) {
+    error_log('product_stones product_type migration error: ' . $e->getMessage());
+}
+
 switch ($method) {
     case 'GET':
         // Ürünleri getir
@@ -151,8 +161,8 @@ switch ($method) {
         $goldKarat = isset($data['gold_karat']) && $data['gold_karat'] !== '' ? (int)$data['gold_karat'] : null;
 
         $stmt = $db->prepare('
-            INSERT INTO products (category_id, slug, name, name_en, name_ru, subtitle, subtitle_en, subtitle_ru, description, description_en, description_ru, main_image, banner_image, banner_image_position, banner_image_scale, gallery_images, image_position, image_scale, gold_weight, gold_karat, is_featured, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO products (category_id, slug, name, name_en, name_ru, subtitle, subtitle_en, subtitle_ru, description, description_en, description_ru, main_image, banner_image, banner_image_position, banner_image_scale, gallery_images, image_position, image_scale, gold_weight, gold_karat, product_type, is_featured, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ');
         $stmt->execute([
             $data['categoryId'] ?? $data['category_id'] ?? null,
@@ -175,6 +185,7 @@ switch ($method) {
             $data['imageScale'] ?? $data['image_scale'] ?? 1,
             $goldWeight,
             $goldKarat,
+            $data['product_type'] ?? $data['productType'] ?? null,
             $data['isFeatured'] ?? $data['is_featured'] ?? 0,
             $data['sortOrder'] ?? $data['sort_order'] ?? 0
         ]);
@@ -184,8 +195,8 @@ switch ($method) {
         // Taş bilgilerini ekle (varsa)
         if (!empty($data['stones']) && is_array($data['stones'])) {
             $stoneStmt = $db->prepare('
-                INSERT INTO product_stones (product_id, stone_type, carat, quantity, color, clarity, cut, sort_order)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO product_stones (product_id, stone_type, product_type, carat, quantity, color, clarity, cut, sort_order)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ');
             foreach ($data['stones'] as $index => $stone) {
                 $stoneCarat = null;
@@ -196,6 +207,7 @@ switch ($method) {
                 $stoneStmt->execute([
                     $insertId,
                     $stone['stone_type'] ?? 'Pırlanta',
+                    $stone['product_type'] ?? null,
                     $stoneCarat,
                     $stone['quantity'] ?? 1,
                     $stone['color'] ?? '',
@@ -244,7 +256,7 @@ switch ($method) {
             'main_image', 'banner_image', 'gallery_images',
             'image_position', 'image_scale',
             'banner_image_position', 'banner_image_scale',
-            'gold_weight', 'gold_karat',
+            'gold_weight', 'gold_karat', 'product_type',
             'is_featured', 'sort_order', 'is_active'
         ];
 
@@ -264,6 +276,7 @@ switch ($method) {
             'isActive' => 'is_active',
             'goldWeight' => 'gold_weight',
             'goldKarat' => 'gold_karat',
+            'productType' => 'product_type',
             'nameEn' => 'name_en',
             'nameRu' => 'name_ru',
             'subtitleEn' => 'subtitle_en',
@@ -354,8 +367,8 @@ switch ($method) {
             // Yeni taşları ekle
             if (!empty($stones)) {
                 $stoneStmt = $db->prepare('
-                    INSERT INTO product_stones (product_id, stone_type, carat, quantity, color, clarity, cut, sort_order)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO product_stones (product_id, stone_type, product_type, carat, quantity, color, clarity, cut, sort_order)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ');
                 foreach ($stones as $index => $stone) {
                     $stoneCarat = null;
@@ -366,6 +379,7 @@ switch ($method) {
                     $stoneStmt->execute([
                         $id,
                         $stone['stone_type'] ?? 'Pırlanta',
+                        $stone['product_type'] ?? null,
                         $stoneCarat,
                         $stone['quantity'] ?? 1,
                         $stone['color'] ?? '',
@@ -460,6 +474,7 @@ function formatProduct($product) {
             $stones[] = [
                 'id' => (int)$stone['id'],
                 'stone_type' => $stone['stone_type'],
+                'product_type' => $stone['product_type'] ?? null,
                 'carat' => $stone['carat'],
                 'quantity' => (int)$stone['quantity'],
                 'color' => $stone['color'],
@@ -518,6 +533,7 @@ function formatProduct($product) {
         'image_scale' => $product['image_scale'] ? (float)$product['image_scale'] : 1,
         'gold_weight' => $product['gold_weight'] ?? null,
         'gold_karat' => $product['gold_karat'] ?? null,
+        'product_type' => $product['product_type'] ?? null,
         'stones' => $stones,
         'isFeatured' => (bool)$product['is_featured'],
         'is_featured' => (bool)$product['is_featured'],

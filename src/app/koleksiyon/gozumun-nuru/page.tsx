@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useContent } from "@/hooks/useContent";
+import { useLocale } from "@/i18n/LocaleContext";
 import Link from "next/link";
 import Image from "next/image";
 import { getAssetPath } from "@/utils/paths";
@@ -32,8 +33,15 @@ function WhiteSpaceText({ text, className, style }: { text: string; className?: 
   return <p className={className} style={style}>{text}</p>;
 }
 
+const sloganSvg: Record<string, string> = {
+  tr: "/footer-slogan.svg",
+  en: "/footer-slogan-en.svg",
+  ru: "/footer-slogan-ru.svg",
+};
+
 export default function GozumunNuruPage() {
   const content = useContent();
+  const locale = useLocale();
   const category = content.gozumunNuruCategory;
   const products = (category?.products || []) as Array<{ id: number; name: string; subtitle: string; image: string; link?: string; slug?: string }>;
 
@@ -85,14 +93,16 @@ export default function GozumunNuruPage() {
           <h1 className="text-[28px] md:text-[40px] lg:text-[52px] leading-[1.05] text-white mb-10 lowercase" style={{ fontFamily: 'Buljirya, cursive' }}>
             {category?.heroTitle || "Gözümün Nuru"}
           </h1>
-          <div className="w-[80px] h-px bg-primary mx-auto mb-10" />
-          <p className="text-[18px] md:text-[22px] leading-[1.8] text-white/85 font-light max-w-[700px] mx-auto" style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}>
-            {category?.heroSubtitle || "Değerini yitirmeyen bir yakınlıktan doğdu"}
-          </p>
         </div>
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-          <span className="text-[11px] tracking-[0.2em] text-white/50 uppercase" style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}>Keşfedin</span>
-          <div className="w-px h-[40px] bg-white/30 animate-pulse" />
+        {/* Footer Slogan SVG */}
+        <div className="absolute bottom-8 left-0 right-0 flex justify-center z-10">
+          <Image
+            src={getAssetPath(sloganSvg[locale] || sloganSvg.tr)}
+            alt="slogan"
+            width={480}
+            height={60}
+            style={{ opacity: 0.85, filter: 'brightness(0) invert(1)' }}
+          />
         </div>
       </section>
 
@@ -143,6 +153,11 @@ export default function GozumunNuruPage() {
               <WhiteSpaceText
                 text={s.splitText2}
                 className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75 whitespace-pre-line"
+                style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
+              />
+              <WhiteSpaceText
+                text={s.darkText3}
+                className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75 whitespace-pre-line mt-8"
                 style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
               />
               <div className="w-[60px] h-[2px] bg-primary mt-10" />
@@ -228,11 +243,6 @@ export default function GozumunNuruPage() {
           <div className="absolute inset-0 bg-[#2f3237]/90" />
         </div>
         <div className="relative z-10 max-w-[900px] mx-auto px-6 text-center space-y-8">
-          <WhiteSpaceText
-            text={s.darkText1}
-            className="text-[18px] md:text-[20px] leading-[1.9] font-light text-white/85 whitespace-pre-line"
-            style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
-          />
           <p className="text-[20px] md:text-[26px] leading-[1.8] font-light text-white/85" style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}>
             <Image
               src={getAssetPath("/images/han-logo.svg")}
@@ -247,12 +257,6 @@ export default function GozumunNuruPage() {
               {s.darkText2Cursive}
             </span>
           </p>
-          <div className="w-[80px] h-px bg-primary mx-auto my-12" />
-          <WhiteSpaceText
-            text={s.darkText3}
-            className="text-[17px] md:text-[18px] leading-loose font-light text-white/60 whitespace-pre-line"
-            style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
-          />
         </div>
       </section>
 

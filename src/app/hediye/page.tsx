@@ -142,10 +142,6 @@ export default function HediyePage() {
             {pageData?.heroSubtitle || "Kalplerde bir iz olarak kalan özel günler vardır"}
           </p>
         </div>
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-          <span className="text-[11px] tracking-[0.2em] text-white/50 uppercase" style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}>Keşfedin</span>
-          <div className="w-px h-[40px] bg-white/30 animate-pulse" />
-        </div>
       </section>
 
       {/* Philosophy Section */}
