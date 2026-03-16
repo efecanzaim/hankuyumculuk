@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useContent } from "@/hooks/useContent";
-import { useLocale } from "@/i18n/LocaleContext";
+
 import Link from "next/link";
 import Image from "next/image";
 import { getAssetPath } from "@/utils/paths";
@@ -33,15 +33,8 @@ function WhiteSpaceText({ text, className, style }: { text: string; className?: 
   return <p className={className} style={style}>{text}</p>;
 }
 
-const sloganSvg: Record<string, string> = {
-  tr: "/footer-slogan.svg",
-  en: "/footer-slogan-en.svg",
-  ru: "/footer-slogan-ru.svg",
-};
-
 export default function GozumunNuruPage() {
   const content = useContent();
-  const locale = useLocale();
   const category = content.gozumunNuruCategory;
   const products = (category?.products || []) as Array<{ id: number; name: string; subtitle: string; image: string; link?: string; slug?: string }>;
 
@@ -94,11 +87,11 @@ export default function GozumunNuruPage() {
             {category?.heroTitle || "Gözümün Nuru"}
           </h1>
         </div>
-        {/* Footer Slogan SVG */}
+        {/* Hero SVG */}
         <div className="absolute bottom-8 left-0 right-0 flex justify-center z-10">
           <Image
-            src={getAssetPath(sloganSvg[locale] || sloganSvg.tr)}
-            alt="slogan"
+            src={getAssetPath("/gozumunnuru-hero.svg")}
+            alt="Gözümün Nuru"
             width={480}
             height={60}
             style={{ opacity: 0.85, filter: 'brightness(0) invert(1)' }}

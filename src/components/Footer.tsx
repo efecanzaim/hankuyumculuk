@@ -136,7 +136,8 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
                     <li key={linkIndex}>
                       <Link
                         href={link.href}
-                        className="font-normal text-[13px] leading-[26px] text-[#2f3237] hover:opacity-70 transition-opacity"
+                        className={`font-normal text-[13px] leading-[26px] text-[#2f3237] hover:opacity-70 transition-opacity ${link.href.includes('gozumun-nuru') ? 'lowercase' : ''}`}
+                        style={link.href.includes('gozumun-nuru') ? { fontFamily: 'Buljirya, cursive' } : undefined}
                       >
                         {link.text}
                       </Link>
