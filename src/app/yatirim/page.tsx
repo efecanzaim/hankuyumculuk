@@ -36,7 +36,6 @@ export default function YatirimPage() {
       <Footer
         logo={content.footer.logo}
         slogan={content.footer.slogan}
-        description={content.footer.description}
         columns={content.footer.columns}
         socialLinks={content.footer.socialLinks}
         copyright={content.footer.copyright}

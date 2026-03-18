@@ -692,9 +692,30 @@ export default function AdminPanel() {
         }
       }
 
+      // EN/RU içerikleri de localStorage'a kaydet
+      try {
+        if (contentEn) {
+          const cleanedEn = cleanContentForStorage(contentEn);
+          localStorage.setItem("admin_saved_content_en", JSON.stringify(cleanedEn));
+        }
+        if (contentRu) {
+          const cleanedRu = cleanContentForStorage(contentRu);
+          localStorage.setItem("admin_saved_content_ru", JSON.stringify(cleanedRu));
+        }
+      } catch {
+        console.warn("EN/RU localStorage'a kaydedilemedi");
+      }
+
       // Eğer API_URL tanımlıysa (production), PHP API'ye de kaydet
       if (API_URL) {
-        // Tüm içeriği tek seferde kaydet
+        // Çeviri destekli section listesi (bu key'ler için EN/RU de gönderilecek)
+        const translatableSections = [
+          "top_banner", "hero", "trend_section", "story_section",
+          "featured_products_section", "special_design_section",
+          "blog_section", "footer", "contact"
+        ];
+
+        // Tüm içeriği tek seferde kaydet (TR)
         const allSections = [
           { key: "top_banner", value: content?.topBanner },
           { key: "header", value: content?.header },
@@ -727,6 +748,7 @@ export default function AdminPanel() {
           { key: "iletisim_page", value: content?.iletisimPage },
         ];
 
+        // TR kayıt
         const savePromises = allSections
           .filter(section => section.value)
           .map(section =>
@@ -737,6 +759,60 @@ export default function AdminPanel() {
               body: JSON.stringify({ key: section.key, value: section.value }),
             })
           );
+
+        // EN kayıt - sadece çevirilebilir section'lar
+        if (contentEn) {
+          const enSections = [
+            { key: "top_banner", value: contentEn.topBanner },
+            { key: "hero", value: contentEn.hero },
+            { key: "trend_section", value: contentEn.trendSection },
+            { key: "story_section", value: contentEn.storySection },
+            { key: "featured_products_section", value: contentEn.featuredProductsSection },
+            { key: "special_design_section", value: contentEn.specialDesignSection },
+            { key: "blog_section", value: contentEn.blogSection },
+            { key: "footer", value: contentEn.footer },
+            { key: "contact", value: contentEn.contact },
+          ];
+          enSections
+            .filter(s => s.value)
+            .forEach(s => {
+              savePromises.push(
+                fetch(`${API_URL}/api/settings.php`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  credentials: "include",
+                  body: JSON.stringify({ key: s.key, value: s.value, locale: "en" }),
+                })
+              );
+            });
+        }
+
+        // RU kayıt - sadece çevirilebilir section'lar
+        if (contentRu) {
+          const ruSections = [
+            { key: "top_banner", value: contentRu.topBanner },
+            { key: "hero", value: contentRu.hero },
+            { key: "trend_section", value: contentRu.trendSection },
+            { key: "story_section", value: contentRu.storySection },
+            { key: "featured_products_section", value: contentRu.featuredProductsSection },
+            { key: "special_design_section", value: contentRu.specialDesignSection },
+            { key: "blog_section", value: contentRu.blogSection },
+            { key: "footer", value: contentRu.footer },
+            { key: "contact", value: contentRu.contact },
+          ];
+          ruSections
+            .filter(s => s.value)
+            .forEach(s => {
+              savePromises.push(
+                fetch(`${API_URL}/api/settings.php`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  credentials: "include",
+                  body: JSON.stringify({ key: s.key, value: s.value, locale: "ru" }),
+                })
+              );
+            });
+        }
 
         const results = await Promise.all(savePromises);
         const hasError = results.some(r => !r.ok);
@@ -3187,12 +3263,6 @@ export default function AdminPanel() {
                     value={getLocalizedValue("footer", "slogan") as string || ""}
                     onChange={(v) => updateField("footer", "slogan", v)}
                     placeholder={contentLang !== 'tr' ? (content?.footer as Record<string, unknown>)?.slogan as string : undefined}
-                  />
-                  <TextareaField
-                    label={`Açıklama${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
-                    value={getLocalizedValue("footer", "description") as string || ""}
-                    onChange={(v) => updateField("footer", "description", v)}
-                    placeholder={contentLang !== 'tr' ? (content?.footer as Record<string, unknown>)?.description as string : undefined}
                   />
                   <InputField
                     label={`Telif Hakkı${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}

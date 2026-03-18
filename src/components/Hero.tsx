@@ -12,6 +12,7 @@ interface Slide {
   ctaLink: string;
   imagePosition?: string;
   imageScale?: number;
+  poster?: string;
 }
 
 interface HeroProps {
@@ -21,9 +22,17 @@ interface HeroProps {
 const isVideo = (src: string | undefined) =>
   !!src && /\.(mp4|webm|ogg)$/i.test(src);
 
+// Sadece aktif slide ve bir sonraki slide'ı yükle
+function shouldLoadSlide(index: number, current: number, total: number) {
+  if (index === current) return true;
+  const next = (current + 1) % total;
+  return index === next;
+}
+
 export default function Hero({ slides }: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showContent, setShowContent] = useState(false);
+  const [loadedSlides, setLoadedSlides] = useState<Set<number>>(new Set([0]));
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const currentSlideRef = useRef(0);
@@ -51,6 +60,17 @@ export default function Hero({ slides }: HeroProps) {
     setShowContent(true);
     timerRef.current = setTimeout(goToNext, 5000);
   }, [goToNext]);
+
+  // Aktif slide ve bir sonraki slide'ı yükleme kuyruğuna ekle
+  useEffect(() => {
+    const next = (currentSlide + 1) % slides.length;
+    setLoadedSlides(prev => {
+      const updated = new Set(prev);
+      updated.add(currentSlide);
+      updated.add(next);
+      return updated;
+    });
+  }, [currentSlide, slides.length]);
 
   // Slide değiştiğinde video kontrolü ve görsel slide için zamanlayıcı
   useEffect(() => {
@@ -108,27 +128,33 @@ export default function Hero({ slides }: HeroProps) {
       {/* Background Images/Videos */}
       {slides.map((s, index) => {
         const bgImage = s.backgroundImage || '';
+        const isActive = index === currentSlide;
+        const shouldLoad = loadedSlides.has(index) || shouldLoadSlide(index, currentSlide, slides.length);
         return (
           <div
             key={index}
             className="absolute inset-0"
             style={{
-              opacity: index === currentSlide ? 1 : 0,
+              opacity: isActive ? 1 : 0,
               transition: "opacity 1.5s ease-in-out",
-              zIndex: index === currentSlide ? 1 : 0,
+              zIndex: isActive ? 1 : 0,
             }}
           >
             {isVideo(bgImage) ? (
-              <video
-                ref={(el) => { videoRefs.current[index] = el; }}
-                muted
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
-                onEnded={() => handleVideoEnded(index)}
-              >
-                <source src={getAssetPath(bgImage)} type="video/mp4" />
-              </video>
-            ) : bgImage ? (
+              shouldLoad ? (
+                <video
+                  ref={(el) => { videoRefs.current[index] = el; }}
+                  muted
+                  playsInline
+                  preload={isActive ? "auto" : "none"}
+                  poster={s.poster ? getAssetPath(s.poster) : undefined}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onEnded={() => handleVideoEnded(index)}
+                >
+                  <source src={getAssetPath(bgImage)} type="video/mp4" />
+                </video>
+              ) : null
+            ) : bgImage && shouldLoad ? (
               <div
                 className="absolute inset-0 bg-cover bg-no-repeat"
                 style={{

@@ -43,7 +43,6 @@ export default function UrunPage() {
         <Footer
           logo={content.footer.logo}
           slogan={content.footer.slogan}
-          description={content.footer.description}
           columns={content.footer.columns}
           copyright={content.footer.copyright}
           socialLinks={content.footer.socialLinks}
@@ -52,6 +51,6 @@ export default function UrunPage() {
     );
   }
 
-  return <ProductPageClient slug={slug} initialProduct={null} />;
+  return <ProductPageClient slug={slug} initialProduct={null} locale="tr" />;
 }
 

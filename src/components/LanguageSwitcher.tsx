@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LOCALES, DEFAULT_LOCALE, routeMap, getPageIdFromPath } from "@/i18n/config";
+import { LOCALES, DEFAULT_LOCALE, routeMap, getPageIdFromPath, getSlugFromPath, getLocaleFromPath } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
 
 interface LanguageSwitcherProps {
@@ -22,13 +22,20 @@ export default function LanguageSwitcher({ currentLocale, className = "", textCl
 
   // Mevcut sayfanın pageId'sini bul
   const pageId = getPageIdFromPath(pathname);
+  const currentPathLocale = getLocaleFromPath(pathname);
+  // Dinamik sayfalardaki slug'ı koru (örn: /urun/YZK-180001 -> YZK-180001)
+  const slug = pageId ? getSlugFromPath(pathname, pageId, currentPathLocale) : null;
 
   return (
     <div className={`flex items-center gap-1 ${className}`}>
       {LOCALES.map((locale, index) => {
         const isActive = locale === currentLocale;
         // Bu dil için hedef URL'yi hesapla
-        const targetPath = pageId ? (routeMap[locale]?.[pageId] || '/') : (locale === DEFAULT_LOCALE ? '/' : `/${locale}`);
+        let targetPath = pageId ? (routeMap[locale]?.[pageId] || '/') : (locale === DEFAULT_LOCALE ? '/' : `/${locale}`);
+        // Slug varsa hedef URL'ye ekle
+        if (slug && pageId) {
+          targetPath = targetPath + '/' + slug;
+        }
 
         return (
           <span key={locale} className="flex items-center">

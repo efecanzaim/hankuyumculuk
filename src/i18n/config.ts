@@ -101,11 +101,22 @@ function buildReverseMap(locale: Locale): Record<string, string> {
   return reverse;
 }
 
+// Page IDs that support dynamic sub-paths (e.g. /product/SLUG)
+const dynamicPageIds = ['product'];
+
 /** Resolve a localized path to a pageId */
 export function resolvePageId(locale: Locale, pathSegments: string[]): string | null {
   const reverse = buildReverseMap(locale);
   const path = '/' + pathSegments.join('/');
-  return reverse[path] || null;
+  // Exact match first
+  if (reverse[path]) return reverse[path];
+  // Prefix match for dynamic routes (e.g. /product/YZK-180001 -> product)
+  for (const [routePath, pageId] of Object.entries(reverse)) {
+    if (dynamicPageIds.includes(pageId) && path.startsWith(routePath + '/')) {
+      return pageId;
+    }
+  }
+  return null;
 }
 
 /** Get localized path for a given pageId and locale */
@@ -152,8 +163,24 @@ export function getLocaleFromPath(pathname: string): Locale {
 /** Get pageId from any pathname */
 export function getPageIdFromPath(pathname: string): string | null {
   const locale = getLocaleFromPath(pathname);
+  // Exact match first
   for (const [pageId, path] of Object.entries(routeMap[locale])) {
     if (path === pathname) return pageId;
+  }
+  // Prefix match for dynamic routes (e.g. /urun/YZK-180001 -> product)
+  for (const [pageId, path] of Object.entries(routeMap[locale])) {
+    if (dynamicPageIds.includes(pageId) && pathname.startsWith(path + '/')) {
+      return pageId;
+    }
+  }
+  return null;
+}
+
+/** Extract the dynamic segment (slug) from a pathname for a given pageId */
+export function getSlugFromPath(pathname: string, pageId: string, locale: Locale): string | null {
+  const basePath = routeMap[locale]?.[pageId];
+  if (basePath && pathname.startsWith(basePath + '/')) {
+    return pathname.slice(basePath.length + 1);
   }
   return null;
 }

@@ -23,7 +23,23 @@
       "Bash(git -C \"C:/Users/demas/Desktop/hankuyumculuk\" show HEAD:src/components/pages/ProductCategoryPageContent.tsx)",
       "Bash(grep -rn \"objectPosition\\\\|imagePosition\" src/components/*.tsx)",
       "Bash(grep -rn \"imagePosition\\\\|heroImagePosition\" src/components/pages/*.tsx)",
-      "Bash(grep -n \"splitImagePosition\\\\|darkBgImagePosition\" src/components/pages/*.tsx)"
+      "Bash(grep -n \"splitImagePosition\\\\|darkBgImagePosition\" src/components/pages/*.tsx)",
+      "Bash(grep -E \"\\\\.\\(mp4|webm|jpg|jpeg|png|webp\\)$\")",
+      "Bash(grep -l \"next/image\" /c/Users/demas/Desktop/hankuyumculuk/src/components/*.tsx)",
+      "Bash(grep -n \"from \"\"next/image\"\"\" /c/Users/demas/Desktop/hankuyumculuk/src/components/*.tsx)",
+      "Bash(ffmpeg -version)",
+      "Bash(winget install:*)",
+      "Bash(export PATH=\"/c/Users/demas/AppData/Local/Microsoft/WinGet/Links:$PATH\")",
+      "Bash(where.exe ffmpeg:*)",
+      "Read(//c/Users/demas/**)",
+      "Read(//c//**)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/ProgramData/**)",
+      "Bash(FFMPEG=\"/c/Users/demas/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1-full_build/bin/ffmpeg.exe\")",
+      "Bash(\"$FFMPEG\" -version)",
+      "Bash(while read:*)",
+      "Bash(do sed:*)",
+      "Bash(awk '/INSERT INTO `products`/,/;/' \"c:/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk.sql\")"
     ]
   }
 }

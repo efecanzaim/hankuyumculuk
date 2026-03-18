@@ -45,9 +45,11 @@ switch ($method) {
 
         $key = $data['key'];
         $value = $data['value'] ?? null;
+        $locale = $data['locale'] ?? 'tr';
+        if (!in_array($locale, ['tr', 'en', 'ru'])) $locale = 'tr';
 
         try {
-            $result = saveSettingByKey($db, $key, $value);
+            $result = saveSettingByKey($db, $key, $value, $locale);
             if ($result) {
                 jsonResponse(['success' => true, 'message' => 'Ayar güncellendi']);
             } else {
@@ -75,16 +77,22 @@ function getSettingByKey($db, $key) {
     return $setting ? parseSettingValue($setting) : null;
 }
 
-function saveSettingByKey($db, $key, $value) {
+function saveSettingByKey($db, $key, $value, $locale = 'tr') {
+    // Locale suffix for _en / _ru columns
+    $ls = ($locale !== 'tr') ? '_' . $locale : '';
+
     switch ($key) {
         case 'top_banner':
             $text = $value['text'] ?? '';
+            if ($locale !== 'tr') {
+                // Sadece çeviri alanını güncelle
+                $stmt = $db->prepare("UPDATE top_banner SET text{$ls} = ? LIMIT 1");
+                return $stmt->execute([$text]);
+            }
             $link = $value['link'] ?? '';
             $visible = ($value['visible'] ?? true) ? 1 : 0;
-            
             $stmt = $db->query('SELECT id FROM top_banner LIMIT 1');
             $existing = $stmt->fetch();
-            
             if ($existing) {
                 $stmt = $db->prepare('UPDATE top_banner SET text = ?, link = ?, is_visible = ? LIMIT 1');
                 return $stmt->execute([$text, $link, $visible]);
@@ -93,9 +101,10 @@ function saveSettingByKey($db, $key, $value) {
             return $stmt->execute([$text, $link, $visible]);
 
         case 'header':
+            // Header alanları dil bağımsız (logo, logoAlt)
+            if ($locale !== 'tr') return true;
             $logo = $value['logo'] ?? '/images/logo.png';
             $logoAlt = $value['logoAlt'] ?? 'Han Kuyumculuk';
-            
             $stmt = $db->query('SELECT id FROM header_settings LIMIT 1');
             if ($stmt->fetch()) {
                 $stmt = $db->prepare('UPDATE header_settings SET logo_image = ?, logo_alt = ? LIMIT 1');
@@ -105,8 +114,11 @@ function saveSettingByKey($db, $key, $value) {
             return $stmt->execute([$logo, $logoAlt]);
 
         case 'trend_section':
+            if ($locale !== 'tr') {
+                $stmt = $db->prepare("UPDATE homepage_trend_section SET left_title{$ls}=?, right_title{$ls}=? LIMIT 1");
+                return $stmt->execute([$value['leftTitle'] ?? '', $value['rightTitle'] ?? '']);
+            }
             $stmt = $db->query('SELECT id FROM homepage_trend_section LIMIT 1');
-            // Konum/zoom sütunları var mı kontrol et
             $hasAdjustCols = false;
             try {
                 $checkCol = $db->query("SHOW COLUMNS FROM homepage_trend_section LIKE 'left_image_position'");
@@ -140,6 +152,7 @@ function saveSettingByKey($db, $key, $value) {
             }
 
         case 'parallax_section':
+            if ($locale !== 'tr') return true; // Görsel, çeviri yok
             $bg = $value['backgroundImage'] ?? '';
             $stmt = $db->query('SELECT id FROM homepage_parallax_section LIMIT 1');
             if ($stmt->fetch()) {
@@ -150,6 +163,10 @@ function saveSettingByKey($db, $key, $value) {
             return $stmt->execute([$bg]);
 
         case 'story_section':
+            if ($locale !== 'tr') {
+                $stmt = $db->prepare("UPDATE homepage_story_section SET title{$ls}=?, main_text{$ls}=?, sub_text{$ls}=?, link_text{$ls}=? LIMIT 1");
+                return $stmt->execute([$value['title'] ?? '', $value['mainText'] ?? '', $value['subText'] ?? '', $value['linkText'] ?? '']);
+            }
             $stmt = $db->query('SELECT id FROM homepage_story_section LIMIT 1');
             $params = [$value['title'] ?? '', $value['mainText'] ?? '', $value['subText'] ?? '', $value['linkText'] ?? '', $value['linkUrl'] ?? ''];
             if ($stmt->fetch()) {
@@ -160,6 +177,10 @@ function saveSettingByKey($db, $key, $value) {
             return $stmt->execute($params);
 
         case 'featured_products_section':
+            if ($locale !== 'tr') {
+                $stmt = $db->prepare("UPDATE homepage_featured_section SET title_part1{$ls}=?, title_part2{$ls}=? LIMIT 1");
+                return $stmt->execute([$value['titlePart1'] ?? '', $value['titlePart2'] ?? '']);
+            }
             $stmt = $db->query('SELECT id FROM homepage_featured_section LIMIT 1');
             $params = [$value['titlePart1'] ?? '', $value['titlePart2'] ?? '', $value['bannerImage1'] ?? '', $value['bannerImage2'] ?? ''];
             if ($stmt->fetch()) {
@@ -170,7 +191,26 @@ function saveSettingByKey($db, $key, $value) {
             return $stmt->execute($params);
 
         case 'special_design_section':
-            // Başlık kaydet
+            if ($locale !== 'tr') {
+                // Başlık çevirisi
+                $stmt = $db->prepare("UPDATE homepage_special_section SET title_part1{$ls}=?, title_part2{$ls}=? LIMIT 1");
+                $stmt->execute([$value['titlePart1'] ?? '', $value['titlePart2'] ?? '']);
+                // Kart çevirileri - sort_order ile eşleştir
+                $topCards = $value['topCards'] ?? [];
+                foreach ($topCards as $i => $card) {
+                    $sortOrder = $i + 1;
+                    $stmt = $db->prepare("UPDATE homepage_cards SET title{$ls}=?, subtitle{$ls}=?, button_text{$ls}=? WHERE section_type='top' AND sort_order=?");
+                    $stmt->execute([$card['title'] ?? '', $card['subtitle'] ?? '', $card['buttonText'] ?? '', $sortOrder]);
+                }
+                $bottomCards = $value['bottomCards'] ?? [];
+                foreach ($bottomCards as $i => $card) {
+                    $sortOrder = $i + 1;
+                    $stmt = $db->prepare("UPDATE homepage_cards SET title{$ls}=?, subtitle{$ls}=?, button_text{$ls}=? WHERE section_type='bottom' AND sort_order=?");
+                    $stmt->execute([$card['title'] ?? '', $card['subtitle'] ?? '', $card['buttonText'] ?? '', $sortOrder]);
+                }
+                return true;
+            }
+            // TR kayıt (mevcut davranış)
             $stmt = $db->query('SELECT id FROM homepage_special_section LIMIT 1');
             $params = [$value['titlePart1'] ?? '', $value['titlePart2'] ?? ''];
             if ($stmt->fetch()) {
@@ -237,6 +277,10 @@ function saveSettingByKey($db, $key, $value) {
             return true;
 
         case 'blog_section':
+            if ($locale !== 'tr') {
+                $stmt = $db->prepare("UPDATE homepage_blog_section SET title{$ls}=?, subtitle{$ls}=?, description{$ls}=?, additional_text{$ls}=?, link_text{$ls}=? LIMIT 1");
+                return $stmt->execute([$value['title'] ?? '', $value['subtitle'] ?? '', $value['description'] ?? '', $value['additionalText'] ?? '', $value['linkText'] ?? '']);
+            }
             $stmt = $db->query('SELECT id FROM homepage_blog_section LIMIT 1');
             $params = [$value['title'] ?? '', $value['subtitle'] ?? '', $value['description'] ?? '', $value['additionalText'] ?? '', $value['image'] ?? '', $value['linkText'] ?? '', $value['linkUrl'] ?? ''];
             if ($stmt->fetch()) {
@@ -247,6 +291,10 @@ function saveSettingByKey($db, $key, $value) {
             return $stmt->execute($params);
 
         case 'footer':
+            if ($locale !== 'tr') {
+                $stmt = $db->prepare("UPDATE footer_settings SET slogan{$ls}=?, copyright_text{$ls}=? LIMIT 1");
+                return $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '']);
+            }
             $stmt = $db->query('SELECT id FROM footer_settings LIMIT 1');
             $params = [$value['logo'] ?? '', $value['slogan'] ?? '', $value['copyright'] ?? ''];
             if ($stmt->fetch()) {
@@ -257,6 +305,10 @@ function saveSettingByKey($db, $key, $value) {
             return $stmt->execute($params);
 
         case 'contact':
+            if ($locale !== 'tr') {
+                $stmt = $db->prepare("UPDATE contact_info SET address{$ls}=?, working_hours{$ls}=? LIMIT 1");
+                return $stmt->execute([$value['address'] ?? '', $value['workingHours'] ?? '']);
+            }
             // Instagram sütunlarının varlığını kontrol et, yoksa ekle
             $hasInstagramCols = false;
             try {
@@ -299,7 +351,6 @@ function saveSettingByKey($db, $key, $value) {
                 $stmt = $db->prepare('INSERT INTO contact_info (address, phone, email, working_hours, map_embed, instagram1, instagram1_url, instagram2, instagram2_url) VALUES (?,?,?,?,?,?,?,?,?)');
                 return $stmt->execute($params);
             } else {
-                // Instagram sütunları eklenemedi, temel alanları kaydet
                 $params = [
                     $value['address'] ?? '',
                     $value['phone'] ?? '',
@@ -316,8 +367,22 @@ function saveSettingByKey($db, $key, $value) {
             }
 
         case 'hero':
-            // Hero slides güncelle
-            // Auto-migration: image_position ve image_scale kolonlarını ekle (yoksa)
+            if ($locale !== 'tr') {
+                // Sadece çeviri alanlarını güncelle (slide silme/ekleme yapmadan)
+                $slides = $value['slides'] ?? [];
+                foreach ($slides as $slide) {
+                    $id = $slide['id'] ?? null;
+                    if ($id) {
+                        $title = $slide['title'] ?? '';
+                        $subtitle = $slide['subtitle'] ?? '';
+                        $buttonText = $slide['ctaText'] ?? $slide['buttonText'] ?? '';
+                        $stmt = $db->prepare("UPDATE hero_slides SET title{$ls}=?, subtitle{$ls}=?, button_text{$ls}=? WHERE id=?");
+                        $stmt->execute([$title, $subtitle, $buttonText, $id]);
+                    }
+                }
+                return true;
+            }
+            // TR kayıt (mevcut davranış)
             try {
                 $checkCol = $db->query("SHOW COLUMNS FROM hero_slides LIKE 'image_position'");
                 if ($checkCol->rowCount() === 0) {
@@ -345,7 +410,6 @@ function saveSettingByKey($db, $key, $value) {
                 $stmt = $db->prepare("DELETE FROM hero_slides WHERE id NOT IN ($placeholders)");
                 $stmt->execute($sentIds);
             } else {
-                // Hiç ID yoksa tümünü sil (hepsi yeni eklenecek)
                 $db->exec('DELETE FROM hero_slides');
             }
 
@@ -362,11 +426,9 @@ function saveSettingByKey($db, $key, $value) {
                 $imageScale = (float)($slide['imageScale'] ?? 1);
 
                 if ($id) {
-                    // Mevcut slide'ı güncelle
                     $stmt = $db->prepare('UPDATE hero_slides SET background_media=?, media_type=?, title=?, subtitle=?, button_text=?, button_link=?, sort_order=?, image_position=?, image_scale=? WHERE id=?');
                     $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink, $sortOrder, $imagePosition, $imageScale, $id]);
                 } else {
-                    // Yeni slide ekle
                     $stmt = $db->prepare('INSERT INTO hero_slides (background_media, media_type, title, subtitle, button_text, button_link, sort_order, image_position, image_scale, is_active) VALUES (?,?,?,?,?,?,?,?,?,1)');
                     $stmt->execute([$backgroundMedia, $mediaType, $title, $subtitle, $buttonText, $buttonLink, $sortOrder, $imagePosition, $imageScale]);
                 }

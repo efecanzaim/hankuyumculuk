@@ -334,7 +334,6 @@ export default function HediyePageContent({ locale }: HediyePageContentProps) {
       <Footer
         logo={content.footer.logo}
         slogan={content.footer.slogan}
-        description={content.footer.description}
         columns={content.footer.columns}
         copyright={content.footer.copyright}
         socialLinks={content.footer.socialLinks}

@@ -34,7 +34,7 @@ interface FooterColumn {
 interface FooterProps {
   logo: string;
   slogan: string;
-  description: string;
+  description?: string;
   columns: FooterColumn[];
   copyright: string;
   socialLinks?: { instagram?: string };
@@ -106,13 +106,6 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
         </div>
 
         <div className="relative z-10 max-w-[1430px] mx-auto px-4 md:px-8 pt-[60px] md:pt-[100px]">
-          {/* Description - Shown first on mobile */}
-          <div className="text-center max-w-[420px] md:max-w-[708px] mx-auto px-2 md:px-6">
-            <p className="font-light text-[20px] leading-[30px] text-[#2f3237]">
-              {renderWithLogo(description, 18)}
-            </p>
-          </div>
-
           {/* Slogan */}
           <div className="text-center mt-[20px] md:mt-[10px]">
             <Image
