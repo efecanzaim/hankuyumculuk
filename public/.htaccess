@@ -16,6 +16,41 @@
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^urun/.+ /urun/index.html [L]
 
+  # EN - Product detail pages
+  RewriteCond %{REQUEST_URI} ^/en/product/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^en/product/.+ /en/product/index.html [L]
+
+  # EN - Blog detail pages
+  RewriteCond %{REQUEST_URI} ^/en/blog/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^en/blog/.+ /en/blog/index.html [L]
+
+  # RU - Product detail pages (tovar)
+  RewriteCond %{REQUEST_URI} ^/ru/tovar/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ru/tovar/.+ /ru/tovar/index.html [L]
+
+  # RU - Blog detail pages
+  RewriteCond %{REQUEST_URI} ^/ru/blog/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ru/blog/.+ /ru/blog/index.html [L]
+
+  # TR - Sertifika sayfaları
+  RewriteCond %{REQUEST_URI} ^/sertifika/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^sertifika/.+ /sertifika/index.html [L]
+
+  # EN - Certificate pages
+  RewriteCond %{REQUEST_URI} ^/en/certificate/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^en/certificate/.+ /en/certificate/index.html [L]
+
+  # RU - Certificate pages (sertifikat)
+  RewriteCond %{REQUEST_URI} ^/ru/sertifikat/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ru/sertifikat/.+ /ru/sertifikat/index.html [L]
+
   # Trailing slash yoksa ve dizin varsa, trailing slash ekle (SEO için)
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteCond %{REQUEST_URI} !(.*)/$
@@ -29,6 +64,14 @@
   # Eğer path/index.html varsa, onu sun (trailing slash olmadan)
   RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_URI}/index.html -f
   RewriteRule ^(.*)$ $1/index.html [L]
+
+  # EN SPA fallback - /en/* için /en/index.html'e yönlendir
+  RewriteCond %{REQUEST_URI} ^/en/
+  RewriteRule ^en/.+ /en/index.html [L]
+
+  # RU SPA fallback - /ru/* için /ru/index.html'e yönlendir
+  RewriteCond %{REQUEST_URI} ^/ru/
+  RewriteRule ^ru/.+ /ru/index.html [L]
 
   # Hiçbiri değilse, ana index.html'e yönlendir (SPA fallback)
   RewriteRule ^ /index.html [L]

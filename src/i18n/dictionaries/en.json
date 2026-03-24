@@ -245,6 +245,25 @@
     "goldPurity": "Gold Purity",
     "certificates": "Certificate Information"
   },
+  "certificate": {
+    "title": "Product Certificate",
+    "productCode": "Product Code",
+    "goldWeight": "Gold Weight",
+    "goldPurity": "Gold Karat",
+    "stoneDetails": "Stone Details",
+    "stone": "Stone",
+    "carat": "Carat",
+    "quantity": "Qty",
+    "color": "Color",
+    "clarity": "Clarity",
+    "cut": "Cut",
+    "address": "Address",
+    "phone": "Phone",
+    "printCertificate": "Print Certificate",
+    "notFound": "Certificate not found",
+    "notFoundDesc": "Please enter a valid certificate URL.",
+    "grams": "g"
+  },
   "careWarranty": {
     "title": "Care & Warranty Terms"
   },

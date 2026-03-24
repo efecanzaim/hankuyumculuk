@@ -1,7 +1,7 @@
 import { getLocaleStaticParams } from "@/i18n/config";
 import CatchAllPageClient from "@/components/pages/CatchAllPageClient";
 
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return getLocaleStaticParams();

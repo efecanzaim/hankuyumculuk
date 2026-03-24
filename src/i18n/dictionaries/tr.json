@@ -245,6 +245,25 @@
     "goldPurity": "Altın Ayar",
     "certificates": "Sertifika Bilgileri"
   },
+  "certificate": {
+    "title": "Ürün Sertifikası",
+    "productCode": "Ürün Kodu",
+    "goldWeight": "Altın Ağırlığı",
+    "goldPurity": "Altın Ayar",
+    "stoneDetails": "Taş Bilgileri",
+    "stone": "Taş",
+    "carat": "Karat",
+    "quantity": "Adet",
+    "color": "Renk",
+    "clarity": "Berraklık",
+    "cut": "Kesim",
+    "address": "Adres",
+    "phone": "Telefon",
+    "printCertificate": "Sertifikayı Yazdır",
+    "notFound": "Sertifika bulunamadı",
+    "notFoundDesc": "Geçerli bir sertifika URL'si girin.",
+    "grams": "gr"
+  },
   "careWarranty": {
     "title": "Bakım ve Garanti Koşulları"
   },

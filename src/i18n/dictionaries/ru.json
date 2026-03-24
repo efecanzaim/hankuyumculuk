@@ -245,6 +245,25 @@
     "goldPurity": "Проба золота",
     "certificates": "Сертификаты"
   },
+  "certificate": {
+    "title": "Сертификат товара",
+    "productCode": "Код товара",
+    "goldWeight": "Вес золота",
+    "goldPurity": "Проба золота",
+    "stoneDetails": "Информация о камнях",
+    "stone": "Камень",
+    "carat": "Карат",
+    "quantity": "Кол-во",
+    "color": "Цвет",
+    "clarity": "Чистота",
+    "cut": "Огранка",
+    "address": "Адрес",
+    "phone": "Телефон",
+    "printCertificate": "Распечатать сертификат",
+    "notFound": "Сертификат не найден",
+    "notFoundDesc": "Пожалуйста, введите действительный URL сертификата.",
+    "grams": "г"
+  },
   "careWarranty": {
     "title": "Условия ухода и гарантии"
   },

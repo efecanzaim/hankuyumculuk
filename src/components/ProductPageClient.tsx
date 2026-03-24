@@ -289,6 +289,7 @@ export default function ProductPageClient({ slug, initialProduct, locale = 'tr' 
         goldWeight={product.gold_weight}
         goldKarat={product.gold_karat}
         stones={product.stones}
+        locale={locale}
       />
       <Footer
         logo={content.footer.logo}

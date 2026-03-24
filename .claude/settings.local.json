@@ -39,7 +39,12 @@
       "Bash(\"$FFMPEG\" -version)",
       "Bash(while read:*)",
       "Bash(do sed:*)",
-      "Bash(awk '/INSERT INTO `products`/,/;/' \"c:/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk.sql\")"
+      "Bash(awk '/INSERT INTO `products`/,/;/' \"c:/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk.sql\")",
+      "Bash(grep -A 50 \"CREATE TABLE \\\\`contact_info\\\\`\" /c/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk.sql)",
+      "Bash(grep -A 5 \"INSERT INTO \\\\`contact_info\\\\`\" /c/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk.sql)",
+      "Bash(find /c/Users/demas/Desktop/hankuyumculuk -name content*.json -o -name *content* -type f)",
+      "Bash(grep -E \"\\\\.\\(json|ts\\)$\")",
+      "Bash(npm install:*)"
     ]
   }
 }

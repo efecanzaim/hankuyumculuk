@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { getAssetPath } from "@/utils/paths";
+import type { Locale } from "@/i18n/config";
 
 interface Stone {
   id?: number;
@@ -27,7 +28,48 @@ interface ProductDetailPageProps {
   goldWeight?: number | string | null;
   goldKarat?: number | string | null;
   stones?: Stone[];
+  locale?: Locale;
 }
+
+// Sertifika bölümü çevirileri
+const certLabels: Record<string, Record<Locale, string>> = {
+  title: { tr: 'Sertifika Bilgileri', en: 'Certificate Details', ru: 'Сертификат' },
+  stone: { tr: 'Taş', en: 'Stone', ru: 'Камень' },
+  carat: { tr: 'Karat', en: 'Carat', ru: 'Карат' },
+  quantity: { tr: 'Adet', en: 'Qty', ru: 'Кол-во' },
+  color: { tr: 'Renk', en: 'Color', ru: 'Цвет' },
+  clarity: { tr: 'Berraklık', en: 'Clarity', ru: 'Чистота' },
+  cut: { tr: 'Kesim', en: 'Cut', ru: 'Огранка' },
+  goldWeight: { tr: 'Altın Ağırlığı', en: 'Gold Weight', ru: 'Вес золота' },
+  goldKarat: { tr: 'Altın Ayar', en: 'Gold Karat', ru: 'Проба золота' },
+};
+
+// Taş türü çevirileri
+const stoneTypeMap: Record<string, Record<Locale, string>> = {
+  'Pırlanta': { tr: 'Pırlanta', en: 'Diamond', ru: 'Бриллиант' },
+  'Yakut': { tr: 'Yakut', en: 'Ruby', ru: 'Рубин' },
+  'Safir': { tr: 'Safir', en: 'Sapphire', ru: 'Сапфир' },
+  'Zümrüt': { tr: 'Zümrüt', en: 'Emerald', ru: 'Изумруд' },
+  'Tanzanit': { tr: 'Tanzanit', en: 'Tanzanite', ru: 'Танзанит' },
+  'Turmalin': { tr: 'Turmalin', en: 'Tourmaline', ru: 'Турмалин' },
+};
+
+// Kesim çevirileri
+const cutMap: Record<string, Record<Locale, string>> = {
+  'Yuvarlak': { tr: 'Yuvarlak', en: 'Round', ru: 'Круглая' },
+  'Zümrüt': { tr: 'Zümrüt', en: 'Emerald', ru: 'Изумрудная' },
+  'Markiz': { tr: 'Markiz', en: 'Marquise', ru: 'Маркиз' },
+  'Kalp': { tr: 'Kalp', en: 'Heart', ru: 'Сердце' },
+  'Armut': { tr: 'Armut', en: 'Pear', ru: 'Грушевидная' },
+  'Damla': { tr: 'Damla', en: 'Pear', ru: 'Грушевидная' },
+  'Yastık': { tr: 'Yastık', en: 'Cushion', ru: 'Кушон' },
+  'Radyan': { tr: 'Radyan', en: 'Radiant', ru: 'Радиант' },
+  'Işıltılı': { tr: 'Işıltılı', en: 'Radiant', ru: 'Радиант' },
+  'Oval': { tr: 'Oval', en: 'Oval', ru: 'Овальная' },
+  'Prenses': { tr: 'Prenses', en: 'Princess', ru: 'Принцесса' },
+  'Trapez': { tr: 'Trapez', en: 'Trapezoid', ru: 'Трапеция' },
+  'Baget': { tr: 'Baget', en: 'Baguette', ru: 'Багет' },
+};
 
 export default function ProductDetailPage({
   mainImage,
@@ -41,6 +83,7 @@ export default function ProductDetailPage({
   goldWeight,
   goldKarat,
   stones = [],
+  locale = 'tr',
 }: ProductDetailPageProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [bgColor, setBgColor] = useState("#ffffff");
@@ -94,27 +137,16 @@ export default function ProductDetailPage({
     return isNaN(parsed) ? null : parsed;
   };
 
-  // Kesim değerlerini İngilizce'ye çevir
-  const cutMapping: Record<string, string> = {
-    'Yuvarlak': 'Round',
-    'Zümrüt': 'Emerald',
-    'Markiz': 'Marquise',
-    'Kalp': 'Heart',
-    'Armut': 'Pear',
-    'Damla': 'Pear',
-    'Yastık': 'Cushion',
-    'Radyan': 'Radiant',
-    'Işıltılı': 'Radiant',
-    'Oval': 'Oval',
-    'Prenses': 'Princess',
-    'Trapez': 'Trapezoid',
-    'Baget': 'Baguette',
-  };
-
   const getCutName = (cut: string | undefined): string => {
     if (!cut) return '-';
-    return cutMapping[cut] || cut;
+    return cutMap[cut]?.[locale] || cut;
   };
+
+  const getStoneName = (stoneType: string): string => {
+    return stoneTypeMap[stoneType]?.[locale] || stoneType;
+  };
+
+  const label = (key: string): string => certLabels[key]?.[locale] || key;
 
   const goToPrevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
@@ -293,7 +325,7 @@ export default function ProductDetailPage({
                 className="text-[30px] leading-[30px] text-[#2f3237] mb-[20px] text-center"
                 style={{ fontFamily: 'var(--font-faculty-glyphic)' }}
               >
-                Sertifika Bilgileri
+                {label('title')}
               </h2>
               
               {/* Ürün Adı */}
@@ -313,22 +345,22 @@ export default function ProductDetailPage({
                     <div className={`grid ${stones.some(s => s.product_type) ? 'grid-cols-7' : 'grid-cols-6'} gap-4 mb-[20px]`}>
                       {stones.some(s => s.product_type) && <div />}
                       <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        Taş
+                        {label('stone')}
                       </div>
                       <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        Karat
+                        {label('carat')}
                       </div>
                       <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        Adet
+                        {label('quantity')}
                       </div>
                       <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        Renk
+                        {label('color')}
                       </div>
                       <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        Berraklık
+                        {label('clarity')}
                       </div>
                       <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        Kesim
+                        {label('cut')}
                       </div>
                     </div>
 
@@ -345,7 +377,7 @@ export default function ProductDetailPage({
                             </div>
                           )}
                           <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                            {stone.stone_type}
+                            {getStoneName(stone.stone_type)}
                           </div>
                           <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
                             {(() => {
@@ -386,12 +418,12 @@ export default function ProductDetailPage({
                     <div className="grid grid-cols-2 gap-4 mb-[20px]">
                       {goldWeight && (
                         <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                          Altın Ağırlığı
+                          {label('goldWeight')}
                         </div>
                       )}
                       {goldKarat && (
                         <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                          Altın Ayar
+                          {label('goldKarat')}
                         </div>
                       )}
                     </div>

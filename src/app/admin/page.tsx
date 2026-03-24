@@ -36,6 +36,7 @@ import {
   FiFileText,
   FiMaximize2
 } from "react-icons/fi";
+import { QRCodeCanvas } from "qrcode.react";
 import initialContent from "@/data/content.json";
 import initialContentEn from "@/data/content-en.json";
 import initialContentRu from "@/data/content-ru.json";
@@ -294,6 +295,7 @@ export default function AdminPanel() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [qrProduct, setQrProduct] = useState<Product | null>(null);
   const [newProduct, setNewProduct] = useState<Product>({
     category_id: null,
     categories: [],
@@ -3338,6 +3340,15 @@ export default function AdminPanel() {
                               <FiEdit3 size={16} />
                             </button>
                             <button
+                              onClick={() => setQrProduct(product)}
+                              className="p-2 text-gray-400 hover:text-[#d4af37] hover:bg-[#2a2a2a] rounded-lg"
+                              title="QR Kod"
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="2" y="2" width="8" height="8" rx="1" /><rect x="14" y="2" width="8" height="8" rx="1" /><rect x="2" y="14" width="8" height="8" rx="1" /><rect x="14" y="14" width="4" height="4" /><rect x="20" y="14" width="2" height="2" /><rect x="14" y="20" width="2" height="2" /><rect x="20" y="20" width="2" height="2" />
+                              </svg>
+                            </button>
+                            <button
                               onClick={() => product.id && handleDeleteProduct(product.id)}
                               className="p-2 text-gray-400 hover:text-red-400 hover:bg-[#2a2a2a] rounded-lg"
                               title="Sil"
@@ -3359,6 +3370,48 @@ export default function AdminPanel() {
                   )}
 
                   {/* Ürün Düzenleme Modal */}
+                  {/* QR Kod Modal */}
+                  {qrProduct && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+                      <div className="bg-[#1a1a1a] rounded-xl p-6 max-w-sm w-full mx-4">
+                        <h3 className="text-white text-lg font-semibold mb-1">QR Kod</h3>
+                        <p className="text-gray-400 text-sm mb-4">{qrProduct.name} - {qrProduct.subtitle}</p>
+                        <div id="qr-canvas" className="flex justify-center bg-white p-6 rounded-lg mb-4">
+                          <QRCodeCanvas
+                            value={`https://hankuyumculuk.com/sertifika/${qrProduct.slug}`}
+                            size={256}
+                            level="H"
+                          />
+                        </div>
+                        <p className="text-gray-500 text-xs text-center mb-4 break-all">
+                          https://hankuyumculuk.com/sertifika/{qrProduct.slug}
+                        </p>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              const canvas = document.querySelector('#qr-canvas canvas') as HTMLCanvasElement;
+                              if (!canvas) return;
+                              const url = canvas.toDataURL('image/png');
+                              const a = document.createElement('a');
+                              a.href = url;
+                              a.download = `qr-${qrProduct.slug}.png`;
+                              a.click();
+                            }}
+                            className="flex-1 bg-[#d4af37] text-black py-2.5 rounded-lg font-medium text-sm hover:bg-[#c4a030] transition-colors"
+                          >
+                            PNG İndir
+                          </button>
+                          <button
+                            onClick={() => setQrProduct(null)}
+                            className="flex-1 bg-[#2a2a2a] text-white py-2.5 rounded-lg text-sm hover:bg-[#333] transition-colors"
+                          >
+                            Kapat
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {editingProduct && (
                     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
                       <div className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] w-full max-w-lg max-h-[90vh] overflow-y-auto">
