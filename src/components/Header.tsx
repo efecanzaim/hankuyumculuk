@@ -156,30 +156,33 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             <div className="flex items-center justify-center gap-12">
 
             {/* MÜCEVHER Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setActiveMenu('mucevher')}
-            >
-              <span
-                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-default ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+            <div className="relative">
+              <button
+                onClick={() => setActiveMenu(activeMenu === 'mucevher' ? null : 'mucevher')}
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-pointer ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
               >
                 {t('header.nav.jewelry')}
-              </span>
+              </button>
               {activeMenu === 'mucevher' && (
                 <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
               )}
             </div>
 
             {/* KOLEKSİYON Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setActiveMenu('koleksiyon')}
-            >
-              <span
-                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-default ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  if (activeMenu === 'koleksiyon') {
+                    router.push(lp('collection'));
+                    setActiveMenu(null);
+                  } else {
+                    setActiveMenu('koleksiyon');
+                  }
+                }}
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-pointer ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
               >
                 {t('header.nav.collection')}
-              </span>
+              </button>
               {activeMenu === 'koleksiyon' && (
                 <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
               )}
@@ -188,7 +191,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             <Link
               href={lp('preloved')}
               className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
-              onMouseEnter={() => setActiveMenu(null)}
+              onClick={() => setActiveMenu(null)}
             >
               {t('header.nav.preloved')}
             </Link>
@@ -196,7 +199,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             <Link
               href={lp('custom-design')}
               className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
-              onMouseEnter={() => setActiveMenu(null)}
+              onClick={() => setActiveMenu(null)}
             >
               {t('header.nav.custom')}
             </Link>
@@ -204,21 +207,19 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             <Link
               href={lp('gifts')}
               className={`text-[13px] font-normal hover:opacity-70 transition-opacity ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
-              onMouseEnter={() => setActiveMenu(null)}
+              onClick={() => setActiveMenu(null)}
             >
               {t('header.nav.gifts')}
             </Link>
 
             {/* ERKEKLERE ÖZEL Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setActiveMenu('erkek')}
-            >
-              <span
-                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-default ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
+            <div className="relative">
+              <button
+                onClick={() => setActiveMenu(activeMenu === 'erkek' ? null : 'erkek')}
+                className={`text-[13px] font-normal hover:opacity-70 transition-opacity cursor-pointer ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
               >
                 {t('header.nav.men')}
-              </span>
+              </button>
               {activeMenu === 'erkek' && (
                 <div className="absolute left-1/2 -translate-x-1/2 top-[41px] w-[123px] h-[2px] bg-[#2f3237]" />
               )}
@@ -443,10 +444,15 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
 
       {/* Global Dropdown Menus */}
       {activeMenu && (
+        <>
+          {/* Backdrop - dışarı tıklayınca kapat */}
+          <div
+            className="fixed inset-0 z-30"
+            onClick={() => setActiveMenu(null)}
+          />
         <div
           className="fixed left-0 right-0 z-40 h-[60vh] overflow-y-auto"
           style={{ top: topBannerVisible ? '141px' : '91px' }}
-          onMouseLeave={() => setActiveMenu(null)}
         >
           <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
             <Image
@@ -555,6 +561,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             </div>
           </div>
         </div>
+        </>
       )}
     </>
   );

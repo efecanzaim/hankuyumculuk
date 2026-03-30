@@ -121,8 +121,8 @@ switch ($method) {
                 // Sayfa yoksa oluştur
                 try {
                     $stmt = $db->prepare('
-                        INSERT INTO pages (slug, title, hero_image, hero_title, content, values_title)
-                        VALUES (?, ?, ?, ?, ?, ?)
+                        INSERT INTO pages (slug, title, hero_image, hero_title, content, values_title, is_active)
+                        VALUES (?, ?, ?, ?, ?, ?, 1)
                     ');
                     $stmt->execute([
                         $slug,

@@ -44,7 +44,9 @@
       "Bash(grep -A 5 \"INSERT INTO \\\\`contact_info\\\\`\" /c/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk.sql)",
       "Bash(find /c/Users/demas/Desktop/hankuyumculuk -name content*.json -o -name *content* -type f)",
       "Bash(grep -E \"\\\\.\\(json|ts\\)$\")",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(grep -A 20 \"case ''contact'':\" \"c:\\\\Users\\\\demas\\\\Desktop\\\\hankuyumculuk\\\\api\\\\settings.php\")",
+      "Bash(grep -n \"case ''featured_products''\\\\|case ''yuzuk_category''\" \"c:/Users/demas/Desktop/hankuyumculuk/api/settings.php\")"
     ]
   }
 }

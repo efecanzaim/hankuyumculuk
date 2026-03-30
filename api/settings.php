@@ -437,6 +437,19 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
 
         case 'featured_products':
         case 'yuzuk_category':
+        case 'koleksiyon_sayfasi':
+            if ($locale !== 'tr') {
+                $localeData = json_encode([
+                    'title' => $value['title'] ?? '',
+                    'description' => $value['description'] ?? '',
+                ], JSON_UNESCAPED_UNICODE);
+                $stmt = $db->prepare('INSERT INTO general_settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
+                return $stmt->execute(['koleksiyon_sayfasi_' . $locale, $localeData, 'json']);
+            }
+            $storedValue = json_encode($value, JSON_UNESCAPED_UNICODE);
+            $stmt = $db->prepare('INSERT INTO general_settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
+            return $stmt->execute(['koleksiyon_sayfasi', $storedValue, 'json']);
+
         case 'kolye_category':
         case 'bileklik_category':
         case 'kupe_category':

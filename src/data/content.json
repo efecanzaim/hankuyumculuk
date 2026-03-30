@@ -913,5 +913,18 @@
       "instagram": "https://www.instagram.com/hankuyumculuk_"
     },
     "copyright": "© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır"
+  },
+  "koleksiyonSayfasi": {
+    "title": "Koleksiyonlar",
+    "description": "Her Han koleksiyonu, bir duygunun mücevhere dönüşmüş halidir.\nTasarladığımız her parça; bir anı, bir bağı, bir yakınlığı taşır.\nGösterişten uzak, kalıcı olan için…",
+    "cards": [
+      {
+        "id": "gozumun-nuru",
+        "href": "/koleksiyon/gozumun-nuru",
+        "image": "/images/collection-menu-hero.jpg",
+        "title": "Gözümün Nuru",
+        "titleFont": "Buljirya, cursive"
+      }
+    ]
   }
 }

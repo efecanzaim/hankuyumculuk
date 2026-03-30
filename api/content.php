@@ -515,9 +515,51 @@ try {
         'hediyeCategories' => $categoriesByType['hediye'] ?? [],
         'erkekCategories' => $categoriesByType['erkek'] ?? [],
         'gozumunNuruCategory' => $categoriesByType['koleksiyon']['gozumun-nuru'] ?? null,
+        'koleksiyonSayfasi' => (function() use ($db, $locale) {
+            try {
+                $stmt = $db->prepare('SELECT setting_value FROM general_settings WHERE setting_key = ? LIMIT 1');
+                $stmt->execute(['koleksiyon_sayfasi']);
+                $row = $stmt->fetch();
+                $data = $row ? json_decode($row['setting_value'], true) : null;
+                if ($locale !== 'tr') {
+                    $stmt->execute(['koleksiyon_sayfasi_' . $locale]);
+                    $localeRow = $stmt->fetch();
+                    if ($localeRow && $data) {
+                        $localeData = json_decode($localeRow['setting_value'], true);
+                        if ($localeData['title'] ?? '') $data['title'] = $localeData['title'];
+                        if ($localeData['description'] ?? '') $data['description'] = $localeData['description'];
+                    }
+                }
+                return $data; // null dönerse frontend JSON fallback'i kullanır
+            } catch (Exception $e) {
+                return null;
+            }
+        })(),
         'prelovedCategory' => $categoriesByType['preloved']['preloved'] ?? null,
         'yatirimCategory' => $categoriesByType['yatirim']['yatirim'] ?? null,
         'ozelTasarimCategory' => $categoriesByType['ozel_tasarim']['ozel-tasarim'] ?? null,
+
+        // Size Özel sayfası (pages tablosundan)
+        'ozelTasarimPage' => (function() use ($db) {
+            try {
+                $stmt = $db->prepare('SELECT * FROM pages WHERE slug = ? AND is_active = 1 LIMIT 1');
+                $stmt->execute(['ozel-tasarim']);
+                $p = $stmt->fetch();
+                if (!$p) return null;
+                $sections = [];
+                if (!empty($p['content'])) {
+                    $sections = json_decode($p['content'], true) ?: [];
+                }
+                return [
+                    'heroImage' => $p['hero_image'] ?? '',
+                    'heroImagePosition' => $p['hero_image_position'] ?? '50% 50%',
+                    'heroImageScale' => isset($p['hero_image_scale']) ? (float)$p['hero_image_scale'] : 1.0,
+                    'sections' => $sections,
+                ];
+            } catch (Exception $e) {
+                return null;
+            }
+        })(),
 
         // Hediye ve Hakkımızda sayfaları (pages tablosundan)
         'hediyePage' => (function() use ($db) {

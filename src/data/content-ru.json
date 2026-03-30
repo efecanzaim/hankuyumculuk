@@ -912,5 +912,18 @@
       "instagram": "https://www.instagram.com/hankuyumculuk_"
     },
     "copyright": "\u00a9 2025 Han Kuyumculuk, Все права защищены"
+  },
+  "koleksiyonSayfasi": {
+    "title": "Коллекции",
+    "description": "Каждая коллекция Han — это чувство, воплощённое в ювелирном украшении.\nКаждое изделие хранит воспоминание, связь, близость.\nВдали от показного — для того, что остаётся навсегда…",
+    "cards": [
+      {
+        "id": "gozumun-nuru",
+        "href": "/ru/kollektsiya/svet-moikh-glaz",
+        "image": "/images/collection-menu-hero.jpg",
+        "title": "свет моих глаз",
+        "titleFont": "Buljirya, cursive"
+      }
+    ]
   }
 }

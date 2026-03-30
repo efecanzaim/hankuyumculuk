@@ -748,6 +748,7 @@ export default function AdminPanel() {
           { key: "preloved_page", value: content?.prelovedPage },
           { key: "yatirim_page", value: content?.yatirimPage },
           { key: "iletisim_page", value: content?.iletisimPage },
+          { key: "koleksiyon_sayfasi", value: (content as Record<string, unknown>)?.koleksiyonSayfasi },
         ];
 
         // TR kayıt
@@ -1572,9 +1573,9 @@ export default function AdminPanel() {
     ctaButtonText: "RANDEVU OLUŞTURUN",
     ctaButtonLink: "/randevu?subject=size-ozel",
     galleryImages: [
-      "/images/products/product-1.jpg",
-      "/images/products/product-2.jpg",
-      "/images/products/product-3.jpg"
+      { image: "/images/products/product-1.jpg", href: "" },
+      { image: "/images/products/product-2.jpg", href: "" },
+      { image: "/images/products/product-3.jpg", href: "" },
     ],
   };
 
@@ -1642,6 +1643,7 @@ export default function AdminPanel() {
           title: rest.title || "Hediye",
           slug: rest.slug || "hediye",
           content: JSON.stringify(sections || {}),
+          isActive: true,
         };
 
         const response = await fetch(`${API_URL}/api/pages.php`, {
@@ -1684,7 +1686,16 @@ export default function AdminPanel() {
           const data = await response.json();
           let sections = defaultOzelTasarimSections;
           try {
-            if (data.content) sections = { ...defaultOzelTasarimSections, ...JSON.parse(data.content) };
+            if (data.content) {
+              const parsed = JSON.parse(data.content);
+              // galleryImages string array ise object array'e normalize et
+              if (Array.isArray(parsed.galleryImages)) {
+                parsed.galleryImages = parsed.galleryImages.map((item: unknown) =>
+                  typeof item === 'string' ? { image: item, href: '' } : item
+                );
+              }
+              sections = { ...defaultOzelTasarimSections, ...parsed };
+            }
           } catch { /* use defaults */ }
           setOzelTasarimPage({
             id: data.id || null,
@@ -1732,6 +1743,7 @@ export default function AdminPanel() {
           title: rest.title || "Size Özel",
           slug: rest.slug || "ozel-tasarim",
           content: JSON.stringify(sections || {}),
+          isActive: true,
         };
 
         const response = await fetch(`${API_URL}/api/pages.php`, {
@@ -2378,6 +2390,7 @@ export default function AdminPanel() {
       label: "Koleksiyon",
       icon: FiLayout,
       subItems: [
+        { key: "koleksiyon-sayfa", label: "Sayfa İçeriği" },
         { key: "koleksiyon-gozumun-nuru", label: "Gözümün Nuru" },
       ]
     },
@@ -4932,6 +4945,102 @@ export default function AdminPanel() {
               )}
 
               {/* KOLEKSİYON KATEGORİLERİ */}
+              {activeSection === "koleksiyon-sayfa" && (() => {
+                const ksRaw = (activeContent as Record<string, unknown>)?.koleksiyonSayfasi as Record<string, unknown> | undefined | null;
+                const DEFAULT_KS = {
+                  title: 'Koleksiyonlar',
+                  description: 'Her Han koleksiyonu, bir duygunun mücevhere dönüşmüş halidir.\nTasarladığımız her parça; bir anı, bir bağı, bir yakınlığı taşır.\nGösterişten uzak, kalıcı olan için…',
+                  cards: [{ id: 'gozumun-nuru', title: 'Gözümün Nuru', href: '/koleksiyon/gozumun-nuru', image: '/images/collection-menu-hero.jpg', titleFont: 'Buljirya, cursive' }],
+                };
+                const ks: Record<string, unknown> = {
+                  ...DEFAULT_KS,
+                  ...(ksRaw ?? {}),
+                  description: (ksRaw?.description as string)?.trim() || DEFAULT_KS.description,
+                  cards: (ksRaw?.cards as unknown[])?.length ? ksRaw?.cards : DEFAULT_KS.cards,
+                };
+                const ksCards = (ks.cards as Array<Record<string, unknown>>) ?? [];
+                return (
+                  <Section title="Koleksiyon Sayfası" subtitle="Genel koleksiyon sayfasının başlık, açıklama ve koleksiyon kartları">
+                    <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
+                    <InputField
+                      label={`Sayfa Başlığı${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                      value={(ks.title as string) ?? ''}
+                      onChange={(v: string) => updateField('koleksiyonSayfasi', 'title', v)}
+                    />
+                    <TextareaField
+                      label={`Açıklama${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                      value={(ks.description as string) ?? ''}
+                      onChange={(v: string) => updateField('koleksiyonSayfasi', 'description', v)}
+                      rows={5}
+                    />
+
+                    {/* Koleksiyon Kartları - sadece TR'de düzenlenir */}
+                    {contentLang === 'tr' && (
+                      <div className="mt-6">
+                        <div className="flex items-center justify-between mb-3">
+                          <label className="text-[13px] font-medium text-gray-700">Koleksiyon Kartları</label>
+                          <button
+                            onClick={() => {
+                              const newCard = { id: Date.now().toString(), title: 'Yeni Koleksiyon', href: '/koleksiyon/', image: '', titleFont: 'Buljirya, cursive' };
+                              updateField('koleksiyonSayfasi', 'cards', [...ksCards, newCard]);
+                            }}
+                            className="text-[12px] px-3 py-1 bg-[#2f3237] text-white hover:bg-[#1a1c1f] transition-colors"
+                          >
+                            + Kart Ekle
+                          </button>
+                        </div>
+                        <div className="space-y-4">
+                          {ksCards.map((card, idx) => (
+                            <div key={(card.id as string) ?? idx} className="border border-gray-200 p-4 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[12px] font-medium text-gray-600">Kart {idx + 1}</span>
+                                <button
+                                  onClick={() => {
+                                    const updated = ksCards.filter((_, i) => i !== idx);
+                                    updateField('koleksiyonSayfasi', 'cards', updated);
+                                  }}
+                                  className="text-[12px] text-red-500 hover:text-red-700"
+                                >
+                                  Sil
+                                </button>
+                              </div>
+                              <InputField
+                                label="Koleksiyon Adı"
+                                value={(card.title as string) ?? ''}
+                                onChange={(v: string) => {
+                                  const updated = ksCards.map((c, i) => i === idx ? { ...c, title: v } : c);
+                                  updateField('koleksiyonSayfasi', 'cards', updated);
+                                }}
+                              />
+                              <InputField
+                                label="Link (href)"
+                                value={(card.href as string) ?? ''}
+                                onChange={(v: string) => {
+                                  const updated = ksCards.map((c, i) => i === idx ? { ...c, href: v } : c);
+                                  updateField('koleksiyonSayfasi', 'cards', updated);
+                                }}
+                              />
+                              <ImageField
+                                label="Fotoğraf"
+                                value={(card.image as string) ?? ''}
+                                onChange={(v: string) => {
+                                  const updated = ksCards.map((c, i) => i === idx ? { ...c, image: v } : c);
+                                  updateField('koleksiyonSayfasi', 'cards', updated);
+                                }}
+                                folder="categories"
+                              />
+                            </div>
+                          ))}
+                          {ksCards.length === 0 && (
+                            <p className="text-[12px] text-gray-400 text-center py-4">Henüz kart yok. "+ Kart Ekle" ile ekleyin.</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </Section>
+                );
+              })()}
+
               {activeSection === "koleksiyon-gozumun-nuru" && (
                 <div className="space-y-6">
                   <CategorySection
@@ -5554,21 +5663,30 @@ export default function AdminPanel() {
                         />
                       </Section>
 
-                      <Section title="Galeri Bölümü" subtitle="3 görsel yan yana">
+                      <Section title="Galeri Bölümü" subtitle="3 görsel yan yana — tıklandığında ürün sayfasına yönlendirir">
                         {[0, 1, 2].map((i) => {
                           const gImages = ozelTasarimPage.sections?.galleryImages || [];
+                          const item = typeof gImages[i] === 'object' ? gImages[i] : { image: gImages[i] || "", href: "" };
+                          const updateGallery = (field: string, value: string) => {
+                            const updated = [...(ozelTasarimPage.sections?.galleryImages || [{}, {}, {}])];
+                            updated[i] = { ...(typeof updated[i] === 'object' ? updated[i] : { image: updated[i] || "", href: "" }), [field]: value };
+                            setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, galleryImages: updated } });
+                          };
                           return (
-                            <ImageField
-                              key={i}
-                              label={`Görsel ${i + 1}`}
-                              value={gImages[i] || ""}
-                              onChange={(v: string) => {
-                                const updated = [...(ozelTasarimPage.sections?.galleryImages || ["", "", ""])];
-                                updated[i] = v;
-                                setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, galleryImages: updated } });
-                              }}
-                              folder="pages"
-                            />
+                            <div key={i} className="border border-[#2a2a2a] rounded-lg p-4 space-y-3">
+                              <p className="text-sm font-medium text-[#d4af37]">Fotoğraf {i + 1}</p>
+                              <ImageField
+                                label="Görsel"
+                                value={item.image || ""}
+                                onChange={(v: string) => updateGallery("image", v)}
+                                folder="products"
+                              />
+                              <InputField
+                                label="Tıklanınca gidilecek ürün linki (örn: /urun/YZ18001)"
+                                value={item.href || ""}
+                                onChange={(v: string) => updateGallery("href", v)}
+                              />
+                            </div>
                           );
                         })}
                       </Section>

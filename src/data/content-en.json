@@ -912,5 +912,18 @@
       "instagram": "https://www.instagram.com/hankuyumculuk_"
     },
     "copyright": "\u00a9 2025 Han Kuyumculuk, All Rights Reserved"
+  },
+  "koleksiyonSayfasi": {
+    "title": "Collections",
+    "description": "Each Han collection is a feeling transformed into jewellery.\nEvery piece we design carries a memory, a bond, a closeness.\nFar from the ostentatious, made for what lasts…",
+    "cards": [
+      {
+        "id": "gozumun-nuru",
+        "href": "/en/collection/light-of-my-eyes",
+        "image": "/images/collection-menu-hero.jpg",
+        "title": "light of my eyes",
+        "titleFont": "Buljirya, cursive"
+      }
+    ]
   }
 }
