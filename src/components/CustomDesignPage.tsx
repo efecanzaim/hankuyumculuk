@@ -80,7 +80,21 @@ export default function CustomDesignPage() {
 
   const heroImage = pageData?.heroImage || "/images/categories/ozel-tasarim-card.jpg";
   const steps = s.steps || defaultSections.steps;
-  const galleryImages = s.galleryImages || defaultSections.galleryImages;
+  const rawGallery = s.galleryImages || defaultSections.galleryImages;
+  const defaultImgs = ["/images/products/product-1.jpg", "/images/products/product-2.jpg", "/images/products/product-3.jpg"];
+  const gallery = [0, 1, 2].map((i) => {
+    const item = (rawGallery as unknown[])[i];
+    let image = defaultImgs[i];
+    let href = "";
+    if (item && typeof item === 'object' && !Array.isArray(item)) {
+      const obj = item as Record<string, unknown>;
+      if (typeof obj.image === 'string' && obj.image) image = obj.image;
+      if (typeof obj.href === 'string' && obj.href) href = obj.href;
+    } else if (typeof item === 'string' && item) {
+      image = item;
+    }
+    return { image, href };
+  });
 
   return (
     <div className="bg-white">
@@ -471,33 +485,28 @@ export default function CustomDesignPage() {
       {/* Image Gallery - Three Column */}
       <section className="bg-white">
         <div className="grid grid-cols-1 md:grid-cols-3 h-auto md:h-[550px]">
-          <div className="relative h-[350px] md:h-full overflow-hidden group">
-            <Image
-              src={getAssetPath(galleryImages[0] || "/images/products/product-1.jpg")}
-              alt="Özel Tasarım 1"
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
-          </div>
-          <div className="relative h-[350px] md:h-full overflow-hidden group">
-            <Image
-              src={getAssetPath(galleryImages[1] || "/images/products/product-2.jpg")}
-              alt="Özel Tasarım 2"
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
-          </div>
-          <div className="relative h-[350px] md:h-full overflow-hidden group">
-            <Image
-              src={getAssetPath(galleryImages[2] || "/images/products/product-3.jpg")}
-              alt="Özel Tasarım 3"
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
-          </div>
+          {gallery.map((item, i) => {
+            const inner = (
+              <>
+                <Image
+                  src={getAssetPath(item.image)}
+                  alt={`Özel Tasarım ${i + 1}`}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
+              </>
+            );
+            return item.href ? (
+              <Link key={i} href={item.href} className="relative h-[350px] md:h-full overflow-hidden group block">
+                {inner}
+              </Link>
+            ) : (
+              <div key={i} className="relative h-[350px] md:h-full overflow-hidden group">
+                {inner}
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>

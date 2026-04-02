@@ -41,6 +41,7 @@ $allowedTypes = [
     'image/png' => 'png',
     'image/gif' => 'gif',
     'image/webp' => 'webp',
+    'image/svg+xml' => 'svg',
     'video/mp4' => 'mp4',
     'video/webm' => 'webm',
     'video/ogg' => 'ogg'
@@ -52,7 +53,7 @@ $mimeType = finfo_file($finfo, $file['tmp_name']);
 finfo_close($finfo);
 
 if (!isset($allowedTypes[$mimeType])) {
-    jsonResponse(['error' => 'Geçersiz dosya türü. Sadece JPG, PNG, GIF, WebP, MP4, WebM ve OGG kabul edilir.'], 400);
+    jsonResponse(['error' => 'Geçersiz dosya türü. Sadece JPG, PNG, GIF, WebP, SVG, MP4, WebM ve OGG kabul edilir.'], 400);
 }
 
 // Dosya boyutu kontrolü (video: max 100MB, görsel: max 10MB)

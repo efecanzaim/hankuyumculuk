@@ -156,6 +156,12 @@ export default function CertificatePageClient({ slug, locale = 'tr' }: Certifica
   const productCode = getLocalizedField(product, 'subtitle', locale);
   const weightNum = toNumber(product.gold_weight);
   const mainImg = product.mainImage || product.image || '';
+  const warrantyLinkText = {
+    tr: 'Bakim & Garanti Bilgileri',
+    en: 'Care & Warranty Information',
+    ru: 'Informaciya po uhodu i garantii',
+  }[locale];
+  const warrantyLinkUrl = 'https://hankuyumculuk.com/musteri-hizmetleri/bakim-garanti/';
 
   return (
     <div className="min-h-screen bg-white">
@@ -322,6 +328,40 @@ export default function CertificatePageClient({ slug, locale = 'tr' }: Certifica
           <p className="text-[10px] text-gray-400 text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
             www.hankuyumculuk.com
           </p>
+        </div>
+
+        {/* Bakim ve Garanti Linki */}
+        <div className="mt-6 print:hidden">
+          <a
+            href={warrantyLinkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block rounded-xl border border-[#d4af37]/45 bg-gradient-to-r from-[#fdfaf1] to-[#fff] px-5 py-4 transition-colors hover:border-[#d4af37]"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p
+                  className="text-[11px] uppercase tracking-[1.8px] text-[#b8952e] mb-1"
+                  style={{ fontFamily: 'var(--font-bw-modelica)' }}
+                >
+                  Han Kuyumculuk
+                </p>
+                <p
+                  className="text-[16px] text-[#2f3237]"
+                  style={{ fontFamily: 'var(--font-faculty-glyphic)' }}
+                >
+                  {warrantyLinkText}
+                </p>
+              </div>
+              <span
+                className="text-[20px] text-[#d4af37] transition-transform group-hover:translate-x-1"
+                aria-hidden="true"
+                style={{ fontFamily: 'var(--font-bw-modelica)' }}
+              >
+                →
+              </span>
+            </div>
+          </a>
         </div>
 
         {/* Yazdır Butonu - print'te gizlenir */}

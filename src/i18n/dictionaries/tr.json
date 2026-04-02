@@ -204,8 +204,13 @@
   "collection": {
     "brand": "Han Koleksiyonu",
     "title": "Gözümün Nuru",
+    "collectionLabel": "Koleksiyonu",
     "heroSubtitle": "Değerini yitirmeyen bir yakınlıktan doğdu",
     "philosophyTitle": "Sen benim hayatımı güzelleştiren biri değilsin; hayatımı anlamlı kılan yerdesin.",
+    "philosophyQuote1": "\"Sen benim hayatımı güzelleştiren biri değilsin;",
+    "philosophyQuote2": "hayatımı anlamlı kılan yerdesin.\"",
+    "darkTextMain": "mücevherleri,",
+    "darkTextCursive": "özel hissettirmek için var olur.",
     "philosophyDesc": "Gözümün Nuru, değerini yitirmeyen bir yakınlıktan doğdu. Ruhun penceresinden süzülen aydınlık bir bağdan…",
     "discoverTitle": "Koleksiyonu Keşfet",
     "discoverDesc": "Işık saçmaktan daha çok; ait olmak için…",

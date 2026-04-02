@@ -1,13 +1,32 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useContent } from "@/hooks/useContent";
 import { useTranslation } from "@/i18n/useTranslation";
-import { getLocalizedPath } from "@/i18n/config";
+import { getLocalizedPath, routeMap } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+
+// TR href'ini locale'e çevir: /urun/SLUG → /en/product/SLUG
+function localizeHref(href: string, locale: Locale): string {
+  if (!href || locale === 'tr') return href;
+  const trRoutes = routeMap['tr'];
+  for (const [pageId, trPath] of Object.entries(trRoutes)) {
+    if (href === trPath) {
+      return getLocalizedPath(pageId, locale);
+    }
+    if (href.startsWith(trPath + '/')) {
+      const suffix = href.slice(trPath.length);
+      return getLocalizedPath(pageId, locale) + suffix;
+    }
+  }
+  return href;
+}
 import { getAssetPath } from "@/utils/paths";
 
 interface OzelTasarimPageContentProps {
@@ -17,6 +36,25 @@ interface OzelTasarimPageContentProps {
 export default function OzelTasarimPageContent({ locale }: OzelTasarimPageContentProps) {
   const content = useContent(locale);
   const t = useTranslation(locale);
+  const [galleryImages, setGalleryImages] = useState<Array<{ image: string; href: string }>>([]);
+
+  useEffect(() => {
+    if (!API_URL) return;
+    fetch(`${API_URL}/api/pages.php?slug=ozel-tasarim`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.content) {
+          const sections = JSON.parse(data.content);
+          const imgs = (sections?.galleryImages || []).map((item: unknown) =>
+            typeof item === 'string'
+              ? { image: item, href: '' }
+              : (item as { image: string; href: string })
+          );
+          if (imgs.length > 0) setGalleryImages(imgs);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <>
@@ -421,22 +459,13 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
 
         {/* Image Gallery - Three Column */}
         {(() => {
-          const page = (content as Record<string, unknown>)?.ozelTasarimPage as Record<string, unknown> | undefined;
-          const sections = page?.sections as Record<string, unknown> | undefined;
-          const rawGallery = (sections?.galleryImages as unknown[]) || [];
           const defaultImgs = ["/images/products/product-1.jpg", "/images/products/product-2.jpg", "/images/products/product-3.jpg"];
           const gallery = [0, 1, 2].map((i) => {
-            const item = rawGallery[i];
-            let image = defaultImgs[i];
-            let href = "";
-            if (item && typeof item === 'object' && !Array.isArray(item)) {
-              const obj = item as Record<string, unknown>;
-              if (typeof obj.image === 'string' && obj.image) image = obj.image;
-              if (typeof obj.href === 'string' && obj.href) href = obj.href;
-            } else if (typeof item === 'string' && item) {
-              image = item;
-            }
-            return { image, href };
+            const item = galleryImages[i];
+            return {
+              image: item?.image || defaultImgs[i],
+              href: item?.href ? localizeHref(item.href, locale) : "",
+            };
           });
           return (
             <section className="bg-white">

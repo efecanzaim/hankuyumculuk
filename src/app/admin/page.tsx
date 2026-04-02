@@ -326,6 +326,7 @@ export default function AdminPanel() {
   // Hakkımızda sayfası state
   const [aboutPage, setAboutPage] = useState<any>(null);
   const [loadingAboutPage, setLoadingAboutPage] = useState(false);
+  const [aboutPageLang, setAboutPageLang] = useState<'tr'|'en'|'ru'>('tr');
   const [aboutValues, setAboutValues] = useState<any[]>([]);
   const [loadingAboutValues, setLoadingAboutValues] = useState(false);
 
@@ -1422,7 +1423,11 @@ export default function AdminPanel() {
             heroImagePosition: data.heroImagePosition || "50% 50%",
             heroImageScale: data.heroImageScale || 1,
             heroTitle: data.heroTitle || "Hakkımızda | Han Kuyumculuk",
+            heroTitle_en: data.heroTitle_en || "",
+            heroTitle_ru: data.heroTitle_ru || "",
             heroParagraph2: data.heroParagraph2 || "1988 yılında İstanbul'da kurulan Han Kuyumculuk, mücevher üretimini bir zanaatten öte; disiplin, süreklilik ve sorumluluk anlayışıyla ele alan köklü bir üreticidir. Kuruluşundan bu yana tasarımdan üretime uzanan tüm süreçlerinde istikrar, kalite ve güven ilkelerini merkeze alarak yol almıştır.\n\nİstanbul'un tarihsel kuyumculuk kültüründen beslenen üretim anlayışı, çağdaş estetik ve teknik hassasiyetle birleşerek Han'ın karakterini oluşturur. Bugün farklı markalar altında vitrinlerde yer alan birçok mücevher tasarımının arkasında Han imzası bulunur; çoğu zaman adı görünmeden, işçiliği ve detay diliyle kendini belli eder.\n\nTüm koleksiyonlar; pırlanta ve değerli taşlar konusunda derin bilgi birikimine sahip, alanında uzman ve istikrarlı ekipler tarafından geliştirilir. Üretimde süreklilik, Han için yalnızca hacim değil; hammaddeden son sunuma kadar standartların titizlikle korunması anlamına gelir.\n\nBugün Han Kuyumculuk;\n• Gücünü yıllara dayanan üretim tecrübesinden,\n• Güvenilirliğini uzman ve istikrarlı ekibinden,\n• Kimliğini ise pırlantada söz sahibi olma kararlılığından alır.\n\nHan, mücevheri yalnızca üreten değil; onu anlayan, ölçen ve kalıcı kılan bir marka olarak yoluna devam etmektedir.",
+            heroParagraph2_en: data.content_en || "",
+            heroParagraph2_ru: data.content_ru || "",
             valuesTitle: data.valuesTitle || "Vizyonumuz"
           });
         } else {
@@ -1484,6 +1489,10 @@ export default function AdminPanel() {
           ...aboutPage,
           title: aboutPage.title || "Hakkımızda",
           slug: aboutPage.slug || "hakkimizda",
+          heroTitle_en: aboutPage.heroTitle_en || "",
+          heroTitle_ru: aboutPage.heroTitle_ru || "",
+          content_en: aboutPage.heroParagraph2_en || "",
+          content_ru: aboutPage.heroParagraph2_ru || "",
         };
 
         const response = await fetch(`${API_URL}/api/pages.php`, {
@@ -1702,6 +1711,8 @@ export default function AdminPanel() {
             slug: data.slug || "ozel-tasarim",
             title: data.title || "Size Özel",
             heroImage: data.heroImage || "/images/categories/ozel-tasarim-card.jpg",
+            heroImagePosition: data.heroImagePosition || "50% 50%",
+            heroImageScale: data.heroImageScale || 1,
             sections,
           });
         } else {
@@ -1776,6 +1787,7 @@ export default function AdminPanel() {
 
   // Gözümün Nuru ek bölümler
   const defaultGnSections = {
+    heroSvg: "/gozumunnuru-hero.svg",
     philosophyQuote1: "\"Sen benim hayatımı güzelleştiren biri değilsin;",
     philosophyQuote2: "hayatımı anlamlı kılan yerdesin.\"",
     philosophyText: "Gözümün Nuru,\ndeğerini yitirmeyen bir yakınlıktan doğdu.\nRuhun penceresinden süzülen aydınlık bir bağdan…",
@@ -3197,21 +3209,25 @@ export default function AdminPanel() {
               {/* ANA SAYFA - BLOG */}
               {activeSection === "anasayfa-blog" && (
                 <Section title="Blog Bölümü" subtitle="Blog tanıtım alanı">
+                  <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
                   <InputField
-                    label="Başlık"
-                    value={(content.blogSection as Record<string, unknown>)?.title as string || ""}
+                    label={`Başlık${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={(activeContent?.blogSection as Record<string, unknown>)?.title as string || ""}
                     onChange={(v) => updateField("blogSection", "title", v)}
+                    placeholder={contentLang !== 'tr' ? (content?.blogSection as Record<string, unknown>)?.title as string : undefined}
                   />
                   <InputField
-                    label="Alt Başlık"
-                    value={(content.blogSection as Record<string, unknown>)?.subtitle as string || ""}
+                    label={`Alt Başlık${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={(activeContent?.blogSection as Record<string, unknown>)?.subtitle as string || ""}
                     onChange={(v) => updateField("blogSection", "subtitle", v)}
+                    placeholder={contentLang !== 'tr' ? (content?.blogSection as Record<string, unknown>)?.subtitle as string : undefined}
                   />
                   <TextareaField
-                    label="Açıklama"
-                    value={(content.blogSection as Record<string, unknown>)?.description as string || ""}
+                    label={`Açıklama${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={(activeContent?.blogSection as Record<string, unknown>)?.description as string || ""}
                     onChange={(v) => updateField("blogSection", "description", v)}
                     maxLength={120}
+                    placeholder={contentLang !== 'tr' ? (content?.blogSection as Record<string, unknown>)?.description as string : undefined}
                   />
                 </Section>
               )}
@@ -3284,6 +3300,12 @@ export default function AdminPanel() {
                     value={getLocalizedValue("footer", "copyright") as string || ""}
                     onChange={(v) => updateField("footer", "copyright", v)}
                     placeholder={contentLang !== 'tr' ? (content?.footer as Record<string, unknown>)?.copyright as string : undefined}
+                  />
+                  <ImageField
+                    label={`Slogan SVG Görseli${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={getLocalizedValue("footer", "sloganSvg") as string || ""}
+                    onChange={(v) => updateField("footer", "sloganSvg", v)}
+                    folder="footer"
                   />
                 </Section>
               )}
@@ -4955,22 +4977,41 @@ export default function AdminPanel() {
                 const ks: Record<string, unknown> = {
                   ...DEFAULT_KS,
                   ...(ksRaw ?? {}),
-                  description: (ksRaw?.description as string)?.trim() || DEFAULT_KS.description,
+                  description: (ksRaw?.description as string) ?? DEFAULT_KS.description,
                   cards: (ksRaw?.cards as unknown[])?.length ? ksRaw?.cards : DEFAULT_KS.cards,
                 };
                 const ksCards = (ks.cards as Array<Record<string, unknown>>) ?? [];
+
+                // Koleksiyon sayfası için özel güncelleme fonksiyonu
+                // updateField kullanılamaz çünkü content.koleksiyonSayfasi null olabilir
+                // ve ...null spread edildiğinde tüm alanlar kayboluyor
+                const updateKs = (field: string, value: unknown) => {
+                  setActiveContent((prev) => {
+                    if (!prev) return prev;
+                    const existing = (prev as Record<string, unknown>).koleksiyonSayfasi as Record<string, unknown> | null;
+                    return {
+                      ...prev,
+                      koleksiyonSayfasi: {
+                        ...DEFAULT_KS,
+                        ...(existing ?? {}),
+                        [field]: value,
+                      },
+                    };
+                  });
+                };
+
                 return (
                   <Section title="Koleksiyon Sayfası" subtitle="Genel koleksiyon sayfasının başlık, açıklama ve koleksiyon kartları">
                     <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
                     <InputField
                       label={`Sayfa Başlığı${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
                       value={(ks.title as string) ?? ''}
-                      onChange={(v: string) => updateField('koleksiyonSayfasi', 'title', v)}
+                      onChange={(v: string) => updateKs('title', v)}
                     />
                     <TextareaField
                       label={`Açıklama${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
                       value={(ks.description as string) ?? ''}
-                      onChange={(v: string) => updateField('koleksiyonSayfasi', 'description', v)}
+                      onChange={(v: string) => updateKs('description', v)}
                       rows={5}
                     />
 
@@ -4982,7 +5023,7 @@ export default function AdminPanel() {
                           <button
                             onClick={() => {
                               const newCard = { id: Date.now().toString(), title: 'Yeni Koleksiyon', href: '/koleksiyon/', image: '', titleFont: 'Buljirya, cursive' };
-                              updateField('koleksiyonSayfasi', 'cards', [...ksCards, newCard]);
+                              updateKs('cards', [...ksCards, newCard]);
                             }}
                             className="text-[12px] px-3 py-1 bg-[#2f3237] text-white hover:bg-[#1a1c1f] transition-colors"
                           >
@@ -4997,7 +5038,7 @@ export default function AdminPanel() {
                                 <button
                                   onClick={() => {
                                     const updated = ksCards.filter((_, i) => i !== idx);
-                                    updateField('koleksiyonSayfasi', 'cards', updated);
+                                    updateKs('cards', updated);
                                   }}
                                   className="text-[12px] text-red-500 hover:text-red-700"
                                 >
@@ -5009,7 +5050,7 @@ export default function AdminPanel() {
                                 value={(card.title as string) ?? ''}
                                 onChange={(v: string) => {
                                   const updated = ksCards.map((c, i) => i === idx ? { ...c, title: v } : c);
-                                  updateField('koleksiyonSayfasi', 'cards', updated);
+                                  updateKs('cards', updated);
                                 }}
                               />
                               <InputField
@@ -5017,7 +5058,7 @@ export default function AdminPanel() {
                                 value={(card.href as string) ?? ''}
                                 onChange={(v: string) => {
                                   const updated = ksCards.map((c, i) => i === idx ? { ...c, href: v } : c);
-                                  updateField('koleksiyonSayfasi', 'cards', updated);
+                                  updateKs('cards', updated);
                                 }}
                               />
                               <ImageField
@@ -5025,7 +5066,7 @@ export default function AdminPanel() {
                                 value={(card.image as string) ?? ''}
                                 onChange={(v: string) => {
                                   const updated = ksCards.map((c, i) => i === idx ? { ...c, image: v } : c);
-                                  updateField('koleksiyonSayfasi', 'cards', updated);
+                                  updateKs('cards', updated);
                                 }}
                                 folder="categories"
                               />
@@ -5075,6 +5116,15 @@ export default function AdminPanel() {
                     <div className="text-center py-8 text-gray-500">Bölümler yükleniyor...</div>
                   ) : gnSections ? (
                     <>
+                      <Section title="Hero SVG" subtitle="Hero alanının altındaki dekoratif SVG görsel">
+                        <ImageField
+                          label="Hero SVG Görseli"
+                          value={gnSections.heroSvg || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, heroSvg: v })}
+                          folder="categories"
+                        />
+                      </Section>
+
                       <Section title="Felsefe Bölümü" subtitle="Alıntı ve açıklama metinleri">
                         <InputField
                           label="Alıntı Satır 1"
@@ -5745,28 +5795,32 @@ export default function AdminPanel() {
                   ) : aboutPage ? (
                     <>
                       <Section title="Hero Bölümü" subtitle="Sayfa üst kısmı">
+                        <LanguageTabs currentLang={aboutPageLang} onChange={setAboutPageLang} />
                         <InputField
-                          label="Hero Başlık"
-                          value={aboutPage.heroTitle || ""}
-                          onChange={(v) => setAboutPage({ ...aboutPage, heroTitle: v })}
+                          label={`Hero Başlık${aboutPageLang !== 'tr' ? ` (${aboutPageLang.toUpperCase()})` : ''}`}
+                          value={(aboutPageLang === 'en' ? aboutPage.heroTitle_en : aboutPageLang === 'ru' ? aboutPage.heroTitle_ru : aboutPage.heroTitle) || ""}
+                          onChange={(v) => setAboutPage({ ...aboutPage, [aboutPageLang === 'tr' ? 'heroTitle' : `heroTitle_${aboutPageLang}`]: v })}
+                          placeholder={aboutPageLang !== 'tr' ? (aboutPage.heroTitle || "") : undefined}
                         />
                         <TextareaField
-                          label="Hero Detay Metin"
-                          value={aboutPage.heroParagraph2 || ""}
-                          onChange={(v) => setAboutPage({ ...aboutPage, heroParagraph2: v })}
+                          label={`Hakkımızda Metni${aboutPageLang !== 'tr' ? ` (${aboutPageLang.toUpperCase()})` : ''}`}
+                          value={(aboutPageLang === 'en' ? aboutPage.heroParagraph2_en : aboutPageLang === 'ru' ? aboutPage.heroParagraph2_ru : aboutPage.heroParagraph2) || ""}
+                          onChange={(v) => setAboutPage({ ...aboutPage, [aboutPageLang === 'tr' ? 'heroParagraph2' : `heroParagraph2_${aboutPageLang}`]: v })}
                           rows={15}
-                          placeholder="Detaylı hakkımızda metni. Paragraflar arasında boş satır bırakın."
+                          placeholder={aboutPageLang !== 'tr' ? (aboutPage.heroParagraph2 || "Türkçe metin fallback olarak kullanılır") : "Detaylı hakkımızda metni. Paragraflar arasında boş satır bırakın."}
                         />
-                        <ImageField
-                          label="Hero Görsel"
-                          value={aboutPage.heroImage || ""}
-                          onChange={(v) => setAboutPage({ ...aboutPage, heroImage: v })}
-                          folder="pages"
-                          objectPosition={aboutPage.heroImagePosition || "50% 50%"}
-                          onObjectPositionChange={(v: string) => setAboutPage({ ...aboutPage, heroImagePosition: v })}
-                          objectScale={aboutPage.heroImageScale || 1}
-                          onObjectScaleChange={(v: number) => setAboutPage({ ...aboutPage, heroImageScale: v })}
-                        />
+                        {aboutPageLang === 'tr' && (
+                          <ImageField
+                            label="Hero Görsel"
+                            value={aboutPage.heroImage || ""}
+                            onChange={(v) => setAboutPage({ ...aboutPage, heroImage: v })}
+                            folder="pages"
+                            objectPosition={aboutPage.heroImagePosition || "50% 50%"}
+                            onObjectPositionChange={(v: string) => setAboutPage({ ...aboutPage, heroImagePosition: v })}
+                            objectScale={aboutPage.heroImageScale || 1}
+                            onObjectScaleChange={(v: number) => setAboutPage({ ...aboutPage, heroImageScale: v })}
+                          />
+                        )}
                       </Section>
 
                       <Section title="Vizyonumuz Bölümü" subtitle="Values (Değerler) bölümü">
@@ -5901,11 +5955,13 @@ export default function AdminPanel() {
 
               {activeSection === "iletisim-bilgiler" && (
                 <Section title="İletişim Bilgileri" subtitle="İletişim sayfası içeriği">
+                  <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
                   <TextareaField
-                    label="Adres"
-                    value={(content.contact as Record<string, unknown>)?.address as string || ""}
+                    label={`Adres${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={(activeContent?.contact as Record<string, unknown>)?.address as string || ""}
                     onChange={(v) => updateField("contact", "address", v)}
                     rows={3}
+                    placeholder={contentLang !== 'tr' ? (content?.contact as Record<string, unknown>)?.address as string : undefined}
                   />
                   <InputField
                     label="Telefon"
@@ -5918,9 +5974,10 @@ export default function AdminPanel() {
                     onChange={(v) => updateField("contact", "email", v)}
                   />
                   <InputField
-                    label="Çalışma Saatleri"
-                    value={(content.contact as Record<string, unknown>)?.workingHours as string || ""}
+                    label={`Çalışma Saatleri${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={(activeContent?.contact as Record<string, unknown>)?.workingHours as string || ""}
                     onChange={(v) => updateField("contact", "workingHours", v)}
+                    placeholder={contentLang !== 'tr' ? (content?.contact as Record<string, unknown>)?.workingHours as string : undefined}
                   />
                   <InputField
                     label="Instagram 1 (kullanıcı adı)"
@@ -6549,12 +6606,12 @@ function ImageField({
     if (!file) return;
 
     // Dosya türü kontrolü
-    const allowedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const allowedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"];
     const allowedVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
     const allowedTypes = [...allowedImageTypes, ...allowedVideoTypes];
     const isVideo = allowedVideoTypes.includes(file.type);
     if (!allowedTypes.includes(file.type)) {
-      setError("JPG, PNG, GIF, WebP, MP4, WebM veya OGG dosyaları yüklenebilir");
+      setError("JPG, PNG, GIF, WebP, SVG, MP4, WebM veya OGG dosyaları yüklenebilir");
       return;
     }
 

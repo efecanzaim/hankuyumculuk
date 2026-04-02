@@ -292,16 +292,16 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
 
         case 'footer':
             if ($locale !== 'tr') {
-                $stmt = $db->prepare("UPDATE footer_settings SET slogan{$ls}=?, copyright_text{$ls}=? LIMIT 1");
-                return $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '']);
+                $stmt = $db->prepare("UPDATE footer_settings SET slogan{$ls}=?, copyright_text{$ls}=?, slogan_svg{$ls}=? LIMIT 1");
+                return $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '', $value['sloganSvg'] ?? null]);
             }
             $stmt = $db->query('SELECT id FROM footer_settings LIMIT 1');
-            $params = [$value['logo'] ?? '', $value['slogan'] ?? '', $value['copyright'] ?? ''];
+            $params = [$value['logo'] ?? '', $value['slogan'] ?? '', $value['copyright'] ?? '', $value['sloganSvg'] ?? null];
             if ($stmt->fetch()) {
-                $stmt = $db->prepare('UPDATE footer_settings SET logo_image=?, slogan=?, copyright_text=? LIMIT 1');
+                $stmt = $db->prepare('UPDATE footer_settings SET logo_image=?, slogan=?, copyright_text=?, slogan_svg=? LIMIT 1');
                 return $stmt->execute($params);
             }
-            $stmt = $db->prepare('INSERT INTO footer_settings (logo_image, slogan, copyright_text) VALUES (?,?,?)');
+            $stmt = $db->prepare('INSERT INTO footer_settings (logo_image, slogan, copyright_text, slogan_svg) VALUES (?,?,?,?)');
             return $stmt->execute($params);
 
         case 'contact':

@@ -35,10 +35,17 @@ switch ($method) {
                 jsonResponse(['error' => 'Sayfa bulunamadı'], 404);
             }
         } elseif ($slug) {
-            // Tek sayfa getir (slug ile)
+            // Tek sayfa getir (slug ile) - önce aktif olanı ara, yoksa inaktif olanı da dene (admin düzenleyebilsin)
             $stmt = $db->prepare('SELECT * FROM pages WHERE slug = ? AND is_active = 1');
             $stmt->execute([$slug]);
             $page = $stmt->fetch();
+
+            if (!$page) {
+                // is_active = 0 veya NULL olan sayfayı da bul (admin'den düzenlenip aktif edilebilsin)
+                $stmt = $db->prepare('SELECT * FROM pages WHERE slug = ? LIMIT 1');
+                $stmt->execute([$slug]);
+                $page = $stmt->fetch();
+            }
 
             if ($page) {
                 jsonResponse(formatPage($page));
@@ -144,14 +151,26 @@ switch ($method) {
         // Alanları maple (camelCase -> snake_case)
         $fieldMap = [
             'title' => 'title',
+            'title_en' => 'title_en',
+            'title_ru' => 'title_ru',
             'heroImage' => 'hero_image',
             'heroTitle' => 'hero_title',
+            'heroTitle_en' => 'hero_title_en',
+            'heroTitle_ru' => 'hero_title_ru',
             'heroSubtitle' => 'hero_subtitle',
+            'heroSubtitle_en' => 'hero_subtitle_en',
+            'heroSubtitle_ru' => 'hero_subtitle_ru',
             'heroParagraph2' => 'content',
             'content' => 'content',
+            'content_en' => 'content_en',
+            'content_ru' => 'content_ru',
             'valuesTitle' => 'values_title',
             'metaTitle' => 'meta_title',
+            'metaTitle_en' => 'meta_title_en',
+            'metaTitle_ru' => 'meta_title_ru',
             'metaDescription' => 'meta_description',
+            'metaDescription_en' => 'meta_description_en',
+            'metaDescription_ru' => 'meta_description_ru',
             'isActive' => 'is_active'
         ];
 
@@ -241,16 +260,28 @@ function formatPage($page) {
         'id' => (int)$page['id'],
         'slug' => $page['slug'],
         'title' => $page['title'],
+        'title_en' => $page['title_en'] ?? '',
+        'title_ru' => $page['title_ru'] ?? '',
         'heroImage' => $page['hero_image'],
         'heroImagePosition' => $page['hero_image_position'] ?? '50% 50%',
         'heroImageScale' => isset($page['hero_image_scale']) ? (float)$page['hero_image_scale'] : 1.0,
         'heroTitle' => $page['hero_title'],
+        'heroTitle_en' => $page['hero_title_en'] ?? '',
+        'heroTitle_ru' => $page['hero_title_ru'] ?? '',
         'heroSubtitle' => $page['hero_subtitle'],
+        'heroSubtitle_en' => $page['hero_subtitle_en'] ?? '',
+        'heroSubtitle_ru' => $page['hero_subtitle_ru'] ?? '',
         'heroParagraph2' => $page['content'],
         'content' => $page['content'],
+        'content_en' => $page['content_en'] ?? '',
+        'content_ru' => $page['content_ru'] ?? '',
         'valuesTitle' => $page['values_title'] ?? 'Vizyonumuz',
         'metaTitle' => $page['meta_title'],
-        'metaDescription' => $page['meta_description']
+        'metaTitle_en' => $page['meta_title_en'] ?? '',
+        'metaTitle_ru' => $page['meta_title_ru'] ?? '',
+        'metaDescription' => $page['meta_description'],
+        'metaDescription_en' => $page['meta_description_en'] ?? '',
+        'metaDescription_ru' => $page['meta_description_ru'] ?? '',
     ];
 }
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getAssetPath } from "@/utils/paths";
 import { useLocale } from "@/i18n/LocaleContext";
+import useContent from "@/hooks/useContent";
 
 function renderWithLogo(text: string | undefined, logoHeight: number = 18) {
   if (!text) return text;
@@ -42,11 +43,14 @@ interface FooterProps {
 
 export default function Footer({ logo, slogan, description, columns, copyright, socialLinks }: FooterProps) {
   const locale = useLocale();
-  const sloganSvg = locale === 'en'
+  const content = useContent(locale);
+
+  const defaultSloganSvg = locale === 'en'
     ? '/footer-slogan-en.svg'
     : locale === 'ru'
       ? '/footer-slogan-ru.svg'
       : '/footer-slogan.svg';
+  const sloganSvg = (content.footer as Record<string, unknown>)?.sloganSvg as string || defaultSloganSvg;
 
   return (
     <>
@@ -129,10 +133,10 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
                     <li key={linkIndex}>
                       <Link
                         href={link.href}
-                        className={`font-normal text-[13px] leading-[26px] text-[#2f3237] hover:opacity-70 transition-opacity ${link.href.includes('gozumun-nuru') ? 'lowercase' : ''}`}
-                        style={link.href.includes('gozumun-nuru') ? { fontFamily: 'Buljirya, cursive' } : undefined}
+                        className={`font-normal text-[13px] leading-[26px] text-[#2f3237] hover:opacity-70 transition-opacity ${(link.href.includes('gozumun-nuru') || link.href.includes('light-of-my-eyes') || link.href.includes('svet-moikh-glaz')) ? 'lowercase' : ''}`}
+                        style={(link.href.includes('gozumun-nuru') || link.href.includes('light-of-my-eyes') || link.href.includes('svet-moikh-glaz')) ? { fontFamily: 'Buljirya, cursive' } : undefined}
                       >
-                        {link.text}
+                        {(link.href.includes('gozumun-nuru') || link.href.includes('light-of-my-eyes') || link.href.includes('svet-moikh-glaz')) ? 'Gözümün Nuru' : link.text}
                       </Link>
                     </li>
                   ))}

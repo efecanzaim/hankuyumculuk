@@ -46,7 +46,10 @@
       "Bash(grep -E \"\\\\.\\(json|ts\\)$\")",
       "Bash(npm install:*)",
       "Bash(grep -A 20 \"case ''contact'':\" \"c:\\\\Users\\\\demas\\\\Desktop\\\\hankuyumculuk\\\\api\\\\settings.php\")",
-      "Bash(grep -n \"case ''featured_products''\\\\|case ''yuzuk_category''\" \"c:/Users/demas/Desktop/hankuyumculuk/api/settings.php\")"
+      "Bash(grep -n \"case ''featured_products''\\\\|case ''yuzuk_category''\" \"c:/Users/demas/Desktop/hankuyumculuk/api/settings.php\")",
+      "Bash(wc -l \"c:\\\\Users\\\\demas\\\\Desktop\\\\hankuyumculuk/src/i18n/dictionaries\"/*.json)",
+      "Bash(grep -n \"INSERT INTO \\\\`top_banner\\\\`\" \"u2526296_hankuyumculuk.sql\")",
+      "Bash(python3 -c ':*)"
     ]
   }
 }

@@ -491,6 +491,7 @@ try {
         'footer' => [
             'logo' => $footerSettings['logo_image'] ?? '/images/1818-logo.svg',
             'slogan' => getLocalizedValue($footerSettings, 'slogan', $locale) ?: 'Seninle güzelleşir her şey…',
+            'sloganSvg' => getLocalizedValue($footerSettings, 'slogan_svg', $locale) ?: null,
             'copyright' => getLocalizedValue($footerSettings, 'copyright_text', $locale) ?: '© 2025 Han Kuyumculuk, Tüm Hakları Saklıdır',
             'columns' => $formattedColumns,
             'socialLinks' => $socialLinks
@@ -540,12 +541,13 @@ try {
         'ozelTasarimCategory' => $categoriesByType['ozel_tasarim']['ozel-tasarim'] ?? null,
 
         // Size Özel sayfası (pages tablosundan)
-        'ozelTasarimPage' => (function() use ($db) {
+        'ozelTasarimPage' => (function() use ($db, $locale) {
             try {
                 $stmt = $db->prepare('SELECT * FROM pages WHERE slug = ? AND is_active = 1 LIMIT 1');
                 $stmt->execute(['ozel-tasarim']);
                 $p = $stmt->fetch();
                 if (!$p) return null;
+                // Tüm metin t() ile geliyor, sections sadece görseller için — her zaman TR'den al
                 $sections = [];
                 if (!empty($p['content'])) {
                     $sections = json_decode($p['content'], true) ?: [];
@@ -554,6 +556,8 @@ try {
                     'heroImage' => $p['hero_image'] ?? '',
                     'heroImagePosition' => $p['hero_image_position'] ?? '50% 50%',
                     'heroImageScale' => isset($p['hero_image_scale']) ? (float)$p['hero_image_scale'] : 1.0,
+                    'heroTitle' => getLocalizedValue($p, 'hero_title', $locale),
+                    'heroSubtitle' => getLocalizedValue($p, 'hero_subtitle', $locale),
                     'sections' => $sections,
                 ];
             } catch (Exception $e) {
@@ -562,20 +566,34 @@ try {
         })(),
 
         // Hediye ve Hakkımızda sayfaları (pages tablosundan)
-        'hediyePage' => (function() use ($db) {
+        'hediyePage' => (function() use ($db, $locale) {
             try {
                 $stmt = $db->prepare('SELECT * FROM pages WHERE slug = ? AND is_active = 1 LIMIT 1');
                 $stmt->execute(['hediye']);
                 $p = $stmt->fetch();
                 if (!$p) return null;
-                $sections = [];
+                $trSections = [];
                 if (!empty($p['content'])) {
-                    $sections = json_decode($p['content'], true) ?: [];
+                    $trSections = json_decode($p['content'], true) ?: [];
+                }
+                $sections = $trSections;
+                if ($locale !== 'tr' && !empty($p['content_' . $locale])) {
+                    $localeSections = json_decode($p['content_' . $locale], true) ?: [];
+                    if (!empty($localeSections)) {
+                        $sections = $localeSections;
+                        foreach (['splitImage', 'darkBgImage'] as $imgKey) {
+                            if (!empty($trSections[$imgKey])) {
+                                $sections[$imgKey] = $trSections[$imgKey];
+                            }
+                        }
+                    }
                 }
                 return [
                     'heroImage' => $p['hero_image'] ?? '',
                     'heroImagePosition' => $p['hero_image_position'] ?? '50% 50%',
                     'heroImageScale' => isset($p['hero_image_scale']) ? (float)$p['hero_image_scale'] : 1.0,
+                    'heroTitle' => getLocalizedValue($p, 'hero_title', $locale),
+                    'heroSubtitle' => getLocalizedValue($p, 'hero_subtitle', $locale),
                     'sections' => $sections,
                 ];
             } catch (Exception $e) {
