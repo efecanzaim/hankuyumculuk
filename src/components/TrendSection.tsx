@@ -13,6 +13,8 @@ interface TrendSectionProps {
   rightLink: string;
   leftTitleLink: string;
   rightTitleLink: string;
+  leftButtonText?: string;
+  rightButtonText?: string;
   leftImagePosition?: string;
   leftImageScale?: number;
   rightImagePosition?: string;
@@ -28,6 +30,8 @@ export default function TrendSection({
   rightLink = "#",
   leftTitleLink = "#",
   rightTitleLink = "#",
+  leftButtonText = "KEŞFEDİN",
+  rightButtonText = "KEŞFEDİN",
   leftImagePosition,
   leftImageScale,
   rightImagePosition,
@@ -65,10 +69,10 @@ export default function TrendSection({
               {/* Link */}
               <div className="text-center">
                 <Link
-                  href={leftLink}
+                  href={leftTitleLink || leftLink}
                   className="inline-block px-8 py-3 text-[13px] tracking-[0.15em] font-medium text-[#2f3237] bg-white border border-[#2f3237] hover:bg-[#2f3237] hover:text-white transition-all duration-300 uppercase"
                 >
-                  keşfedin
+                  {leftButtonText}
                 </Link>
               </div>
             </div>
@@ -99,10 +103,10 @@ export default function TrendSection({
               {/* Link */}
               <div className="text-center">
                 <Link
-                  href={rightLink}
+                  href={rightTitleLink || rightLink}
                   className="inline-block px-8 py-3 text-[13px] tracking-[0.15em] font-medium text-[#2f3237] bg-white border border-[#2f3237] hover:bg-[#2f3237] hover:text-white transition-all duration-300 uppercase"
                 >
-                  keşfedin
+                  {rightButtonText}
                 </Link>
               </div>
             </div>
@@ -137,10 +141,10 @@ export default function TrendSection({
             {/* Link - Below image */}
             <div className="text-center px-6">
               <Link
-                href={leftLink}
+                href={leftTitleLink || leftLink}
                 className="inline-block px-8 py-3 text-[13px] tracking-[0.15em] font-medium text-[#2f3237] bg-white border border-[#2f3237] hover:bg-[#2f3237] hover:text-white transition-all duration-300 uppercase"
               >
-                keşfedin
+                {leftButtonText}
               </Link>
             </div>
           </div>
@@ -171,10 +175,10 @@ export default function TrendSection({
             {/* Link - Below image */}
             <div className="text-center px-6">
               <Link
-                href={rightLink}
+                href={rightTitleLink || rightLink}
                 className="inline-block px-8 py-3 text-[13px] tracking-[0.15em] font-medium text-[#2f3237] bg-white border border-[#2f3237] hover:bg-[#2f3237] hover:text-white transition-all duration-300 uppercase"
               >
-                keşfedin
+                {rightButtonText}
               </Link>
             </div>
           </div>

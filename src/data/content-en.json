@@ -19,7 +19,7 @@
     "mainNav": [
       {
         "text": "JEWELRY",
-        "href": "/en/jewelry"
+        "href": "/en/jewellery"
       },
       {
         "text": "COLLECTION",
@@ -42,7 +42,7 @@
         "title": "the art  of elegance",
         "subtitle": "UNIQUE DESIGNS, TIMELESS VALUES",
         "ctaText": "DISCOVER JEWELRY",
-        "ctaLink": "/en/jewelry"
+        "ctaLink": "/en/jewellery"
       },
       {
         "backgroundImage": "/images/hero-bg2.mp4",
@@ -68,14 +68,16 @@
     ]
   },
   "trendSection": {
-    "leftImage": "/images/trend-left.jpg",
-    "rightImage": "/images/trend-right.jpg",
+    "leftImage": "/images/trend/1771324798_f5a8f56d_tasarimlarimiz.png",
+    "rightImage": "/images/trend/1772453076_c43abe3d_IMG_1178_lifestyle.jpg",
     "leftTitle": "Discover Our Designs",
     "rightTitle": "Discover Our Collection",
-    "leftLink": "/en/jewelry/rings",
+    "leftLink": "/en/jewellery/rings",
     "rightLink": "/en/collection/light-of-my-eyes",
-    "leftTitleLink": "/en/jewelry/rings",
+    "leftTitleLink": "/en/jewellery/rings",
     "rightTitleLink": "/en/collection/light-of-my-eyes",
+    "leftButtonText": "DISCOVER",
+    "rightButtonText": "DISCOVER",
     "leftImagePosition": "50% 50%",
     "leftImageScale": 1,
     "rightImagePosition": "50% 50%",
@@ -130,7 +132,7 @@
       "id": 1,
       "image": "/images/categories/mucevher.jpg",
       "title": "JEWELRY",
-      "link": "/en/jewelry"
+      "link": "/en/jewellery"
     },
     {
       "id": 2,
@@ -723,7 +725,7 @@
       "heroImage": "/images/hediye-menu-hero.jpg",
       "heroTitle": "Finishing Touches",
       "heroSubtitle": "Complete your style.",
-      "heroDescription": "Accessories to complement your jewelry collection. Distinctive selections from hair clips to jewelry boxes.",
+      "heroDescription": "Accessories to complement your jewellery collection. Distinctive selections from hair clips to jewellery boxes.",
       "categoryTitle": "ACCESSORIES",
       "products": []
     }
@@ -768,6 +770,7 @@
     "heroSubtitle": "Pieces that never lose their value with time.",
     "heroDescription": "There are certain jewels\nthat never lose their value with time.\nWith their design, craftsmanship, and presence, they still carry the impact of the very first day.\n\nPreloved pieces\nconsist of carefully selected, authenticity-preserved\njewels awaiting rediscovery.\n\nEach one unites a story from its past\nwith the elegance of today.\nDistinguished, unique, and within reach...",
     "categoryTitle": "PRELOVED COLLECTION",
+    "content": null,
     "products": []
   },
   "newArrivalsCategory": {
@@ -814,7 +817,7 @@
     "heroImage": "/images/mucevher-menu-hero.jpg",
     "heroTitle": "Sets",
     "heroSubtitle": "Harmonious pieces, flawless appearance.",
-    "heroDescription": "Our jewelry sets,\nthoughtfully brought together,\ncomplete your style.",
+    "heroDescription": "Our jewellery sets,\nthoughtfully brought together,\ncomplete your style.",
     "categoryTitle": "SETS",
     "products": []
   },

@@ -52,6 +52,13 @@ $finfo = finfo_open(FILEINFO_MIME_TYPE);
 $mimeType = finfo_file($finfo, $file['tmp_name']);
 finfo_close($finfo);
 
+// SVG dosyaları bazı PHP sürümlerinde text/plain veya text/html olarak algılanır
+// Uzantıya göre düzelt
+$fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+if ($fileExtension === 'svg' && in_array($mimeType, ['text/plain', 'text/html', 'text/xml', 'application/xml', 'application/octet-stream'])) {
+    $mimeType = 'image/svg+xml';
+}
+
 if (!isset($allowedTypes[$mimeType])) {
     jsonResponse(['error' => 'Geçersiz dosya türü. Sadece JPG, PNG, GIF, WebP, SVG, MP4, WebM ve OGG kabul edilir.'], 400);
 }

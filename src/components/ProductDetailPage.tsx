@@ -138,8 +138,8 @@ export default function ProductDetailPage({
   };
 
   const getCutName = (cut: string | undefined): string => {
-    if (!cut) return '-';
-    return cutMap[cut]?.[locale] || cut;
+    if (!cut) return '';
+    return cutMap[cut]?.['en'] || cut;
   };
 
   const getStoneName = (stoneType: string): string => {

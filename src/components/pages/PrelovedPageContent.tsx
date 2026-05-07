@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import ProductListingPage from "@/components/ProductListingPage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -13,6 +14,25 @@ interface PrelovedPageContentProps {
 export default function PrelovedPageContent({ locale }: PrelovedPageContentProps) {
   const content = useContent(locale);
   const category = content.prelovedCategory;
+
+  const extraContent = useMemo(() => {
+    const raw = category.content;
+    if (!raw) return {} as Record<string, string>;
+    try {
+      const parsed: Record<string, string> = typeof raw === 'string' ? JSON.parse(raw) : (raw as Record<string, string>);
+      const suffix = locale === 'tr' ? '' : `_${locale}`;
+      const pick = (key: string) => parsed[`${key}${suffix}`] || (suffix ? parsed[key] : undefined) || undefined;
+      return {
+        appointmentTitle: pick('appointmentTitle'),
+        appointmentDesc: pick('appointmentDesc'),
+        appointmentButtonText: pick('appointmentButtonText'),
+        productsFoundText: pick('productsFoundText'),
+        loadMoreText: pick('loadMoreText'),
+      } as Record<string, string | undefined>;
+    } catch {
+      return {} as Record<string, string>;
+    }
+  }, [category.content, locale]);
 
   return (
     <>
@@ -33,6 +53,12 @@ export default function PrelovedPageContent({ locale }: PrelovedPageContentProps
         products={category.products}
         totalProducts={category.products.length}
         appointmentSubject="preloved"
+        locale={locale}
+        appointmentTitle={extraContent.appointmentTitle}
+        appointmentDesc={extraContent.appointmentDesc}
+        appointmentButtonText={extraContent.appointmentButtonText}
+        productsFoundText={extraContent.productsFoundText}
+        loadMoreText={extraContent.loadMoreText}
       />
       <Footer
         logo={content.footer.logo}

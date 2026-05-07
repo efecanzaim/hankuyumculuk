@@ -60,13 +60,14 @@ switch ($method) {
             $stmt = $db->prepare('DELETE FROM category_products WHERE category_id = ?');
             $stmt->execute([$categoryId]);
             
-            // Yeni ilişkileri ekle
+            // Yeni ilişkileri ekle (duplicate'leri temizle)
+            $productIds = array_values(array_unique(array_map('intval', $productIds)));
             if (!empty($productIds)) {
                 $stmt = $db->prepare('
-                    INSERT INTO category_products (category_id, product_id, sort_order, is_active)
+                    INSERT IGNORE INTO category_products (category_id, product_id, sort_order, is_active)
                     VALUES (?, ?, ?, 1)
                 ');
-                
+
                 foreach ($productIds as $index => $productId) {
                     $stmt->execute([$categoryId, $productId, $index]);
                 }

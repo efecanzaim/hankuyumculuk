@@ -16,6 +16,12 @@
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^urun/.+ /urun/index.html [L]
 
+  # Koleksiyon detay sayfaları - Tüm /koleksiyon/* URL'lerini /koleksiyon/index.html'e yönlendir
+  # (gozumun-nuru hariç - kendi dizini var)
+  RewriteCond %{REQUEST_URI} ^/koleksiyon/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^koleksiyon/.+ /koleksiyon/index.html [L]
+
   # EN - Product detail pages
   RewriteCond %{REQUEST_URI} ^/en/product/[^/]+/?$
   RewriteCond %{REQUEST_FILENAME} !-d
@@ -50,6 +56,16 @@
   RewriteCond %{REQUEST_URI} ^/ru/sertifikat/[^/]+/?$
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^ru/sertifikat/.+ /ru/sertifikat/index.html [L]
+
+  # EN - Collection detail pages
+  RewriteCond %{REQUEST_URI} ^/en/collection/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^en/collection/.+ /en/collection/index.html [L]
+
+  # RU - Collection detail pages (kollektsiya)
+  RewriteCond %{REQUEST_URI} ^/ru/kollektsiya/[^/]+/?$
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ru/kollektsiya/.+ /ru/kollektsiya/index.html [L]
 
   # Trailing slash yoksa ve dizin varsa, trailing slash ekle (SEO için)
   RewriteCond %{REQUEST_FILENAME} -d

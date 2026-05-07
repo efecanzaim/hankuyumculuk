@@ -78,6 +78,8 @@ export default function HomePageClient() {
         rightLink={content.trendSection?.rightLink}
         leftTitleLink={content.trendSection?.leftTitleLink}
         rightTitleLink={content.trendSection?.rightTitleLink}
+        leftButtonText={content.trendSection?.leftButtonText}
+        rightButtonText={content.trendSection?.rightButtonText}
         leftImagePosition={content.trendSection?.leftImagePosition}
         leftImageScale={content.trendSection?.leftImageScale}
         rightImagePosition={content.trendSection?.rightImagePosition}

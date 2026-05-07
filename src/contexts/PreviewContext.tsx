@@ -91,7 +91,19 @@ export function PreviewProvider({ locale = 'tr' as Locale, children }: { locale?
             // sadece görsel/ürün gibi dinamik verileri kullan
             if (locale !== 'tr') {
               // Sadece ürün ve görsel verilerini API'den al
-              const dynamicKeys = ['featuredProducts', 'mucevherCategories', 'erkekCategories', 'koleksiyonCategories', 'hediyeCategories', 'mucevherCategory', 'erkekCategory', 'yuzukCategory', 'kolyeCategory', 'bileklikCategory', 'kupeCategory', 'setCategory', 'gozumunNuruCategory', 'prelovedCategory', 'yatirimCategory', 'ozelTasarimCategory', 'blog', 'blogPosts'];
+              const dynamicKeys = [
+                'topBanner', 'header', 'hero',
+                'trendSection', 'parallaxSection', 'storySection',
+                'featuredProductsSection', 'featuredProducts',
+                'specialDesignSection', 'blogSection',
+                'footer', 'contact', 'menuImages',
+                'mucevherCategories', 'erkekCategories', 'koleksiyonCategories', 'hediyeCategories',
+                'mucevherCategory', 'erkekCategory', 'yuzukCategory', 'kolyeCategory',
+                'bileklikCategory', 'kupeCategory', 'setCategory',
+                'gozumunNuruCategory', 'prelovedCategory', 'yatirimCategory', 'ozelTasarimCategory',
+                'koleksiyonSayfasi', 'ozelTasarimPage', 'hediyePage',
+                'blog', 'blogPosts',
+              ];
               const filteredData: Partial<typeof data> = {};
               for (const key of dynamicKeys) {
                 if (data[key] !== undefined) {

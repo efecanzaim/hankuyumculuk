@@ -53,7 +53,7 @@ export default function CollectionPage({
               <h1 className="font-title text-[40px] md:text-[50px] leading-[60px] md:leading-[80px] text-primary mb-4 md:mb-6">
                 {heroTitle}
               </h1>
-              <p className="font-title text-[24px] md:text-[30px] leading-[30px] text-[#2f3237] mb-6 md:mb-[50px]">
+              <p className="font-title text-[24px] md:text-[30px] leading-[30px] text-[#2f3237] mb-6 md:mb-[50px] whitespace-pre-line">
                 {heroSubtitle}
               </p>
               <p className="text-[18px] md:text-[24px] leading-[28px] md:leading-[38px] font-light text-[#2f3237] whitespace-pre-line">

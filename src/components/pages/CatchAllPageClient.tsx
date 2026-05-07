@@ -20,6 +20,7 @@ import BakimGarantiPageContent from "@/components/pages/BakimGarantiPageContent"
 import CerezPolitikasiPageContent from "@/components/pages/CerezPolitikasiPageContent";
 import ProductCategoryPageContent from "@/components/pages/ProductCategoryPageContent";
 import SertifikaPageContent from "@/components/pages/SertifikaPageContent";
+import CollectionPage from "@/components/pages/CollectionPage";
 
 interface PageComponentProps {
   locale: Locale;
@@ -39,6 +40,7 @@ const pageComponents: Record<string, React.ComponentType<PageComponentProps>> = 
   'certificate': SertifikaPageContent,
   'appointment': RandevuPageContent,
   'collection/light-of-my-eyes': GozumunNuruPageContent,
+  'collection': CollectionPage,
   'customer-service/care-warranty': BakimGarantiPageContent,
   'legal/cookie-policy': CerezPolitikasiPageContent,
   // Product categories

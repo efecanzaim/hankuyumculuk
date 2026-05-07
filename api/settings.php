@@ -115,24 +115,67 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
 
         case 'trend_section':
             if ($locale !== 'tr') {
-                $stmt = $db->prepare("UPDATE homepage_trend_section SET left_title{$ls}=?, right_title{$ls}=? LIMIT 1");
-                return $stmt->execute([$value['leftTitle'] ?? '', $value['rightTitle'] ?? '']);
+                $stmt = $db->prepare("UPDATE homepage_trend_section SET left_title{$ls}=?, right_title{$ls}=?, left_button_text{$ls}=?, right_button_text{$ls}=? LIMIT 1");
+                return $stmt->execute([
+                    $value['leftTitle'] ?? '',
+                    $value['rightTitle'] ?? '',
+                    $value['leftButtonText'] ?? '',
+                    $value['rightButtonText'] ?? ''
+                ]);
             }
-            $stmt = $db->query('SELECT id FROM homepage_trend_section LIMIT 1');
+            // Kolon varlıklarını kontrol et ve gerekirse ekle
             $hasAdjustCols = false;
+            $hasButtonCols = false;
             try {
                 $checkCol = $db->query("SHOW COLUMNS FROM homepage_trend_section LIKE 'left_image_position'");
                 $hasAdjustCols = $checkCol->rowCount() > 0;
             } catch (Exception $e) {}
+            try {
+                $checkCol = $db->query("SHOW COLUMNS FROM homepage_trend_section LIKE 'left_button_text'");
+                $hasButtonCols = $checkCol->rowCount() > 0;
+            } catch (Exception $e) {}
 
-            if ($hasAdjustCols) {
+            if (!$hasButtonCols) {
+                try {
+                    $db->exec("ALTER TABLE homepage_trend_section
+                        ADD COLUMN left_button_text VARCHAR(100) DEFAULT 'KEŞFEDİN',
+                        ADD COLUMN left_button_text_en VARCHAR(100) DEFAULT 'DISCOVER',
+                        ADD COLUMN left_button_text_ru VARCHAR(100) DEFAULT 'ОТКРЫТЬ',
+                        ADD COLUMN right_button_text VARCHAR(100) DEFAULT 'KEŞFEDİN',
+                        ADD COLUMN right_button_text_en VARCHAR(100) DEFAULT 'DISCOVER',
+                        ADD COLUMN right_button_text_ru VARCHAR(100) DEFAULT 'ОТКРЫТЬ'");
+                    $hasButtonCols = true;
+                } catch (Exception $e) {
+                    error_log('trend_section button columns migration failed: ' . $e->getMessage());
+                }
+            }
+
+            $stmt = $db->query('SELECT id FROM homepage_trend_section LIMIT 1');
+            $existing = $stmt->fetch();
+
+            if ($hasAdjustCols && $hasButtonCols) {
+                $params = [
+                    $value['leftImage'] ?? '', $value['leftTitle'] ?? '', $value['leftTitleLink'] ?? '',
+                    $value['leftImagePosition'] ?? '50% 50%', $value['leftImageScale'] ?? 1,
+                    $value['leftButtonText'] ?? 'KEŞFEDİN',
+                    $value['rightImage'] ?? '', $value['rightTitle'] ?? '', $value['rightTitleLink'] ?? '',
+                    $value['rightImagePosition'] ?? '50% 50%', $value['rightImageScale'] ?? 1,
+                    $value['rightButtonText'] ?? 'KEŞFEDİN'
+                ];
+                if ($existing) {
+                    $stmt = $db->prepare('UPDATE homepage_trend_section SET left_image=?, left_title=?, left_link=?, left_image_position=?, left_image_scale=?, left_button_text=?, right_image=?, right_title=?, right_link=?, right_image_position=?, right_image_scale=?, right_button_text=? LIMIT 1');
+                    return $stmt->execute($params);
+                }
+                $stmt = $db->prepare('INSERT INTO homepage_trend_section (left_image, left_title, left_link, left_image_position, left_image_scale, left_button_text, right_image, right_title, right_link, right_image_position, right_image_scale, right_button_text) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
+                return $stmt->execute($params);
+            } elseif ($hasAdjustCols) {
                 $params = [
                     $value['leftImage'] ?? '', $value['leftTitle'] ?? '', $value['leftTitleLink'] ?? '',
                     $value['leftImagePosition'] ?? '50% 50%', $value['leftImageScale'] ?? 1,
                     $value['rightImage'] ?? '', $value['rightTitle'] ?? '', $value['rightTitleLink'] ?? '',
                     $value['rightImagePosition'] ?? '50% 50%', $value['rightImageScale'] ?? 1
                 ];
-                if ($stmt->fetch()) {
+                if ($existing) {
                     $stmt = $db->prepare('UPDATE homepage_trend_section SET left_image=?, left_title=?, left_link=?, left_image_position=?, left_image_scale=?, right_image=?, right_title=?, right_link=?, right_image_position=?, right_image_scale=? LIMIT 1');
                     return $stmt->execute($params);
                 }
@@ -143,7 +186,7 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
                     $value['leftImage'] ?? '', $value['leftTitle'] ?? '', $value['leftTitleLink'] ?? '',
                     $value['rightImage'] ?? '', $value['rightTitle'] ?? '', $value['rightTitleLink'] ?? ''
                 ];
-                if ($stmt->fetch()) {
+                if ($existing) {
                     $stmt = $db->prepare('UPDATE homepage_trend_section SET left_image=?, left_title=?, left_link=?, right_image=?, right_title=?, right_link=? LIMIT 1');
                     return $stmt->execute($params);
                 }
@@ -291,18 +334,40 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
             return $stmt->execute($params);
 
         case 'footer':
+            // slogan_svg kolonu var mı kontrol et
+            $hasSvgCol = false;
+            try {
+                $chk = $db->query("SHOW COLUMNS FROM footer_settings LIKE 'slogan_svg'");
+                $hasSvgCol = $chk->rowCount() > 0;
+            } catch (Exception $e) {}
+
             if ($locale !== 'tr') {
-                $stmt = $db->prepare("UPDATE footer_settings SET slogan{$ls}=?, copyright_text{$ls}=?, slogan_svg{$ls}=? LIMIT 1");
-                return $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '', $value['sloganSvg'] ?? null]);
+                if ($hasSvgCol) {
+                    $stmt = $db->prepare("UPDATE footer_settings SET slogan{$ls}=?, copyright_text{$ls}=?, slogan_svg{$ls}=? LIMIT 1");
+                    return $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '', $value['sloganSvg'] ?? null]);
+                } else {
+                    $stmt = $db->prepare("UPDATE footer_settings SET slogan{$ls}=?, copyright_text{$ls}=? LIMIT 1");
+                    return $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '']);
+                }
             }
             $stmt = $db->query('SELECT id FROM footer_settings LIMIT 1');
-            $params = [$value['logo'] ?? '', $value['slogan'] ?? '', $value['copyright'] ?? '', $value['sloganSvg'] ?? null];
-            if ($stmt->fetch()) {
-                $stmt = $db->prepare('UPDATE footer_settings SET logo_image=?, slogan=?, copyright_text=?, slogan_svg=? LIMIT 1');
+            if ($hasSvgCol) {
+                $params = [$value['logo'] ?? '', $value['slogan'] ?? '', $value['copyright'] ?? '', $value['sloganSvg'] ?? null];
+                if ($stmt->fetch()) {
+                    $stmt = $db->prepare('UPDATE footer_settings SET logo_image=?, slogan=?, copyright_text=?, slogan_svg=? LIMIT 1');
+                    return $stmt->execute($params);
+                }
+                $stmt = $db->prepare('INSERT INTO footer_settings (logo_image, slogan, copyright_text, slogan_svg) VALUES (?,?,?,?)');
+                return $stmt->execute($params);
+            } else {
+                $params = [$value['logo'] ?? '', $value['slogan'] ?? '', $value['copyright'] ?? ''];
+                if ($stmt->fetch()) {
+                    $stmt = $db->prepare('UPDATE footer_settings SET logo_image=?, slogan=?, copyright_text=? LIMIT 1');
+                    return $stmt->execute($params);
+                }
+                $stmt = $db->prepare('INSERT INTO footer_settings (logo_image, slogan, copyright_text) VALUES (?,?,?)');
                 return $stmt->execute($params);
             }
-            $stmt = $db->prepare('INSERT INTO footer_settings (logo_image, slogan, copyright_text, slogan_svg) VALUES (?,?,?,?)');
-            return $stmt->execute($params);
 
         case 'contact':
             if ($locale !== 'tr') {
@@ -437,6 +502,10 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
 
         case 'featured_products':
         case 'yuzuk_category':
+            // Bunlar kendi tabloları (featured_products / categories) üzerinden yönetilir,
+            // general_settings'e yazılmamalı.
+            return true;
+
         case 'koleksiyon_sayfasi':
             if ($locale !== 'tr') {
                 $localeData = json_encode([

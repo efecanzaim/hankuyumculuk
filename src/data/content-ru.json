@@ -76,6 +76,8 @@
     "rightLink": "/ru/kollektsiya/svet-moikh-glaz",
     "leftTitleLink": "/ru/yuvelirnye-izdeliya/koltsa",
     "rightTitleLink": "/ru/kollektsiya/svet-moikh-glaz",
+    "leftButtonText": "ОТКРЫТЬ",
+    "rightButtonText": "ОТКРЫТЬ",
     "leftImagePosition": "50% 50%",
     "leftImageScale": 1,
     "rightImagePosition": "50% 50%",
@@ -768,6 +770,7 @@
     "heroSubtitle": "Изделия, не теряющие своей ценности со временем.",
     "heroDescription": "Есть украшения,\nкоторые со временем не теряют ничего из своей ценности.\nСвоим дизайном, мастерством и характером\nони по-прежнему несут в себе первоначальное впечатление.\n\nPreloved изделия\nсостоят из тщательно отобранных, сохранивших свою подлинность\nукрашений, ожидающих нового открытия.\n\nКаждое из них соединяет историю\nиз своего прошлого с изяществом настоящего.\nИзысканно, особенно и доступно...",
     "categoryTitle": "КОЛЛЕКЦИЯ PRELOVED",
+    "content": null,
     "products": []
   },
   "newArrivalsCategory": {

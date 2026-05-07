@@ -12,7 +12,7 @@
     "bookAppointment": "BOOK APPOINTMENT",
     "productsFound": "{count} Products found",
     "filterProducts": "Filter products",
-    "loadProducts": "LOAD PRODUCTS",
+    "loadProducts": "SHOW MORE",
     "loadingProducts": "LOADING...",
     "image": "Image",
     "previousImage": "Previous image",
@@ -32,7 +32,7 @@
     "contact": "Contact",
     "blog": "Blog",
     "nav": {
-      "jewelry": "JEWELRY",
+      "jewelry": "JEWELLERY",
       "collection": "COLLECTION",
       "preloved": "PRELOVED",
       "custom": "FOR YOU",
@@ -113,7 +113,7 @@
     "ourStore": "Our Store",
     "storeAddress": "Liman Mahallesi, Akdeniz Bulvarı No: 257 Fenix Center, Konyaaltı/Antalya",
     "subjects": {
-      "jewelry": "Jewelry",
+      "jewelry": "Jewellery",
       "collection": "Collection",
       "custom": "For You",
       "gift": "Gift",
@@ -129,7 +129,7 @@
     "values": {
       "elegance": { "title": "Elegance", "desc": "We prioritize elegance in every design." },
       "quality": { "title": "Quality", "desc": "We work with certified diamonds and the highest quality materials." },
-      "originality": { "title": "Originality", "desc": "Every piece of jewelry carries its own unique story." },
+      "originality": { "title": "Originality", "desc": "Every piece of jewellery carries its own unique story." },
       "trust": { "title": "Trust", "desc": "The trust we build with our customers is the foundation of our work." }
     }
   },
@@ -156,7 +156,7 @@
     "freedomDesc": "You expect options not to limit you, but to open up space for you.",
     "step1Title": "First Step",
     "step1Name": "Understanding",
-    "step1Desc": "Jewelry begins with understanding you before taking shape. Expectations, emotions, and your story become clear at this stage. We listen to your feelings, intentions, and what you want to express.",
+    "step1Desc": "Jewellery begins with understanding you before taking shape. Expectations, emotions, and your story become clear at this stage. We listen to your feelings, intentions, and what you want to express.",
     "step2Title": "Second Step",
     "step2Name": "Shaping",
     "step2Desc": "Measurements, textures, and details gradually emerge. This stage is not a decision but a discovery. Work continues until the piece finds itself. At this stage, your expectations and our technical knowledge and years of production experience come together. The design gains its true character in this phase.",
@@ -165,7 +165,7 @@
     "step3Desc": "When the design is finalized, it comes to life as a unique piece in the hands of master craftsmen. The process continues meticulously until your expectations and wishes are fully met.",
     "step4Title": "Final Step",
     "step4Name": "Completion",
-    "step4Desc": "The resulting jewelry is no longer just a design, but becomes a mark that belongs to you. Completion occurs when your expectations are fully met.",
+    "step4Desc": "The resulting jewellery is no longer just a design, but becomes a mark that belongs to you. Completion occurs when your expectations are fully met.",
     "darkTitle": "And Finally...",
     "darkDesc1": "You expect a piece that feels like it belongs to you.",
     "darkDesc2": "Not to someone else, but perfectly suited to you.",
@@ -181,7 +181,7 @@
     "philosophyTitle1": "A thank you,",
     "philosophyTitle2": "a celebration",
     "philosophySubtitle": "The most lasting way of saying \"glad you exist\"…",
-    "philosophyDesc": "At Han, a gift is not just a jewelry selection; it is a gesture that has been heard, thought about, and imbued with meaning.",
+    "philosophyDesc": "At Han, a gift is not just a jewellery selection; it is a gesture that has been heard, thought about, and imbued with meaning.",
     "categoriesTitle": "Our Categories",
     "categoriesSubtitle": "Selected, thoughtful, and an expression of long-term value",
     "catRing": "Rings",
@@ -211,7 +211,7 @@
     "philosophyTitle": "You are not someone who beautifies my life; you are where my life becomes meaningful.",
     "philosophyQuote1": "\"You are not someone who beautifies my life;",
     "philosophyQuote2": "you are where my life becomes meaningful.\"",
-    "darkTextMain": "jewelry,",
+    "darkTextMain": "jewellery,",
     "darkTextCursive": "exists to make you feel special.",
     "philosophyDesc": "Light of My Eyes was born from a closeness that never loses its value. From a bright bond filtering through the window of the soul…",
     "discoverTitle": "Discover the Collection",
@@ -220,7 +220,7 @@
     "detailDesc1": "Every piece in this collection is a spiritual reflection of the pure love, protective instinct, and sense of being indispensable felt for someone.",
     "detailDesc2": "Every touch, every detail carries the trace of a bond that has been carefully crafted, embracing, and completing.",
     "darkDesc1": "Designed to make you feel, rather than to show off.",
-    "darkDesc2": "Han jewelry exists to make you feel special.",
+    "darkDesc2": "Han jewellery exists to make you feel special.",
     "darkDesc3": "This is the story of someone very special… So where are you in it?",
     "ctaTitle": "Selected",
     "ctaSubtitle": "Thoughtful and Long-Term Value",
@@ -278,8 +278,8 @@
     "title": "Cookie Policy"
   },
   "metadata": {
-    "title": "Han Kuyumculuk | Diamond & Jewelry",
+    "title": "Han Kuyumculuk | Diamond & Jewellery",
     "description": "Everything becomes beautiful with you… Carrying the elegance of love in every diamond.",
-    "keywords": "diamond, jewelry, gold, ring, necklace, bracelet, earring, custom design"
+    "keywords": "diamond, jewellery, gold, ring, necklace, bracelet, earring, custom design"
   }
 }

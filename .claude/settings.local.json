@@ -49,7 +49,14 @@
       "Bash(grep -n \"case ''featured_products''\\\\|case ''yuzuk_category''\" \"c:/Users/demas/Desktop/hankuyumculuk/api/settings.php\")",
       "Bash(wc -l \"c:\\\\Users\\\\demas\\\\Desktop\\\\hankuyumculuk/src/i18n/dictionaries\"/*.json)",
       "Bash(grep -n \"INSERT INTO \\\\`top_banner\\\\`\" \"u2526296_hankuyumculuk.sql\")",
-      "Bash(python3 -c ':*)"
+      "Bash(python3 -c ':*)",
+      "Bash(wc -l /c/Users/demas/Desktop/hankuyumculuk/src/i18n/dictionaries/*.json)",
+      "Bash(grep -v \"t\\('\\\\|t\\(\\\\\"\\\\|//\")",
+      "Bash(grep -n \"INSERT INTO \\\\`categories\\\\`\\\\|INSERT INTO \\\\`products\\\\`\" \"c:/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk \\(1\\).sql\")",
+      "Bash(grep -n \"INSERT INTO \\\\`general_settings\\\\`\" \"c:/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk \\(1\\).sql\")",
+      "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)",
+      "PowerShell(npx tsc --noEmit 2>&1)",
+      "Bash(npx tsc *)"
     ]
   }
 }

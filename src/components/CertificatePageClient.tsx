@@ -127,8 +127,8 @@ export default function CertificatePageClient({ slug, locale = 'tr' }: Certifica
 
   const getStoneName = (stoneType: string): string => stoneTypeMap[stoneType]?.[locale] || stoneType;
   const getCutName = (cut: string | undefined): string => {
-    if (!cut) return '-';
-    return cutMap[cut]?.[locale] || cut;
+    if (!cut) return '';
+    return cutMap[cut]?.['en'] || cut;
   };
 
   // Loading

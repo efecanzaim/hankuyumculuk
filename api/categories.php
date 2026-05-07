@@ -59,9 +59,35 @@ switch ($method) {
 
                 // Ürünleri de getir
                 if ($withProducts) {
-                    $stmt2 = $db->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY CASE WHEN sort_order = 0 THEN 999999 ELSE sort_order END ASC, name ASC');
-                    $stmt2->execute([$category['id']]);
-                    $products = $stmt2->fetchAll();
+                    $products = [];
+                    $tableExistsId = false;
+                    try {
+                        $checkStmt = $db->query("SHOW TABLES LIKE 'category_products'");
+                        $tableExistsId = $checkStmt->rowCount() > 0;
+                    } catch (Exception $e) {
+                        error_log('category_products check error: ' . $e->getMessage());
+                    }
+                    if ($tableExistsId) {
+                        try {
+                            $stmt2 = $db->prepare('
+                                SELECT p.*, cp.sort_order AS cp_sort_order
+                                FROM category_products cp
+                                INNER JOIN products p ON cp.product_id = p.id
+                                WHERE cp.category_id = ? AND cp.is_active = 1 AND p.is_active = 1
+                                ORDER BY CASE WHEN cp.sort_order = 0 THEN 999999 ELSE cp.sort_order END ASC, p.name ASC
+                            ');
+                            $stmt2->execute([$category['id']]);
+                            $products = $stmt2->fetchAll();
+                        } catch (PDOException $e) {
+                            error_log('category_products id query error: ' . $e->getMessage());
+                            $products = [];
+                        }
+                    }
+                    if (empty($products)) {
+                        $stmt2 = $db->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY CASE WHEN sort_order = 0 THEN 999999 ELSE sort_order END ASC, name ASC');
+                        $stmt2->execute([$category['id']]);
+                        $products = $stmt2->fetchAll();
+                    }
                     $formatted['products'] = array_map('formatCategoryProduct', $products);
                 }
 
@@ -78,10 +104,40 @@ switch ($method) {
             if ($category) {
                 $formatted = formatCategory($category);
 
-                // Kategoriye ait ürünleri de getir
-                $stmt2 = $db->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY CASE WHEN sort_order = 0 THEN 999999 ELSE sort_order END ASC, name ASC');
-                $stmt2->execute([$category['id']]);
-                $products = $stmt2->fetchAll();
+                // Kategoriye ait ürünleri getir - önce pivot tablodan (çoklu kategori), sonra fallback
+                $products = [];
+                $tableExists = false;
+                try {
+                    $checkStmt = $db->query("SHOW TABLES LIKE 'category_products'");
+                    $tableExists = $checkStmt->rowCount() > 0;
+                } catch (Exception $e) {
+                    error_log('category_products check error: ' . $e->getMessage());
+                }
+
+                if ($tableExists) {
+                    try {
+                        $stmt2 = $db->prepare('
+                            SELECT p.*, cp.sort_order AS cp_sort_order
+                            FROM category_products cp
+                            INNER JOIN products p ON cp.product_id = p.id
+                            WHERE cp.category_id = ? AND cp.is_active = 1 AND p.is_active = 1
+                            ORDER BY CASE WHEN cp.sort_order = 0 THEN 999999 ELSE cp.sort_order END ASC, p.name ASC
+                        ');
+                        $stmt2->execute([$category['id']]);
+                        $products = $stmt2->fetchAll();
+                    } catch (PDOException $e) {
+                        error_log('category_products slug query error: ' . $e->getMessage());
+                        $products = [];
+                    }
+                }
+
+                // Fallback: direkt category_id ile
+                if (empty($products)) {
+                    $stmt2 = $db->prepare('SELECT * FROM products WHERE category_id = ? AND is_active = 1 ORDER BY CASE WHEN sort_order = 0 THEN 999999 ELSE sort_order END ASC, name ASC');
+                    $stmt2->execute([$category['id']]);
+                    $products = $stmt2->fetchAll();
+                }
+
                 $formatted['products'] = array_map('formatCategoryProduct', $products);
 
                 jsonResponse($formatted);
@@ -132,6 +188,10 @@ switch ($method) {
         // Yeni kategori ekle
         $data = getJsonBody();
 
+        // Her iki format da kabul et (camelCase ve snake_case)
+        if (!isset($data['parentType']) && isset($data['parent_type'])) {
+            $data['parentType'] = $data['parent_type'];
+        }
         if (empty($data['name']) || empty($data['parentType'])) {
             jsonResponse(['error' => 'Kategori adı ve parent type gerekli'], 400);
         }
@@ -266,12 +326,22 @@ function formatCategory($category) {
         'id' => (int)$category['id'],
         'parentType' => $category['parent_type'],
         'name' => $category['name'],
+        'nameEn' => $category['name_en'] ?? null,
+        'nameRu' => $category['name_ru'] ?? null,
         'slug' => $category['slug'],
         'heroImage' => $category['hero_image'],
         'heroTitle' => $category['hero_title'],
+        'heroTitleEn' => $category['hero_title_en'] ?? null,
+        'heroTitleRu' => $category['hero_title_ru'] ?? null,
         'heroSubtitle' => $category['hero_subtitle'],
+        'heroSubtitleEn' => $category['hero_subtitle_en'] ?? null,
+        'heroSubtitleRu' => $category['hero_subtitle_ru'] ?? null,
         'heroDescription' => $category['hero_description'],
+        'heroDescriptionEn' => $category['hero_description_en'] ?? null,
+        'heroDescriptionRu' => $category['hero_description_ru'] ?? null,
         'listTitle' => $category['list_title'],
+        'listTitleEn' => $category['list_title_en'] ?? null,
+        'listTitleRu' => $category['list_title_ru'] ?? null,
         'content' => $category['content'] ?? null,
         'sortOrder' => (int)$category['sort_order']
     ];
@@ -285,7 +355,11 @@ function formatCategoryProduct($product) {
         'id' => (int)$product['id'],
         'slug' => $product['slug'],
         'name' => $product['name'],
+        'nameEn' => $product['name_en'] ?? null,
+        'nameRu' => $product['name_ru'] ?? null,
         'subtitle' => $product['subtitle'],
+        'subtitleEn' => $product['subtitle_en'] ?? null,
+        'subtitleRu' => $product['subtitle_ru'] ?? null,
         'image' => $product['main_image'],
         'link' => '/urun/' . $product['slug']
     ];

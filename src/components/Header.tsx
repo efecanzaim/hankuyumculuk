@@ -35,6 +35,28 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
   const [topBannerVisible, setTopBannerVisible] = useState(bannerVisible);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileActiveDropdown, setMobileActiveDropdown] = useState<string | null>(null);
+  const [collectionCategories, setCollectionCategories] = useState<Array<{ id: number; name: string; slug: string; content?: string }>>([]);
+
+  const getHeroTitleImage = (col: { content?: string }): string | null => {
+    try {
+      if (!col.content) return null;
+      const parsed = typeof col.content === 'string' ? JSON.parse(col.content) : col.content;
+      const p = parsed as Record<string, unknown>;
+      return (p?.headerTitleImage as string) || (p?.heroTitleImage as string) || null;
+    } catch { return null; }
+  };
+
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+
+  useEffect(() => {
+    if (!API_URL) return;
+    fetch(`${API_URL}/api/categories.php?parentType=koleksiyon&_t=${Date.now()}`, { cache: 'no-store' })
+      .then(res => res.ok ? res.json() : [])
+      .then(data => {
+        if (Array.isArray(data)) setCollectionCategories(data);
+      })
+      .catch(() => {});
+  }, [API_URL]);
 
   const lp = (pageId: string) => getLocalizedPath(pageId, locale);
 
@@ -108,6 +130,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                       width={110}
                       height={41}
                       className="h-[41px] w-auto"
+                      priority
                       style={isTransparent && !activeMenu ? {} : { filter: 'brightness(0) saturate(100%) invert(18%) sepia(5%) saturate(412%) hue-rotate(169deg) brightness(95%) contrast(89%)' }}
                     />
                   </Link>
@@ -357,18 +380,51 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
 
                 {/* KOLEKSİYON Dropdown */}
                 <div className="mb-2">
-                  <button
-                    onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'koleksiyon' ? null : 'koleksiyon')}
-                    className="flex items-center justify-between w-full py-2 text-[18px] font-bold text-[#5b5b5b]"
-                  >
-                    <span className="flex-1 text-center">{t('header.nav.collection')}</span>
-                    <svg className={`w-3 h-3 transition-transform duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                  <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'max-h-[300px]' : 'max-h-0'}`}>
+                  <div className="flex items-center justify-between w-full py-2">
+                    <div className="w-3" />
+                    <Link
+                      href={lp('collection')}
+                      onClick={toggleMobileMenu}
+                      className="flex-1 text-center text-[18px] font-bold text-[#5b5b5b]"
+                    >
+                      {t('header.nav.collection')}
+                    </Link>
+                    <button
+                      onClick={() => setMobileActiveDropdown(mobileActiveDropdown === 'koleksiyon' ? null : 'koleksiyon')}
+                      className="w-3 flex items-center justify-center"
+                    >
+                      <svg className={`w-3 h-3 transition-transform duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className={`overflow-hidden transition-all duration-200 ${mobileActiveDropdown === 'koleksiyon' ? 'max-h-[400px]' : 'max-h-0'}`}>
                     <div className="flex flex-col items-center py-2">
-                      <Link href={lp('collection/light-of-my-eyes')} className="py-2 text-[18px] text-[#5b5b5b] leading-[45px] lowercase" style={{ fontFamily: 'Buljirya, cursive' }} onClick={toggleMobileMenu}>Gözümün Nuru</Link>
+                      {collectionCategories.length > 0 ? collectionCategories.map(col => {
+                        const heroTitleImg = getHeroTitleImage(col);
+                        return (
+                          <Link
+                            key={col.id}
+                            href={col.slug === 'gozumun-nuru' ? lp('collection/light-of-my-eyes') : `${lp('collection')}/${col.slug}`}
+                            className="py-2 leading-[45px] flex items-center justify-center"
+                            onClick={toggleMobileMenu}
+                          >
+                            {heroTitleImg ? (
+                              <Image
+                                src={getAssetPath(heroTitleImg)}
+                                alt={col.name}
+                                width={180}
+                                height={36}
+                                className="h-[36px] w-auto object-contain"
+                              />
+                            ) : (
+                              <span className="text-[18px] text-[#5b5b5b] lowercase" style={{ fontFamily: 'Buljirya, cursive' }}>{col.name}</span>
+                            )}
+                          </Link>
+                        );
+                      }) : (
+                        <Link href={lp('collection/light-of-my-eyes')} className="py-2 text-[18px] text-[#5b5b5b] leading-[45px] lowercase" style={{ fontFamily: 'Buljirya, cursive' }} onClick={toggleMobileMenu}>Gözümün Nuru</Link>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -447,11 +503,11 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
         <>
           {/* Backdrop - dışarı tıklayınca kapat */}
           <div
-            className="fixed inset-0 z-30"
+            className="fixed inset-0 z-30 bg-black/40"
             onClick={() => setActiveMenu(null)}
           />
         <div
-          className="fixed left-0 right-0 z-40 h-[60vh] overflow-y-auto"
+          className="fixed left-0 right-0 z-40 h-[60vh] overflow-y-auto border-b-[12px] border-b-primary outline-b outline outline-0 [box-shadow:0_1px_0_0_#2f3237]"
           style={{ top: topBannerVisible ? '141px' : '91px' }}
         >
           <div className="absolute left-0 top-0 w-full h-full pointer-events-none">
@@ -502,10 +558,35 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               {/* KOLEKSİYON Menu */}
               {activeMenu === 'koleksiyon' && (
                 <div className="text-[21px] text-[#2f3237] font-light leading-[51px]">
-                  <Link href={lp('collection/light-of-my-eyes')} className="group flex items-center gap-4 hover:font-bold transition-all">
-                    <span className="lowercase" style={{ fontFamily: 'Buljirya, cursive' }}>Gözümün Nuru</span>
-                    <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
+                  {collectionCategories.length > 0 ? collectionCategories.map(col => {
+                    const heroTitleImg = getHeroTitleImage(col);
+                    return (
+                      <Link
+                        key={col.id}
+                        href={col.slug === 'gozumun-nuru' ? lp('collection/light-of-my-eyes') : `${lp('collection')}/${col.slug}`}
+                        className="group flex items-center gap-4 hover:opacity-80 transition-all"
+                        onClick={() => setActiveMenu(null)}
+                      >
+                        {heroTitleImg ? (
+                          <Image
+                            src={getAssetPath(heroTitleImg)}
+                            alt={col.name}
+                            width={260}
+                            height={32}
+                            className="h-[32px] w-auto object-contain"
+                          />
+                        ) : (
+                          <span className="lowercase" style={{ fontFamily: 'Buljirya, cursive' }}>{col.name}</span>
+                        )}
+                        <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </Link>
+                    );
+                  }) : (
+                    <Link href={lp('collection/light-of-my-eyes')} className="group flex items-center gap-4 hover:font-bold transition-all">
+                      <span className="lowercase" style={{ fontFamily: 'Buljirya, cursive' }}>Gözümün Nuru</span>
+                      <span className="w-[110px] h-[2px] bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+                  )}
                 </div>
               )}
 

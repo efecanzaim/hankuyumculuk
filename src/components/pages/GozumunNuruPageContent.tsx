@@ -17,6 +17,8 @@ interface GozumunNuruPageContentProps {
 
 const defaultSections = {
   heroSvg: "/gozumunnuru-hero.svg",
+  heroSvgEn: "",
+  heroSvgRu: "",
   philosophyQuote1: "\"Sen benim hayatımı güzelleştiren biri değilsin;",
   philosophyQuote2: "hayatımı anlamlı kılan yerdesin.\"",
   philosophyText: "Gözümün Nuru,\ndeğerini yitirmeyen bir yakınlıktan doğdu.\nRuhun penceresinden süzülen aydınlık bir bağdan…",
@@ -48,7 +50,7 @@ export default function GozumunNuruPageContent({ locale }: GozumunNuruPageConten
   const content = useContent(locale);
   const t = useTranslation(locale);
   const category = content.gozumunNuruCategory;
-  const products = (category?.products || []) as Array<{ id: number; name: string; subtitle: string; image: string; link?: string; slug?: string }>;
+  const products = (category?.products || []) as Array<{ id: number; name: string; nameEn?: string; nameRu?: string; subtitle: string; subtitleEn?: string; subtitleRu?: string; image: string; link?: string; slug?: string }>;
 
   const s = useMemo(() => {
     let sections = defaultSections;
@@ -137,13 +139,17 @@ export default function GozumunNuruPageContent({ locale }: GozumunNuruPageConten
             <span>{tc.collectionLabel}</span>
           </p>
           <h1 className="text-[28px] md:text-[40px] lg:text-[52px] leading-[1.05] text-white mb-10 lowercase" style={{ fontFamily: 'Buljirya, cursive' }}>
-            {category?.heroTitle || tc.heroTitleFallback}
+            {locale === 'tr' ? (category?.heroTitle || 'Gözümün Nuru') : 'Gözümün Nuru'}
           </h1>
         </div>
         {/* Hero SVG */}
         <div className="absolute bottom-8 left-0 right-0 flex justify-center z-10">
           <Image
-            src={getAssetPath(s.heroSvg)}
+            src={getAssetPath(
+              locale === 'en' ? (s.heroSvgEn || s.heroSvg) :
+              locale === 'ru' ? (s.heroSvgRu || s.heroSvg) :
+              s.heroSvg
+            )}
             alt="Gözümün Nuru"
             width={480}
             height={60}
@@ -259,10 +265,10 @@ export default function GozumunNuruPageContent({ locale }: GozumunNuruPageConten
                   </div>
                   <div className="pt-[20px] pb-[30px] text-center">
                     <h3 className="text-[20px] leading-[20px] text-[#2f3237] mb-[10px]" style={{ fontFamily: 'var(--font-faculty-glyphic)' }}>
-                      {product.name}
+                      {(locale === 'en' ? product.nameEn : locale === 'ru' ? product.nameRu : null) || product.name}
                     </h3>
                     <p className="font-light text-[13px] leading-[26px] text-[#2f3237]">
-                      {product.subtitle || "Özel tasarım"}
+                      {(locale === 'en' ? product.subtitleEn : locale === 'ru' ? product.subtitleRu : null) || product.subtitle || "Özel tasarım"}
                     </p>
                   </div>
                 </Link>

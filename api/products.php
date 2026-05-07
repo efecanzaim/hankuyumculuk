@@ -221,8 +221,9 @@ switch ($method) {
         // Çoklu kategori ilişkilerini ekle (varsa)
         if (!empty($data['categories']) && is_array($data['categories'])) {
             $categorySortOrders = $data['category_sort_orders'] ?? $data['categorySortOrders'] ?? [];
+            $data['categories'] = array_values(array_unique(array_map('intval', $data['categories'])));
             $catStmt = $db->prepare('
-                INSERT INTO category_products (category_id, product_id, sort_order, is_active)
+                INSERT IGNORE INTO category_products (category_id, product_id, sort_order, is_active)
                 VALUES (?, ?, ?, 1)
             ');
             foreach ($data['categories'] as $categoryId) {
@@ -398,10 +399,11 @@ switch ($method) {
             $deleteCatStmt = $db->prepare('DELETE FROM category_products WHERE product_id = ?');
             $deleteCatStmt->execute([$id]);
 
-            // Yeni kategori ilişkilerini ekle
+            // Yeni kategori ilişkilerini ekle (duplicate'leri temizle)
             if (!empty($categories)) {
+                $categories = array_values(array_unique(array_map('intval', $categories)));
                 $catStmt = $db->prepare('
-                    INSERT INTO category_products (category_id, product_id, sort_order, is_active)
+                    INSERT IGNORE INTO category_products (category_id, product_id, sort_order, is_active)
                     VALUES (?, ?, ?, 1)
                 ');
                 foreach ($categories as $categoryId) {

@@ -16,6 +16,16 @@ import type { Locale } from "@/i18n/config";
 // Google Apps Script URL - .env dosyasindan veya dogrudan buraya yazin
 const GOOGLE_SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || '';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
+
+interface RandevuHero {
+  heroImage: string;
+  heroImagePosition?: string;
+  heroImageScale?: number;
+  heroTitle: string;
+  heroSubtitle: string;
+}
+
 // Varsayilan saat slotlari (11:00-16:00, 1 saatlik araliklar)
 const DEFAULT_TIME_SLOTS = ["11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
 
@@ -52,6 +62,57 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
       setFormData(prev => ({ ...prev, subject: subjectFromUrl }));
     }
   }, [subjectFromUrl]);
+
+  const [heroData, setHeroData] = useState<RandevuHero | null>(null);
+  const [contactData, setContactData] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!API_URL) return;
+    fetch(`${API_URL}/api/content.php`)
+      .then(res => res.json())
+      .then(data => { if (data.contact) setContactData(data.contact); })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const fetchHero = async () => {
+      if (!API_URL) return;
+      try {
+        const response = await fetch(`${API_URL}/api/pages.php?slug=randevu`);
+        if (!response.ok) return;
+        const data = await response.json();
+        const localizedTitle =
+          locale === 'en'
+            ? (data.heroTitle_en || data.heroTitle)
+            : locale === 'ru'
+              ? (data.heroTitle_ru || data.heroTitle)
+              : data.heroTitle;
+        const localizedSubtitle =
+          locale === 'en'
+            ? (data.heroSubtitle_en || data.heroSubtitle)
+            : locale === 'ru'
+              ? (data.heroSubtitle_ru || data.heroSubtitle)
+              : data.heroSubtitle;
+        setHeroData({
+          heroImage: data.heroImage || "/images/categories/ozel-tasarim-card.jpg",
+          heroImagePosition: data.heroImagePosition || "50% 50%",
+          heroImageScale: data.heroImageScale || 1,
+          heroTitle: localizedTitle || t('appointment.title'),
+          heroSubtitle: localizedSubtitle || t('appointment.subtitle'),
+        });
+      } catch (error) {
+        console.error("Randevu sayfa yükleme hatası:", error);
+      }
+    };
+    fetchHero();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale]);
+
+  const heroTitle = heroData?.heroTitle || t('appointment.title');
+  const heroSubtitle = heroData?.heroSubtitle || t('appointment.subtitle');
+  const heroImageSrc = heroData?.heroImage || "/images/categories/ozel-tasarim-card.jpg";
+  const heroImagePosition = heroData?.heroImagePosition || "50% 50%";
+  const heroImageScale = heroData?.heroImageScale || 1;
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -226,10 +287,14 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
           {/* Background */}
           <div className="absolute inset-0">
             <Image
-              src={getAssetPath("/images/categories/ozel-tasarim-card.jpg")}
-              alt={t('appointment.title')}
+              src={getAssetPath(heroImageSrc)}
+              alt={heroTitle}
               fill
               className="object-cover"
+              style={{
+                objectPosition: heroImagePosition,
+                transform: heroImageScale !== 1 ? `scale(${heroImageScale})` : undefined,
+              }}
               priority
             />
             <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/40 to-black/60" />
@@ -250,13 +315,13 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
               className="text-[44px] md:text-[60px] leading-[1.1] text-white mb-6"
               style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
             >
-              {t('appointment.title')}
+              {heroTitle}
             </h1>
             <p
               className="text-[16px] md:text-[18px] leading-[1.6] text-white/80 font-light max-w-[500px] mx-auto"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              {t('appointment.subtitle')}
+              {heroSubtitle}
             </p>
           </div>
         </section>
@@ -620,10 +685,10 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
                     {t('appointment.ourStore')}
                   </h3>
                   <p
-                    className="text-[15px] text-[#2f3237]/60 font-light"
+                    className="text-[15px] text-[#2f3237]/60 font-light whitespace-pre-line"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('appointment.storeAddress')}
+                    {contactData.address || t('appointment.storeAddress')}
                   </p>
                 </div>
 
@@ -644,7 +709,7 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
                     className="text-[15px] text-[#2f3237]/60 font-light"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    +90 212 123 45 67
+                    {contactData.phone || "+90 212 123 45 67"}
                   </p>
                 </div>
 
@@ -666,7 +731,7 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
                     className="text-[15px] text-[#2f3237]/60 font-light"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('contact.workingHoursValue')}
+                    {contactData.workingHours || t('contact.workingHoursValue')}
                   </p>
                 </div>
               </div>

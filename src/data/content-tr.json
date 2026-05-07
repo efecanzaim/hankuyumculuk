@@ -76,6 +76,8 @@
     "rightLink": "/koleksiyon/gozumun-nuru",
     "leftTitleLink": "/mucevher/yuzuk",
     "rightTitleLink": "/koleksiyon/gozumun-nuru",
+    "leftButtonText": "KEŞFEDİN",
+    "rightButtonText": "KEŞFEDİN",
     "leftImagePosition": "50% 50%",
     "leftImageScale": 1,
     "rightImagePosition": "50% 50%",
@@ -768,6 +770,7 @@
     "heroSubtitle": "Zamanla değerinden hiçbir şey kaybetmeyen parçalar.",
     "heroDescription": "Bazı mücevherler vardır;\nzamanla değerinden hiçbir şey kaybetmez.\nTasarımı, işçiliği ve duruşuyla hâlâ ilk günkü etkisini taşır.\n\nPreloved parçalar,\nözenle seçilmiş, özgünlüğü korunmuş\nve yeniden keşfedilmeyi bekleyen mücevherlerden oluşur.\n\nHer biri, geçmişinden gelen bir hikâyeyi\nbugünün zarafetiyle buluşturur.\nSeçkin, özel ve ulaşılabilir bir dengeyle…",
     "categoryTitle": "PRELOVED KOLEKSİYONU",
+    "content": null,
     "products": []
   },
   "newArrivalsCategory": {

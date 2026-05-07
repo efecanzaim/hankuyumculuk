@@ -34,7 +34,8 @@ import {
   FiEdit3,
   FiPackage,
   FiFileText,
-  FiMaximize2
+  FiMaximize2,
+  FiCalendar
 } from "react-icons/fi";
 import { QRCodeCanvas } from "qrcode.react";
 import initialContent from "@/data/content.json";
@@ -263,6 +264,8 @@ export default function AdminPanel() {
 
   // Dil yönetimi state
   const [contentLang, setContentLang] = useState<'tr' | 'en' | 'ru'>('tr');
+  // Sayfa-özel section kaydetmelerini tetikleyen sayaç
+  const [saveTrigger, setSaveTrigger] = useState(0);
 
   // Aktif dile göre içerik döndür
   const getActiveContent = (): ContentType | null => {
@@ -338,9 +341,19 @@ export default function AdminPanel() {
   const [ozelTasarimPage, setOzelTasarimPage] = useState<any>(null);
   const [loadingOzelTasarimPage, setLoadingOzelTasarimPage] = useState(false);
 
+  // Randevu sayfası state
+  const [randevuPage, setRandevuPage] = useState<any>(null);
+  const [loadingRandevuPage, setLoadingRandevuPage] = useState(false);
+
   // Gözümün Nuru ek bölümler state
   const [gnSections, setGnSections] = useState<any>(null);
   const [loadingGnSections, setLoadingGnSections] = useState(false);
+
+  // Özel koleksiyon yönetimi state
+  const [customCollectionSections, setCustomCollectionSections] = useState<any>(null);
+  const [loadingCustomCollection, setLoadingCustomCollection] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState("");
+  const [collectionSectionLang, setCollectionSectionLang] = useState<'tr' | 'en' | 'ru'>('tr');
 
   // Blog yönetimi state
   interface BlogPost {
@@ -396,6 +409,41 @@ export default function AdminPanel() {
     slug = slug.replace(/^-+|-+$/g, '');
     
     return slug;
+  };
+
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  const translateText = async (text: string, targetLang: 'en' | 'ru'): Promise<string> => {
+    if (!text) return '';
+    const langpair = targetLang === 'en' ? 'tr|en' : 'tr|ru';
+    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`);
+    const data = await res.json();
+    return data?.responseData?.translatedText || '';
+  };
+
+  const autoTranslateProduct = async (
+    product: typeof editingProduct | typeof newProduct,
+    setProduct: (p: any) => void,
+    targetLang: 'en' | 'ru'
+  ) => {
+    if (!product) return;
+    setIsTranslating(true);
+    try {
+      const [name, subtitle, description] = await Promise.all([
+        translateText(product.name || '', targetLang),
+        translateText(product.subtitle || '', targetLang),
+        translateText(product.description || '', targetLang),
+      ]);
+      if (targetLang === 'en') {
+        setProduct({ ...product, name_en: name, subtitle_en: subtitle, description_en: description });
+      } else {
+        setProduct({ ...product, name_ru: name, subtitle_ru: subtitle, description_ru: description });
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setIsTranslating(false);
+    }
   };
 
   // Kategori-ürün ilişkisi state
@@ -776,6 +824,7 @@ export default function AdminPanel() {
             { key: "blog_section", value: contentEn.blogSection },
             { key: "footer", value: contentEn.footer },
             { key: "contact", value: contentEn.contact },
+            { key: "koleksiyon_sayfasi", value: (contentEn as Record<string, unknown>)?.koleksiyonSayfasi },
           ];
           enSections
             .filter(s => s.value)
@@ -803,6 +852,7 @@ export default function AdminPanel() {
             { key: "blog_section", value: contentRu.blogSection },
             { key: "footer", value: contentRu.footer },
             { key: "contact", value: contentRu.contact },
+            { key: "koleksiyon_sayfasi", value: (contentRu as Record<string, unknown>)?.koleksiyonSayfasi },
           ];
           ruSections
             .filter(s => s.value)
@@ -825,6 +875,24 @@ export default function AdminPanel() {
           throw new Error("Bazı ayarlar kaydedilemedi");
         }
       }
+
+      // Yüklü olan sayfa-özel içerikleri de kaydet
+      const pageSaves: Promise<void>[] = [];
+      if (hediyePage) pageSaves.push(_doSaveHediyePage());
+      if (randevuPage) pageSaves.push(_doSaveRandevuPage());
+      if (ozelTasarimPage) pageSaves.push(_doSaveOzelTasarimPage());
+      if (aboutPage) pageSaves.push(_doSaveAboutPage());
+      if (gnSections) pageSaves.push(_doSaveGnSections());
+      if (customCollectionSections && activeSection.startsWith("koleksiyon-") && activeSection !== "koleksiyon-yeni-ekle") {
+        const colSlug = activeSection.replace("koleksiyon-", "");
+        pageSaves.push(_doSaveCustomCollectionSections(colSlug));
+      }
+      if (pageSaves.length > 0) {
+        await Promise.all(pageSaves);
+      }
+
+      // CategorySection bileşenlerini tetikle
+      setSaveTrigger(t => t + 1);
 
       setMessage({ type: "success", text: "Tüm değişiklikler kaydedildi!" });
     } catch (error) {
@@ -905,13 +973,23 @@ export default function AdminPanel() {
                     flatCategories.push({
                       id: cat.id,
                       name: cat.name,
+                      name_en: cat.nameEn,
+                      name_ru: cat.nameRu,
                       slug: cat.slug,
                       parent_type: cat.parentType || parentType,
                       hero_image: cat.heroImage,
                       hero_title: cat.heroTitle,
+                      hero_title_en: cat.heroTitleEn,
+                      hero_title_ru: cat.heroTitleRu,
                       hero_subtitle: cat.heroSubtitle,
+                      hero_subtitle_en: cat.heroSubtitleEn,
+                      hero_subtitle_ru: cat.heroSubtitleRu,
                       hero_description: cat.heroDescription,
+                      hero_description_en: cat.heroDescriptionEn,
+                      hero_description_ru: cat.heroDescriptionRu,
                       list_title: cat.listTitle,
+                      list_title_en: cat.listTitleEn,
+                      list_title_ru: cat.listTitleRu,
                       content: cat.content,
                     });
                   });
@@ -1477,52 +1555,29 @@ export default function AdminPanel() {
     }
   };
 
-  // Hakkımızda sayfasını kaydet
-  const saveAboutPage = async () => {
-    if (!aboutPage) return;
-
-    setSaving(true);
-    try {
-      if (API_URL) {
-        // Her zaman PUT kullan - API slug ile sayfayı bulup güncelleyecek veya oluşturacak
-        const body = {
-          ...aboutPage,
-          title: aboutPage.title || "Hakkımızda",
-          slug: aboutPage.slug || "hakkimizda",
-          heroTitle_en: aboutPage.heroTitle_en || "",
-          heroTitle_ru: aboutPage.heroTitle_ru || "",
-          content_en: aboutPage.heroParagraph2_en || "",
-          content_ru: aboutPage.heroParagraph2_ru || "",
-        };
-
-        const response = await fetch(`${API_URL}/api/pages.php`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(body),
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success !== false && !data.error) {
-          setMessage({ type: "success", text: "Hakkımızda sayfası kaydedildi!" });
-          if (data.id) {
-            setAboutPage({ ...aboutPage, id: data.id });
-          }
-        } else {
-          throw new Error(data.error || "Sayfa kaydedilemedi");
-        }
-      } else {
-        // Development: Local state'e kaydet
-        setMessage({ type: "success", text: "Hakkımızda sayfası kaydedildi (local)!" });
-      }
-    } catch (error) {
-      console.error("Hakkımızda sayfası kaydetme hatası:", error);
-      setMessage({ type: "error", text: error instanceof Error ? error.message : "Sayfa kaydedilemedi!" });
-    }
-    setSaving(false);
-    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  // Hakkımızda sayfasını kaydet (core - no setSaving)
+  const _doSaveAboutPage = async () => {
+    if (!aboutPage || !API_URL) return;
+    const body = {
+      ...aboutPage,
+      title: aboutPage.title || "Hakkımızda",
+      slug: aboutPage.slug || "hakkimizda",
+      heroTitle_en: aboutPage.heroTitle_en || "",
+      heroTitle_ru: aboutPage.heroTitle_ru || "",
+      content_en: aboutPage.heroParagraph2_en || "",
+      content_ru: aboutPage.heroParagraph2_ru || "",
+    };
+    const response = await fetch(`${API_URL}/api/pages.php`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error || "Hakkımızda kaydedilemedi");
+    if (data.id) setAboutPage({ ...aboutPage, id: data.id });
   };
+
 
   // Hediye sayfasını yükle
   const defaultHediyeSections = {
@@ -1639,49 +1694,17 @@ export default function AdminPanel() {
     }
   };
 
-  // Hediye sayfasını kaydet
-  const saveHediyePage = async () => {
-    if (!hediyePage) return;
-
-    setSaving(true);
-    try {
-      if (API_URL) {
-        const { sections, ...rest } = hediyePage;
-        const body = {
-          ...rest,
-          title: rest.title || "Hediye",
-          slug: rest.slug || "hediye",
-          content: JSON.stringify(sections || {}),
-          isActive: true,
-        };
-
-        const response = await fetch(`${API_URL}/api/pages.php`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(body),
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success !== false && !data.error) {
-          setMessage({ type: "success", text: "Hediye sayfası kaydedildi!" });
-          if (data.id) {
-            setHediyePage({ ...hediyePage, id: data.id });
-          }
-        } else {
-          throw new Error(data.error || "Sayfa kaydedilemedi");
-        }
-      } else {
-        setMessage({ type: "success", text: "Hediye sayfası kaydedildi (local)!" });
-      }
-    } catch (error) {
-      console.error("Hediye sayfası kaydetme hatası:", error);
-      setMessage({ type: "error", text: error instanceof Error ? error.message : "Sayfa kaydedilemedi!" });
-    }
-    setSaving(false);
-    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  // Hediye sayfasını kaydet (core - no setSaving)
+  const _doSaveHediyePage = async () => {
+    if (!hediyePage || !API_URL) return;
+    const { sections, ...rest } = hediyePage;
+    const body = { ...rest, title: rest.title || "Hediye", slug: rest.slug || "hediye", content: JSON.stringify(sections || {}), isActive: true };
+    const response = await fetch(`${API_URL}/api/pages.php`, { method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(body) });
+    const data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error || "Hediye sayfası kaydedilemedi");
+    if (data.id) setHediyePage({ ...hediyePage, id: data.id });
   };
+
 
   // Size Özel (Özel Tasarım) sayfasını yükle
   const loadOzelTasarimPage = async () => {
@@ -1741,53 +1764,87 @@ export default function AdminPanel() {
     }
   };
 
-  // Size Özel sayfasını kaydet
-  const saveOzelTasarimPage = async () => {
-    if (!ozelTasarimPage) return;
+  // Size Özel sayfasını kaydet (core - no setSaving)
+  const _doSaveOzelTasarimPage = async () => {
+    if (!ozelTasarimPage || !API_URL) return;
+    const { sections, ...rest } = ozelTasarimPage;
+    const body = { ...rest, title: rest.title || "Size Özel", slug: rest.slug || "ozel-tasarim", content: JSON.stringify(sections || {}), isActive: true };
+    const response = await fetch(`${API_URL}/api/pages.php`, { method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(body) });
+    const data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error || "Size Özel kaydedilemedi");
+    if (data.id) setOzelTasarimPage({ ...ozelTasarimPage, id: data.id });
+  };
 
-    setSaving(true);
+
+  // Randevu sayfasını yükle
+  const loadRandevuPage = async () => {
+    setLoadingRandevuPage(true);
+    const fallback = {
+      id: null,
+      slug: "randevu",
+      title: "Randevu",
+      heroImage: "/images/categories/ozel-tasarim-card.jpg",
+      heroImagePosition: "50% 50%",
+      heroImageScale: 1,
+      heroTitle: "Randevu Al",
+      heroTitle_en: "Book an Appointment",
+      heroTitle_ru: "Записаться на приём",
+      heroSubtitle: "Özel tasarım sürecin için bir adım at. Sana uygun bir zamanda buluşalım.",
+      heroSubtitle_en: "Take a step for your custom design process. Let's meet at a time that suits you.",
+      heroSubtitle_ru: "Сделайте шаг к процессу индивидуального дизайна. Давайте встретимся в удобное для вас время.",
+    };
     try {
       if (API_URL) {
-        const { sections, ...rest } = ozelTasarimPage;
-        const body = {
-          ...rest,
-          title: rest.title || "Size Özel",
-          slug: rest.slug || "ozel-tasarim",
-          content: JSON.stringify(sections || {}),
-          isActive: true,
-        };
-
-        const response = await fetch(`${API_URL}/api/pages.php`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch(`${API_URL}/api/pages.php?slug=randevu`, {
           credentials: "include",
-          body: JSON.stringify(body),
         });
-
-        const data = await response.json();
-
-        if (response.ok && data.success !== false && !data.error) {
-          setMessage({ type: "success", text: "Size Özel sayfası kaydedildi!" });
-          if (data.id) {
-            setOzelTasarimPage({ ...ozelTasarimPage, id: data.id });
-          }
+        if (response.ok) {
+          const data = await response.json();
+          setRandevuPage({
+            id: data.id || null,
+            slug: data.slug || "randevu",
+            title: data.title || "Randevu",
+            heroImage: data.heroImage || fallback.heroImage,
+            heroImagePosition: data.heroImagePosition || "50% 50%",
+            heroImageScale: data.heroImageScale || 1,
+            heroTitle: data.heroTitle || fallback.heroTitle,
+            heroTitle_en: data.heroTitle_en || fallback.heroTitle_en,
+            heroTitle_ru: data.heroTitle_ru || fallback.heroTitle_ru,
+            heroSubtitle: data.heroSubtitle || fallback.heroSubtitle,
+            heroSubtitle_en: data.heroSubtitle_en || fallback.heroSubtitle_en,
+            heroSubtitle_ru: data.heroSubtitle_ru || fallback.heroSubtitle_ru,
+          });
         } else {
-          throw new Error(data.error || "Sayfa kaydedilemedi");
+          setRandevuPage(fallback);
         }
       } else {
-        setMessage({ type: "success", text: "Size Özel sayfası kaydedildi (local)!" });
+        setRandevuPage(fallback);
       }
     } catch (error) {
-      console.error("Size Özel sayfası kaydetme hatası:", error);
-      setMessage({ type: "error", text: error instanceof Error ? error.message : "Sayfa kaydedilemedi!" });
+      console.error("Randevu sayfası yükleme hatası:", error);
+      setRandevuPage(fallback);
+    } finally {
+      setLoadingRandevuPage(false);
     }
-    setSaving(false);
-    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
   };
+
+  // Randevu sayfasını kaydet (core - no setSaving)
+  const _doSaveRandevuPage = async () => {
+    if (!randevuPage || !API_URL) return;
+    const body = { ...randevuPage, title: randevuPage.title || "Randevu", slug: randevuPage.slug || "randevu", isActive: true };
+    const response = await fetch(`${API_URL}/api/pages.php`, { method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify(body) });
+    const data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error || "Randevu kaydedilemedi");
+    if (data.id) setRandevuPage({ ...randevuPage, id: data.id });
+  };
+
 
   // Gözümün Nuru ek bölümler
   const defaultGnSections = {
+    heroTitleImage: "",
     heroSvg: "/gozumunnuru-hero.svg",
+    heroSvgEn: "",
+    heroSvgRu: "",
     philosophyQuote1: "\"Sen benim hayatımı güzelleştiren biri değilsin;",
     philosophyQuote2: "hayatımı anlamlı kılan yerdesin.\"",
     philosophyText: "Gözümün Nuru,\ndeğerini yitirmeyen bir yakınlıktan doğdu.\nRuhun penceresinden süzülen aydınlık bir bağdan…",
@@ -1845,35 +1902,140 @@ export default function AdminPanel() {
     }
   };
 
-  const saveGnSections = async () => {
-    if (!gnSections) return;
+  const _doSaveGnSections = async () => {
+    if (!gnSections || !API_URL) return;
+    const cat = categories.find(c => c.slug === "gozumun-nuru" && c.parent_type === "koleksiyon");
+    if (!cat) return;
+    const response = await fetch(`${API_URL}/api/categories.php`, { method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ id: cat.id, content: JSON.stringify(gnSections) }) });
+    if (!response.ok) throw new Error("Gözümün Nuru kaydedilemedi");
+    setCategories(prev => prev.map(c => c.id === cat.id ? { ...c, content: JSON.stringify(gnSections) } : c));
+  };
+
+
+  // Özel koleksiyon bölümlerini yükle
+  const loadCustomCollectionSections = async (slug: string) => {
+    setLoadingCustomCollection(true);
+    setCustomCollectionSections(null);
+    try {
+      const cat = categories.find(c => c.slug === slug && c.parent_type === "koleksiyon");
+      let parsed = {};
+      if (cat?.content) {
+        try { parsed = JSON.parse(cat.content); } catch { /* */ }
+      } else if (API_URL) {
+        const response = await fetch(`${API_URL}/api/categories.php?slug=${slug}`, { credentials: "include" });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.content) {
+            try { parsed = typeof data.content === 'string' ? JSON.parse(data.content) : data.content; } catch { /* */ }
+          }
+        }
+      }
+      setCustomCollectionSections({ ...defaultGnSections, ...parsed });
+    } catch (error) {
+      console.error("Koleksiyon bölümleri yükleme hatası:", error);
+      setCustomCollectionSections({ ...defaultGnSections });
+    } finally {
+      setLoadingCustomCollection(false);
+    }
+  };
+
+  // Özel koleksiyon bölümlerini kaydet (core - no setSaving)
+  const _doSaveCustomCollectionSections = async (slug: string) => {
+    if (!customCollectionSections || !API_URL) return;
+    const cat = categories.find(c => c.slug === slug && c.parent_type === "koleksiyon");
+    if (!cat) return;
+    const response = await fetch(`${API_URL}/api/categories.php`, { method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ id: cat.id, content: JSON.stringify(customCollectionSections) }) });
+    if (!response.ok) throw new Error("Koleksiyon kaydedilemedi");
+    setCategories(prev => prev.map(c => c.id === cat.id ? { ...c, content: JSON.stringify(customCollectionSections) } : c));
+  };
+
+
+  // Yeni koleksiyon oluştur
+  const createNewCollection = async (name: string) => {
+    if (!name.trim() || !API_URL) return;
     setSaving(true);
     try {
-      const cat = categories.find(c => c.slug === "gozumun-nuru" && c.parent_type === "koleksiyon");
-      if (cat && API_URL) {
-        const response = await fetch(`${API_URL}/api/categories.php`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ id: cat.id, content: JSON.stringify(gnSections) }),
-        });
-        if (response.ok) {
-          setMessage({ type: "success", text: "Gözümün Nuru bölümleri kaydedildi!" });
-          // Update local categories state
-          setCategories(prev => prev.map(c =>
-            c.id === cat.id ? { ...c, content: JSON.stringify(gnSections) } : c
-          ));
-        } else {
-          throw new Error("Kaydedilemedi");
+      const response = await fetch(`${API_URL}/api/categories.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          name: name.trim(),
+          parentType: "koleksiyon",
+          content: JSON.stringify(defaultGnSections),
+        }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setMessage({ type: "success", text: `"${name.trim()}" koleksiyonu oluşturuldu!` });
+        setNewCollectionName("");
+        // Koleksiyon menüsünü aç
+        setExpandedMenus(prev => prev.includes("koleksiyon") ? prev : [...prev, "koleksiyon"]);
+        // Kategorileri yeniden yükle
+        const catRes = await fetch(`${API_URL}/api/categories.php`, { credentials: "include" });
+        if (catRes.ok) {
+          const catData = await catRes.json();
+          if (typeof catData === 'object' && catData !== null && !Array.isArray(catData)) {
+            const flatCategories: Category[] = [];
+            Object.entries(catData).forEach(([parentType, cats]) => {
+              if (Array.isArray(cats)) {
+                cats.forEach((cat: any) => {
+                  flatCategories.push({
+                    id: cat.id, name: cat.name, slug: cat.slug,
+                    name_en: cat.nameEn, name_ru: cat.nameRu,
+                    parent_type: cat.parentType || parentType,
+                    hero_image: cat.heroImage, hero_title: cat.heroTitle,
+                    hero_title_en: cat.heroTitleEn, hero_title_ru: cat.heroTitleRu,
+                    hero_subtitle: cat.heroSubtitle,
+                    hero_subtitle_en: cat.heroSubtitleEn, hero_subtitle_ru: cat.heroSubtitleRu,
+                    hero_description: cat.heroDescription,
+                    hero_description_en: cat.heroDescriptionEn, hero_description_ru: cat.heroDescriptionRu,
+                    list_title: cat.listTitle,
+                    list_title_en: cat.listTitleEn, list_title_ru: cat.listTitleRu,
+                    content: cat.content,
+                  });
+                });
+              }
+            });
+            setCategories(flatCategories);
+          }
+        }
+        // Yeni koleksiyona geç
+        if (data.slug) {
+          setActiveSection(`koleksiyon-${data.slug}`);
         }
       } else {
-        setMessage({ type: "success", text: "Gözümün Nuru bölümleri kaydedildi (local)!" });
+        throw new Error(data.error || "Koleksiyon oluşturulamadı");
       }
     } catch (error) {
-      console.error("Gözümün Nuru kaydetme hatası:", error);
-      setMessage({ type: "error", text: "Bölümler kaydedilemedi!" });
+      console.error("Koleksiyon oluşturma hatası:", error);
+      setMessage({ type: "error", text: error instanceof Error ? error.message : "Koleksiyon oluşturulamadı!" });
     }
     setSaving(false);
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
+  // Koleksiyon sil
+  const deleteCollection = async (id: number, name: string) => {
+    if (!confirm(`"${name}" koleksiyonunu silmek istediğinize emin misiniz?`)) return;
+    try {
+      if (API_URL) {
+        const response = await fetch(`${API_URL}/api/categories.php?id=${id}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+        if (response.ok) {
+          setMessage({ type: "success", text: `"${name}" silindi.` });
+          setCategories(prev => prev.filter(c => c.id !== id));
+          setActiveSection("koleksiyon-sayfa");
+        } else {
+          throw new Error("Silinemedi");
+        }
+      }
+    } catch (error) {
+      console.error("Koleksiyon silme hatası:", error);
+      setMessage({ type: "error", text: "Koleksiyon silinemedi!" });
+    }
     setTimeout(() => setMessage({ type: "", text: "" }), 3000);
   };
 
@@ -2338,12 +2500,36 @@ export default function AdminPanel() {
     }
   }, [activeSection]);
 
+  // Randevu sayfasına geçildiğinde yükle
+  useEffect(() => {
+    if (activeSection === "randevu-sayfa") {
+      loadRandevuPage();
+    }
+  }, [activeSection]);
+
   // Gözümün Nuru sayfasına geçildiğinde ek bölümleri yükle
   useEffect(() => {
     if (activeSection === "koleksiyon-gozumun-nuru") {
       loadGnSections();
     }
   }, [activeSection, categories]);
+
+  // Özel koleksiyon sayfasına geçildiğinde yükle (sadece activeSection değişince, categories değişince değil)
+  useEffect(() => {
+    if (activeSection.startsWith("koleksiyon-") &&
+        activeSection !== "koleksiyon-sayfa" &&
+        activeSection !== "koleksiyon-gozumun-nuru" &&
+        activeSection !== "koleksiyon-yeni-ekle") {
+      const slug = activeSection.replace("koleksiyon-", "");
+      loadCustomCollectionSections(slug);
+      // Ürünleri de yükle
+      const cat = categories.find(c => c.slug === slug && c.parent_type === "koleksiyon");
+      if (cat && !categoryProducts[cat.id]) {
+        loadCategoryProducts(cat.id);
+        loadProducts();
+      }
+    }
+  }, [activeSection]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Kategori sayfasına geçildiğinde kategori-ürün ilişkisini yükle
   useEffect(() => {
@@ -2360,13 +2546,17 @@ export default function AdminPanel() {
       "erkek-kol": 16,
       "preloved": 17,
     };
-    
+    // Dinamik koleksiyon kategorilerini de ekle
+    categories
+      .filter(c => c.parent_type === "koleksiyon" && c.slug !== "gozumun-nuru")
+      .forEach(c => { categoryMap[`koleksiyon-${c.slug}`] = c.id; });
+
     const categoryId = categoryMap[activeSection];
     if (categoryId && !categoryProducts[categoryId]) {
       loadCategoryProducts(categoryId);
       loadProducts(); // Ürünleri de yükle
     }
-  }, [activeSection]);
+  }, [activeSection, categories]);
 
   // Menu structure based on pages
   const menuStructure = [
@@ -2404,6 +2594,10 @@ export default function AdminPanel() {
       subItems: [
         { key: "koleksiyon-sayfa", label: "Sayfa İçeriği" },
         { key: "koleksiyon-gozumun-nuru", label: "Gözümün Nuru" },
+        ...categories
+          .filter(c => c.parent_type === "koleksiyon" && c.slug !== "gozumun-nuru")
+          .map(c => ({ key: `koleksiyon-${c.slug}`, label: c.name })),
+        { key: "koleksiyon-yeni-ekle", label: "+ Yeni Koleksiyon" },
       ]
     },
     {
@@ -2431,6 +2625,14 @@ export default function AdminPanel() {
       icon: FiHeart,
       subItems: [
         { key: "ozel-tasarim-sayfa", label: "Sayfa İçeriği" },
+      ]
+    },
+    {
+      key: "randevu",
+      label: "Randevu",
+      icon: FiCalendar,
+      subItems: [
+        { key: "randevu-sayfa", label: "Sayfa İçeriği" },
       ]
     },
     {
@@ -2772,12 +2974,12 @@ export default function AdminPanel() {
                       <p className="text-[#d4af37] text-xs font-medium mb-3">Sol Taraf</p>
                       <ImageField
                         label="Görsel"
-                        value={(content?.trendSection as Record<string, unknown>)?.leftImage as string || ""}
+                        value={(activeContent?.trendSection as Record<string, unknown>)?.leftImage as string || ""}
                         onChange={(v) => updateField("trendSection", "leftImage", v)}
                         folder="trend"
-                        objectPosition={(content?.trendSection as Record<string, unknown>)?.leftImagePosition as string || "50% 50%"}
+                        objectPosition={(activeContent?.trendSection as Record<string, unknown>)?.leftImagePosition as string || "50% 50%"}
                         onObjectPositionChange={(v) => updateField("trendSection", "leftImagePosition", v)}
-                        objectScale={(content?.trendSection as Record<string, unknown>)?.leftImageScale as number || 1}
+                        objectScale={(activeContent?.trendSection as Record<string, unknown>)?.leftImageScale as number || 1}
                         onObjectScaleChange={(v) => updateField("trendSection", "leftImageScale", v)}
                       />
                       <InputField
@@ -2787,21 +2989,30 @@ export default function AdminPanel() {
                         placeholder={contentLang !== 'tr' ? (content?.trendSection as Record<string, unknown>)?.leftTitle as string || '' : ''}
                       />
                       <InputField
+                        label={`Buton Metni ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
+                        value={getLocalizedValue("trendSection", "leftButtonText") as string || ""}
+                        onChange={(v) => updateField("trendSection", "leftButtonText", v)}
+                        placeholder={contentLang !== 'tr' ? (content?.trendSection as Record<string, unknown>)?.leftButtonText as string || 'KEŞFEDİN' : ''}
+                      />
+                      <InputField
                         label="Link"
                         value={getLocalizedValue("trendSection", "leftTitleLink") as string || ""}
-                        onChange={(v) => updateField("trendSection", "leftTitleLink", v)}
+                        onChange={(v) => {
+                          updateField("trendSection", "leftTitleLink", v);
+                          updateField("trendSection", "leftLink", v);
+                        }}
                       />
                     </div>
                     <div className="p-3 bg-blue-500/10 rounded-lg">
                       <p className="text-blue-400 text-xs font-medium mb-3">Sağ Taraf</p>
                       <ImageField
                         label="Görsel"
-                        value={(content?.trendSection as Record<string, unknown>)?.rightImage as string || ""}
+                        value={(activeContent?.trendSection as Record<string, unknown>)?.rightImage as string || ""}
                         onChange={(v) => updateField("trendSection", "rightImage", v)}
                         folder="trend"
-                        objectPosition={(content?.trendSection as Record<string, unknown>)?.rightImagePosition as string || "50% 50%"}
+                        objectPosition={(activeContent?.trendSection as Record<string, unknown>)?.rightImagePosition as string || "50% 50%"}
                         onObjectPositionChange={(v) => updateField("trendSection", "rightImagePosition", v)}
-                        objectScale={(content?.trendSection as Record<string, unknown>)?.rightImageScale as number || 1}
+                        objectScale={(activeContent?.trendSection as Record<string, unknown>)?.rightImageScale as number || 1}
                         onObjectScaleChange={(v) => updateField("trendSection", "rightImageScale", v)}
                       />
                       <InputField
@@ -2811,9 +3022,18 @@ export default function AdminPanel() {
                         placeholder={contentLang !== 'tr' ? (content?.trendSection as Record<string, unknown>)?.rightTitle as string || '' : ''}
                       />
                       <InputField
+                        label={`Buton Metni ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
+                        value={getLocalizedValue("trendSection", "rightButtonText") as string || ""}
+                        onChange={(v) => updateField("trendSection", "rightButtonText", v)}
+                        placeholder={contentLang !== 'tr' ? (content?.trendSection as Record<string, unknown>)?.rightButtonText as string || 'KEŞFEDİN' : ''}
+                      />
+                      <InputField
                         label="Link"
                         value={getLocalizedValue("trendSection", "rightTitleLink") as string || ""}
-                        onChange={(v) => updateField("trendSection", "rightTitleLink", v)}
+                        onChange={(v) => {
+                          updateField("trendSection", "rightTitleLink", v);
+                          updateField("trendSection", "rightLink", v);
+                        }}
                       />
                     </div>
                   </div>
@@ -2995,7 +3215,7 @@ export default function AdminPanel() {
                         <h3 className="text-white text-sm font-medium">Üst Kartlar</h3>
                         <button
                           onClick={() => {
-                            const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                            const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
                             const newCard = {
                               title: "Yeni Kart",
                               image: "/images/categories/mucevher-card.jpg",
@@ -3010,7 +3230,7 @@ export default function AdminPanel() {
                           Kart Ekle
                         </button>
                       </div>
-                      {((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[])?.map((card: unknown, index: number) => {
+                      {((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[])?.map((card: unknown, index: number) => {
                         const c = card as Record<string, unknown>;
                         return (
                           <div key={index} className="bg-[#0f0f0f] rounded-lg border border-[#2a2a2a] p-4 space-y-3">
@@ -3018,7 +3238,7 @@ export default function AdminPanel() {
                               <span className="text-[#d4af37] text-xs font-medium">Kart {index + 1}</span>
                               <button
                                 onClick={() => {
-                                  const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                  const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
                                   updateField("specialDesignSection", "topCards", topCards.filter((_: unknown, i: number) => i !== index));
                                 }}
                                 className="p-1 text-gray-400 hover:text-red-400"
@@ -3030,7 +3250,7 @@ export default function AdminPanel() {
                               label="Başlık"
                               value={(c.title as string) || ""}
                               onChange={(v) => {
-                                const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
                                 const updated = [...topCards];
                                 updated[index] = { ...c, title: v };
                                 updateField("specialDesignSection", "topCards", updated);
@@ -3040,7 +3260,7 @@ export default function AdminPanel() {
                               label="Görsel"
                               value={(c.image as string) || ""}
                               onChange={(v) => {
-                                const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
                                 const updated = [...topCards];
                                 updated[index] = { ...c, image: v };
                                 updateField("specialDesignSection", "topCards", updated);
@@ -3048,14 +3268,14 @@ export default function AdminPanel() {
                               folder="categories"
                               objectPosition={(c.imagePosition as string) || "50% 50%"}
                               onObjectPositionChange={(v) => {
-                                const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
                                 const updated = [...topCards];
                                 updated[index] = { ...c, imagePosition: v };
                                 updateField("specialDesignSection", "topCards", updated);
                               }}
                               objectScale={(c.imageScale as number) || 1}
                               onObjectScaleChange={(v) => {
-                                const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
                                 const updated = [...topCards];
                                 updated[index] = { ...c, imageScale: v };
                                 updateField("specialDesignSection", "topCards", updated);
@@ -3065,7 +3285,7 @@ export default function AdminPanel() {
                               label="Link"
                               value={(c.link as string) || ""}
                               onChange={(v) => {
-                                const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
                                 const updated = [...topCards];
                                 updated[index] = { ...c, link: v };
                                 updateField("specialDesignSection", "topCards", updated);
@@ -3075,7 +3295,7 @@ export default function AdminPanel() {
                               label="Buton Metni"
                               value={(c.buttonText as string) || ""}
                               onChange={(v) => {
-                                const topCards = ((content.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
                                 const updated = [...topCards];
                                 updated[index] = { ...c, buttonText: v };
                                 updateField("specialDesignSection", "topCards", updated);
@@ -3096,7 +3316,7 @@ export default function AdminPanel() {
                         <h3 className="text-white text-sm font-medium">Alt Kartlar</h3>
                         <button
                           onClick={() => {
-                            const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                            const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
                             const newCard = {
                               title: "Yeni Kart",
                               subtitle: "Alt başlık",
@@ -3112,7 +3332,7 @@ export default function AdminPanel() {
                           Kart Ekle
                         </button>
                       </div>
-                      {((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[])?.map((card: unknown, index: number) => {
+                      {((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[])?.map((card: unknown, index: number) => {
                         const c = card as Record<string, unknown>;
                         return (
                           <div key={index} className="bg-[#0f0f0f] rounded-lg border border-[#2a2a2a] p-4 space-y-3">
@@ -3120,7 +3340,7 @@ export default function AdminPanel() {
                               <span className="text-[#d4af37] text-xs font-medium">Kart {index + 1}</span>
                               <button
                                 onClick={() => {
-                                  const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                  const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
                                   updateField("specialDesignSection", "bottomCards", bottomCards.filter((_: unknown, i: number) => i !== index));
                                 }}
                                 className="p-1 text-gray-400 hover:text-red-400"
@@ -3132,7 +3352,7 @@ export default function AdminPanel() {
                               label="Başlık"
                               value={(c.title as string) || ""}
                               onChange={(v) => {
-                                const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
                                 const updated = [...bottomCards];
                                 updated[index] = { ...c, title: v };
                                 updateField("specialDesignSection", "bottomCards", updated);
@@ -3142,7 +3362,7 @@ export default function AdminPanel() {
                               label="Alt Başlık"
                               value={(c.subtitle as string) || ""}
                               onChange={(v) => {
-                                const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
                                 const updated = [...bottomCards];
                                 updated[index] = { ...c, subtitle: v };
                                 updateField("specialDesignSection", "bottomCards", updated);
@@ -3153,7 +3373,7 @@ export default function AdminPanel() {
                               label="Görsel"
                               value={(c.image as string) || ""}
                               onChange={(v) => {
-                                const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
                                 const updated = [...bottomCards];
                                 updated[index] = { ...c, image: v };
                                 updateField("specialDesignSection", "bottomCards", updated);
@@ -3161,14 +3381,14 @@ export default function AdminPanel() {
                               folder="promo"
                               objectPosition={(c.imagePosition as string) || "50% 50%"}
                               onObjectPositionChange={(v) => {
-                                const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
                                 const updated = [...bottomCards];
                                 updated[index] = { ...c, imagePosition: v };
                                 updateField("specialDesignSection", "bottomCards", updated);
                               }}
                               objectScale={(c.imageScale as number) || 1}
                               onObjectScaleChange={(v) => {
-                                const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
                                 const updated = [...bottomCards];
                                 updated[index] = { ...c, imageScale: v };
                                 updateField("specialDesignSection", "bottomCards", updated);
@@ -3178,7 +3398,7 @@ export default function AdminPanel() {
                               label="Link"
                               value={(c.link as string) || ""}
                               onChange={(v) => {
-                                const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
                                 const updated = [...bottomCards];
                                 updated[index] = { ...c, link: v };
                                 updateField("specialDesignSection", "bottomCards", updated);
@@ -3188,7 +3408,7 @@ export default function AdminPanel() {
                               label="Buton Metni"
                               value={(c.buttonText as string) || ""}
                               onChange={(v) => {
-                                const bottomCards = ((content.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
                                 const updated = [...bottomCards];
                                 updated[index] = { ...c, buttonText: v };
                                 updateField("specialDesignSection", "bottomCards", updated);
@@ -3485,6 +3705,13 @@ export default function AdminPanel() {
                             </>
                           ) : contentLang === 'en' ? (
                             <>
+                              <button
+                                onClick={() => autoTranslateProduct(editingProduct, setEditingProduct, 'en')}
+                                disabled={isTranslating}
+                                className="w-full py-2 px-4 rounded-lg text-sm font-medium bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                              >
+                                {isTranslating ? 'Çevriliyor...' : 'Otomatik Çevir (TR → EN)'}
+                              </button>
                               <InputField
                                 label="Ürün Adı (EN)"
                                 value={editingProduct.name_en || ''}
@@ -3506,6 +3733,13 @@ export default function AdminPanel() {
                             </>
                           ) : (
                             <>
+                              <button
+                                onClick={() => autoTranslateProduct(editingProduct, setEditingProduct, 'ru')}
+                                disabled={isTranslating}
+                                className="w-full py-2 px-4 rounded-lg text-sm font-medium bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                              >
+                                {isTranslating ? 'Çevriliyor...' : 'Otomatik Çevir (TR → RU)'}
+                              </button>
                               <InputField
                                 label="Ürün Adı (RU)"
                                 value={editingProduct.name_ru || ''}
@@ -3752,6 +3986,7 @@ export default function AdminPanel() {
                                             <option value="Tanzanit">Tanzanit</option>
                                             <option value="Ametist">Ametist</option>
                                             <option value="Akuamarin">Akuamarin</option>
+                                            <option value="Diğer">Diğer</option>
                                           </select>
                                         </div>
                                         <div>
@@ -3821,6 +4056,7 @@ export default function AdminPanel() {
                                             }}
                                             className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
                                           >
+                                            <option value="">Seçiniz</option>
                                             <option value="Yuvarlak">Yuvarlak</option>
                                             <option value="Baget">Baget</option>
                                             <option value="Prenses">Prenses</option>
@@ -3893,6 +4129,13 @@ export default function AdminPanel() {
                       </>
                     ) : contentLang === 'en' ? (
                       <>
+                        <button
+                          onClick={() => autoTranslateProduct(newProduct, setNewProduct, 'en')}
+                          disabled={isTranslating}
+                          className="w-full py-2 px-4 rounded-lg text-sm font-medium bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          {isTranslating ? 'Çevriliyor...' : 'Otomatik Çevir (TR → EN)'}
+                        </button>
                         <InputField
                           label="Ürün Adı (EN)"
                           value={newProduct.name_en || ''}
@@ -3914,6 +4157,13 @@ export default function AdminPanel() {
                       </>
                     ) : (
                       <>
+                        <button
+                          onClick={() => autoTranslateProduct(newProduct, setNewProduct, 'ru')}
+                          disabled={isTranslating}
+                          className="w-full py-2 px-4 rounded-lg text-sm font-medium bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          {isTranslating ? 'Çevriliyor...' : 'Otomatik Çevir (TR → RU)'}
+                        </button>
                         <InputField
                           label="Ürün Adı (RU)"
                           value={newProduct.name_ru || ''}
@@ -4158,6 +4408,7 @@ export default function AdminPanel() {
                                       <option value="Tanzanit">Tanzanit</option>
                                       <option value="Ametist">Ametist</option>
                                       <option value="Akuamarin">Akuamarin</option>
+                                      <option value="Diğer">Diğer</option>
                                     </select>
                                   </div>
                                   <div>
@@ -4227,6 +4478,7 @@ export default function AdminPanel() {
                                       }}
                                       className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
                                     >
+                                      <option value="">Seçiniz</option>
                                       <option value="Yuvarlak">Yuvarlak</option>
                                       <option value="Baget">Baget</option>
                                       <option value="Prenses">Prenses</option>
@@ -4855,6 +5107,7 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  saveTrigger={saveTrigger}
                 />
               )}
               {activeSection === "mucevher-kolye" && (
@@ -4882,6 +5135,7 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  saveTrigger={saveTrigger}
                 />
               )}
               {activeSection === "mucevher-bileklik" && (
@@ -4909,6 +5163,7 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  saveTrigger={saveTrigger}
                 />
               )}
               {activeSection === "mucevher-kupe" && (
@@ -4936,6 +5191,7 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  saveTrigger={saveTrigger}
                 />
               )}
               {activeSection === "mucevher-set" && (
@@ -4963,6 +5219,7 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  saveTrigger={saveTrigger}
                 />
               )}
 
@@ -5070,6 +5327,15 @@ export default function AdminPanel() {
                                 }}
                                 folder="categories"
                               />
+                              <ImageField
+                                label="İsim Logosu (varsa isim yerine gösterilir)"
+                                value={(card.heroTitleImage as string) ?? ''}
+                                onChange={(v: string) => {
+                                  const updated = ksCards.map((c, i) => i === idx ? { ...c, heroTitleImage: v } : c);
+                                  updateKs('cards', updated);
+                                }}
+                                folder="categories"
+                              />
                             </div>
                           ))}
                           {ksCards.length === 0 && (
@@ -5109,6 +5375,7 @@ export default function AdminPanel() {
                     contentLang={contentLang}
                     onLangChange={setContentLang}
                     hideSubtitle={true}
+                    saveTrigger={saveTrigger}
                   />
 
                   {/* Ek Bölümler */}
@@ -5116,11 +5383,35 @@ export default function AdminPanel() {
                     <div className="text-center py-8 text-gray-500">Bölümler yükleniyor...</div>
                   ) : gnSections ? (
                     <>
+                      <Section title="Hero Başlık" subtitle="Koleksiyon adının yerine görsel kullanmak için. Görsel varsa koleksiyon adı yazısı gizlenir.">
+                        <ImageField
+                          label="Başlık Görseli (opsiyonel — varsa yazı gösterilmez)"
+                          value={gnSections.heroTitleImage || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, heroTitleImage: v })}
+                          folder="categories"
+                        />
+                        {gnSections.heroTitleImage && (
+                          <p className="text-[11px] text-amber-600 mt-1">⚠ Görsel ayarlandı — hero'da koleksiyon adı yazısı gizlenecek.</p>
+                        )}
+                      </Section>
+
                       <Section title="Hero SVG" subtitle="Hero alanının altındaki dekoratif SVG görsel">
                         <ImageField
-                          label="Hero SVG Görseli"
+                          label="Hero SVG Görseli (TR)"
                           value={gnSections.heroSvg || ""}
                           onChange={(v: string) => setGnSections({ ...gnSections, heroSvg: v })}
+                          folder="categories"
+                        />
+                        <ImageField
+                          label="Hero SVG Görseli (EN)"
+                          value={gnSections.heroSvgEn || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, heroSvgEn: v })}
+                          folder="categories"
+                        />
+                        <ImageField
+                          label="Hero SVG Görseli (RU)"
+                          value={gnSections.heroSvgRu || ""}
+                          onChange={(v: string) => setGnSections({ ...gnSections, heroSvgRu: v })}
                           folder="categories"
                         />
                       </Section>
@@ -5186,10 +5477,11 @@ export default function AdminPanel() {
                           value={gnSections.collectionTitle || ""}
                           onChange={(v: string) => setGnSections({ ...gnSections, collectionTitle: v })}
                         />
-                        <InputField
+                        <TextareaField
                           label="Bölüm Alt Başlığı"
                           value={gnSections.collectionSubtitle || ""}
                           onChange={(v: string) => setGnSections({ ...gnSections, collectionSubtitle: v })}
+                          rows={3}
                         />
                       </Section>
 
@@ -5234,19 +5526,269 @@ export default function AdminPanel() {
                         />
                       </Section>
 
-                      <div className="flex justify-end">
-                        <button
-                          onClick={saveGnSections}
-                          disabled={saving}
-                          className="px-6 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c4a030] transition-colors disabled:opacity-50"
-                        >
-                          {saving ? "Kaydediliyor..." : "Bölümleri Kaydet"}
-                        </button>
-                      </div>
                     </>
                   ) : null}
                 </div>
               )}
+
+              {/* YENİ KOLEKSİYON EKLE */}
+              {activeSection === "koleksiyon-yeni-ekle" && (
+                <div className="space-y-6">
+                  <Section title="Yeni Koleksiyon Oluştur" subtitle="Gözümün Nuru ile aynı tasarımda yeni bir koleksiyon sayfası oluşturun">
+                    <InputField
+                      label="Koleksiyon Adı"
+                      value={newCollectionName}
+                      onChange={(v: string) => setNewCollectionName(v)}
+                    />
+                    <div className="flex justify-end mt-4">
+                      <button
+                        onClick={() => createNewCollection(newCollectionName)}
+                        disabled={saving || !newCollectionName.trim()}
+                        className="px-6 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c4a030] transition-colors disabled:opacity-50"
+                      >
+                        {saving ? "Oluşturuluyor..." : "Koleksiyon Oluştur"}
+                      </button>
+                    </div>
+                  </Section>
+                </div>
+              )}
+
+              {/* ÖZEL KOLEKSİYON EDİTÖRÜ */}
+              {activeSection.startsWith("koleksiyon-") &&
+               activeSection !== "koleksiyon-sayfa" &&
+               activeSection !== "koleksiyon-gozumun-nuru" &&
+               activeSection !== "koleksiyon-yeni-ekle" && (() => {
+                const colSlug = activeSection.replace("koleksiyon-", "");
+                const cat = categories.find(c => c.slug === colSlug && c.parent_type === "koleksiyon");
+                if (!cat) return null;
+                return (
+                  <div className="space-y-6">
+                    <CategorySection
+                      title={cat.name}
+                      categoryKey={colSlug}
+                      parentType="koleksiyon"
+                      content={content}
+                      categories={categories}
+                      onUpdate={(field, value) => {
+                        updateCategory(cat.id, field, value, colSlug, "koleksiyon");
+                      }}
+                      products={products}
+                      categoryProducts={categoryProducts}
+                      loadingCategoryProducts={loadingCategoryProducts}
+                      onProductToggle={(categoryId, productId) => {
+                        const current = categoryProducts[categoryId] || [];
+                        const updated = current.includes(productId) ? current.filter(id => id !== productId) : [...current, productId];
+                        setCategoryProducts(prev => ({ ...prev, [categoryId]: updated }));
+                      }}
+                      onSave={(categoryId) => {
+                        const productIds = categoryProducts[categoryId] || [];
+                        saveCategoryProducts(categoryId, productIds);
+                      }}
+                      contentLang={contentLang}
+                      onLangChange={setContentLang}
+                      hideSubtitle={true}
+                      saveTrigger={saveTrigger}
+                    />
+
+                    {/* Ek Bölümler */}
+                    {loadingCustomCollection ? (
+                      <div className="text-center py-8 text-gray-500">Bölümler yükleniyor...</div>
+                    ) : customCollectionSections ? (
+                      <>
+                        {(() => {
+                          const suffix = collectionSectionLang === 'tr' ? '' : collectionSectionLang === 'en' ? 'En' : 'Ru';
+                          const csk = (base: string) => suffix ? `${base}${suffix}` : base;
+                          const csv = (base: string) => customCollectionSections[csk(base)] || "";
+                          const csc = (base: string) => (v: string) => setCustomCollectionSections({ ...customCollectionSections, [csk(base)]: v });
+                          const trVal = (base: string) => customCollectionSections[base] || "";
+                          return (
+                            <>
+                        <Section title="Başlık Görselleri" subtitle="Her alan için ayrı görsel yükleyebilirsiniz. Boş bırakılan alanlar koleksiyon adını metin olarak gösterir.">
+                          <ImageField
+                            label="Hero Başlık Görseli (hero sayfasında koleksiyon adının yerine)"
+                            value={customCollectionSections.heroTitleImage || ""}
+                            onChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, heroTitleImage: v })}
+                            folder="categories"
+                          />
+                          <ImageField
+                            label="Menü (Header) Görseli (header dropdown'da koleksiyon adının yerine)"
+                            value={customCollectionSections.headerTitleImage || ""}
+                            onChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, headerTitleImage: v })}
+                            folder="categories"
+                          />
+                          <ImageField
+                            label="Footer Görseli (footer'da koleksiyon adının yerine)"
+                            value={customCollectionSections.footerTitleImage || ""}
+                            onChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, footerTitleImage: v })}
+                            folder="categories"
+                          />
+                        </Section>
+
+                        <Section title="Hero SVG" subtitle="Hero alanının altındaki dekoratif SVG görsel">
+                          <ImageField
+                            label="Hero SVG Görseli (TR)"
+                            value={customCollectionSections.heroSvg || ""}
+                            onChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, heroSvg: v })}
+                            folder="categories"
+                          />
+                          <ImageField
+                            label="Hero SVG Görseli (EN)"
+                            value={customCollectionSections.heroSvgEn || ""}
+                            onChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, heroSvgEn: v })}
+                            folder="categories"
+                          />
+                          <ImageField
+                            label="Hero SVG Görseli (RU)"
+                            value={customCollectionSections.heroSvgRu || ""}
+                            onChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, heroSvgRu: v })}
+                            folder="categories"
+                          />
+                        </Section>
+
+                        <Section title="Metin İçerikleri" subtitle="Türkçe, İngilizce ve Rusça metinleri ayrı ayrı girin">
+                          <LanguageTabs currentLang={collectionSectionLang} onChange={setCollectionSectionLang} />
+
+                          <Section title="Felsefe Bölümü" subtitle="Alıntı ve açıklama metinleri">
+                            <InputField
+                              label="Alıntı Satır 1"
+                              value={csv('philosophyQuote1')}
+                              onChange={csc('philosophyQuote1')}
+                              placeholder={suffix ? trVal('philosophyQuote1') : ''}
+                            />
+                            <InputField
+                              label="Alıntı Satır 2 (italik)"
+                              value={csv('philosophyQuote2')}
+                              onChange={csc('philosophyQuote2')}
+                              placeholder={suffix ? trVal('philosophyQuote2') : ''}
+                            />
+                            <TextareaField
+                              label="Felsefe Metni"
+                              value={csv('philosophyText')}
+                              onChange={csc('philosophyText')}
+                              rows={4}
+                              placeholder={suffix ? trVal('philosophyText') : ''}
+                            />
+                          </Section>
+
+                          <Section title="Görsel + Metin Bölümü" subtitle="Sol görsel, sağ metin alanı">
+                            <ImageField
+                              label="Sol Görsel"
+                              value={customCollectionSections.splitImage || ""}
+                              onChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, splitImage: v })}
+                              folder="categories"
+                              objectPosition={customCollectionSections.splitImagePosition || "50% 50%"}
+                              onObjectPositionChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, splitImagePosition: v })}
+                              objectScale={customCollectionSections.splitImageScale || 1}
+                              onObjectScaleChange={(v: number) => setCustomCollectionSections({ ...customCollectionSections, splitImageScale: v })}
+                            />
+                            <InputField
+                              label="Başlık"
+                              value={csv('splitTitle')}
+                              onChange={csc('splitTitle')}
+                              placeholder={suffix ? trVal('splitTitle') : ''}
+                            />
+                            <TextareaField
+                              label="Metin 1"
+                              value={csv('splitText1')}
+                              onChange={csc('splitText1')}
+                              rows={4}
+                              placeholder={suffix ? trVal('splitText1') : ''}
+                            />
+                            <TextareaField
+                              label="Metin 2"
+                              value={csv('splitText2')}
+                              onChange={csc('splitText2')}
+                              rows={3}
+                              placeholder={suffix ? trVal('splitText2') : ''}
+                            />
+                            <TextareaField
+                              label="Metin 3"
+                              value={csv('darkText3')}
+                              onChange={csc('darkText3')}
+                              rows={2}
+                              placeholder={suffix ? trVal('darkText3') : ''}
+                            />
+                          </Section>
+
+                          <Section title="Koleksiyon Başlıkları" subtitle="Ürün listesi üst başlıkları">
+                            <InputField
+                              label="Bölüm Başlığı"
+                              value={csv('collectionTitle')}
+                              onChange={csc('collectionTitle')}
+                              placeholder={suffix ? trVal('collectionTitle') : ''}
+                            />
+                            <TextareaField
+                              label="Bölüm Alt Başlığı"
+                              value={csv('collectionSubtitle')}
+                              onChange={csc('collectionSubtitle')}
+                              rows={3}
+                              placeholder={suffix ? trVal('collectionSubtitle') : ''}
+                            />
+                          </Section>
+
+                          <Section title="Koyu Arkaplan Bölümü" subtitle="Arka planlı metin alanı">
+                            <ImageField
+                              label="Arkaplan Görseli"
+                              value={customCollectionSections.darkBgImage || ""}
+                              onChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, darkBgImage: v })}
+                              folder="categories"
+                              objectPosition={customCollectionSections.darkBgImagePosition || "50% 50%"}
+                              onObjectPositionChange={(v: string) => setCustomCollectionSections({ ...customCollectionSections, darkBgImagePosition: v })}
+                              objectScale={customCollectionSections.darkBgImageScale || 1}
+                              onObjectScaleChange={(v: number) => setCustomCollectionSections({ ...customCollectionSections, darkBgImageScale: v })}
+                            />
+                            <InputField
+                              label="Metin 2"
+                              value={csv('darkText2')}
+                              onChange={csc('darkText2')}
+                              placeholder={suffix ? trVal('darkText2') : ''}
+                            />
+                            <InputField
+                              label="Metin 2 İtalik Kısmı"
+                              value={csv('darkText2Cursive')}
+                              onChange={csc('darkText2Cursive')}
+                              placeholder={suffix ? trVal('darkText2Cursive') : ''}
+                            />
+                          </Section>
+
+                          <Section title="CTA Bölümü" subtitle="Sayfanın alt kısmı - çağrı butonu">
+                            <InputField
+                              label="Küçük Başlık (italik)"
+                              value={csv('ctaSmallTitle')}
+                              onChange={csc('ctaSmallTitle')}
+                              placeholder={suffix ? trVal('ctaSmallTitle') : ''}
+                            />
+                            <InputField
+                              label="Ana Başlık"
+                              value={csv('ctaTitle')}
+                              onChange={csc('ctaTitle')}
+                              placeholder={suffix ? trVal('ctaTitle') : ''}
+                            />
+                            <InputField
+                              label="Alt Metin"
+                              value={csv('ctaSubtitle')}
+                              onChange={csc('ctaSubtitle')}
+                              placeholder={suffix ? trVal('ctaSubtitle') : ''}
+                            />
+                          </Section>
+                        </Section>
+                            </>
+                          );
+                        })()}
+
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => deleteCollection(cat.id, cat.name)}
+                            className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
+                          >
+                            Koleksiyonu Sil
+                          </button>
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                );
+              })()}
 
               {/* HEDİYE KATEGORİLERİ */}
               {activeSection === "hediye-sayfa" && (
@@ -5416,15 +5958,72 @@ export default function AdminPanel() {
                         />
                       </Section>
 
-                      <div className="flex justify-end">
-                        <button
-                          onClick={saveHediyePage}
-                          disabled={saving}
-                          className="px-6 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c4a030] transition-colors disabled:opacity-50"
-                        >
-                          {saving ? "Kaydediliyor..." : "Kaydet"}
-                        </button>
-                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi.</div>
+                  )}
+                </div>
+              )}
+
+              {/* RANDEVU SAYFASI */}
+              {activeSection === "randevu-sayfa" && (
+                <div className="space-y-6">
+                  {loadingRandevuPage ? (
+                    <div className="text-center py-8 text-gray-500">Yükleniyor...</div>
+                  ) : randevuPage ? (
+                    <>
+                      <Section title="Hero Bölümü" subtitle="Randevu sayfası üst kısmı">
+                        <ImageField
+                          label="Hero Görsel"
+                          value={randevuPage.heroImage || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroImage: v })}
+                          folder="pages"
+                          objectPosition={randevuPage.heroImagePosition || "50% 50%"}
+                          onObjectPositionChange={(v: string) => setRandevuPage({ ...randevuPage, heroImagePosition: v })}
+                          objectScale={randevuPage.heroImageScale || 1}
+                          onObjectScaleChange={(v: number) => setRandevuPage({ ...randevuPage, heroImageScale: v })}
+                        />
+                      </Section>
+
+                      <Section title="Hero Metinleri (Türkçe)" subtitle="Türkçe başlık ve alt başlık">
+                        <InputField
+                          label="Hero Başlık (TR)"
+                          value={randevuPage.heroTitle || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroTitle: v })}
+                        />
+                        <InputField
+                          label="Hero Alt Başlık (TR)"
+                          value={randevuPage.heroSubtitle || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroSubtitle: v })}
+                        />
+                      </Section>
+
+                      <Section title="Hero Metinleri (English)" subtitle="İngilizce çeviriler">
+                        <InputField
+                          label="Hero Title (EN)"
+                          value={randevuPage.heroTitle_en || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroTitle_en: v })}
+                        />
+                        <InputField
+                          label="Hero Subtitle (EN)"
+                          value={randevuPage.heroSubtitle_en || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroSubtitle_en: v })}
+                        />
+                      </Section>
+
+                      <Section title="Hero Metinleri (Русский)" subtitle="Rusça çeviriler">
+                        <InputField
+                          label="Hero Title (RU)"
+                          value={randevuPage.heroTitle_ru || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroTitle_ru: v })}
+                        />
+                        <InputField
+                          label="Hero Subtitle (RU)"
+                          value={randevuPage.heroSubtitle_ru || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroSubtitle_ru: v })}
+                        />
+                      </Section>
+
                     </>
                   ) : (
                     <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi.</div>
@@ -5458,6 +6057,7 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  saveTrigger={saveTrigger}
                 />
               )}
               {activeSection === "erkek-bileklik" && (
@@ -5485,6 +6085,7 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  saveTrigger={saveTrigger}
                 />
               )}
               {activeSection === "erkek-yuzuk" && (
@@ -5512,6 +6113,7 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  saveTrigger={saveTrigger}
                 />
               )}
               {activeSection === "erkek-kol" && (
@@ -5539,6 +6141,7 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  saveTrigger={saveTrigger}
                 />
               )}
 
@@ -5741,15 +6344,6 @@ export default function AdminPanel() {
                         })}
                       </Section>
 
-                      <div className="flex justify-end">
-                        <button
-                          onClick={saveOzelTasarimPage}
-                          disabled={saving}
-                          className="px-6 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold hover:bg-[#c4a030] transition-colors disabled:opacity-50"
-                        >
-                          {saving ? "Kaydediliyor..." : "Kaydet"}
-                        </button>
-                      </div>
                     </>
                   ) : (
                     <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi.</div>
@@ -5783,6 +6377,8 @@ export default function AdminPanel() {
                   }}
                   contentLang={contentLang}
                   onLangChange={setContentLang}
+                  showExtraContent={true}
+                  saveTrigger={saveTrigger}
                 />
               )}
 
@@ -5824,19 +6420,21 @@ export default function AdminPanel() {
                       </Section>
 
                       <Section title="Vizyonumuz Bölümü" subtitle="Values (Değerler) bölümü">
+                        <LanguageTabs currentLang={aboutPageLang} onChange={setAboutPageLang} />
                         <InputField
-                          label="Bölüm Başlığı"
-                          value={aboutPage.valuesTitle || "Vizyonumuz"}
-                          onChange={(v) => setAboutPage({ ...aboutPage, valuesTitle: v })}
+                          label={`Bölüm Başlığı${aboutPageLang !== 'tr' ? ` (${aboutPageLang.toUpperCase()})` : ''}`}
+                          value={(aboutPageLang === 'en' ? aboutPage.valuesTitle_en : aboutPageLang === 'ru' ? aboutPage.valuesTitle_ru : aboutPage.valuesTitle) || ""}
+                          onChange={(v) => setAboutPage({ ...aboutPage, [aboutPageLang === 'tr' ? 'valuesTitle' : `valuesTitle_${aboutPageLang}`]: v })}
+                          placeholder={aboutPageLang !== 'tr' ? (aboutPage.valuesTitle || "Vizyonumuz") : undefined}
                         />
-                        
+
                         <div className="mt-4">
                           <div className="flex items-center justify-between mb-3">
                             <label className="block text-xs font-medium text-gray-400">Değerler</label>
                             <button
                               type="button"
                               onClick={() => {
-                                const newValue = { id: null, title: "", description: "", image: "", sortOrder: aboutValues.length + 1 };
+                                const newValue = { id: null, title: "", title_en: "", title_ru: "", description: "", description_en: "", description_ru: "", image: "", sortOrder: aboutValues.length + 1 };
                                 setAboutValues([...aboutValues, newValue]);
                               }}
                               className="px-3 py-1.5 bg-[#2a2a2a] text-white rounded text-xs hover:bg-[#3a3a3a] transition-colors flex items-center gap-1"
@@ -5864,46 +6462,52 @@ export default function AdminPanel() {
                                   </div>
                                   <div className="space-y-3">
                                     <InputField
-                                      label="Başlık"
-                                      value={value.title || ""}
+                                      label={`Başlık${aboutPageLang !== 'tr' ? ` (${aboutPageLang.toUpperCase()})` : ''}`}
+                                      value={(aboutPageLang === 'en' ? value.title_en : aboutPageLang === 'ru' ? value.title_ru : value.title) || ""}
                                       onChange={(v) => {
                                         const updated = [...aboutValues];
-                                        updated[index] = { ...updated[index], title: v };
+                                        const field = aboutPageLang === 'tr' ? 'title' : `title_${aboutPageLang}`;
+                                        updated[index] = { ...updated[index], [field]: v };
                                         setAboutValues(updated);
                                       }}
+                                      placeholder={aboutPageLang !== 'tr' ? (value.title || "") : undefined}
                                     />
                                     <TextareaField
-                                      label="Açıklama"
-                                      value={value.description || ""}
+                                      label={`Açıklama${aboutPageLang !== 'tr' ? ` (${aboutPageLang.toUpperCase()})` : ''}`}
+                                      value={(aboutPageLang === 'en' ? value.description_en : aboutPageLang === 'ru' ? value.description_ru : value.description) || ""}
                                       onChange={(v) => {
                                         const updated = [...aboutValues];
-                                        updated[index] = { ...updated[index], description: v };
+                                        const field = aboutPageLang === 'tr' ? 'description' : `description_${aboutPageLang}`;
+                                        updated[index] = { ...updated[index], [field]: v };
                                         setAboutValues(updated);
                                       }}
                                       rows={2}
+                                      placeholder={aboutPageLang !== 'tr' ? (value.description || "") : undefined}
                                     />
-                                    <ImageField
-                                      label="Görsel"
-                                      value={value.image || ""}
-                                      onChange={(v) => {
-                                        const updated = [...aboutValues];
-                                        updated[index] = { ...updated[index], image: v };
-                                        setAboutValues(updated);
-                                      }}
-                                      folder="pages"
-                                      objectPosition={value.imagePosition || "50% 50%"}
-                                      onObjectPositionChange={(v) => {
-                                        const updated = [...aboutValues];
-                                        updated[index] = { ...updated[index], imagePosition: v };
-                                        setAboutValues(updated);
-                                      }}
-                                      objectScale={value.imageScale || 1}
-                                      onObjectScaleChange={(v) => {
-                                        const updated = [...aboutValues];
-                                        updated[index] = { ...updated[index], imageScale: v };
-                                        setAboutValues(updated);
-                                      }}
-                                    />
+                                    {aboutPageLang === 'tr' && (
+                                      <ImageField
+                                        label="Görsel"
+                                        value={value.image || ""}
+                                        onChange={(v) => {
+                                          const updated = [...aboutValues];
+                                          updated[index] = { ...updated[index], image: v };
+                                          setAboutValues(updated);
+                                        }}
+                                        folder="pages"
+                                        objectPosition={value.imagePosition || "50% 50%"}
+                                        onObjectPositionChange={(v) => {
+                                          const updated = [...aboutValues];
+                                          updated[index] = { ...updated[index], imagePosition: v };
+                                          setAboutValues(updated);
+                                        }}
+                                        objectScale={value.imageScale || 1}
+                                        onObjectScaleChange={(v) => {
+                                          const updated = [...aboutValues];
+                                          updated[index] = { ...updated[index], imageScale: v };
+                                          setAboutValues(updated);
+                                        }}
+                                      />
+                                    )}
                                     <div className="flex justify-end">
                                       <button
                                         type="button"
@@ -5927,25 +6531,6 @@ export default function AdminPanel() {
                         </div>
                       </Section>
 
-                      <div className="flex justify-end">
-                        <button
-                          onClick={saveAboutPage}
-                          disabled={saving}
-                          className="px-6 py-3 bg-[#d4af37] text-[#0f0f0f] rounded-lg font-semibold text-sm hover:bg-[#c9a432] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                        >
-                          {saving ? (
-                            <>
-                              <div className="w-4 h-4 border-2 border-[#0f0f0f] border-t-transparent rounded-full animate-spin" />
-                              Kaydediliyor...
-                            </>
-                          ) : (
-                            <>
-                              <FiSave size={16} />
-                              Kaydet
-                            </>
-                          )}
-                        </button>
-                      </div>
                     </>
                   ) : (
                     <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi</div>
@@ -6172,6 +6757,8 @@ function CategorySection({
   contentLang,
   onLangChange,
   hideSubtitle = false,
+  showExtraContent = false,
+  saveTrigger = 0,
 }: {
   title: string;
   categoryKey: string;
@@ -6187,25 +6774,19 @@ function CategorySection({
   contentLang: 'tr' | 'en' | 'ru';
   onLangChange: (lang: 'tr' | 'en' | 'ru') => void;
   hideSubtitle?: boolean;
+  showExtraContent?: boolean;
+  saveTrigger?: number;
 }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [saving, setSaving] = useState(false);
+  const mountedRef = useRef(false);
   const category = categories.find(c => c.slug === categoryKey && c.parent_type === parentType);
   const selectedProductIds = category ? (categoryProducts?.[category.id] || []) : [];
 
-  // Dile göre alan adını belirle
-  const getFieldName = (field: string) => contentLang === 'tr' ? field : `${field}_${contentLang}`;
+  // Label yardımcısı
   const getFieldLabel = (label: string) => contentLang === 'tr' ? label : `${label} (${contentLang.toUpperCase()})`;
-  const getFieldValue = (field: string) => {
-    if (!category) return '';
-    const localizedField = contentLang === 'tr' ? field : `${field}_${contentLang}`;
-    return (category as unknown as Record<string, string>)[localizedField] || '';
-  };
-  const getPlaceholder = (field: string) => {
-    if (contentLang === 'tr' || !category) return '';
-    return (category as unknown as Record<string, string>)[field] || '';
-  };
 
-  // Content'ten kategori verilerini al (API'den gelen)
+  // Content'ten kategori verilerini al (JSON fallback)
   const getCategoryFromContent = () => {
     const categoriesMap: Record<string, string> = {
       'mucevher': 'mucevherCategories',
@@ -6216,16 +6797,151 @@ function CategorySection({
     };
     const contentKey = categoriesMap[parentType];
     if (!contentKey) return null;
-
     if (parentType === 'preloved') {
       return content[contentKey] as Record<string, unknown>;
     }
-
     const cats = content[contentKey] as Record<string, Record<string, unknown>>;
     return cats?.[categoryKey] || null;
   };
 
   const categoryData = getCategoryFromContent();
+
+  // İçerik JSON blob'undan extra alanları oku
+  const getContentJson = (): Record<string, string> => {
+    if (!category?.content) return {};
+    try { return typeof category.content === 'string' ? JSON.parse(category.content) : {}; }
+    catch { return {}; }
+  };
+
+  // Her field için 3 dili birden tutan state — dil değiştirince sıfırlanmaz
+  const catRow = category as unknown as Record<string, string> | undefined;
+  const [localHeroTitle, setLocalHeroTitle] = useState<Record<string, string>>(() => ({
+    tr: catRow?.['hero_title'] || (categoryData?.heroTitle as string) || '',
+    en: catRow?.['hero_title_en'] || '',
+    ru: catRow?.['hero_title_ru'] || '',
+  }));
+  const [localHeroSubtitle, setLocalHeroSubtitle] = useState<Record<string, string>>(() => ({
+    tr: catRow?.['hero_subtitle'] || (categoryData?.heroSubtitle as string) || '',
+    en: catRow?.['hero_subtitle_en'] || '',
+    ru: catRow?.['hero_subtitle_ru'] || '',
+  }));
+  const [localHeroDescription, setLocalHeroDescription] = useState<Record<string, string>>(() => ({
+    tr: catRow?.['hero_description'] || (categoryData?.heroDescription as string) || '',
+    en: catRow?.['hero_description_en'] || '',
+    ru: catRow?.['hero_description_ru'] || '',
+  }));
+  const [localListTitle, setLocalListTitle] = useState<Record<string, string>>(() => ({
+    tr: catRow?.['list_title'] || (categoryData?.categoryTitle as string) || '',
+    en: catRow?.['list_title_en'] || '',
+    ru: catRow?.['list_title_ru'] || '',
+  }));
+
+  const [localApptTitle, setLocalApptTitle] = useState<Record<string, string>>(() => {
+    const c = getContentJson();
+    return { tr: c['appointmentTitle'] || '', en: c['appointmentTitle_en'] || '', ru: c['appointmentTitle_ru'] || '' };
+  });
+  const [localApptDesc, setLocalApptDesc] = useState<Record<string, string>>(() => {
+    const c = getContentJson();
+    return { tr: c['appointmentDesc'] || '', en: c['appointmentDesc_en'] || '', ru: c['appointmentDesc_ru'] || '' };
+  });
+  const [localApptButton, setLocalApptButton] = useState<Record<string, string>>(() => {
+    const c = getContentJson();
+    return { tr: c['appointmentButtonText'] || '', en: c['appointmentButtonText_en'] || '', ru: c['appointmentButtonText_ru'] || '' };
+  });
+  const [localProductsFound, setLocalProductsFound] = useState<Record<string, string>>(() => {
+    const c = getContentJson();
+    return { tr: c['productsFoundText'] || '', en: c['productsFoundText_en'] || '', ru: c['productsFoundText_ru'] || '' };
+  });
+  const [localLoadMore, setLocalLoadMore] = useState<Record<string, string>>(() => {
+    const c = getContentJson();
+    return { tr: c['loadMoreText'] || '', en: c['loadMoreText_en'] || '', ru: c['loadMoreText_ru'] || '' };
+  });
+
+  // Kategori değişince (sayfa geçişi) state'i DB'den yeniden başlat
+  useEffect(() => {
+    const row = category as unknown as Record<string, string> | undefined;
+    const cd = getCategoryFromContent();
+    setLocalHeroTitle({
+      tr: row?.['hero_title'] || (cd?.heroTitle as string) || '',
+      en: row?.['hero_title_en'] || '',
+      ru: row?.['hero_title_ru'] || '',
+    });
+    setLocalHeroSubtitle({
+      tr: row?.['hero_subtitle'] || (cd?.heroSubtitle as string) || '',
+      en: row?.['hero_subtitle_en'] || '',
+      ru: row?.['hero_subtitle_ru'] || '',
+    });
+    setLocalHeroDescription({
+      tr: row?.['hero_description'] || (cd?.heroDescription as string) || '',
+      en: row?.['hero_description_en'] || '',
+      ru: row?.['hero_description_ru'] || '',
+    });
+    setLocalListTitle({
+      tr: row?.['list_title'] || (cd?.categoryTitle as string) || '',
+      en: row?.['list_title_en'] || '',
+      ru: row?.['list_title_ru'] || '',
+    });
+    const c = getContentJson();
+    setLocalApptTitle({ tr: c['appointmentTitle'] || '', en: c['appointmentTitle_en'] || '', ru: c['appointmentTitle_ru'] || '' });
+    setLocalApptDesc({ tr: c['appointmentDesc'] || '', en: c['appointmentDesc_en'] || '', ru: c['appointmentDesc_ru'] || '' });
+    setLocalApptButton({ tr: c['appointmentButtonText'] || '', en: c['appointmentButtonText_en'] || '', ru: c['appointmentButtonText_ru'] || '' });
+    setLocalProductsFound({ tr: c['productsFoundText'] || '', en: c['productsFoundText_en'] || '', ru: c['productsFoundText_ru'] || '' });
+    setLocalLoadMore({ tr: c['loadMoreText'] || '', en: c['loadMoreText_en'] || '', ru: c['loadMoreText_ru'] || '' });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category?.id, category?.content]);
+
+  // 3 dili birden kaydet — hangi sekmede olursa olsun hepsi gönderilir
+  const handleSaveAll = async () => {
+    setSaving(true);
+    onUpdate('hero_title', localHeroTitle.tr);
+    onUpdate('hero_title_en', localHeroTitle.en);
+    onUpdate('hero_title_ru', localHeroTitle.ru);
+    onUpdate('hero_description', localHeroDescription.tr);
+    onUpdate('hero_description_en', localHeroDescription.en);
+    onUpdate('hero_description_ru', localHeroDescription.ru);
+    onUpdate('list_title', localListTitle.tr);
+    onUpdate('list_title_en', localListTitle.en);
+    onUpdate('list_title_ru', localListTitle.ru);
+    if (!hideSubtitle) {
+      onUpdate('hero_subtitle', localHeroSubtitle.tr);
+      onUpdate('hero_subtitle_en', localHeroSubtitle.en);
+      onUpdate('hero_subtitle_ru', localHeroSubtitle.ru);
+    }
+    if (showExtraContent) {
+      const existing = getContentJson();
+      const merged = {
+        ...existing,
+        appointmentTitle: localApptTitle.tr,
+        appointmentTitle_en: localApptTitle.en,
+        appointmentTitle_ru: localApptTitle.ru,
+        appointmentDesc: localApptDesc.tr,
+        appointmentDesc_en: localApptDesc.en,
+        appointmentDesc_ru: localApptDesc.ru,
+        appointmentButtonText: localApptButton.tr,
+        appointmentButtonText_en: localApptButton.en,
+        appointmentButtonText_ru: localApptButton.ru,
+        productsFoundText: localProductsFound.tr,
+        productsFoundText_en: localProductsFound.en,
+        productsFoundText_ru: localProductsFound.ru,
+        loadMoreText: localLoadMore.tr,
+        loadMoreText_en: localLoadMore.en,
+        loadMoreText_ru: localLoadMore.ru,
+      };
+      onUpdate('content', JSON.stringify(merged));
+    }
+    setSaving(false);
+  };
+
+  // Ana "Kaydet" butonundan tetiklenince kaydet (ilk mount'ta çalışmasın)
+  useEffect(() => {
+    if (!mountedRef.current) return;
+    handleSaveAll();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveTrigger]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+  }, []);
 
   const filteredProducts = products?.filter(p =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -6244,30 +6960,67 @@ function CategorySection({
         />
         <InputFieldSimple
           label={getFieldLabel("Hero Başlık")}
-          value={getFieldValue("hero_title") || (contentLang === 'tr' ? (categoryData?.heroTitle as string) || "" : "")}
-          onChange={(v) => onUpdate(getFieldName("hero_title"), v)}
-          placeholder={getPlaceholder("hero_title")}
+          value={localHeroTitle[contentLang] || ''}
+          onChange={(v) => setLocalHeroTitle(prev => ({ ...prev, [contentLang]: v }))}
+          placeholder={contentLang !== 'tr' ? localHeroTitle.tr : ''}
         />
         {!hideSubtitle && (
-          <InputFieldSimple
+          <TextareaFieldSimple
             label={getFieldLabel("Hero Alt Başlık")}
-            value={getFieldValue("hero_subtitle") || (contentLang === 'tr' ? (categoryData?.heroSubtitle as string) || "" : "")}
-            onChange={(v) => onUpdate(getFieldName("hero_subtitle"), v)}
-            placeholder={getPlaceholder("hero_subtitle")}
+            value={localHeroSubtitle[contentLang] || ''}
+            onChange={(v) => setLocalHeroSubtitle(prev => ({ ...prev, [contentLang]: v }))}
+            rows={3}
           />
         )}
         <TextareaFieldSimple
           label={getFieldLabel("Hero Açıklama")}
-          value={getFieldValue("hero_description") || (contentLang === 'tr' ? (categoryData?.heroDescription as string) || "" : "")}
-          onChange={(v) => onUpdate(getFieldName("hero_description"), v)}
+          value={localHeroDescription[contentLang] || ''}
+          onChange={(v) => setLocalHeroDescription(prev => ({ ...prev, [contentLang]: v }))}
           rows={3}
         />
         <InputFieldSimple
           label={getFieldLabel("Liste Başlığı")}
-          value={getFieldValue("list_title") || (contentLang === 'tr' ? (categoryData?.categoryTitle as string) || "" : "")}
-          onChange={(v) => onUpdate(getFieldName("list_title"), v)}
-          placeholder={getPlaceholder("list_title")}
+          value={localListTitle[contentLang] || ''}
+          onChange={(v) => setLocalListTitle(prev => ({ ...prev, [contentLang]: v }))}
+          placeholder={contentLang !== 'tr' ? localListTitle.tr : ''}
         />
+        {showExtraContent && (
+          <>
+            <div className="border-t border-[#2a2a2a] pt-4 mt-2">
+              <p className="text-xs font-medium text-gray-400 mb-3">Randevu & Ek İçerik</p>
+            </div>
+            <InputFieldSimple
+              label={getFieldLabel("Randevu Başlık")}
+              value={localApptTitle[contentLang] || ''}
+              onChange={(v) => setLocalApptTitle(prev => ({ ...prev, [contentLang]: v }))}
+              placeholder={contentLang !== 'tr' ? localApptTitle.tr : ''}
+            />
+            <TextareaFieldSimple
+              label={getFieldLabel("Randevu Açıklama")}
+              value={localApptDesc[contentLang] || ''}
+              onChange={(v) => setLocalApptDesc(prev => ({ ...prev, [contentLang]: v }))}
+              rows={3}
+            />
+            <InputFieldSimple
+              label={getFieldLabel("Randevu Buton Metni")}
+              value={localApptButton[contentLang] || ''}
+              onChange={(v) => setLocalApptButton(prev => ({ ...prev, [contentLang]: v }))}
+              placeholder={contentLang !== 'tr' ? localApptButton.tr : ''}
+            />
+            <InputFieldSimple
+              label={getFieldLabel("Ürün Sayısı Metni ({count} = sayı)")}
+              value={localProductsFound[contentLang] || ''}
+              onChange={(v) => setLocalProductsFound(prev => ({ ...prev, [contentLang]: v }))}
+              placeholder="{count} Ürün bulunmaktadır"
+            />
+            <InputFieldSimple
+              label={getFieldLabel("Daha Fazla Göster Butonu")}
+              value={localLoadMore[contentLang] || ''}
+              onChange={(v) => setLocalLoadMore(prev => ({ ...prev, [contentLang]: v }))}
+              placeholder={contentLang !== 'tr' ? localLoadMore.tr : ''}
+            />
+          </>
+        )}
       </Section>
 
       {/* Ürün Seçimi */}

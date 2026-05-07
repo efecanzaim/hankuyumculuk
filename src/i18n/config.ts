@@ -36,12 +36,12 @@ export const routeMap: Record<Locale, Record<string, string>> = {
     home: '/en',
     contact: '/en/contact',
     about: '/en/about',
-    jewelry: '/en/jewelry',
-    'jewelry/rings': '/en/jewelry/rings',
-    'jewelry/bracelets': '/en/jewelry/bracelets',
-    'jewelry/necklaces': '/en/jewelry/necklaces',
-    'jewelry/earrings': '/en/jewelry/earrings',
-    'jewelry/sets': '/en/jewelry/sets',
+    jewelry: '/en/jewellery',
+    'jewelry/rings': '/en/jewellery/rings',
+    'jewelry/bracelets': '/en/jewellery/bracelets',
+    'jewelry/necklaces': '/en/jewellery/necklaces',
+    'jewelry/earrings': '/en/jewellery/earrings',
+    'jewelry/sets': '/en/jewellery/sets',
     men: '/en/men',
     'men/rings': '/en/men/rings',
     'men/bracelets': '/en/men/bracelets',
@@ -108,7 +108,7 @@ function buildReverseMap(locale: Locale): Record<string, string> {
 }
 
 // Page IDs that support dynamic sub-paths (e.g. /product/SLUG)
-const dynamicPageIds = ['product', 'certificate'];
+const dynamicPageIds = ['product', 'certificate', 'collection'];
 
 /** Resolve a localized path to a pageId */
 export function resolvePageId(locale: Locale, pathSegments: string[]): string | null {

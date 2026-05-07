@@ -1,10 +1,13 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getAssetPath } from "@/utils/paths";
 import { useLocale } from "@/i18n/LocaleContext";
 import useContent from "@/hooks/useContent";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 function renderWithLogo(text: string | undefined, logoHeight: number = 18) {
   if (!text) return text;
@@ -50,7 +53,39 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
     : locale === 'ru'
       ? '/footer-slogan-ru.svg'
       : '/footer-slogan.svg';
-  const sloganSvg = (content.footer as Record<string, unknown>)?.sloganSvg as string || defaultSloganSvg;
+
+  const [sloganSvg, setSloganSvg] = useState(defaultSloganSvg);
+  const [collectionCats, setCollectionCats] = useState<Array<{ id: number; name: string; slug: string; content?: string }>>([]);
+
+  useEffect(() => {
+    if (!API_URL) return;
+    fetch(`${API_URL}/api/categories.php?parentType=koleksiyon&_t=${Date.now()}`, { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : [])
+      .then((data: Array<{ id: number; name: string; slug: string; content?: string }>) => {
+        setCollectionCats(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    // Önce useContent'ten kontrol et
+    const fromContent = (content.footer as Record<string, unknown>)?.sloganSvg as string;
+    if (fromContent) {
+      setSloganSvg(fromContent);
+      return;
+    }
+    // Doğrudan API'den çek
+    if (API_URL) {
+      const langParam = locale !== 'tr' ? `?locale=${locale}` : '';
+      fetch(`${API_URL}/api/content.php${langParam}`)
+        .then(r => r.json())
+        .then(data => {
+          const svg = data?.footer?.sloganSvg;
+          if (svg) setSloganSvg(svg);
+        })
+        .catch(() => {});
+    }
+  }, [content, locale]);
 
   return (
     <>
@@ -122,28 +157,89 @@ export default function Footer({ logo, slogan, description, columns, copyright, 
           </div>
 
           {/* Footer Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-16 mt-[50px] md:mt-[100px] max-w-[900px] mx-auto px-4 md:px-6">
-            {columns.map((column, index) => (
-              <div key={index} className="text-center">
-                <h3 className="font-bold text-[13px] leading-[normal] text-[#2f3237] mb-[12px] md:mb-[16px]">
-                  {column.title}
-                </h3>
-                <ul className="space-y-[8px] md:space-y-[10px]">
-                  {column.links.map((link, linkIndex) => (
-                    <li key={linkIndex}>
-                      <Link
-                        href={link.href}
-                        className={`font-normal text-[13px] leading-[26px] text-[#2f3237] hover:opacity-70 transition-opacity ${(link.href.includes('gozumun-nuru') || link.href.includes('light-of-my-eyes') || link.href.includes('svet-moikh-glaz')) ? 'lowercase' : ''}`}
-                        style={(link.href.includes('gozumun-nuru') || link.href.includes('light-of-my-eyes') || link.href.includes('svet-moikh-glaz')) ? { fontFamily: 'Buljirya, cursive' } : undefined}
-                      >
-                        {(link.href.includes('gozumun-nuru') || link.href.includes('light-of-my-eyes') || link.href.includes('svet-moikh-glaz')) ? 'Gözümün Nuru' : link.text}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+          {(() => {
+            const collectionBasePath = locale === 'en' ? '/en/collection' : locale === 'ru' ? '/ru/kollektsiya' : '/koleksiyon';
+
+            const getHeroTitleImage = (content?: string): string | null => {
+              try {
+                if (!content) return null;
+                const parsed = typeof content === 'string' ? JSON.parse(content) : content;
+                const p = parsed as Record<string, unknown>;
+                return (p?.footerTitleImage as string) || (p?.heroTitleImage as string) || null;
+              } catch { return null; }
+            };
+
+            const enhancedColumns = columns.map(col => {
+              const isCollectionCol = col.links.some(l =>
+                l.href.includes('/koleksiyon') || l.href.includes('/collection') || l.href.includes('/kollektsiya')
+              );
+              if (isCollectionCol && collectionCats.length > 0) {
+                return { ...col, _isDynamic: true };
+              }
+              return { ...col, _isDynamic: false };
+            });
+
+            return (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-16 mt-[50px] md:mt-[100px] max-w-[900px] mx-auto px-4 md:px-6">
+                {enhancedColumns.map((column, index) => (
+                  <div key={index} className="text-center">
+                    <h3 className="font-bold text-[13px] leading-[normal] text-[#2f3237] mb-[12px] md:mb-[16px]">
+                      {column.title}
+                    </h3>
+                    <ul className="space-y-[8px] md:space-y-[10px]">
+                      {column._isDynamic ? (
+                        collectionCats.map(cat => {
+                          const href = cat.slug === 'gozumun-nuru'
+                            ? `${collectionBasePath}/gozumun-nuru`
+                            : `${collectionBasePath}/${cat.slug}`;
+                          const heroTitleImg = getHeroTitleImage(cat.content);
+                          const isGozumun = cat.slug === 'gozumun-nuru';
+                          return (
+                            <li key={cat.id}>
+                              <Link href={href} className="inline-flex items-center justify-center hover:opacity-70 transition-opacity">
+                                {heroTitleImg ? (
+                                  <Image
+                                    src={getAssetPath(heroTitleImg)}
+                                    alt={cat.name}
+                                    width={160}
+                                    height={22}
+                                    className="h-[22px] w-auto object-contain"
+                                  />
+                                ) : (
+                                  <span
+                                    className={`font-normal text-[13px] leading-[26px] text-[#2f3237] ${isGozumun ? 'lowercase' : ''}`}
+                                    style={isGozumun ? { fontFamily: 'Buljirya, cursive' } : { fontFamily: 'var(--font-faculty-glyphic), serif' }}
+                                  >
+                                    {cat.name}
+                                  </span>
+                                )}
+                              </Link>
+                            </li>
+                          );
+                        })
+                      ) : (
+                        column.links.map((link, linkIndex) => {
+                          const isGozumun = link.href.includes('gozumun-nuru') || link.href.includes('light-of-my-eyes') || link.href.includes('svet-moikh-glaz');
+                          return (
+                            <li key={linkIndex}>
+                              <Link
+                                href={link.href}
+                                className={`font-normal text-[13px] leading-[26px] text-[#2f3237] hover:opacity-70 transition-opacity ${isGozumun ? 'lowercase' : ''}`}
+                                style={isGozumun ? { fontFamily: 'Buljirya, cursive' } : undefined}
+                              >
+                                {isGozumun ? 'Gözümün Nuru' : link.text}
+                              </Link>
+                            </li>
+                          );
+                        })
+                      )}
+                    </ul>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            );
+          })()}
+
 
           {/* Copyright */}
           <div className="text-center mt-[40px] md:mt-[60px] pb-[30px] md:pb-[40px]">
