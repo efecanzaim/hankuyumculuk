@@ -44,3 +44,7 @@ next-env.d.ts
 
 # Backup/arşiv dosyaları
 *.zip
+
+# database dumps
+u2526296_hankuyumculuk*.sql
+duzeltmeler.sql

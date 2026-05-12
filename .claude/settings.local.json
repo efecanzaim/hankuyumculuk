@@ -58,7 +58,18 @@
       "PowerShell(npx tsc --noEmit 2>&1)",
       "Bash(npx tsc *)",
       "Bash(xargs grep -l \"blog\")",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git commit *)",
+      "PowerShell(Get-ChildItem -LiteralPath \"C:\\\\Users\\\\demas\\\\Desktop\" -File | Where-Object { $_.Name -match 'hank|296|\\\\.sql$' } | Select-Object Name, Length)",
+      "PowerShell(Get-ChildItem -LiteralPath \"C:\\\\Users\\\\demas\\\\Desktop\" -File -Force | Measure-Object | Select-Object Count; Get-ChildItem -LiteralPath \"C:\\\\Users\\\\demas\\\\Desktop\" -File -Force | Where-Object { $_.Extension -eq '.sql' } | ForEach-Object { $_.FullName + ' | ' + $_.Length })",
+      "Bash(grep -oE \"^\\\\\\([0-9]+, '[^']{0,40}\")",
+      "Bash(awk 'NR>=131 && NR<=160' '/c/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk \\(2\\).sql')",
+      "Bash(/c/Python314/python scan_translations.py)",
+      "Bash(/c/Python314/python -c ' *)",
+      "Bash(/c/Python314/python)",
+      "Bash(/c/Python314/python \"C:\\\\Users\\\\demas\\\\Desktop\\\\hankuyumculuk\\\\fix_path.py\")",
+      "Bash(/c/Python314/python \"C:\\\\Users\\\\demas\\\\Desktop\\\\hankuyumculuk\\\\debug_json.py\")"
     ]
   }
 }

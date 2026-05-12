@@ -103,27 +103,25 @@ export default function HediyePageContent({ locale }: HediyePageContentProps) {
     return sections;
   }, [pageData]);
 
-  // Lokalize seçici: önce DB'deki o dilin değeri, yoksa TR DB değeri, yoksa dictionary fallback
+  // Lokalize seçici: TR locale ise TR DB değeri kullan, EN/RU ise lokalize DB değeri dolu mu kontrol et — değilse dictionary fallback (TR'ye DÜŞMEZ)
   const sAny = s as Record<string, unknown>;
   const suffix = locale === 'en' ? 'En' : locale === 'ru' ? 'Ru' : '';
   const sPick = (base: string, fallback: string): string => {
     if (suffix) {
       const v = sAny[`${base}${suffix}`];
-      if (v && String(v).trim()) return String(v);
+      return v && String(v).trim() ? String(v) : fallback;
     }
     const tr = sAny[base];
-    if (tr && String(tr).trim()) return String(tr);
-    return fallback;
+    return tr && String(tr).trim() ? String(tr) : fallback;
   };
   const pd = pageData as Record<string, unknown> | undefined;
   const heroPick = (base: string, fallback: string): string => {
     if (suffix) {
       const v = pd?.[`${base}_${locale}`];
-      if (v && String(v).trim()) return String(v);
+      return v && String(v).trim() ? String(v) : fallback;
     }
     const tr = pd?.[base];
-    if (tr && String(tr).trim()) return String(tr);
-    return fallback;
+    return tr && String(tr).trim() ? String(tr) : fallback;
   };
 
   const txt = {
@@ -160,12 +158,18 @@ export default function HediyePageContent({ locale }: HediyePageContentProps) {
     { title: t('gifts.catEarring'), description: t('gifts.catEarringDesc'), href: getLocalizedPath('jewelry/earrings', locale) },
   ];
   const categories = dbCategories.map((c, i) => {
-    const titleKey = suffix ? `title${suffix}` : 'title';
-    const descKey = suffix ? `description${suffix}` : 'description';
     const fallback = localizedDefaults?.[i];
+    // EN/RU: lokalize DB değeri doluysa kullan, yoksa dictionary fallback (TR'ye DÜŞMEZ)
+    // TR: DB TR değerini kullan
+    const titleVal = suffix
+      ? (c[`title${suffix}`]?.trim() ? c[`title${suffix}`] : (fallback?.title || ''))
+      : (c.title || fallback?.title || '');
+    const descVal = suffix
+      ? (c[`description${suffix}`]?.trim() ? c[`description${suffix}`] : (fallback?.description || ''))
+      : (c.description || fallback?.description || '');
     return {
-      title: c[titleKey] || c.title || fallback?.title || '',
-      description: c[descKey] || c.description || fallback?.description || '',
+      title: titleVal,
+      description: descVal,
       image: c.image || (defaultSections.categories[i]?.image || ''),
       href: c.href || fallback?.href || '#',
     };

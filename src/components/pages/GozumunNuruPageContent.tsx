@@ -63,17 +63,16 @@ export default function GozumunNuruPageContent({ locale }: GozumunNuruPageConten
     return sections;
   }, [category]);
 
-  // Lokale göre alanı seç: önce DB'den o dilin değeri, yoksa TR DB değeri, yoksa dictionary fallback
+  // Lokalize seçici: TR ise TR DB, EN/RU ise lokalize DB doluysa kullan, yoksa dictionary fallback (TR'ye DÜŞMEZ)
   const sAny = s as Record<string, unknown>;
   const suffix = locale === 'en' ? 'En' : locale === 'ru' ? 'Ru' : '';
   const pick = (base: string, fallback: string): string => {
     if (suffix) {
       const v = sAny[`${base}${suffix}`];
-      if (v && String(v).trim()) return String(v);
+      return v && String(v).trim() ? String(v) : fallback;
     }
     const tr = sAny[base];
-    if (tr && String(tr).trim()) return String(tr);
-    return fallback;
+    return tr && String(tr).trim() ? String(tr) : fallback;
   };
   const darkText2Full = pick('darkText2', s.darkText2);
 

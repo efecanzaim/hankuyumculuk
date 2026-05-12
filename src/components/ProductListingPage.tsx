@@ -63,6 +63,18 @@ export default function ProductListingPage({
     }, 500);
   };
 
+  // Ürün linklerini geçerli locale'e lokalize et: /urun/SLUG → /en/product/SLUG / /ru/tovar/SLUG
+  // Sayfaların manuel lokalize etmesine gerek kalmasın diye burada tek noktadan hallediyoruz
+  const productBasePath = getLocalizedPath('product', locale);
+  const localizeLink = (link: string | undefined): string => {
+    if (!link) return '#';
+    if (locale === 'tr') return link;
+    // /urun/SLUG kalıbını locale base path'e çevir
+    if (link.startsWith('/urun/')) return productBasePath + link.slice('/urun'.length);
+    // Zaten lokalize bir link gelmişse (örn /en/product/SLUG) olduğu gibi bırak
+    return link;
+  };
+
   const displayedProducts = products.slice(0, visibleProducts);
 
   return (
@@ -122,7 +134,7 @@ export default function ProductListingPage({
             {displayedProducts.map((product) => (
               <Link
                 key={product.id}
-                href={product.link}
+                href={localizeLink(product.link)}
                 className="group block"
               >
                 {/* Product Image */}

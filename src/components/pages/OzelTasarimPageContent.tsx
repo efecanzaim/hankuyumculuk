@@ -60,23 +60,23 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
       .catch(() => {});
   }, []);
 
-  // DB → TR DB → dictionary fallback zinciri
+  // Lokalize seçici: TR ise TR DB, EN/RU ise lokalize DB doluysa kullan, yoksa dictionary fallback (TR'ye DÜŞMEZ)
   const suffix = locale === 'en' ? 'En' : locale === 'ru' ? 'Ru' : '';
   const pick = (base: string, fallback: string): string => {
     if (suffix) {
       const v = sections[`${base}${suffix}`];
-      if (v && String(v).trim()) return String(v);
+      return v && String(v).trim() ? String(v) : fallback;
     }
     const tr = sections[base];
-    if (tr && String(tr).trim()) return String(tr);
-    return fallback;
+    return tr && String(tr).trim() ? String(tr) : fallback;
   };
   const pickStep = (idx: number, field: 'label' | 'title' | 'desc', fallback: string): string => {
     const steps = (sections.steps as Array<Record<string, string>>) || [];
     const step = steps[idx] || {};
-    if (suffix && step[`${field}${suffix}`]?.trim()) return step[`${field}${suffix}`];
-    if (step[field]?.trim()) return step[field];
-    return fallback;
+    if (suffix) {
+      return step[`${field}${suffix}`]?.trim() ? step[`${field}${suffix}`] : fallback;
+    }
+    return step[field]?.trim() ? step[field] : fallback;
   };
   const heroImage = (pageData.heroImage as string) || "/images/categories/ozel-tasarim-card.jpg";
   const darkBgImage = (sections.darkBgImage as string) || "/images/parallax-bg.jpg";

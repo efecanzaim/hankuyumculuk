@@ -1819,6 +1819,9 @@ export default function AdminPanel() {
             heroSubtitle: data.heroSubtitle || fallback.heroSubtitle,
             heroSubtitle_en: data.heroSubtitle_en || fallback.heroSubtitle_en,
             heroSubtitle_ru: data.heroSubtitle_ru || fallback.heroSubtitle_ru,
+            content: data.content || "",
+            content_en: data.content_en || "",
+            content_ru: data.content_ru || "",
           });
         } else {
           setRandevuPage(fallback);
@@ -6310,62 +6313,58 @@ export default function AdminPanel() {
                 <div className="space-y-6">
                   {loadingRandevuPage ? (
                     <div className="text-center py-8 text-gray-500">Yükleniyor...</div>
-                  ) : randevuPage ? (
+                  ) : randevuPage ? (() => {
+                    const heroSuffix = contentLang === 'tr' ? '' : `_${contentLang}`;
+                    const langSuffix = contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : '';
+                    const heroK = (base: string) => `${base}${heroSuffix}`;
+                    return (
                     <>
+                      <Section title="Dil Sekmesi" subtitle="Metinleri düzenlemek için bir dil seçin">
+                        <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
+                        {contentLang !== 'tr' && (
+                          <p className="text-[11px] text-gray-400 mt-2">Görsel tüm diller için ortaktır — TR sekmesinden ayarlayın.</p>
+                        )}
+                      </Section>
+
                       <Section title="Hero Bölümü" subtitle="Randevu sayfası üst kısmı">
-                        <ImageField
-                          label="Hero Görsel"
-                          value={randevuPage.heroImage || ""}
-                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroImage: v })}
-                          folder="pages"
-                          objectPosition={randevuPage.heroImagePosition || "50% 50%"}
-                          onObjectPositionChange={(v: string) => setRandevuPage({ ...randevuPage, heroImagePosition: v })}
-                          objectScale={randevuPage.heroImageScale || 1}
-                          onObjectScaleChange={(v: number) => setRandevuPage({ ...randevuPage, heroImageScale: v })}
+                        {contentLang === 'tr' && (
+                          <ImageField
+                            label="Hero Görsel"
+                            value={randevuPage.heroImage || ""}
+                            onChange={(v: string) => setRandevuPage({ ...randevuPage, heroImage: v })}
+                            folder="pages"
+                            objectPosition={randevuPage.heroImagePosition || "50% 50%"}
+                            onObjectPositionChange={(v: string) => setRandevuPage({ ...randevuPage, heroImagePosition: v })}
+                            objectScale={randevuPage.heroImageScale || 1}
+                            onObjectScaleChange={(v: number) => setRandevuPage({ ...randevuPage, heroImageScale: v })}
+                          />
+                        )}
+                        <InputField
+                          label={`Hero Başlık${langSuffix}`}
+                          value={randevuPage[heroK('heroTitle')] || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, [heroK('heroTitle')]: v })}
+                          placeholder={contentLang !== 'tr' ? (randevuPage.heroTitle || '') : ''}
+                        />
+                        <InputField
+                          label={`Hero Alt Başlık${langSuffix}`}
+                          value={randevuPage[heroK('heroSubtitle')] || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, [heroK('heroSubtitle')]: v })}
+                          placeholder={contentLang !== 'tr' ? (randevuPage.heroSubtitle || '') : ''}
                         />
                       </Section>
 
-                      <Section title="Hero Metinleri (Türkçe)" subtitle="Türkçe başlık ve alt başlık">
-                        <InputField
-                          label="Hero Başlık (TR)"
-                          value={randevuPage.heroTitle || ""}
-                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroTitle: v })}
-                        />
-                        <InputField
-                          label="Hero Alt Başlık (TR)"
-                          value={randevuPage.heroSubtitle || ""}
-                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroSubtitle: v })}
+                      <Section title="Sayfa İçeriği" subtitle="Sayfanın detay metni (HTML destekli)">
+                        <TextareaField
+                          label={`İçerik${langSuffix}`}
+                          value={randevuPage[heroK('content')] || ""}
+                          onChange={(v: string) => setRandevuPage({ ...randevuPage, [heroK('content')]: v })}
+                          rows={6}
+                          placeholder={contentLang !== 'tr' ? (randevuPage.content || '') : ''}
                         />
                       </Section>
-
-                      <Section title="Hero Metinleri (English)" subtitle="İngilizce çeviriler">
-                        <InputField
-                          label="Hero Title (EN)"
-                          value={randevuPage.heroTitle_en || ""}
-                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroTitle_en: v })}
-                        />
-                        <InputField
-                          label="Hero Subtitle (EN)"
-                          value={randevuPage.heroSubtitle_en || ""}
-                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroSubtitle_en: v })}
-                        />
-                      </Section>
-
-                      <Section title="Hero Metinleri (Русский)" subtitle="Rusça çeviriler">
-                        <InputField
-                          label="Hero Title (RU)"
-                          value={randevuPage.heroTitle_ru || ""}
-                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroTitle_ru: v })}
-                        />
-                        <InputField
-                          label="Hero Subtitle (RU)"
-                          value={randevuPage.heroSubtitle_ru || ""}
-                          onChange={(v: string) => setRandevuPage({ ...randevuPage, heroSubtitle_ru: v })}
-                        />
-                      </Section>
-
                     </>
-                  ) : (
+                    );
+                  })() : (
                     <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi.</div>
                   )}
                 </div>
