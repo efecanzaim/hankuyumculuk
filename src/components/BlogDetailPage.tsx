@@ -18,33 +18,44 @@ interface BlogPost {
   published_at: string;
 }
 
+import type { Locale } from "@/i18n/config";
+import { getLocalizedPath } from "@/i18n/config";
+
 interface BlogDetailPageProps {
   slug: string;
+  locale?: Locale;
 }
 
-export default function BlogDetailPage({ slug }: BlogDetailPageProps) {
+const uiText: Record<Locale, { loading: string; notFound: string; notFoundDesc: string; allPosts: string; otherPosts: string }> = {
+  tr: { loading: 'Yükleniyor...', notFound: 'Blog Yazısı Bulunamadı', notFoundDesc: 'Aradığınız blog yazısı mevcut değil veya kaldırılmış olabilir.', allPosts: 'TÜM BLOG YAZILARI', otherPosts: 'DİĞER BLOG YAZILARI' },
+  en: { loading: 'Loading...', notFound: 'Blog Post Not Found', notFoundDesc: 'The blog post you are looking for does not exist or may have been removed.', allPosts: 'ALL BLOG POSTS', otherPosts: 'OTHER BLOG POSTS' },
+  ru: { loading: 'Загрузка...', notFound: 'Запись не найдена', notFoundDesc: 'Запрашиваемая статья не существует или была удалена.', allPosts: 'ВСЕ СТАТЬИ', otherPosts: 'ДРУГИЕ СТАТЬИ' },
+};
+
+export default function BlogDetailPage({ slug, locale = 'tr' }: BlogDetailPageProps) {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const langParam = locale !== 'tr' ? `&lang=${locale}` : '';
+  const blogBasePath = getLocalizedPath('blog', locale);
+  const ui = uiText[locale];
 
   useEffect(() => {
     const fetchPost = async () => {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       if (apiUrl && slug) {
         try {
-          // Tek blog yazısını getir
-          const response = await fetch(`${apiUrl}/api/blog.php?slug=${slug}`);
+          const response = await fetch(`${apiUrl}/api/blog.php?slug=${slug}${langParam}`);
           if (response.ok) {
             const data = await response.json();
             if (data && !data.error) {
               setPost(data);
 
-              // Diğer blog yazılarını getir (ilgili yazılar için)
-              const allResponse = await fetch(`${apiUrl}/api/blog.php?status=published`);
+              const allResponse = await fetch(`${apiUrl}/api/blog.php?status=published${langParam}`);
               if (allResponse.ok) {
                 const allData = await allResponse.json();
-                // Mevcut yazıyı hariç tut ve en fazla 4 yazı göster
                 const filtered = allData.filter((p: BlogPost) => p.slug !== slug).slice(0, 4);
                 setRelatedPosts(filtered);
               }
@@ -62,16 +73,13 @@ export default function BlogDetailPage({ slug }: BlogDetailPageProps) {
       setLoading(false);
     };
     fetchPost();
-  }, [slug]);
+  }, [slug, locale]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString("tr-TR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+    const localeMap: Record<Locale, string> = { tr: 'tr-TR', en: 'en-GB', ru: 'ru-RU' };
+    return date.toLocaleDateString(localeMap[locale], { day: "numeric", month: "long", year: "numeric" });
   };
 
   // Group posts into rows of 2 for the grid layout
@@ -89,7 +97,7 @@ export default function BlogDetailPage({ slug }: BlogDetailPageProps) {
             className="text-[15px] text-[#2f3237]"
             style={{ fontFamily: "var(--font-bw-modelica), sans-serif" }}
           >
-            Yükleniyor...
+            {ui.loading}
           </p>
         </div>
       </div>
@@ -105,20 +113,20 @@ export default function BlogDetailPage({ slug }: BlogDetailPageProps) {
               className="text-[50px] leading-[70px] text-[#2f3237] mb-[30px]"
               style={{ fontFamily: "var(--font-faculty-glyphic), serif" }}
             >
-              Blog Yazısı Bulunamadı
+              {ui.notFound}
             </h1>
             <p
               className="text-[18px] leading-[28px] text-[#666] font-light mb-[40px]"
               style={{ fontFamily: "var(--font-bw-modelica), sans-serif" }}
             >
-              Aradığınız blog yazısı mevcut değil veya kaldırılmış olabilir.
+              {ui.notFoundDesc}
             </p>
             <Link
-              href="/blog"
+              href={blogBasePath}
               className="bg-dark text-light text-[13px] leading-[15px] font-light px-[60px] py-[18px] hover:bg-[#1f2227] transition-colors inline-block"
               style={{ fontFamily: "var(--font-bw-modelica), sans-serif" }}
             >
-              TÜM BLOG YAZILARI
+              {ui.allPosts}
             </Link>
           </div>
         </section>
@@ -202,11 +210,11 @@ export default function BlogDetailPage({ slug }: BlogDetailPageProps) {
       <section className="py-[30px] md:py-[40px]">
         <div className="flex justify-center px-4">
           <Link
-            href="/blog"
+            href={blogBasePath}
             className="bg-dark text-light text-[12px] md:text-[13px] leading-[15px] font-light px-[40px] md:px-[60px] py-[15px] md:py-[18px] hover:bg-[#1f2227] transition-colors"
             style={{ fontFamily: "var(--font-bw-modelica), sans-serif" }}
           >
-            TÜM BLOG YAZILARI
+            {ui.allPosts}
           </Link>
         </div>
       </section>
@@ -227,7 +235,7 @@ export default function BlogDetailPage({ slug }: BlogDetailPageProps) {
                   className="text-[16px] md:text-[20px] leading-[24px] md:leading-[30px] font-light text-[#2f3237] bg-white px-[20px] md:px-[40px]"
                   style={{ fontFamily: "var(--font-bw-modelica), sans-serif" }}
                 >
-                  DİĞER BLOG YAZILARI
+                  {ui.otherPosts}
                 </h2>
               </div>
             </div>
@@ -240,7 +248,7 @@ export default function BlogDetailPage({ slug }: BlogDetailPageProps) {
               >
                 {row.map((relPost, colIndex) => (
                   <Link
-                    href={`/blog/${relPost.slug}`}
+                    href={`${blogBasePath}/${relPost.slug}`}
                     key={relPost.id}
                     className="group flex-1 max-w-[700px]"
                   >

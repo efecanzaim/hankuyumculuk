@@ -56,7 +56,9 @@
       "Bash(grep -n \"INSERT INTO \\\\`general_settings\\\\`\" \"c:/Users/demas/Desktop/hankuyumculuk/u2526296_hankuyumculuk \\(1\\).sql\")",
       "Bash(Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue)",
       "PowerShell(npx tsc --noEmit 2>&1)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(xargs grep -l \"blog\")",
+      "Bash(git add *)"
     ]
   }
 }

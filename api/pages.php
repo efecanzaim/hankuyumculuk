@@ -13,6 +13,17 @@ require_once 'auth.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $db = getDB();
 
+// Migration: values_title_en / values_title_ru kolonlarını ekle
+foreach (['values_title_en' => 'VARCHAR(255)', 'values_title_ru' => 'VARCHAR(255)'] as $col => $type) {
+    try {
+        if (empty($db->query("SHOW COLUMNS FROM pages LIKE '$col'")->fetchAll())) {
+            $db->exec("ALTER TABLE pages ADD COLUMN $col $type AFTER values_title");
+        }
+    } catch (Exception $e) {
+        error_log("pages migration $col: " . $e->getMessage());
+    }
+}
+
 // Debug: Versiyon kontrolü
 if (isset($_GET['version'])) {
     jsonResponse(['version' => '2026-02-18-v3', 'method' => $method, 'time' => date('Y-m-d H:i:s')]);
@@ -165,6 +176,8 @@ switch ($method) {
             'content_en' => 'content_en',
             'content_ru' => 'content_ru',
             'valuesTitle' => 'values_title',
+            'valuesTitle_en' => 'values_title_en',
+            'valuesTitle_ru' => 'values_title_ru',
             'metaTitle' => 'meta_title',
             'metaTitle_en' => 'meta_title_en',
             'metaTitle_ru' => 'meta_title_ru',
@@ -275,7 +288,9 @@ function formatPage($page) {
         'content' => $page['content'],
         'content_en' => $page['content_en'] ?? '',
         'content_ru' => $page['content_ru'] ?? '',
-        'valuesTitle' => $page['values_title'] ?? 'Vizyonumuz',
+        'valuesTitle'    => $page['values_title'] ?? 'Vizyonumuz',
+        'valuesTitle_en' => $page['values_title_en'] ?? '',
+        'valuesTitle_ru' => $page['values_title_ru'] ?? '',
         'metaTitle' => $page['meta_title'],
         'metaTitle_en' => $page['meta_title_en'] ?? '',
         'metaTitle_ru' => $page['meta_title_ru'] ?? '',

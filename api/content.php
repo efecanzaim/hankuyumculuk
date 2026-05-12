@@ -29,16 +29,52 @@ function getLocalizedValue($row, $field, $locale) {
     if ($locale === 'tr') {
         return $row[$field] ?? '';
     }
-    
+
     $localizedField = $field . '_' . $locale;
-    
+
     // Lokalize alan dolu ise onu döndür
     if (isset($row[$localizedField]) && $row[$localizedField] !== null && $row[$localizedField] !== '') {
         return $row[$localizedField];
     }
-    
+
     // Yoksa varsayılan (TR) değeri döndür
     return $row[$field] ?? '';
+}
+
+/**
+ * Türkçe mücevher terimlerini hedef dile çevirir
+ * Admin'de display_name_en/ru boşsa kullanılır
+ */
+function translateJewelryTerms($text, $locale) {
+    if ($locale === 'tr' || empty($text)) return $text;
+
+    $maps = [
+        'en' => [
+            'Pırlanta' => 'Diamond', 'Pirlanta' => 'Diamond',
+            'Yüzük' => 'Ring', 'Yuzuk' => 'Ring',
+            'Bileklik' => 'Bracelet',
+            'Kolye' => 'Necklace',
+            'Küpe' => 'Earring', 'Kupe' => 'Earring',
+            'Set' => 'Set',
+            'Broş' => 'Brooch',
+            'Karat' => 'Carat',
+            'Ayar' => 'K',
+        ],
+        'ru' => [
+            'Pırlanta' => 'Бриллиант', 'Pirlanta' => 'Бриллиант',
+            'Yüzük' => 'Кольцо', 'Yuzuk' => 'Кольцо',
+            'Bileklik' => 'Браслет',
+            'Kolye' => 'Ожерелье',
+            'Küpe' => 'Серьга', 'Kupe' => 'Серьга',
+            'Set' => 'Набор',
+            'Broş' => 'Брошь',
+            'Karat' => 'карат',
+            'Ayar' => 'К',
+        ],
+    ];
+
+    $map = $maps[$locale] ?? [];
+    return str_replace(array_keys($map), array_values($map), $text);
 }
 
 $db = getDB();
@@ -148,8 +184,9 @@ try {
             $linksByColumn[$colId] = [];
         }
         $linksByColumn[$colId][] = [
+            'id' => (int)$link['id'],
             'text' => getLocalizedValue($link, 'text', $locale),
-            'href' => $link['url']
+            'href' => getLocalizedValue($link, 'url', $locale) ?: ($link['url'] ?? '')
         ];
     }
     
@@ -157,6 +194,7 @@ try {
     $formattedColumns = [];
     foreach ($footerColumns as $column) {
         $formattedColumns[] = [
+            'id' => (int)$column['id'],
             'title' => getLocalizedValue($column, 'title', $locale),
             'links' => $linksByColumn[$column['id']] ?? []
         ];
@@ -363,18 +401,31 @@ try {
     ");
     $featuredProducts = $stmt->fetchAll();
     
-    $formattedFeaturedProducts = array_map(function($fp) use ($locale) {
-        // Önce display_name'in locale versiyonunu, yoksa product_name'in locale versiyonunu al
-        $displayName = getLocalizedValue($fp, 'display_name', $locale);
-        if (empty($displayName)) {
-            $displayName = getLocalizedValue($fp, 'product_name', $locale);
+    $productPathByLocale = ['tr' => '/urun', 'en' => '/en/product', 'ru' => '/ru/tovar'];
+    $productBasePath = $productPathByLocale[$locale] ?? '/urun';
+
+    $formattedFeaturedProducts = array_map(function($fp) use ($locale, $productBasePath) {
+        if ($locale === 'tr') {
+            $displayName = $fp['display_name'] ?? ($fp['product_name'] ?? '');
+            $displayCategory = $fp['display_category'] ?? '';
+        } else {
+            // Lokalize kolon varsa ve doluysa onu kullan, yoksa TR değerini çevir
+            $localeSuffix = '_' . $locale;
+            $displayName = (isset($fp['display_name' . $localeSuffix]) && $fp['display_name' . $localeSuffix] !== '')
+                ? $fp['display_name' . $localeSuffix]
+                : translateJewelryTerms($fp['display_name'] ?? ($fp['product_name'] ?? ''), $locale);
+
+            $displayCategory = (isset($fp['display_category' . $localeSuffix]) && $fp['display_category' . $localeSuffix] !== '')
+                ? $fp['display_category' . $localeSuffix]
+                : translateJewelryTerms($fp['display_category'] ?? '', $locale);
         }
+
         return [
             'id' => (int)($fp['id'] ?? 0),
             'image' => $fp['main_image'] ?? '',
             'name' => $displayName,
-            'category' => getLocalizedValue($fp, 'display_category', $locale),
-            'link' => '/urun/' . ($fp['product_slug'] ?? '')
+            'category' => $displayCategory,
+            'link' => $productBasePath . '/' . ($fp['product_slug'] ?? '')
         ];
     }, $featuredProducts);
     
@@ -385,7 +436,6 @@ try {
         // Top Banner
         'topBanner' => [
             'text' => getLocalizedValue($topBanner ?: [], 'text', $locale),
-            'link' => $topBanner['link'] ?? '',
             'visible' => (bool)($topBanner['is_visible'] ?? false)
         ],
         
@@ -415,7 +465,7 @@ try {
                     'title' => getLocalizedValue($slide, 'title', $locale),
                     'subtitle' => getLocalizedValue($slide, 'subtitle', $locale),
                     'ctaText' => getLocalizedValue($slide, 'button_text', $locale),
-                    'ctaLink' => $slide['button_link'] ?? '',
+                    'ctaLink' => getLocalizedValue($slide, 'button_link', $locale),
                     'imagePosition' => $slide['image_position'] ?? '50% 50%',
                     'imageScale' => isset($slide['image_scale']) ? (float)$slide['image_scale'] : 1.0,
                 ];
@@ -426,15 +476,15 @@ try {
         'trendSection' => $trendSection ? [
             'leftImage' => $trendSection['left_image'] ?? '',
             'leftTitle' => getLocalizedValue($trendSection, 'left_title', $locale),
-            'leftLink' => $trendSection['left_link'] ?? '',
-            'leftTitleLink' => $trendSection['left_link'] ?? '',
+            'leftLink' => getLocalizedValue($trendSection, 'left_link', $locale) ?: ($trendSection['left_link'] ?? ''),
+            'leftTitleLink' => getLocalizedValue($trendSection, 'left_link', $locale) ?: ($trendSection['left_link'] ?? ''),
             'leftButtonText' => getLocalizedValue($trendSection, 'left_button_text', $locale) ?: ($locale === 'ru' ? 'ОТКРЫТЬ' : ($locale === 'en' ? 'DISCOVER' : 'KEŞFEDİN')),
             'leftImagePosition' => $trendSection['left_image_position'] ?? '50% 50%',
             'leftImageScale' => (float)($trendSection['left_image_scale'] ?? 1),
             'rightImage' => $trendSection['right_image'] ?? '',
             'rightTitle' => getLocalizedValue($trendSection, 'right_title', $locale),
-            'rightLink' => $trendSection['right_link'] ?? '',
-            'rightTitleLink' => $trendSection['right_link'] ?? '',
+            'rightLink' => getLocalizedValue($trendSection, 'right_link', $locale) ?: ($trendSection['right_link'] ?? ''),
+            'rightTitleLink' => getLocalizedValue($trendSection, 'right_link', $locale) ?: ($trendSection['right_link'] ?? ''),
             'rightButtonText' => getLocalizedValue($trendSection, 'right_button_text', $locale) ?: ($locale === 'ru' ? 'ОТКРЫТЬ' : ($locale === 'en' ? 'DISCOVER' : 'KEŞFEDİN')),
             'rightImagePosition' => $trendSection['right_image_position'] ?? '50% 50%',
             'rightImageScale' => (float)($trendSection['right_image_scale'] ?? 1),
@@ -450,8 +500,6 @@ try {
             'title' => getLocalizedValue($storySection, 'title', $locale),
             'mainText' => getLocalizedValue($storySection, 'main_text', $locale),
             'subText' => getLocalizedValue($storySection, 'sub_text', $locale),
-            'linkText' => getLocalizedValue($storySection, 'link_text', $locale),
-            'linkUrl' => $storySection['link_url'] ?? ''
         ] : null,
         
         // Featured Products Section
@@ -483,10 +531,10 @@ try {
             'title' => getLocalizedValue($blogSection, 'title', $locale),
             'subtitle' => getLocalizedValue($blogSection, 'subtitle', $locale),
             'description' => getLocalizedValue($blogSection, 'description', $locale),
-            'additionalText' => getLocalizedValue($blogSection, 'additional_text', $locale),
-            'image' => $blogSection['image'] ?? '',
-            'linkText' => getLocalizedValue($blogSection, 'link_text', $locale),
-            'linkUrl' => $blogSection['link_url'] ?? ''
+            'introText' => getLocalizedValue($blogSection, 'intro_text', $locale),
+            'allPostsText' => getLocalizedValue($blogSection, 'all_posts_text', $locale),
+            'allPostsButtonText' => getLocalizedValue($blogSection, 'all_posts_button_text', $locale),
+            'allPostsLink' => getLocalizedValue($blogSection, 'all_posts_link', $locale) ?: ($blogSection['all_posts_link'] ?? '/blog'),
         ] : null,
         
         // Footer
@@ -499,18 +547,26 @@ try {
             'socialLinks' => $socialLinks
         ],
         
-        // Contact
-        'contact' => [
-            'address' => getLocalizedValue($contactInfo, 'address', $locale),
-            'phone' => $contactInfo['phone'] ?? '',
-            'email' => $contactInfo['email'] ?? '',
-            'workingHours' => getLocalizedValue($contactInfo, 'working_hours', $locale),
-            'mapEmbed' => $contactInfo['map_embed'] ?? '',
-            'instagram1' => $contactInfo['instagram1'] ?? '',
-            'instagram1Url' => $contactInfo['instagram1_url'] ?? '',
-            'instagram2' => $contactInfo['instagram2'] ?? '',
-            'instagram2Url' => $contactInfo['instagram2_url'] ?? ''
-        ],
+        // Contact - TR dışı diller için: lokalize değer boşsa BOŞ DÖN (TR'ye düşürme)
+        // Böylece frontend boş gelirse dictionary fallback kullanabilir
+        'contact' => (function() use ($contactInfo, $locale) {
+            $localized = function($field) use ($contactInfo, $locale) {
+                if ($locale === 'tr') return $contactInfo[$field] ?? '';
+                $localizedField = $field . '_' . $locale;
+                return $contactInfo[$localizedField] ?? '';
+            };
+            return [
+                'address' => $localized('address'),
+                'phone' => $contactInfo['phone'] ?? '',
+                'email' => $contactInfo['email'] ?? '',
+                'workingHours' => $localized('working_hours'),
+                'mapEmbed' => $contactInfo['map_embed'] ?? '',
+                'instagram1' => $contactInfo['instagram1'] ?? '',
+                'instagram1Url' => $contactInfo['instagram1_url'] ?? '',
+                'instagram2' => $contactInfo['instagram2'] ?? '',
+                'instagram2Url' => $contactInfo['instagram2_url'] ?? ''
+            ];
+        })(),
         
         // Kategoriler (content.json formatında)
         'mucevherCategories' => $categoriesByType['mucevher'] ?? [],

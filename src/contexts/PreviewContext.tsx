@@ -110,6 +110,26 @@ export function PreviewProvider({ locale = 'tr' as Locale, children }: { locale?
                   filteredData[key] = data[key];
                 }
               }
+
+              // featuredProducts: API lokalize ad/kategori döndürüyor, olduğu gibi kullan
+              // featuredProductsSection: API lokalize başlıkları döndürüyor, olduğu gibi kullan
+
+              // specialDesignSection: API lokalize başlık ve kart metinlerini döndürüyor, olduğu gibi kullan
+
+              // blogSection: metin alanlarını fallback'ten koru (introText, allPostsText, allPostsButtonText)
+              if (filteredData.blogSection && currentFallback.blogSection) {
+                type BlogSec = Record<string, unknown>;
+                const apiBS = filteredData.blogSection as BlogSec;
+                const fbBS = currentFallback.blogSection as BlogSec;
+                filteredData.blogSection = {
+                  ...apiBS,
+                  introText: fbBS.introText || apiBS.introText,
+                  allPostsText: fbBS.allPostsText || apiBS.allPostsText,
+                  allPostsButtonText: fbBS.allPostsButtonText || apiBS.allPostsButtonText,
+                  allPostsLink: fbBS.allPostsLink || apiBS.allPostsLink,
+                } as typeof filteredData.blogSection;
+              }
+
               const mergedContent = { ...currentFallback, ...filteredData };
               setContent(mergedContent as ContentType);
             } else {

@@ -68,7 +68,7 @@ function getSettingByKey($db, $key) {
     if ($key === 'top_banner') {
         $stmt = $db->query('SELECT * FROM top_banner LIMIT 1');
         $row = $stmt->fetch();
-        return $row ? ['text' => $row['text'], 'link' => $row['link'], 'visible' => (bool)$row['is_visible']] : null;
+        return $row ? ['text' => $row['text'], 'visible' => (bool)$row['is_visible']] : null;
     }
     
     $stmt = $db->prepare('SELECT * FROM general_settings WHERE setting_key = ?');
@@ -89,16 +89,15 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
                 $stmt = $db->prepare("UPDATE top_banner SET text{$ls} = ? LIMIT 1");
                 return $stmt->execute([$text]);
             }
-            $link = $value['link'] ?? '';
             $visible = ($value['visible'] ?? true) ? 1 : 0;
             $stmt = $db->query('SELECT id FROM top_banner LIMIT 1');
             $existing = $stmt->fetch();
             if ($existing) {
-                $stmt = $db->prepare('UPDATE top_banner SET text = ?, link = ?, is_visible = ? LIMIT 1');
-                return $stmt->execute([$text, $link, $visible]);
+                $stmt = $db->prepare('UPDATE top_banner SET text = ?, is_visible = ? LIMIT 1');
+                return $stmt->execute([$text, $visible]);
             }
-            $stmt = $db->prepare('INSERT INTO top_banner (text, link, is_visible) VALUES (?, ?, ?)');
-            return $stmt->execute([$text, $link, $visible]);
+            $stmt = $db->prepare('INSERT INTO top_banner (text, is_visible) VALUES (?, ?)');
+            return $stmt->execute([$text, $visible]);
 
         case 'header':
             // Header alanları dil bağımsız (logo, logoAlt)
@@ -115,13 +114,32 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
 
         case 'trend_section':
             if ($locale !== 'tr') {
-                $stmt = $db->prepare("UPDATE homepage_trend_section SET left_title{$ls}=?, right_title{$ls}=?, left_button_text{$ls}=?, right_button_text{$ls}=? LIMIT 1");
-                return $stmt->execute([
-                    $value['leftTitle'] ?? '',
-                    $value['rightTitle'] ?? '',
-                    $value['leftButtonText'] ?? '',
-                    $value['rightButtonText'] ?? ''
-                ]);
+                // left_link_en/ru kolonunun varlığını kontrol et
+                $hasLinkCols = false;
+                try {
+                    $chk = $db->query("SHOW COLUMNS FROM homepage_trend_section LIKE 'left_link_en'");
+                    $hasLinkCols = $chk->rowCount() > 0;
+                } catch (Exception $e) {}
+
+                if ($hasLinkCols) {
+                    $stmt = $db->prepare("UPDATE homepage_trend_section SET left_title{$ls}=?, left_link{$ls}=?, left_button_text{$ls}=?, right_title{$ls}=?, right_link{$ls}=?, right_button_text{$ls}=? LIMIT 1");
+                    return $stmt->execute([
+                        $value['leftTitle'] ?? '',
+                        $value['leftTitleLink'] ?? $value['leftLink'] ?? '',
+                        $value['leftButtonText'] ?? '',
+                        $value['rightTitle'] ?? '',
+                        $value['rightTitleLink'] ?? $value['rightLink'] ?? '',
+                        $value['rightButtonText'] ?? ''
+                    ]);
+                } else {
+                    $stmt = $db->prepare("UPDATE homepage_trend_section SET left_title{$ls}=?, right_title{$ls}=?, left_button_text{$ls}=?, right_button_text{$ls}=? LIMIT 1");
+                    return $stmt->execute([
+                        $value['leftTitle'] ?? '',
+                        $value['rightTitle'] ?? '',
+                        $value['leftButtonText'] ?? '',
+                        $value['rightButtonText'] ?? ''
+                    ]);
+                }
             }
             // Kolon varlıklarını kontrol et ve gerekirse ekle
             $hasAdjustCols = false;
@@ -207,16 +225,16 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
 
         case 'story_section':
             if ($locale !== 'tr') {
-                $stmt = $db->prepare("UPDATE homepage_story_section SET title{$ls}=?, main_text{$ls}=?, sub_text{$ls}=?, link_text{$ls}=? LIMIT 1");
-                return $stmt->execute([$value['title'] ?? '', $value['mainText'] ?? '', $value['subText'] ?? '', $value['linkText'] ?? '']);
+                $stmt = $db->prepare("UPDATE homepage_story_section SET title{$ls}=?, main_text{$ls}=?, sub_text{$ls}=? LIMIT 1");
+                return $stmt->execute([$value['title'] ?? '', $value['mainText'] ?? '', $value['subText'] ?? '']);
             }
             $stmt = $db->query('SELECT id FROM homepage_story_section LIMIT 1');
-            $params = [$value['title'] ?? '', $value['mainText'] ?? '', $value['subText'] ?? '', $value['linkText'] ?? '', $value['linkUrl'] ?? ''];
+            $params = [$value['title'] ?? '', $value['mainText'] ?? '', $value['subText'] ?? ''];
             if ($stmt->fetch()) {
-                $stmt = $db->prepare('UPDATE homepage_story_section SET title=?, main_text=?, sub_text=?, link_text=?, link_url=? LIMIT 1');
+                $stmt = $db->prepare('UPDATE homepage_story_section SET title=?, main_text=?, sub_text=? LIMIT 1');
                 return $stmt->execute($params);
             }
-            $stmt = $db->prepare('INSERT INTO homepage_story_section (title, main_text, sub_text, link_text, link_url) VALUES (?,?,?,?,?)');
+            $stmt = $db->prepare('INSERT INTO homepage_story_section (title, main_text, sub_text) VALUES (?,?,?)');
             return $stmt->execute($params);
 
         case 'featured_products_section':
@@ -321,16 +339,33 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
 
         case 'blog_section':
             if ($locale !== 'tr') {
-                $stmt = $db->prepare("UPDATE homepage_blog_section SET title{$ls}=?, subtitle{$ls}=?, description{$ls}=?, additional_text{$ls}=?, link_text{$ls}=? LIMIT 1");
-                return $stmt->execute([$value['title'] ?? '', $value['subtitle'] ?? '', $value['description'] ?? '', $value['additionalText'] ?? '', $value['linkText'] ?? '']);
+                // all_posts_link_{locale} kolonunu dinamik olarak ekle
+                try {
+                    $chk = $db->query("SHOW COLUMNS FROM homepage_blog_section LIKE 'all_posts_link{$ls}'");
+                    if ($chk->rowCount() === 0) {
+                        $db->exec("ALTER TABLE homepage_blog_section ADD COLUMN all_posts_link{$ls} VARCHAR(255) DEFAULT NULL");
+                    }
+                } catch (Exception $e) {
+                    error_log('homepage_blog_section all_posts_link migration error: ' . $e->getMessage());
+                }
+                $stmt = $db->prepare("UPDATE homepage_blog_section SET title{$ls}=?, subtitle{$ls}=?, description{$ls}=?, intro_text{$ls}=?, all_posts_text{$ls}=?, all_posts_button_text{$ls}=?, all_posts_link{$ls}=? LIMIT 1");
+                return $stmt->execute([
+                    $value['title'] ?? '', $value['subtitle'] ?? '', $value['description'] ?? '',
+                    $value['introText'] ?? '', $value['allPostsText'] ?? '', $value['allPostsButtonText'] ?? '',
+                    $value['allPostsLink'] ?? ''
+                ]);
             }
             $stmt = $db->query('SELECT id FROM homepage_blog_section LIMIT 1');
-            $params = [$value['title'] ?? '', $value['subtitle'] ?? '', $value['description'] ?? '', $value['additionalText'] ?? '', $value['image'] ?? '', $value['linkText'] ?? '', $value['linkUrl'] ?? ''];
+            $params = [
+                $value['title'] ?? '', $value['subtitle'] ?? '', $value['description'] ?? '',
+                $value['introText'] ?? '', $value['allPostsText'] ?? '', $value['allPostsButtonText'] ?? '',
+                $value['allPostsLink'] ?? '/blog'
+            ];
             if ($stmt->fetch()) {
-                $stmt = $db->prepare('UPDATE homepage_blog_section SET title=?, subtitle=?, description=?, additional_text=?, image=?, link_text=?, link_url=? LIMIT 1');
+                $stmt = $db->prepare('UPDATE homepage_blog_section SET title=?, subtitle=?, description=?, intro_text=?, all_posts_text=?, all_posts_button_text=?, all_posts_link=? LIMIT 1');
                 return $stmt->execute($params);
             }
-            $stmt = $db->prepare('INSERT INTO homepage_blog_section (title, subtitle, description, additional_text, image, link_text, link_url) VALUES (?,?,?,?,?,?,?)');
+            $stmt = $db->prepare('INSERT INTO homepage_blog_section (title, subtitle, description, intro_text, all_posts_text, all_posts_button_text, all_posts_link) VALUES (?,?,?,?,?,?,?)');
             return $stmt->execute($params);
 
         case 'footer':
@@ -342,32 +377,146 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
             } catch (Exception $e) {}
 
             if ($locale !== 'tr') {
+                // EN/RU: sadece çevirileri kaydet (slogan, copyright, sloganSvg, sütun başlıkları, link metinleri+URL'leri)
                 if ($hasSvgCol) {
                     $stmt = $db->prepare("UPDATE footer_settings SET slogan{$ls}=?, copyright_text{$ls}=?, slogan_svg{$ls}=? LIMIT 1");
-                    return $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '', $value['sloganSvg'] ?? null]);
+                    $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '', $value['sloganSvg'] ?? null]);
                 } else {
                     $stmt = $db->prepare("UPDATE footer_settings SET slogan{$ls}=?, copyright_text{$ls}=? LIMIT 1");
-                    return $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '']);
+                    $stmt->execute([$value['slogan'] ?? '', $value['copyright'] ?? '']);
                 }
+
+                // Link URL'leri için url_en/url_ru kolonlarının varlığını sağla
+                try {
+                    $chk = $db->query("SHOW COLUMNS FROM footer_links LIKE 'url{$ls}'");
+                    if ($chk->rowCount() === 0) {
+                        $db->exec("ALTER TABLE footer_links ADD COLUMN url{$ls} VARCHAR(255) DEFAULT NULL");
+                    }
+                } catch (Exception $e) {
+                    error_log('footer_links url translation column migration error: ' . $e->getMessage());
+                }
+
+                // Sütun başlık çevirileri
+                $columns = $value['columns'] ?? [];
+                foreach ($columns as $column) {
+                    if (!empty($column['id'])) {
+                        $stmt = $db->prepare("UPDATE footer_columns SET title{$ls}=? WHERE id=?");
+                        $stmt->execute([$column['title'] ?? '', (int)$column['id']]);
+                        // Link çevirileri (text + url)
+                        foreach (($column['links'] ?? []) as $link) {
+                            if (!empty($link['id'])) {
+                                $stmt = $db->prepare("UPDATE footer_links SET text{$ls}=?, url{$ls}=? WHERE id=?");
+                                $stmt->execute([$link['text'] ?? '', $link['href'] ?? '', (int)$link['id']]);
+                            }
+                        }
+                    }
+                }
+                return true;
             }
+
+            // TR kaydı: footer_settings (logo, slogan, copyright, sloganSvg)
             $stmt = $db->query('SELECT id FROM footer_settings LIMIT 1');
             if ($hasSvgCol) {
                 $params = [$value['logo'] ?? '', $value['slogan'] ?? '', $value['copyright'] ?? '', $value['sloganSvg'] ?? null];
                 if ($stmt->fetch()) {
                     $stmt = $db->prepare('UPDATE footer_settings SET logo_image=?, slogan=?, copyright_text=?, slogan_svg=? LIMIT 1');
-                    return $stmt->execute($params);
+                    $stmt->execute($params);
+                } else {
+                    $stmt = $db->prepare('INSERT INTO footer_settings (logo_image, slogan, copyright_text, slogan_svg) VALUES (?,?,?,?)');
+                    $stmt->execute($params);
                 }
-                $stmt = $db->prepare('INSERT INTO footer_settings (logo_image, slogan, copyright_text, slogan_svg) VALUES (?,?,?,?)');
-                return $stmt->execute($params);
             } else {
                 $params = [$value['logo'] ?? '', $value['slogan'] ?? '', $value['copyright'] ?? ''];
                 if ($stmt->fetch()) {
                     $stmt = $db->prepare('UPDATE footer_settings SET logo_image=?, slogan=?, copyright_text=? LIMIT 1');
-                    return $stmt->execute($params);
+                    $stmt->execute($params);
+                } else {
+                    $stmt = $db->prepare('INSERT INTO footer_settings (logo_image, slogan, copyright_text) VALUES (?,?,?)');
+                    $stmt->execute($params);
                 }
-                $stmt = $db->prepare('INSERT INTO footer_settings (logo_image, slogan, copyright_text) VALUES (?,?,?)');
-                return $stmt->execute($params);
             }
+
+            // TR: sütunları + linkleri tam senkronla (CRUD)
+            $columns = $value['columns'] ?? [];
+
+            // Gönderilen sütun ID'lerini topla, listede olmayan sütunları sil
+            $sentColumnIds = array_filter(array_map(fn($c) => isset($c['id']) ? (int)$c['id'] : null, $columns));
+            if (!empty($sentColumnIds)) {
+                $placeholders = implode(',', array_fill(0, count($sentColumnIds), '?'));
+                $stmt = $db->prepare("DELETE FROM footer_columns WHERE id NOT IN ($placeholders)");
+                $stmt->execute(array_values($sentColumnIds));
+            } else {
+                $db->exec('DELETE FROM footer_columns');
+            }
+
+            // Sütunları upsert et + linkleri yönet
+            foreach ($columns as $i => $column) {
+                $sortOrder = $i + 1;
+                $title = $column['title'] ?? '';
+                $columnId = !empty($column['id']) ? (int)$column['id'] : null;
+
+                if ($columnId) {
+                    $stmt = $db->prepare('UPDATE footer_columns SET title=?, sort_order=?, is_active=1 WHERE id=?');
+                    $stmt->execute([$title, $sortOrder, $columnId]);
+                } else {
+                    $stmt = $db->prepare('INSERT INTO footer_columns (title, sort_order, is_active) VALUES (?,?,1)');
+                    $stmt->execute([$title, $sortOrder]);
+                    $columnId = (int)$db->lastInsertId();
+                }
+
+                // Linkler: bu sütundaki, gönderilmemiş linkleri sil
+                $links = $column['links'] ?? [];
+                $sentLinkIds = array_values(array_filter(array_map(fn($l) => isset($l['id']) ? (int)$l['id'] : null, $links)));
+                if (!empty($sentLinkIds)) {
+                    $placeholders = implode(',', array_fill(0, count($sentLinkIds), '?'));
+                    $stmt = $db->prepare("DELETE FROM footer_links WHERE column_id = ? AND id NOT IN ($placeholders)");
+                    $stmt->execute(array_merge([$columnId], $sentLinkIds));
+                } else {
+                    $stmt = $db->prepare('DELETE FROM footer_links WHERE column_id = ?');
+                    $stmt->execute([$columnId]);
+                }
+
+                foreach ($links as $j => $link) {
+                    $linkSort = $j + 1;
+                    $text = $link['text'] ?? '';
+                    $url = $link['href'] ?? '';
+                    $linkId = !empty($link['id']) ? (int)$link['id'] : null;
+                    if ($linkId) {
+                        $stmt = $db->prepare('UPDATE footer_links SET text=?, url=?, sort_order=?, is_active=1 WHERE id=?');
+                        $stmt->execute([$text, $url, $linkSort, $linkId]);
+                    } else {
+                        $stmt = $db->prepare('INSERT INTO footer_links (column_id, text, url, sort_order, is_active) VALUES (?,?,?,?,1)');
+                        $stmt->execute([$columnId, $text, $url, $linkSort]);
+                    }
+                }
+            }
+
+            // Sosyal medya (TR'de global)
+            $social = $value['socialLinks'] ?? [];
+            if (is_array($social)) {
+                foreach ($social as $platform => $url) {
+                    $platform = (string)$platform;
+                    $url = (string)$url;
+                    // Mevcut platformu kontrol et
+                    $stmt = $db->prepare('SELECT id FROM social_media WHERE platform = ? LIMIT 1');
+                    $stmt->execute([$platform]);
+                    $existing = $stmt->fetch();
+                    if ($existing) {
+                        if ($url === '') {
+                            $stmt = $db->prepare('DELETE FROM social_media WHERE id = ?');
+                            $stmt->execute([(int)$existing['id']]);
+                        } else {
+                            $stmt = $db->prepare('UPDATE social_media SET url = ?, is_active = 1 WHERE id = ?');
+                            $stmt->execute([$url, (int)$existing['id']]);
+                        }
+                    } elseif ($url !== '') {
+                        $stmt = $db->prepare('INSERT INTO social_media (platform, url, is_active) VALUES (?, ?, 1)');
+                        $stmt->execute([$platform, $url]);
+                    }
+                }
+            }
+
+            return true;
 
         case 'contact':
             if ($locale !== 'tr') {
@@ -434,6 +583,15 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
         case 'hero':
             if ($locale !== 'tr') {
                 // Sadece çeviri alanlarını güncelle (slide silme/ekleme yapmadan)
+                // button_link kolonunu dinamik olarak ekle
+                try {
+                    $checkLink = $db->query("SHOW COLUMNS FROM hero_slides LIKE 'button_link{$ls}'");
+                    if ($checkLink->rowCount() === 0) {
+                        $db->exec("ALTER TABLE hero_slides ADD COLUMN button_link{$ls} VARCHAR(500) DEFAULT NULL");
+                    }
+                } catch (Exception $e) {
+                    error_log('hero_slides button_link migration error: ' . $e->getMessage());
+                }
                 $slides = $value['slides'] ?? [];
                 foreach ($slides as $slide) {
                     $id = $slide['id'] ?? null;
@@ -441,8 +599,9 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
                         $title = $slide['title'] ?? '';
                         $subtitle = $slide['subtitle'] ?? '';
                         $buttonText = $slide['ctaText'] ?? $slide['buttonText'] ?? '';
-                        $stmt = $db->prepare("UPDATE hero_slides SET title{$ls}=?, subtitle{$ls}=?, button_text{$ls}=? WHERE id=?");
-                        $stmt->execute([$title, $subtitle, $buttonText, $id]);
+                        $buttonLink = $slide['ctaLink'] ?? $slide['buttonLink'] ?? '';
+                        $stmt = $db->prepare("UPDATE hero_slides SET title{$ls}=?, subtitle{$ls}=?, button_text{$ls}=?, button_link{$ls}=? WHERE id=?");
+                        $stmt->execute([$title, $subtitle, $buttonText, $buttonLink, $id]);
                     }
                 }
                 return true;

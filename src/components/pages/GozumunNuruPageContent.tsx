@@ -63,45 +63,39 @@ export default function GozumunNuruPageContent({ locale }: GozumunNuruPageConten
     return sections;
   }, [category]);
 
-  // TR için DB içeriği kullan, EN/RU için çeviri sözlüğü
-  const tc = locale === 'tr' ? {
-    collectionLabel: 'Koleksiyonu',
-    philosophyQuote1: s.philosophyQuote1,
-    philosophyQuote2: s.philosophyQuote2,
-    philosophyText: s.philosophyText,
-    splitTitle: s.splitTitle,
-    splitText1: s.splitText1,
-    splitText2: s.splitText2,
-    darkText3: s.darkText3,
-    darkText2Main: s.darkText2.replace(/^Han\s*/, ''),
-    darkText2Cursive: s.darkText2Cursive,
-    collectionTitle: s.collectionTitle,
-    collectionSubtitle: s.collectionSubtitle,
-    ctaSmallTitle: s.ctaSmallTitle,
-    ctaTitle: s.ctaTitle,
-    ctaSubtitle: s.ctaSubtitle,
+  // Lokale göre alanı seç: önce DB'den o dilin değeri, yoksa TR DB değeri, yoksa dictionary fallback
+  const sAny = s as Record<string, unknown>;
+  const suffix = locale === 'en' ? 'En' : locale === 'ru' ? 'Ru' : '';
+  const pick = (base: string, fallback: string): string => {
+    if (suffix) {
+      const v = sAny[`${base}${suffix}`];
+      if (v && String(v).trim()) return String(v);
+    }
+    const tr = sAny[base];
+    if (tr && String(tr).trim()) return String(tr);
+    return fallback;
+  };
+  const darkText2Full = pick('darkText2', s.darkText2);
+
+  const tc = {
+    collectionLabel: locale === 'tr' ? 'Koleksiyonu' : t('collection.collectionLabel'),
+    philosophyQuote1: pick('philosophyQuote1', t('collection.philosophyQuote1')),
+    philosophyQuote2: pick('philosophyQuote2', t('collection.philosophyQuote2')),
+    philosophyText: pick('philosophyText', t('collection.philosophyDesc')),
+    splitTitle: pick('splitTitle', t('collection.detailTitle')),
+    splitText1: pick('splitText1', t('collection.detailDesc1')),
+    splitText2: pick('splitText2', t('collection.detailDesc2')),
+    darkText3: pick('darkText3', t('collection.darkDesc3')),
+    darkText2Main: darkText2Full.replace(/^Han\s*/, ''),
+    darkText2Cursive: pick('darkText2Cursive', t('collection.darkTextCursive')),
+    collectionTitle: pick('collectionTitle', t('collection.discoverTitle')),
+    collectionSubtitle: pick('collectionSubtitle', t('collection.discoverDesc')),
+    ctaSmallTitle: pick('ctaSmallTitle', t('collection.ctaTitle')),
+    ctaTitle: pick('ctaTitle', t('collection.ctaSubtitle')),
+    ctaSubtitle: pick('ctaSubtitle', t('collection.ctaDesc')),
     heroTitleFallback: 'Gözümün Nuru',
-    noProducts: 'Koleksiyonda henüz ürün yok.',
-    ctaButton: 'RANDEVU OLUŞTURUN',
-  } : {
-    collectionLabel: t('collection.collectionLabel'),
-    philosophyQuote1: t('collection.philosophyQuote1'),
-    philosophyQuote2: t('collection.philosophyQuote2'),
-    philosophyText: t('collection.philosophyDesc'),
-    splitTitle: t('collection.detailTitle'),
-    splitText1: t('collection.detailDesc1'),
-    splitText2: t('collection.detailDesc2'),
-    darkText3: t('collection.darkDesc3'),
-    darkText2Main: t('collection.darkTextMain'),
-    darkText2Cursive: t('collection.darkTextCursive'),
-    collectionTitle: t('collection.discoverTitle'),
-    collectionSubtitle: t('collection.discoverDesc'),
-    ctaSmallTitle: t('collection.ctaTitle'),
-    ctaTitle: t('collection.ctaSubtitle'),
-    ctaSubtitle: t('collection.ctaDesc'),
-    heroTitleFallback: 'Gözümün Nuru',
-    noProducts: t('common.noProductsYet'),
-    ctaButton: t('common.makeAppointment'),
+    noProducts: locale === 'tr' ? 'Koleksiyonda henüz ürün yok.' : t('common.noProductsYet'),
+    ctaButton: locale === 'tr' ? 'RANDEVU OLUŞTURUN' : t('common.makeAppointment'),
   };
 
   return (

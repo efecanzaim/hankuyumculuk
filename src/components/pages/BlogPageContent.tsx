@@ -44,7 +44,7 @@ export default function BlogPageContent({ locale }: BlogPageContentProps) {
         isBlogPage={true}
       />
       <main>
-        {slug ? <BlogDetailPage slug={slug} /> : <BlogListPage />}
+        {slug ? <BlogDetailPage slug={slug} locale={locale} /> : <BlogListPage locale={locale} />}
       </main>
       <Footer
         logo={content.footer.logo}

@@ -148,7 +148,7 @@ export default function IletisimPageContent({ locale }: IletisimPageContentProps
                     <div>
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">{t('contact.workingHours')}</h3>
                       <p className="text-[#6b7280]">
-                        {contact.workingHours}
+                        {locale !== 'tr' ? t('contact.workingHoursValue') : contact.workingHours}
                       </p>
                     </div>
                   </div>

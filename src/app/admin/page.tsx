@@ -1661,8 +1661,14 @@ export default function AdminPanel() {
             slug: data.slug || "hediye",
             title: data.title || "Hediye",
             heroImage: data.heroImage || "/images/hediye-menu-hero.jpg",
+            heroImagePosition: data.heroImagePosition || "50% 50%",
+            heroImageScale: data.heroImageScale || 1,
             heroTitle: data.heroTitle || "Hediye",
+            heroTitle_en: data.heroTitle_en || "",
+            heroTitle_ru: data.heroTitle_ru || "",
             heroSubtitle: data.heroSubtitle || "Kalplerde bir iz olarak kalan özel günler vardır",
+            heroSubtitle_en: data.heroSubtitle_en || "",
+            heroSubtitle_ru: data.heroSubtitle_ru || "",
             sections,
           });
         } else {
@@ -2834,11 +2840,13 @@ export default function AdminPanel() {
                     onChange={(v) => updateField("topBanner", "text", v)}
                     placeholder={contentLang !== 'tr' ? (content.topBanner as Record<string, unknown>)?.text as string || '' : ''}
                   />
-                  <ToggleField
-                    label="Görünürlük"
-                    checked={(content.topBanner as Record<string, unknown>)?.visible as boolean || false}
-                    onChange={(v) => updateField("topBanner", "visible", v)}
-                  />
+                  {contentLang === 'tr' && (
+                    <ToggleField
+                      label="Görünürlük"
+                      checked={(content.topBanner as Record<string, unknown>)?.visible as boolean || false}
+                      onChange={(v) => updateField("topBanner", "visible", v)}
+                    />
+                  )}
                 </Section>
               )}
 
@@ -2846,72 +2854,85 @@ export default function AdminPanel() {
               {activeSection === "anasayfa-hero" && (
                 <Section title="Hero Slider" subtitle="Ana sayfa slider alanı">
                   <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
+                  {contentLang !== 'tr' && (
+                    <div className="mb-4 p-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400">
+                      Görseller, pozisyon ve slide düzeni tüm diller için ortaktır. TR sekmesinden ayarlayın. Bu sekmede sadece çevirileri düzenleyebilirsiniz.
+                    </div>
+                  )}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between mb-4">
                       <p className="text-gray-400 text-sm">
                         {((activeContent?.hero as Record<string, unknown>)?.slides as unknown[])?.length || 0} slide mevcut
                       </p>
-                      <button
-                        onClick={() => {
-                          const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
-                          const newSlide = {
-                            backgroundImage: "/images/hero-bg.jpg",
-                            title: "Yeni Slide",
-                            subtitle: "Alt başlık",
-                            ctaText: "BUTON METNİ",
-                            ctaLink: "/"
-                          };
-                          updateField("hero", "slides", [...slides, newSlide]);
-                        }}
-                        className="px-3 py-1.5 bg-[#d4af37] text-[#0f0f0f] rounded-lg text-xs font-medium hover:bg-[#c9a432]"
-                      >
-                        <FiPlus size={14} className="inline mr-1" />
-                        Yeni Slide Ekle
-                      </button>
+                      {contentLang === 'tr' && (
+                        <button
+                          onClick={() => {
+                            const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
+                            const newSlide = {
+                              backgroundImage: "/images/hero-bg.jpg",
+                              title: "Yeni Slide",
+                              subtitle: "Alt başlık",
+                              ctaText: "BUTON METNİ",
+                              ctaLink: "/"
+                            };
+                            updateField("hero", "slides", [...slides, newSlide]);
+                          }}
+                          className="px-3 py-1.5 bg-[#d4af37] text-[#0f0f0f] rounded-lg text-xs font-medium hover:bg-[#c9a432]"
+                        >
+                          <FiPlus size={14} className="inline mr-1" />
+                          Yeni Slide Ekle
+                        </button>
+                      )}
                     </div>
                     {((activeContent?.hero as Record<string, unknown>)?.slides as unknown[])?.map((slide: unknown, index: number) => {
                       const s = slide as Record<string, unknown>;
+                      const langSuffix = contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : '';
+                      const trSlide = contentLang !== 'tr' ? ((content?.hero as Record<string, unknown>)?.slides as Record<string, unknown>[])?.[index] : undefined;
                       return (
                         <div key={index} className="bg-[#0f0f0f] rounded-lg border border-[#2a2a2a] p-4 space-y-3">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-[#d4af37] text-xs font-medium">Slide {index + 1}</span>
-                            <button
-                              onClick={() => {
-                                const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
-                                updateField("hero", "slides", slides.filter((_: unknown, i: number) => i !== index));
-                              }}
-                              className="p-1 text-gray-400 hover:text-red-400"
-                            >
-                              <FiTrash2 size={14} />
-                            </button>
+                            {contentLang === 'tr' && (
+                              <button
+                                onClick={() => {
+                                  const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
+                                  updateField("hero", "slides", slides.filter((_: unknown, i: number) => i !== index));
+                                }}
+                                className="p-1 text-gray-400 hover:text-red-400"
+                              >
+                                <FiTrash2 size={14} />
+                              </button>
+                            )}
                           </div>
-                          <ImageField
-                            label="Arka Plan Görseli/Video"
-                            value={(s.backgroundImage as string) || ""}
-                            onChange={(v) => {
-                              const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
-                              const updated = [...slides];
-                              updated[index] = { ...s, backgroundImage: v };
-                              updateField("hero", "slides", updated);
-                            }}
-                            folder="hero"
-                            objectPosition={(s.imagePosition as string) || "50% 50%"}
-                            onObjectPositionChange={(v) => {
-                              const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
-                              const updated = [...slides];
-                              updated[index] = { ...s, imagePosition: v };
-                              updateField("hero", "slides", updated);
-                            }}
-                            objectScale={(s.imageScale as number) || 1}
-                            onObjectScaleChange={(v) => {
-                              const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
-                              const updated = [...slides];
-                              updated[index] = { ...s, imageScale: v };
-                              updateField("hero", "slides", updated);
-                            }}
-                          />
+                          {contentLang === 'tr' && (
+                            <ImageField
+                              label="Arka Plan Görseli/Video"
+                              value={(s.backgroundImage as string) || ""}
+                              onChange={(v) => {
+                                const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
+                                const updated = [...slides];
+                                updated[index] = { ...s, backgroundImage: v };
+                                updateField("hero", "slides", updated);
+                              }}
+                              folder="hero"
+                              objectPosition={(s.imagePosition as string) || "50% 50%"}
+                              onObjectPositionChange={(v) => {
+                                const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
+                                const updated = [...slides];
+                                updated[index] = { ...s, imagePosition: v };
+                                updateField("hero", "slides", updated);
+                              }}
+                              objectScale={(s.imageScale as number) || 1}
+                              onObjectScaleChange={(v) => {
+                                const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
+                                const updated = [...slides];
+                                updated[index] = { ...s, imageScale: v };
+                                updateField("hero", "slides", updated);
+                              }}
+                            />
+                          )}
                           <InputField
-                            label={`Başlık ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
+                            label={`Başlık${langSuffix}`}
                             value={(s.title as string) || ''}
                             onChange={(v) => {
                               const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
@@ -2919,10 +2940,10 @@ export default function AdminPanel() {
                               updated[index] = { ...s, title: v };
                               updateField("hero", "slides", updated);
                             }}
-                            placeholder={contentLang !== 'tr' ? ((content?.hero as Record<string, unknown>)?.slides as unknown[])?.[index] ? ((content?.hero as Record<string, unknown>)?.slides as Record<string, unknown>[])?.[index]?.title as string : '' : ''}
+                            placeholder={(trSlide?.title as string) || ''}
                           />
                           <InputField
-                            label={`Alt Başlık ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
+                            label={`Alt Başlık${langSuffix}`}
                             value={(s.subtitle as string) || ''}
                             onChange={(v) => {
                               const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
@@ -2930,10 +2951,10 @@ export default function AdminPanel() {
                               updated[index] = { ...s, subtitle: v };
                               updateField("hero", "slides", updated);
                             }}
-                            placeholder={contentLang !== 'tr' ? ((content?.hero as Record<string, unknown>)?.slides as Record<string, unknown>[])?.[index]?.subtitle as string : ''}
+                            placeholder={(trSlide?.subtitle as string) || ''}
                           />
                           <InputField
-                            label={`Buton Metni ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
+                            label={`Buton Metni${langSuffix}`}
                             value={(s.ctaText as string) || ''}
                             onChange={(v) => {
                               const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
@@ -2941,10 +2962,10 @@ export default function AdminPanel() {
                               updated[index] = { ...s, ctaText: v };
                               updateField("hero", "slides", updated);
                             }}
-                            placeholder={contentLang !== 'tr' ? ((content?.hero as Record<string, unknown>)?.slides as Record<string, unknown>[])?.[index]?.ctaText as string : ''}
+                            placeholder={(trSlide?.ctaText as string) || ''}
                           />
                           <InputField
-                            label="Buton Linki"
+                            label={`Buton Linki${langSuffix}`}
                             value={(s.ctaLink as string) || ""}
                             onChange={(v) => {
                               const slides = ((activeContent?.hero as Record<string, unknown>)?.slides as unknown[]) || [];
@@ -2952,6 +2973,7 @@ export default function AdminPanel() {
                               updated[index] = { ...s, ctaLink: v };
                               updateField("hero", "slides", updated);
                             }}
+                            placeholder={(trSlide?.ctaLink as string) || ''}
                           />
                         </div>
                       );
@@ -2969,19 +2991,26 @@ export default function AdminPanel() {
               {activeSection === "anasayfa-trend" && (
                 <Section title="Trend Bölümü" subtitle="İki sütunlu görsel alan">
                   <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
+                  {contentLang !== 'tr' && (
+                    <div className="mb-4 p-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400">
+                      Görseller ve pozisyon ayarları tüm diller için ortaktır. TR sekmesinden ayarlayın.
+                    </div>
+                  )}
                   <div className="space-y-4">
                     <div className="p-3 bg-[#d4af37]/10 rounded-lg">
                       <p className="text-[#d4af37] text-xs font-medium mb-3">Sol Taraf</p>
-                      <ImageField
-                        label="Görsel"
-                        value={(activeContent?.trendSection as Record<string, unknown>)?.leftImage as string || ""}
-                        onChange={(v) => updateField("trendSection", "leftImage", v)}
-                        folder="trend"
-                        objectPosition={(activeContent?.trendSection as Record<string, unknown>)?.leftImagePosition as string || "50% 50%"}
-                        onObjectPositionChange={(v) => updateField("trendSection", "leftImagePosition", v)}
-                        objectScale={(activeContent?.trendSection as Record<string, unknown>)?.leftImageScale as number || 1}
-                        onObjectScaleChange={(v) => updateField("trendSection", "leftImageScale", v)}
-                      />
+                      {contentLang === 'tr' && (
+                        <ImageField
+                          label="Görsel"
+                          value={(activeContent?.trendSection as Record<string, unknown>)?.leftImage as string || ""}
+                          onChange={(v) => updateField("trendSection", "leftImage", v)}
+                          folder="trend"
+                          objectPosition={(activeContent?.trendSection as Record<string, unknown>)?.leftImagePosition as string || "50% 50%"}
+                          onObjectPositionChange={(v) => updateField("trendSection", "leftImagePosition", v)}
+                          objectScale={(activeContent?.trendSection as Record<string, unknown>)?.leftImageScale as number || 1}
+                          onObjectScaleChange={(v) => updateField("trendSection", "leftImageScale", v)}
+                        />
+                      )}
                       <InputField
                         label={`Başlık ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
                         value={getLocalizedValue("trendSection", "leftTitle") as string || ""}
@@ -2995,26 +3024,29 @@ export default function AdminPanel() {
                         placeholder={contentLang !== 'tr' ? (content?.trendSection as Record<string, unknown>)?.leftButtonText as string || 'KEŞFEDİN' : ''}
                       />
                       <InputField
-                        label="Link"
+                        label={`Link${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
                         value={getLocalizedValue("trendSection", "leftTitleLink") as string || ""}
                         onChange={(v) => {
                           updateField("trendSection", "leftTitleLink", v);
                           updateField("trendSection", "leftLink", v);
                         }}
+                        placeholder={contentLang !== 'tr' ? (content?.trendSection as Record<string, unknown>)?.leftTitleLink as string || '' : ''}
                       />
                     </div>
                     <div className="p-3 bg-blue-500/10 rounded-lg">
                       <p className="text-blue-400 text-xs font-medium mb-3">Sağ Taraf</p>
-                      <ImageField
-                        label="Görsel"
-                        value={(activeContent?.trendSection as Record<string, unknown>)?.rightImage as string || ""}
-                        onChange={(v) => updateField("trendSection", "rightImage", v)}
-                        folder="trend"
-                        objectPosition={(activeContent?.trendSection as Record<string, unknown>)?.rightImagePosition as string || "50% 50%"}
-                        onObjectPositionChange={(v) => updateField("trendSection", "rightImagePosition", v)}
-                        objectScale={(activeContent?.trendSection as Record<string, unknown>)?.rightImageScale as number || 1}
-                        onObjectScaleChange={(v) => updateField("trendSection", "rightImageScale", v)}
-                      />
+                      {contentLang === 'tr' && (
+                        <ImageField
+                          label="Görsel"
+                          value={(activeContent?.trendSection as Record<string, unknown>)?.rightImage as string || ""}
+                          onChange={(v) => updateField("trendSection", "rightImage", v)}
+                          folder="trend"
+                          objectPosition={(activeContent?.trendSection as Record<string, unknown>)?.rightImagePosition as string || "50% 50%"}
+                          onObjectPositionChange={(v) => updateField("trendSection", "rightImagePosition", v)}
+                          objectScale={(activeContent?.trendSection as Record<string, unknown>)?.rightImageScale as number || 1}
+                          onObjectScaleChange={(v) => updateField("trendSection", "rightImageScale", v)}
+                        />
+                      )}
                       <InputField
                         label={`Başlık ${contentLang !== 'tr' ? `(${contentLang.toUpperCase()})` : ''}`}
                         value={getLocalizedValue("trendSection", "rightTitle") as string || ""}
@@ -3028,12 +3060,13 @@ export default function AdminPanel() {
                         placeholder={contentLang !== 'tr' ? (content?.trendSection as Record<string, unknown>)?.rightButtonText as string || 'KEŞFEDİN' : ''}
                       />
                       <InputField
-                        label="Link"
+                        label={`Link${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
                         value={getLocalizedValue("trendSection", "rightTitleLink") as string || ""}
                         onChange={(v) => {
                           updateField("trendSection", "rightTitleLink", v);
                           updateField("trendSection", "rightLink", v);
                         }}
+                        placeholder={contentLang !== 'tr' ? (content?.trendSection as Record<string, unknown>)?.rightTitleLink as string || '' : ''}
                       />
                     </div>
                   </div>
@@ -3087,21 +3120,28 @@ export default function AdminPanel() {
                         />
                       </div>
 
-                      {/* Banner Görselleri */}
-                      <div className="space-y-3">
-                        <ImageUploadField
-                          label="Banner Görsel 1"
-                          value={(content.featuredProductsSection as Record<string, unknown>)?.bannerImage1 as string || ""}
-                          onChange={(v) => updateField("featuredProductsSection", "bannerImage1", v)}
-                          folder="products"
-                        />
-                        <ImageUploadField
-                          label="Banner Görsel 2"
-                          value={(content.featuredProductsSection as Record<string, unknown>)?.bannerImage2 as string || ""}
-                          onChange={(v) => updateField("featuredProductsSection", "bannerImage2", v)}
-                          folder="products"
-                        />
-                      </div>
+                      {/* Banner Görselleri - sadece TR sekmesinde (global görsel) */}
+                      {contentLang === 'tr' && (
+                        <div className="space-y-3">
+                          <ImageUploadField
+                            label="Banner Görsel 1"
+                            value={(activeContent?.featuredProductsSection as Record<string, unknown>)?.bannerImage1 as string || ""}
+                            onChange={(v) => updateField("featuredProductsSection", "bannerImage1", v)}
+                            folder="products"
+                          />
+                          <ImageUploadField
+                            label="Banner Görsel 2"
+                            value={(activeContent?.featuredProductsSection as Record<string, unknown>)?.bannerImage2 as string || ""}
+                            onChange={(v) => updateField("featuredProductsSection", "bannerImage2", v)}
+                            folder="products"
+                          />
+                        </div>
+                      )}
+                      {contentLang !== 'tr' && (
+                        <div className="p-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400">
+                          Banner görselleri tüm diller için ortaktır. TR sekmesinden ayarlayın.
+                        </div>
+                      )}
                     </div>
                   </Section>
 
@@ -3192,6 +3232,11 @@ export default function AdminPanel() {
               {activeSection === "anasayfa-ozel" && (
                 <Section title="Özel Tasarım Kartları" subtitle="Kendini Özel Hisset bölümü">
                   <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
+                  {contentLang !== 'tr' && (
+                    <div className="mb-4 p-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400">
+                      Görseller, link ve kart düzeni tüm diller için ortaktır. TR sekmesinden ayarlayın. Bu sekmede sadece çevirileri düzenleyebilirsiniz.
+                    </div>
+                  )}
                   <div className="space-y-6">
                     {/* Başlık */}
                     <div className="space-y-3">
@@ -3213,41 +3258,47 @@ export default function AdminPanel() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <h3 className="text-white text-sm font-medium">Üst Kartlar</h3>
-                        <button
-                          onClick={() => {
-                            const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
-                            const newCard = {
-                              title: "Yeni Kart",
-                              image: "/images/categories/mucevher-card.jpg",
-                              link: "/",
-                              buttonText: "KEŞFEDİN"
-                            };
-                            updateField("specialDesignSection", "topCards", [...topCards, newCard]);
-                          }}
-                          className="px-3 py-1.5 bg-[#d4af37] text-[#0f0f0f] rounded-lg text-xs font-medium hover:bg-[#c9a432]"
-                        >
-                          <FiPlus size={14} className="inline mr-1" />
-                          Kart Ekle
-                        </button>
+                        {contentLang === 'tr' && (
+                          <button
+                            onClick={() => {
+                              const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                              const newCard = {
+                                title: "Yeni Kart",
+                                image: "/images/categories/mucevher-card.jpg",
+                                link: "/",
+                                buttonText: "KEŞFEDİN"
+                              };
+                              updateField("specialDesignSection", "topCards", [...topCards, newCard]);
+                            }}
+                            className="px-3 py-1.5 bg-[#d4af37] text-[#0f0f0f] rounded-lg text-xs font-medium hover:bg-[#c9a432]"
+                          >
+                            <FiPlus size={14} className="inline mr-1" />
+                            Kart Ekle
+                          </button>
+                        )}
                       </div>
                       {((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[])?.map((card: unknown, index: number) => {
                         const c = card as Record<string, unknown>;
+                        const langSuffix = contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : '';
+                        const trCard = contentLang !== 'tr' ? ((content?.specialDesignSection as Record<string, unknown>)?.topCards as Record<string, unknown>[])?.[index] : undefined;
                         return (
                           <div key={index} className="bg-[#0f0f0f] rounded-lg border border-[#2a2a2a] p-4 space-y-3">
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-[#d4af37] text-xs font-medium">Kart {index + 1}</span>
-                              <button
-                                onClick={() => {
-                                  const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
-                                  updateField("specialDesignSection", "topCards", topCards.filter((_: unknown, i: number) => i !== index));
-                                }}
-                                className="p-1 text-gray-400 hover:text-red-400"
-                              >
-                                <FiTrash2 size={14} />
-                              </button>
+                              {contentLang === 'tr' && (
+                                <button
+                                  onClick={() => {
+                                    const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                    updateField("specialDesignSection", "topCards", topCards.filter((_: unknown, i: number) => i !== index));
+                                  }}
+                                  className="p-1 text-gray-400 hover:text-red-400"
+                                >
+                                  <FiTrash2 size={14} />
+                                </button>
+                              )}
                             </div>
                             <InputField
-                              label="Başlık"
+                              label={`Başlık${langSuffix}`}
                               value={(c.title as string) || ""}
                               onChange={(v) => {
                                 const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
@@ -3255,44 +3306,49 @@ export default function AdminPanel() {
                                 updated[index] = { ...c, title: v };
                                 updateField("specialDesignSection", "topCards", updated);
                               }}
+                              placeholder={(trCard?.title as string) || ''}
                             />
-                            <ImageField
-                              label="Görsel"
-                              value={(c.image as string) || ""}
-                              onChange={(v) => {
-                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
-                                const updated = [...topCards];
-                                updated[index] = { ...c, image: v };
-                                updateField("specialDesignSection", "topCards", updated);
-                              }}
-                              folder="categories"
-                              objectPosition={(c.imagePosition as string) || "50% 50%"}
-                              onObjectPositionChange={(v) => {
-                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
-                                const updated = [...topCards];
-                                updated[index] = { ...c, imagePosition: v };
-                                updateField("specialDesignSection", "topCards", updated);
-                              }}
-                              objectScale={(c.imageScale as number) || 1}
-                              onObjectScaleChange={(v) => {
-                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
-                                const updated = [...topCards];
-                                updated[index] = { ...c, imageScale: v };
-                                updateField("specialDesignSection", "topCards", updated);
-                              }}
-                            />
+                            {contentLang === 'tr' && (
+                              <>
+                                <ImageField
+                                  label="Görsel"
+                                  value={(c.image as string) || ""}
+                                  onChange={(v) => {
+                                    const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                    const updated = [...topCards];
+                                    updated[index] = { ...c, image: v };
+                                    updateField("specialDesignSection", "topCards", updated);
+                                  }}
+                                  folder="categories"
+                                  objectPosition={(c.imagePosition as string) || "50% 50%"}
+                                  onObjectPositionChange={(v) => {
+                                    const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                    const updated = [...topCards];
+                                    updated[index] = { ...c, imagePosition: v };
+                                    updateField("specialDesignSection", "topCards", updated);
+                                  }}
+                                  objectScale={(c.imageScale as number) || 1}
+                                  onObjectScaleChange={(v) => {
+                                    const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                    const updated = [...topCards];
+                                    updated[index] = { ...c, imageScale: v };
+                                    updateField("specialDesignSection", "topCards", updated);
+                                  }}
+                                />
+                                <InputField
+                                  label="Link"
+                                  value={(c.link as string) || ""}
+                                  onChange={(v) => {
+                                    const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
+                                    const updated = [...topCards];
+                                    updated[index] = { ...c, link: v };
+                                    updateField("specialDesignSection", "topCards", updated);
+                                  }}
+                                />
+                              </>
+                            )}
                             <InputField
-                              label="Link"
-                              value={(c.link as string) || ""}
-                              onChange={(v) => {
-                                const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
-                                const updated = [...topCards];
-                                updated[index] = { ...c, link: v };
-                                updateField("specialDesignSection", "topCards", updated);
-                              }}
-                            />
-                            <InputField
-                              label="Buton Metni"
+                              label={`Buton Metni${langSuffix}`}
                               value={(c.buttonText as string) || ""}
                               onChange={(v) => {
                                 const topCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.topCards as unknown[]) || [];
@@ -3300,6 +3356,7 @@ export default function AdminPanel() {
                                 updated[index] = { ...c, buttonText: v };
                                 updateField("specialDesignSection", "topCards", updated);
                               }}
+                              placeholder={(trCard?.buttonText as string) || ''}
                             />
                           </div>
                         );
@@ -3314,42 +3371,48 @@ export default function AdminPanel() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <h3 className="text-white text-sm font-medium">Alt Kartlar</h3>
-                        <button
-                          onClick={() => {
-                            const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
-                            const newCard = {
-                              title: "Yeni Kart",
-                              subtitle: "Alt başlık",
-                              image: "/images/promo/goz-alici.jpg",
-                              link: "/",
-                              buttonText: "BUTON METNİ"
-                            };
-                            updateField("specialDesignSection", "bottomCards", [...bottomCards, newCard]);
-                          }}
-                          className="px-3 py-1.5 bg-[#d4af37] text-[#0f0f0f] rounded-lg text-xs font-medium hover:bg-[#c9a432]"
-                        >
-                          <FiPlus size={14} className="inline mr-1" />
-                          Kart Ekle
-                        </button>
+                        {contentLang === 'tr' && (
+                          <button
+                            onClick={() => {
+                              const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                              const newCard = {
+                                title: "Yeni Kart",
+                                subtitle: "Alt başlık",
+                                image: "/images/promo/goz-alici.jpg",
+                                link: "/",
+                                buttonText: "BUTON METNİ"
+                              };
+                              updateField("specialDesignSection", "bottomCards", [...bottomCards, newCard]);
+                            }}
+                            className="px-3 py-1.5 bg-[#d4af37] text-[#0f0f0f] rounded-lg text-xs font-medium hover:bg-[#c9a432]"
+                          >
+                            <FiPlus size={14} className="inline mr-1" />
+                            Kart Ekle
+                          </button>
+                        )}
                       </div>
                       {((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[])?.map((card: unknown, index: number) => {
                         const c = card as Record<string, unknown>;
+                        const langSuffix = contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : '';
+                        const trCard = contentLang !== 'tr' ? ((content?.specialDesignSection as Record<string, unknown>)?.bottomCards as Record<string, unknown>[])?.[index] : undefined;
                         return (
                           <div key={index} className="bg-[#0f0f0f] rounded-lg border border-[#2a2a2a] p-4 space-y-3">
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-[#d4af37] text-xs font-medium">Kart {index + 1}</span>
-                              <button
-                                onClick={() => {
-                                  const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
-                                  updateField("specialDesignSection", "bottomCards", bottomCards.filter((_: unknown, i: number) => i !== index));
-                                }}
-                                className="p-1 text-gray-400 hover:text-red-400"
-                              >
-                                <FiTrash2 size={14} />
-                              </button>
+                              {contentLang === 'tr' && (
+                                <button
+                                  onClick={() => {
+                                    const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                    updateField("specialDesignSection", "bottomCards", bottomCards.filter((_: unknown, i: number) => i !== index));
+                                  }}
+                                  className="p-1 text-gray-400 hover:text-red-400"
+                                >
+                                  <FiTrash2 size={14} />
+                                </button>
+                              )}
                             </div>
                             <InputField
-                              label="Başlık"
+                              label={`Başlık${langSuffix}`}
                               value={(c.title as string) || ""}
                               onChange={(v) => {
                                 const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
@@ -3357,9 +3420,10 @@ export default function AdminPanel() {
                                 updated[index] = { ...c, title: v };
                                 updateField("specialDesignSection", "bottomCards", updated);
                               }}
+                              placeholder={(trCard?.title as string) || ''}
                             />
                             <TextareaField
-                              label="Alt Başlık"
+                              label={`Alt Başlık${langSuffix}`}
                               value={(c.subtitle as string) || ""}
                               onChange={(v) => {
                                 const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
@@ -3368,44 +3432,49 @@ export default function AdminPanel() {
                                 updateField("specialDesignSection", "bottomCards", updated);
                               }}
                               rows={2}
+                              placeholder={(trCard?.subtitle as string) || ''}
                             />
-                            <ImageField
-                              label="Görsel"
-                              value={(c.image as string) || ""}
-                              onChange={(v) => {
-                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
-                                const updated = [...bottomCards];
-                                updated[index] = { ...c, image: v };
-                                updateField("specialDesignSection", "bottomCards", updated);
-                              }}
-                              folder="promo"
-                              objectPosition={(c.imagePosition as string) || "50% 50%"}
-                              onObjectPositionChange={(v) => {
-                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
-                                const updated = [...bottomCards];
-                                updated[index] = { ...c, imagePosition: v };
-                                updateField("specialDesignSection", "bottomCards", updated);
-                              }}
-                              objectScale={(c.imageScale as number) || 1}
-                              onObjectScaleChange={(v) => {
-                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
-                                const updated = [...bottomCards];
-                                updated[index] = { ...c, imageScale: v };
-                                updateField("specialDesignSection", "bottomCards", updated);
-                              }}
-                            />
+                            {contentLang === 'tr' && (
+                              <>
+                                <ImageField
+                                  label="Görsel"
+                                  value={(c.image as string) || ""}
+                                  onChange={(v) => {
+                                    const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                    const updated = [...bottomCards];
+                                    updated[index] = { ...c, image: v };
+                                    updateField("specialDesignSection", "bottomCards", updated);
+                                  }}
+                                  folder="promo"
+                                  objectPosition={(c.imagePosition as string) || "50% 50%"}
+                                  onObjectPositionChange={(v) => {
+                                    const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                    const updated = [...bottomCards];
+                                    updated[index] = { ...c, imagePosition: v };
+                                    updateField("specialDesignSection", "bottomCards", updated);
+                                  }}
+                                  objectScale={(c.imageScale as number) || 1}
+                                  onObjectScaleChange={(v) => {
+                                    const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                    const updated = [...bottomCards];
+                                    updated[index] = { ...c, imageScale: v };
+                                    updateField("specialDesignSection", "bottomCards", updated);
+                                  }}
+                                />
+                                <InputField
+                                  label="Link"
+                                  value={(c.link as string) || ""}
+                                  onChange={(v) => {
+                                    const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
+                                    const updated = [...bottomCards];
+                                    updated[index] = { ...c, link: v };
+                                    updateField("specialDesignSection", "bottomCards", updated);
+                                  }}
+                                />
+                              </>
+                            )}
                             <InputField
-                              label="Link"
-                              value={(c.link as string) || ""}
-                              onChange={(v) => {
-                                const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
-                                const updated = [...bottomCards];
-                                updated[index] = { ...c, link: v };
-                                updateField("specialDesignSection", "bottomCards", updated);
-                              }}
-                            />
-                            <InputField
-                              label="Buton Metni"
+                              label={`Buton Metni${langSuffix}`}
                               value={(c.buttonText as string) || ""}
                               onChange={(v) => {
                                 const bottomCards = ((activeContent?.specialDesignSection as Record<string, unknown>)?.bottomCards as unknown[]) || [];
@@ -3413,6 +3482,7 @@ export default function AdminPanel() {
                                 updated[index] = { ...c, buttonText: v };
                                 updateField("specialDesignSection", "bottomCards", updated);
                               }}
+                              placeholder={(trCard?.buttonText as string) || ''}
                             />
                           </div>
                         );
@@ -3448,6 +3518,30 @@ export default function AdminPanel() {
                     onChange={(v) => updateField("blogSection", "description", v)}
                     maxLength={120}
                     placeholder={contentLang !== 'tr' ? (content?.blogSection as Record<string, unknown>)?.description as string : undefined}
+                  />
+                  <TextareaField
+                    label={`Giriş Metni (Sol Taraf)${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={(activeContent?.blogSection as Record<string, unknown>)?.introText as string || ""}
+                    onChange={(v) => updateField("blogSection", "introText", v)}
+                    placeholder={contentLang !== 'tr' ? (content?.blogSection as Record<string, unknown>)?.introText as string : "Her hafta, mücevher dünyasından ilham veren hikâyeler..."}
+                  />
+                  <InputField
+                    label={`Tüm Yazılar Daveti${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={(activeContent?.blogSection as Record<string, unknown>)?.allPostsText as string || ""}
+                    onChange={(v) => updateField("blogSection", "allPostsText", v)}
+                    placeholder={contentLang !== 'tr' ? (content?.blogSection as Record<string, unknown>)?.allPostsText as string : "Tüm blog yazılarımızı okumak için;"}
+                  />
+                  <InputField
+                    label={`Tüm Yazılar Buton Metni${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={(activeContent?.blogSection as Record<string, unknown>)?.allPostsButtonText as string || ""}
+                    onChange={(v) => updateField("blogSection", "allPostsButtonText", v)}
+                    placeholder={contentLang !== 'tr' ? (content?.blogSection as Record<string, unknown>)?.allPostsButtonText as string : "TÜM PAYLAŞIMLAR"}
+                  />
+                  <InputField
+                    label={`Tüm Yazılar Bağlantısı${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
+                    value={(activeContent?.blogSection as Record<string, unknown>)?.allPostsLink as string || ""}
+                    onChange={(v) => updateField("blogSection", "allPostsLink", v)}
+                    placeholder={contentLang === 'tr' ? '/blog' : (contentLang === 'en' ? '/en/blog' : '/ru/blog')}
                   />
                 </Section>
               )}
@@ -3508,7 +3602,23 @@ export default function AdminPanel() {
               {activeSection === "footer-genel" && (
                 <Section title="Footer Ayarları" subtitle="Alt bilgi alanı">
                   <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
-                  
+
+                  {contentLang !== 'tr' && (
+                    <div className="mb-4 p-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400">
+                      Logo, sütun düzeni ve sosyal medya linkleri tüm diller için ortaktır. TR sekmesinden ayarlayın.
+                    </div>
+                  )}
+
+                  {/* Logo - sadece TR'de */}
+                  {contentLang === 'tr' && (
+                    <ImageField
+                      label="Footer Logo"
+                      value={(activeContent?.footer as Record<string, unknown>)?.logo as string || ""}
+                      onChange={(v) => updateField("footer", "logo", v)}
+                      folder="footer"
+                    />
+                  )}
+
                   <InputField
                     label={`Slogan${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
                     value={getLocalizedValue("footer", "slogan") as string || ""}
@@ -3527,6 +3637,148 @@ export default function AdminPanel() {
                     onChange={(v) => updateField("footer", "sloganSvg", v)}
                     folder="footer"
                   />
+
+                  {/* Footer Sütunları */}
+                  <div className="mt-6 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-white text-sm font-medium">Footer Sütunları</h3>
+                      {contentLang === 'tr' && (
+                        <button
+                          onClick={() => {
+                            const cols = ((activeContent?.footer as Record<string, unknown>)?.columns as unknown[]) || [];
+                            updateField("footer", "columns", [...cols, { title: "Yeni Sütun", links: [] }]);
+                          }}
+                          className="px-3 py-1.5 bg-[#d4af37] text-[#0f0f0f] rounded-lg text-xs font-medium hover:bg-[#c9a432]"
+                        >
+                          <FiPlus size={14} className="inline mr-1" />
+                          Sütun Ekle
+                        </button>
+                      )}
+                    </div>
+                    {((activeContent?.footer as Record<string, unknown>)?.columns as unknown[])?.map((col: unknown, colIndex: number) => {
+                      const c = col as Record<string, unknown>;
+                      const langSuffix = contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : '';
+                      const trCol = contentLang !== 'tr' ? ((content?.footer as Record<string, unknown>)?.columns as Record<string, unknown>[])?.[colIndex] : undefined;
+                      const links = (c.links as Record<string, unknown>[]) || [];
+                      return (
+                        <div key={colIndex} className="bg-[#0f0f0f] rounded-lg border border-[#2a2a2a] p-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[#d4af37] text-xs font-medium">Sütun {colIndex + 1}</span>
+                            {contentLang === 'tr' && (
+                              <button
+                                onClick={() => {
+                                  const cols = ((activeContent?.footer as Record<string, unknown>)?.columns as unknown[]) || [];
+                                  updateField("footer", "columns", cols.filter((_, i) => i !== colIndex));
+                                }}
+                                className="p-1 text-gray-400 hover:text-red-400"
+                              >
+                                <FiTrash2 size={14} />
+                              </button>
+                            )}
+                          </div>
+                          <InputField
+                            label={`Sütun Başlığı${langSuffix}`}
+                            value={(c.title as string) || ""}
+                            onChange={(v) => {
+                              const cols = ((activeContent?.footer as Record<string, unknown>)?.columns as unknown[]) || [];
+                              const updated = [...cols];
+                              updated[colIndex] = { ...c, title: v };
+                              updateField("footer", "columns", updated);
+                            }}
+                            placeholder={(trCol?.title as string) || ''}
+                          />
+
+                          {/* Linkler */}
+                          <div className="space-y-2 pl-3 border-l-2 border-[#2a2a2a]">
+                            <div className="flex items-center justify-between">
+                              <p className="text-gray-400 text-xs">{links.length} link</p>
+                              {contentLang === 'tr' && (
+                                <button
+                                  onClick={() => {
+                                    const cols = ((activeContent?.footer as Record<string, unknown>)?.columns as unknown[]) || [];
+                                    const updated = [...cols];
+                                    const newLinks = [...links, { text: "Yeni Link", href: "/" }];
+                                    updated[colIndex] = { ...c, links: newLinks };
+                                    updateField("footer", "columns", updated);
+                                  }}
+                                  className="px-2 py-1 bg-[#2a2a2a] text-[#d4af37] rounded text-xs hover:bg-[#3a3a3a]"
+                                >
+                                  <FiPlus size={12} className="inline mr-1" />
+                                  Link Ekle
+                                </button>
+                              )}
+                            </div>
+                            {links.map((link, linkIndex) => {
+                              const trLink = contentLang !== 'tr' ? (trCol?.links as Record<string, unknown>[])?.[linkIndex] : undefined;
+                              return (
+                                <div key={linkIndex} className="bg-[#1a1a1a] p-3 rounded space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-gray-500 text-xs">Link {linkIndex + 1}</span>
+                                    {contentLang === 'tr' && (
+                                      <button
+                                        onClick={() => {
+                                          const cols = ((activeContent?.footer as Record<string, unknown>)?.columns as unknown[]) || [];
+                                          const updated = [...cols];
+                                          const newLinks = links.filter((_, i) => i !== linkIndex);
+                                          updated[colIndex] = { ...c, links: newLinks };
+                                          updateField("footer", "columns", updated);
+                                        }}
+                                        className="p-1 text-gray-400 hover:text-red-400"
+                                      >
+                                        <FiTrash2 size={12} />
+                                      </button>
+                                    )}
+                                  </div>
+                                  <InputField
+                                    label={`Metin${langSuffix}`}
+                                    value={(link.text as string) || ""}
+                                    onChange={(v) => {
+                                      const cols = ((activeContent?.footer as Record<string, unknown>)?.columns as unknown[]) || [];
+                                      const updated = [...cols];
+                                      const newLinks = [...links];
+                                      newLinks[linkIndex] = { ...link, text: v };
+                                      updated[colIndex] = { ...c, links: newLinks };
+                                      updateField("footer", "columns", updated);
+                                    }}
+                                    placeholder={(trLink?.text as string) || ''}
+                                  />
+                                  <InputField
+                                    label={`URL${langSuffix}`}
+                                    value={(link.href as string) || ""}
+                                    onChange={(v) => {
+                                      const cols = ((activeContent?.footer as Record<string, unknown>)?.columns as unknown[]) || [];
+                                      const updated = [...cols];
+                                      const newLinks = [...links];
+                                      newLinks[linkIndex] = { ...link, href: v };
+                                      updated[colIndex] = { ...c, links: newLinks };
+                                      updateField("footer", "columns", updated);
+                                    }}
+                                    placeholder={(trLink?.href as string) || '/'}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Sosyal Medya - sadece TR'de */}
+                  {contentLang === 'tr' && (
+                    <div className="mt-6 space-y-3">
+                      <h3 className="text-white text-sm font-medium">Sosyal Medya</h3>
+                      <InputField
+                        label="Instagram URL"
+                        value={((activeContent?.footer as Record<string, unknown>)?.socialLinks as Record<string, string>)?.instagram || ""}
+                        onChange={(v) => {
+                          const current = ((activeContent?.footer as Record<string, unknown>)?.socialLinks as Record<string, string>) || {};
+                          updateField("footer", "socialLinks", { ...current, instagram: v });
+                        }}
+                        placeholder="https://www.instagram.com/..."
+                      />
+                    </div>
+                  )}
                 </Section>
               )}
 
@@ -5260,6 +5512,11 @@ export default function AdminPanel() {
                 return (
                   <Section title="Koleksiyon Sayfası" subtitle="Genel koleksiyon sayfasının başlık, açıklama ve koleksiyon kartları">
                     <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
+                    {contentLang !== 'tr' && (
+                      <div className="mb-4 p-3 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg text-xs text-gray-400">
+                        Koleksiyon kartları (görsel, link) tüm diller için ortaktır. TR sekmesinden düzenleyin. Kart başlıkları sayfada gözükmez — kategori adından gelir.
+                      </div>
+                    )}
                     <InputField
                       label={`Sayfa Başlığı${contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : ''}`}
                       value={(ks.title as string) ?? ''}
@@ -5303,7 +5560,7 @@ export default function AdminPanel() {
                                 </button>
                               </div>
                               <InputField
-                                label="Koleksiyon Adı"
+                                label="Referans Adı (sadece admin için)"
                                 value={(card.title as string) ?? ''}
                                 onChange={(v: string) => {
                                   const updated = ksCards.map((c, i) => i === idx ? { ...c, title: v } : c);
@@ -5311,12 +5568,13 @@ export default function AdminPanel() {
                                 }}
                               />
                               <InputField
-                                label="Link (href)"
+                                label="Eşleşme Linki (kategori sayfa yolu)"
                                 value={(card.href as string) ?? ''}
                                 onChange={(v: string) => {
                                   const updated = ksCards.map((c, i) => i === idx ? { ...c, href: v } : c);
                                   updateKs('cards', updated);
                                 }}
+                                placeholder="/koleksiyon/gozumun-nuru"
                               />
                               <ImageField
                                 label="Fotoğraf"
@@ -5381,153 +5639,177 @@ export default function AdminPanel() {
                   {/* Ek Bölümler */}
                   {loadingGnSections ? (
                     <div className="text-center py-8 text-gray-500">Bölümler yükleniyor...</div>
-                  ) : gnSections ? (
+                  ) : gnSections ? (() => {
+                    // Lokalize alan helper'ları: TR'de "base", EN/RU'da "baseEn" / "baseRu"
+                    const suffix = contentLang === 'tr' ? '' : contentLang === 'en' ? 'En' : 'Ru';
+                    const k = (base: string) => suffix ? `${base}${suffix}` : base;
+                    const gv = (base: string) => gnSections[k(base)] || "";
+                    const gs = (base: string) => (v: string) => setGnSections({ ...gnSections, [k(base)]: v });
+                    const trv = (base: string) => gnSections[base] || "";
+                    const langSuffix = contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : '';
+                    return (
                     <>
-                      <Section title="Hero Başlık" subtitle="Koleksiyon adının yerine görsel kullanmak için. Görsel varsa koleksiyon adı yazısı gizlenir.">
-                        <ImageField
-                          label="Başlık Görseli (opsiyonel — varsa yazı gösterilmez)"
-                          value={gnSections.heroTitleImage || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, heroTitleImage: v })}
-                          folder="categories"
-                        />
-                        {gnSections.heroTitleImage && (
-                          <p className="text-[11px] text-amber-600 mt-1">⚠ Görsel ayarlandı — hero'da koleksiyon adı yazısı gizlenecek.</p>
+                      <Section title="Dil Sekmesi" subtitle="Bu bölümdeki metinleri düzenlemek için bir dil seçin">
+                        <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
+                        {contentLang !== 'tr' && (
+                          <p className="text-[11px] text-gray-400 mt-2">Görseller ve düzen ayarları tüm diller için ortaktır — TR sekmesinden ayarlayın.</p>
                         )}
                       </Section>
 
-                      <Section title="Hero SVG" subtitle="Hero alanının altındaki dekoratif SVG görsel">
+                      {contentLang === 'tr' && (
+                        <Section title="Hero Başlık" subtitle="Koleksiyon adının yerine görsel kullanmak için. Görsel varsa koleksiyon adı yazısı gizlenir.">
+                          <ImageField
+                            label="Başlık Görseli (opsiyonel — varsa yazı gösterilmez)"
+                            value={gnSections.heroTitleImage || ""}
+                            onChange={(v: string) => setGnSections({ ...gnSections, heroTitleImage: v })}
+                            folder="categories"
+                          />
+                          {gnSections.heroTitleImage && (
+                            <p className="text-[11px] text-amber-600 mt-1">⚠ Görsel ayarlandı — hero&apos;da koleksiyon adı yazısı gizlenecek.</p>
+                          )}
+                        </Section>
+                      )}
+
+                      <Section title={`Hero SVG${langSuffix}`} subtitle="Hero alanının altındaki dekoratif SVG görsel">
                         <ImageField
-                          label="Hero SVG Görseli (TR)"
-                          value={gnSections.heroSvg || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, heroSvg: v })}
-                          folder="categories"
-                        />
-                        <ImageField
-                          label="Hero SVG Görseli (EN)"
-                          value={gnSections.heroSvgEn || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, heroSvgEn: v })}
-                          folder="categories"
-                        />
-                        <ImageField
-                          label="Hero SVG Görseli (RU)"
-                          value={gnSections.heroSvgRu || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, heroSvgRu: v })}
+                          label={`Hero SVG Görseli${langSuffix}`}
+                          value={gv('heroSvg')}
+                          onChange={gs('heroSvg')}
                           folder="categories"
                         />
                       </Section>
 
                       <Section title="Felsefe Bölümü" subtitle="Alıntı ve açıklama metinleri">
                         <InputField
-                          label="Alıntı Satır 1"
-                          value={gnSections.philosophyQuote1 || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, philosophyQuote1: v })}
+                          label={`Alıntı Satır 1${langSuffix}`}
+                          value={gv('philosophyQuote1')}
+                          onChange={gs('philosophyQuote1')}
+                          placeholder={contentLang !== 'tr' ? trv('philosophyQuote1') : ''}
                         />
                         <InputField
-                          label="Alıntı Satır 2 (italik)"
-                          value={gnSections.philosophyQuote2 || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, philosophyQuote2: v })}
+                          label={`Alıntı Satır 2 (italik)${langSuffix}`}
+                          value={gv('philosophyQuote2')}
+                          onChange={gs('philosophyQuote2')}
+                          placeholder={contentLang !== 'tr' ? trv('philosophyQuote2') : ''}
                         />
                         <TextareaField
-                          label="Felsefe Metni"
-                          value={gnSections.philosophyText || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, philosophyText: v })}
+                          label={`Felsefe Metni${langSuffix}`}
+                          value={gv('philosophyText')}
+                          onChange={gs('philosophyText')}
                           rows={4}
+                          placeholder={contentLang !== 'tr' ? trv('philosophyText') : ''}
                         />
                       </Section>
 
                       <Section title="Görsel + Metin Bölümü" subtitle="Sol görsel, sağ metin alanı">
-                        <ImageField
-                          label="Sol Görsel"
-                          value={gnSections.splitImage || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, splitImage: v })}
-                          folder="categories"
-                          objectPosition={gnSections.splitImagePosition || "50% 50%"}
-                          onObjectPositionChange={(v: string) => setGnSections({ ...gnSections, splitImagePosition: v })}
-                          objectScale={gnSections.splitImageScale || 1}
-                          onObjectScaleChange={(v: number) => setGnSections({ ...gnSections, splitImageScale: v })}
-                        />
+                        {contentLang === 'tr' && (
+                          <ImageField
+                            label="Sol Görsel"
+                            value={gnSections.splitImage || ""}
+                            onChange={(v: string) => setGnSections({ ...gnSections, splitImage: v })}
+                            folder="categories"
+                            objectPosition={gnSections.splitImagePosition || "50% 50%"}
+                            onObjectPositionChange={(v: string) => setGnSections({ ...gnSections, splitImagePosition: v })}
+                            objectScale={gnSections.splitImageScale || 1}
+                            onObjectScaleChange={(v: number) => setGnSections({ ...gnSections, splitImageScale: v })}
+                          />
+                        )}
                         <InputField
-                          label="Başlık"
-                          value={gnSections.splitTitle || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, splitTitle: v })}
+                          label={`Başlık${langSuffix}`}
+                          value={gv('splitTitle')}
+                          onChange={gs('splitTitle')}
+                          placeholder={contentLang !== 'tr' ? trv('splitTitle') : ''}
                         />
                         <TextareaField
-                          label="Metin 1"
-                          value={gnSections.splitText1 || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, splitText1: v })}
+                          label={`Metin 1${langSuffix}`}
+                          value={gv('splitText1')}
+                          onChange={gs('splitText1')}
                           rows={4}
+                          placeholder={contentLang !== 'tr' ? trv('splitText1') : ''}
                         />
                         <TextareaField
-                          label="Metin 2"
-                          value={gnSections.splitText2 || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, splitText2: v })}
+                          label={`Metin 2${langSuffix}`}
+                          value={gv('splitText2')}
+                          onChange={gs('splitText2')}
                           rows={3}
+                          placeholder={contentLang !== 'tr' ? trv('splitText2') : ''}
                         />
                         <TextareaField
-                          label="Metin 3"
-                          value={gnSections.darkText3 || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, darkText3: v })}
+                          label={`Metin 3${langSuffix}`}
+                          value={gv('darkText3')}
+                          onChange={gs('darkText3')}
                           rows={2}
+                          placeholder={contentLang !== 'tr' ? trv('darkText3') : ''}
                         />
                       </Section>
 
                       <Section title="Koleksiyon Başlıkları" subtitle="Ürün listesi üst başlıkları">
                         <InputField
-                          label="Bölüm Başlığı"
-                          value={gnSections.collectionTitle || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, collectionTitle: v })}
+                          label={`Bölüm Başlığı${langSuffix}`}
+                          value={gv('collectionTitle')}
+                          onChange={gs('collectionTitle')}
+                          placeholder={contentLang !== 'tr' ? trv('collectionTitle') : ''}
                         />
                         <TextareaField
-                          label="Bölüm Alt Başlığı"
-                          value={gnSections.collectionSubtitle || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, collectionSubtitle: v })}
+                          label={`Bölüm Alt Başlığı${langSuffix}`}
+                          value={gv('collectionSubtitle')}
+                          onChange={gs('collectionSubtitle')}
                           rows={3}
+                          placeholder={contentLang !== 'tr' ? trv('collectionSubtitle') : ''}
                         />
                       </Section>
 
                       <Section title="Koyu Arkaplan Bölümü" subtitle="Arka planlı metin alanı">
-                        <ImageField
-                          label="Arkaplan Görseli"
-                          value={gnSections.darkBgImage || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, darkBgImage: v })}
-                          folder="categories"
-                          objectPosition={gnSections.darkBgImagePosition || "50% 50%"}
-                          onObjectPositionChange={(v: string) => setGnSections({ ...gnSections, darkBgImagePosition: v })}
-                          objectScale={gnSections.darkBgImageScale || 1}
-                          onObjectScaleChange={(v: number) => setGnSections({ ...gnSections, darkBgImageScale: v })}
+                        {contentLang === 'tr' && (
+                          <ImageField
+                            label="Arkaplan Görseli"
+                            value={gnSections.darkBgImage || ""}
+                            onChange={(v: string) => setGnSections({ ...gnSections, darkBgImage: v })}
+                            folder="categories"
+                            objectPosition={gnSections.darkBgImagePosition || "50% 50%"}
+                            onObjectPositionChange={(v: string) => setGnSections({ ...gnSections, darkBgImagePosition: v })}
+                            objectScale={gnSections.darkBgImageScale || 1}
+                            onObjectScaleChange={(v: number) => setGnSections({ ...gnSections, darkBgImageScale: v })}
+                          />
+                        )}
+                        <InputField
+                          label={`Metin 2${langSuffix}`}
+                          value={gv('darkText2')}
+                          onChange={gs('darkText2')}
+                          placeholder={contentLang !== 'tr' ? trv('darkText2') : ''}
                         />
                         <InputField
-                          label="Metin 2"
-                          value={gnSections.darkText2 || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, darkText2: v })}
-                        />
-                        <InputField
-                          label="Metin 2 İtalik Kısmı"
-                          value={gnSections.darkText2Cursive || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, darkText2Cursive: v })}
+                          label={`Metin 2 İtalik Kısmı${langSuffix}`}
+                          value={gv('darkText2Cursive')}
+                          onChange={gs('darkText2Cursive')}
+                          placeholder={contentLang !== 'tr' ? trv('darkText2Cursive') : ''}
                         />
                       </Section>
 
                       <Section title="CTA Bölümü" subtitle="Sayfanın alt kısmı - çağrı butonu">
                         <InputField
-                          label="Küçük Başlık (italik)"
-                          value={gnSections.ctaSmallTitle || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, ctaSmallTitle: v })}
+                          label={`Küçük Başlık (italik)${langSuffix}`}
+                          value={gv('ctaSmallTitle')}
+                          onChange={gs('ctaSmallTitle')}
+                          placeholder={contentLang !== 'tr' ? trv('ctaSmallTitle') : ''}
                         />
                         <InputField
-                          label="Ana Başlık"
-                          value={gnSections.ctaTitle || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, ctaTitle: v })}
+                          label={`Ana Başlık${langSuffix}`}
+                          value={gv('ctaTitle')}
+                          onChange={gs('ctaTitle')}
+                          placeholder={contentLang !== 'tr' ? trv('ctaTitle') : ''}
                         />
                         <InputField
-                          label="Alt Metin"
-                          value={gnSections.ctaSubtitle || ""}
-                          onChange={(v: string) => setGnSections({ ...gnSections, ctaSubtitle: v })}
+                          label={`Alt Metin${langSuffix}`}
+                          value={gv('ctaSubtitle')}
+                          onChange={gs('ctaSubtitle')}
+                          placeholder={contentLang !== 'tr' ? trv('ctaSubtitle') : ''}
                         />
                       </Section>
 
                     </>
-                  ) : null}
+                    );
+                  })() : null}
                 </div>
               )}
 
@@ -5795,171 +6077,229 @@ export default function AdminPanel() {
                 <div className="space-y-6">
                   {loadingHediyePage ? (
                     <div className="text-center py-8 text-gray-500">Yükleniyor...</div>
-                  ) : hediyePage ? (
+                  ) : hediyePage ? (() => {
+                    // Lokalize helper'lar — TR'de "base", EN/RU'da "baseEn"/"baseRu" suffixiyle JSON içinde tutulur.
+                    // pageData seviyesinde heroTitle/heroSubtitle için "_en"/"_ru" suffix (pages tablosu kolonu).
+                    const suffix = contentLang === 'tr' ? '' : contentLang === 'en' ? 'En' : 'Ru';
+                    const heroSuffix = contentLang === 'tr' ? '' : `_${contentLang}`;
+                    const langSuffix = contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : '';
+                    const sec = hediyePage.sections || {};
+                    const sk = (base: string) => suffix ? `${base}${suffix}` : base;
+                    const sv = (base: string) => sec[sk(base)] || "";
+                    const ss = (base: string) => (v: string) => setHediyePage({ ...hediyePage, sections: { ...sec, [sk(base)]: v } });
+                    const trSec = (base: string) => sec[base] || "";
+                    const heroK = (base: string) => `${base}${heroSuffix}`;
+                    return (
                     <>
+                      <Section title="Dil Sekmesi" subtitle="Metinleri düzenlemek için bir dil seçin">
+                        <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
+                        {contentLang !== 'tr' && (
+                          <p className="text-[11px] text-gray-400 mt-2">Görseller ve düzen ayarları tüm diller için ortaktır — TR sekmesinden ayarlayın.</p>
+                        )}
+                      </Section>
+
                       <Section title="Hero Bölümü" subtitle="Hediye sayfası üst kısmı">
                         <InputField
-                          label="Hero Başlık"
-                          value={hediyePage.heroTitle || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, heroTitle: v })}
+                          label={`Hero Başlık${langSuffix}`}
+                          value={hediyePage[heroK('heroTitle')] || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, [heroK('heroTitle')]: v })}
+                          placeholder={contentLang !== 'tr' ? (hediyePage.heroTitle || '') : ''}
                         />
                         <InputField
-                          label="Hero Alt Başlık"
-                          value={hediyePage.heroSubtitle || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, heroSubtitle: v })}
+                          label={`Hero Alt Başlık${langSuffix}`}
+                          value={hediyePage[heroK('heroSubtitle')] || ""}
+                          onChange={(v: string) => setHediyePage({ ...hediyePage, [heroK('heroSubtitle')]: v })}
+                          placeholder={contentLang !== 'tr' ? (hediyePage.heroSubtitle || '') : ''}
                         />
-                        <ImageField
-                          label="Hero Görsel"
-                          value={hediyePage.heroImage || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, heroImage: v })}
-                          folder="pages"
-                          objectPosition={hediyePage.heroImagePosition || "50% 50%"}
-                          onObjectPositionChange={(v: string) => setHediyePage({ ...hediyePage, heroImagePosition: v })}
-                          objectScale={hediyePage.heroImageScale || 1}
-                          onObjectScaleChange={(v: number) => setHediyePage({ ...hediyePage, heroImageScale: v })}
-                        />
+                        {contentLang === 'tr' && (
+                          <ImageField
+                            label="Hero Görsel"
+                            value={hediyePage.heroImage || ""}
+                            onChange={(v: string) => setHediyePage({ ...hediyePage, heroImage: v })}
+                            folder="pages"
+                            objectPosition={hediyePage.heroImagePosition || "50% 50%"}
+                            onObjectPositionChange={(v: string) => setHediyePage({ ...hediyePage, heroImagePosition: v })}
+                            objectScale={hediyePage.heroImageScale || 1}
+                            onObjectScaleChange={(v: number) => setHediyePage({ ...hediyePage, heroImageScale: v })}
+                          />
+                        )}
                       </Section>
 
                       <Section title="Felsefe Bölümü" subtitle="Hediye felsefesi metinleri">
                         <InputField
-                          label="Başlık Satır 1"
-                          value={hediyePage.sections?.philosophyTitle1 || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, philosophyTitle1: v } })}
+                          label={`Başlık Satır 1${langSuffix}`}
+                          value={sv('philosophyTitle1')}
+                          onChange={ss('philosophyTitle1')}
+                          placeholder={contentLang !== 'tr' ? trSec('philosophyTitle1') : ''}
                         />
                         <InputField
-                          label="Başlık Satır 2 (italik)"
-                          value={hediyePage.sections?.philosophyTitle2 || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, philosophyTitle2: v } })}
+                          label={`Başlık Satır 2 (italik)${langSuffix}`}
+                          value={sv('philosophyTitle2')}
+                          onChange={ss('philosophyTitle2')}
+                          placeholder={contentLang !== 'tr' ? trSec('philosophyTitle2') : ''}
                         />
                         <TextareaField
-                          label="Felsefe Metni"
-                          value={hediyePage.sections?.philosophyText || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, philosophyText: v } })}
+                          label={`Felsefe Metni${langSuffix}`}
+                          value={sv('philosophyText')}
+                          onChange={ss('philosophyText')}
                           rows={5}
+                          placeholder={contentLang !== 'tr' ? trSec('philosophyText') : ''}
                         />
                       </Section>
 
                       <Section title="Görsel + Metin Bölümü" subtitle="Sol görsel, sağ metin alanı">
-                        <ImageField
-                          label="Sol Görsel"
-                          value={hediyePage.sections?.splitImage || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitImage: v } })}
-                          folder="pages"
-                          objectPosition={hediyePage.sections?.splitImagePosition || "50% 50%"}
-                          onObjectPositionChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitImagePosition: v } })}
-                          objectScale={hediyePage.sections?.splitImageScale || 1}
-                          onObjectScaleChange={(v: number) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitImageScale: v } })}
-                        />
+                        {contentLang === 'tr' && (
+                          <ImageField
+                            label="Sol Görsel"
+                            value={sec.splitImage || ""}
+                            onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...sec, splitImage: v } })}
+                            folder="pages"
+                            objectPosition={sec.splitImagePosition || "50% 50%"}
+                            onObjectPositionChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...sec, splitImagePosition: v } })}
+                            objectScale={sec.splitImageScale || 1}
+                            onObjectScaleChange={(v: number) => setHediyePage({ ...hediyePage, sections: { ...sec, splitImageScale: v } })}
+                          />
+                        )}
                         <InputField
-                          label="Başlık"
-                          value={hediyePage.sections?.splitTitle || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitTitle: v } })}
+                          label={`Başlık${langSuffix}`}
+                          value={sv('splitTitle')}
+                          onChange={ss('splitTitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('splitTitle') : ''}
                         />
                         <TextareaField
-                          label="Metin 1"
-                          value={hediyePage.sections?.splitText1 || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitText1: v } })}
+                          label={`Metin 1${langSuffix}`}
+                          value={sv('splitText1')}
+                          onChange={ss('splitText1')}
                           rows={3}
+                          placeholder={contentLang !== 'tr' ? trSec('splitText1') : ''}
                         />
                         <TextareaField
-                          label="Metin 2"
-                          value={hediyePage.sections?.splitText2 || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, splitText2: v } })}
+                          label={`Metin 2${langSuffix}`}
+                          value={sv('splitText2')}
+                          onChange={ss('splitText2')}
                           rows={3}
+                          placeholder={contentLang !== 'tr' ? trSec('splitText2') : ''}
                         />
                       </Section>
 
                       <Section title="Kategoriler Bölümü" subtitle="Kategori başlığı ve kartları">
                         <InputField
-                          label="Bölüm Başlığı"
-                          value={hediyePage.sections?.categoriesTitle || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, categoriesTitle: v } })}
+                          label={`Bölüm Başlığı${langSuffix}`}
+                          value={sv('categoriesTitle')}
+                          onChange={ss('categoriesTitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('categoriesTitle') : ''}
                         />
                         <InputField
-                          label="Bölüm Alt Başlığı"
-                          value={hediyePage.sections?.categoriesSubtitle || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, categoriesSubtitle: v } })}
+                          label={`Bölüm Alt Başlığı${langSuffix}`}
+                          value={sv('categoriesSubtitle')}
+                          onChange={ss('categoriesSubtitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('categoriesSubtitle') : ''}
                         />
                         {[0, 1, 2, 3].map((i) => {
-                          const cats = hediyePage.sections?.categories || [];
+                          const cats = sec.categories || [];
                           const cat = cats[i] || { title: "", description: "", image: "", href: "" };
                           const updateCat = (field: string, value: string) => {
-                            const updated = [...(hediyePage.sections?.categories || [{}, {}, {}, {}])];
+                            const updated = [...(sec.categories || [{}, {}, {}, {}])];
                             updated[i] = { ...updated[i], [field]: value };
-                            setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, categories: updated } });
+                            setHediyePage({ ...hediyePage, sections: { ...sec, categories: updated } });
                           };
+                          const tKey = (b: string) => suffix ? `${b}${suffix}` : b;
+                          const trCat = (cats[i] || {}) as Record<string, string>;
                           return (
                             <div key={i} className="border border-[#2a2a2a] rounded-lg p-4 space-y-3">
                               <p className="text-sm font-medium text-[#d4af37]">Kategori {i + 1}</p>
-                              <InputField label="Başlık" value={cat.title || ""} onChange={(v: string) => updateCat("title", v)} />
-                              <InputField label="Açıklama" value={cat.description || ""} onChange={(v: string) => updateCat("description", v)} />
-                              <InputField label="Link" value={cat.href || ""} onChange={(v: string) => updateCat("href", v)} />
-                              <ImageField
-                                label="Görsel"
-                                value={cat.image || ""}
-                                onChange={(v: string) => updateCat("image", v)}
-                                folder="pages"
-                                objectPosition={cat.imagePosition || "50% 50%"}
-                                onObjectPositionChange={(v: string) => updateCat("imagePosition", v)}
-                                objectScale={cat.imageScale || 1}
-                                onObjectScaleChange={(v: number) => updateCat("imageScale", String(v))}
+                              <InputField
+                                label={`Başlık${langSuffix}`}
+                                value={cat[tKey('title')] || ""}
+                                onChange={(v: string) => updateCat(tKey('title'), v)}
+                                placeholder={contentLang !== 'tr' ? (trCat.title || '') : ''}
                               />
+                              <InputField
+                                label={`Açıklama${langSuffix}`}
+                                value={cat[tKey('description')] || ""}
+                                onChange={(v: string) => updateCat(tKey('description'), v)}
+                                placeholder={contentLang !== 'tr' ? (trCat.description || '') : ''}
+                              />
+                              {contentLang === 'tr' && (
+                                <>
+                                  <InputField label="Link" value={cat.href || ""} onChange={(v: string) => updateCat("href", v)} />
+                                  <ImageField
+                                    label="Görsel"
+                                    value={cat.image || ""}
+                                    onChange={(v: string) => updateCat("image", v)}
+                                    folder="pages"
+                                    objectPosition={cat.imagePosition || "50% 50%"}
+                                    onObjectPositionChange={(v: string) => updateCat("imagePosition", v)}
+                                    objectScale={cat.imageScale || 1}
+                                    onObjectScaleChange={(v: number) => updateCat("imageScale", String(v))}
+                                  />
+                                </>
+                              )}
                             </div>
                           );
                         })}
                       </Section>
 
                       <Section title="Koyu Arkaplan Bölümü" subtitle="Arka planlı metin alanı">
-                        <ImageField
-                          label="Arkaplan Görseli"
-                          value={hediyePage.sections?.darkBgImage || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkBgImage: v } })}
-                          folder="pages"
-                          objectPosition={hediyePage.sections?.darkBgImagePosition || "50% 50%"}
-                          onObjectPositionChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkBgImagePosition: v } })}
-                          objectScale={hediyePage.sections?.darkBgImageScale || 1}
-                          onObjectScaleChange={(v: number) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkBgImageScale: v } })}
+                        {contentLang === 'tr' && (
+                          <ImageField
+                            label="Arkaplan Görseli"
+                            value={sec.darkBgImage || ""}
+                            onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...sec, darkBgImage: v } })}
+                            folder="pages"
+                            objectPosition={sec.darkBgImagePosition || "50% 50%"}
+                            onObjectPositionChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...sec, darkBgImagePosition: v } })}
+                            objectScale={sec.darkBgImageScale || 1}
+                            onObjectScaleChange={(v: number) => setHediyePage({ ...hediyePage, sections: { ...sec, darkBgImageScale: v } })}
+                          />
+                        )}
+                        <TextareaField
+                          label={`Metin 1${langSuffix}`}
+                          value={sv('darkText1')}
+                          onChange={ss('darkText1')}
+                          rows={3}
+                          placeholder={contentLang !== 'tr' ? trSec('darkText1') : ''}
                         />
                         <TextareaField
-                          label="Metin 1"
-                          value={hediyePage.sections?.darkText1 || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkText1: v } })}
+                          label={`Metin 2 (vurgulu)${langSuffix}`}
+                          value={sv('darkText2')}
+                          onChange={ss('darkText2')}
                           rows={3}
+                          placeholder={contentLang !== 'tr' ? trSec('darkText2') : ''}
                         />
                         <TextareaField
-                          label="Metin 2 (vurgulu)"
-                          value={hediyePage.sections?.darkText2 || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkText2: v } })}
+                          label={`Metin 3${langSuffix}`}
+                          value={sv('darkText3')}
+                          onChange={ss('darkText3')}
                           rows={3}
-                        />
-                        <TextareaField
-                          label="Metin 3"
-                          value={hediyePage.sections?.darkText3 || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, darkText3: v } })}
-                          rows={3}
+                          placeholder={contentLang !== 'tr' ? trSec('darkText3') : ''}
                         />
                       </Section>
 
                       <Section title="CTA Bölümü" subtitle="Sayfanın alt kısmı - çağrı butonu">
                         <InputField
-                          label="Küçük Başlık"
-                          value={hediyePage.sections?.ctaSmallTitle || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, ctaSmallTitle: v } })}
+                          label={`Küçük Başlık${langSuffix}`}
+                          value={sv('ctaSmallTitle')}
+                          onChange={ss('ctaSmallTitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('ctaSmallTitle') : ''}
                         />
                         <InputField
-                          label="Ana Başlık"
-                          value={hediyePage.sections?.ctaTitle || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, ctaTitle: v } })}
+                          label={`Ana Başlık${langSuffix}`}
+                          value={sv('ctaTitle')}
+                          onChange={ss('ctaTitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('ctaTitle') : ''}
                         />
                         <InputField
-                          label="Alt Metin"
-                          value={hediyePage.sections?.ctaSubtitle || ""}
-                          onChange={(v: string) => setHediyePage({ ...hediyePage, sections: { ...hediyePage.sections, ctaSubtitle: v } })}
+                          label={`Alt Metin${langSuffix}`}
+                          value={sv('ctaSubtitle')}
+                          onChange={ss('ctaSubtitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('ctaSubtitle') : ''}
                         />
                       </Section>
 
                     </>
-                  ) : (
+                    );
+                  })() : (
                     <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi.</div>
                   )}
                 </div>
@@ -6150,170 +6490,215 @@ export default function AdminPanel() {
                 <div className="space-y-6">
                   {loadingOzelTasarimPage ? (
                     <div className="text-center py-8 text-gray-500">Yükleniyor...</div>
-                  ) : ozelTasarimPage ? (
+                  ) : ozelTasarimPage ? (() => {
+                    const suffix = contentLang === 'tr' ? '' : contentLang === 'en' ? 'En' : 'Ru';
+                    const langSuffix = contentLang !== 'tr' ? ` (${contentLang.toUpperCase()})` : '';
+                    const sec = ozelTasarimPage.sections || {};
+                    const sk = (b: string) => suffix ? `${b}${suffix}` : b;
+                    const sv = (b: string) => sec[sk(b)] || "";
+                    const ss = (b: string) => (v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...sec, [sk(b)]: v } });
+                    const trSec = (b: string) => sec[b] || "";
+                    return (
                     <>
+                      <Section title="Dil Sekmesi" subtitle="Metinleri düzenlemek için bir dil seçin">
+                        <LanguageTabs currentLang={contentLang} onChange={setContentLang} />
+                        {contentLang !== 'tr' && (
+                          <p className="text-[11px] text-gray-400 mt-2">Görseller, linkler ve galeri ayarları tüm diller için ortaktır — TR sekmesinden ayarlayın.</p>
+                        )}
+                      </Section>
+
                       <Section title="Hero Bölümü" subtitle="Sayfa üst kısmı (tam ekran görsel)">
-                        <ImageField
-                          label="Hero Arkaplan Görseli"
-                          value={ozelTasarimPage.heroImage || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, heroImage: v })}
-                          folder="pages"
+                        {contentLang === 'tr' && (
+                          <ImageField
+                            label="Hero Arkaplan Görseli"
+                            value={ozelTasarimPage.heroImage || ""}
+                            onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, heroImage: v })}
+                            folder="pages"
+                          />
+                        )}
+                        <InputField
+                          label={`Üst Yazı (küçük)${langSuffix}`}
+                          value={sv('heroSubtitle')}
+                          onChange={ss('heroSubtitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('heroSubtitle') : ''}
                         />
                         <InputField
-                          label="Üst Yazı (küçük)"
-                          value={ozelTasarimPage.sections?.heroSubtitle || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, heroSubtitle: v } })}
+                          label={`Ana Başlık${langSuffix}`}
+                          value={sv('heroTitle')}
+                          onChange={ss('heroTitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('heroTitle') : ''}
                         />
                         <InputField
-                          label="Ana Başlık"
-                          value={ozelTasarimPage.sections?.heroTitle || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, heroTitle: v } })}
+                          label={`Alt Metin${langSuffix}`}
+                          value={sv('heroDesc')}
+                          onChange={ss('heroDesc')}
+                          placeholder={contentLang !== 'tr' ? trSec('heroDesc') : ''}
                         />
                         <InputField
-                          label="Alt Metin"
-                          value={ozelTasarimPage.sections?.heroDesc || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, heroDesc: v } })}
-                        />
-                        <InputField
-                          label="Scroll Indicator Metni"
-                          value={ozelTasarimPage.sections?.scrollText || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, scrollText: v } })}
+                          label={`Scroll Indicator Metni${langSuffix}`}
+                          value={sv('scrollText')}
+                          onChange={ss('scrollText')}
+                          placeholder={contentLang !== 'tr' ? trSec('scrollText') : ''}
                         />
                       </Section>
 
                       <Section title="Felsefe Bölümü" subtitle="Philosophy section metinleri">
                         <InputField
-                          label="Alıntı Satır 1"
-                          value={ozelTasarimPage.sections?.philosophyQuote1 || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, philosophyQuote1: v } })}
+                          label={`Alıntı Satır 1${langSuffix}`}
+                          value={sv('philosophyQuote1')}
+                          onChange={ss('philosophyQuote1')}
+                          placeholder={contentLang !== 'tr' ? trSec('philosophyQuote1') : ''}
                         />
                         <InputField
-                          label="Alıntı Satır 2 (italik)"
-                          value={ozelTasarimPage.sections?.philosophyQuote2 || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, philosophyQuote2: v } })}
+                          label={`Alıntı Satır 2 (italik)${langSuffix}`}
+                          value={sv('philosophyQuote2')}
+                          onChange={ss('philosophyQuote2')}
+                          placeholder={contentLang !== 'tr' ? trSec('philosophyQuote2') : ''}
                         />
                         <TextareaField
-                          label="Felsefe Metni"
-                          value={ozelTasarimPage.sections?.philosophyText || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, philosophyText: v } })}
+                          label={`Felsefe Metni${langSuffix}`}
+                          value={sv('philosophyText')}
+                          onChange={ss('philosophyText')}
                           rows={5}
+                          placeholder={contentLang !== 'tr' ? trSec('philosophyText') : ''}
                         />
                       </Section>
 
                       <Section title="Görsel + Metin Bölümü" subtitle="Split section (sol görsel, sağ metin)">
-                        <ImageField
-                          label="Sol Görsel"
-                          value={ozelTasarimPage.sections?.splitImage || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, splitImage: v } })}
-                          folder="pages"
-                        />
+                        {contentLang === 'tr' && (
+                          <ImageField
+                            label="Sol Görsel"
+                            value={sec.splitImage || ""}
+                            onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...sec, splitImage: v } })}
+                            folder="pages"
+                          />
+                        )}
                         <InputField
-                          label="Başlık"
-                          value={ozelTasarimPage.sections?.splitTitle || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, splitTitle: v } })}
+                          label={`Başlık${langSuffix}`}
+                          value={sv('splitTitle')}
+                          onChange={ss('splitTitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('splitTitle') : ''}
                         />
                         <TextareaField
-                          label="Metin 1"
-                          value={ozelTasarimPage.sections?.splitText1 || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, splitText1: v } })}
+                          label={`Metin 1${langSuffix}`}
+                          value={sv('splitText1')}
+                          onChange={ss('splitText1')}
                           rows={4}
+                          placeholder={contentLang !== 'tr' ? trSec('splitText1') : ''}
                         />
                         <TextareaField
-                          label="Metin 2"
-                          value={ozelTasarimPage.sections?.splitText2 || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, splitText2: v } })}
+                          label={`Metin 2${langSuffix}`}
+                          value={sv('splitText2')}
+                          onChange={ss('splitText2')}
                           rows={4}
+                          placeholder={contentLang !== 'tr' ? trSec('splitText2') : ''}
                         />
                       </Section>
 
                       <Section title="Süreç Bölümü" subtitle="4 adımlık timeline">
                         <InputField
-                          label="Bölüm Başlığı"
-                          value={ozelTasarimPage.sections?.processTitle || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, processTitle: v } })}
+                          label={`Bölüm Başlığı${langSuffix}`}
+                          value={sv('processTitle')}
+                          onChange={ss('processTitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('processTitle') : ''}
                         />
                         <TextareaField
-                          label="Bölüm Alt Başlığı"
-                          value={ozelTasarimPage.sections?.processSubtitle || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, processSubtitle: v } })}
+                          label={`Bölüm Alt Başlığı${langSuffix}`}
+                          value={sv('processSubtitle')}
+                          onChange={ss('processSubtitle')}
                           rows={2}
+                          placeholder={contentLang !== 'tr' ? trSec('processSubtitle') : ''}
                         />
                         {[0, 1, 2, 3].map((i) => {
-                          const steps = ozelTasarimPage.sections?.steps || [];
-                          const step = steps[i] || { label: "", title: "", desc: "" };
+                          const steps = sec.steps || [];
+                          const step = steps[i] || {};
+                          const trStep = (sec.steps?.[i] || {}) as Record<string, string>;
+                          const sKey = (b: string) => suffix ? `${b}${suffix}` : b;
                           const updateStep = (field: string, value: string) => {
-                            const updated = [...(ozelTasarimPage.sections?.steps || [{}, {}, {}, {}])];
+                            const updated = [...(sec.steps || [{}, {}, {}, {}])];
                             updated[i] = { ...updated[i], [field]: value };
-                            setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, steps: updated } });
+                            setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...sec, steps: updated } });
                           };
                           return (
                             <div key={i} className="border border-[#2a2a2a] rounded-lg p-4 space-y-3">
                               <p className="text-sm font-medium text-[#d4af37]">Adım {i + 1}</p>
-                              <InputField label="Etiket (örn: İlk Adım)" value={step.label || ""} onChange={(v: string) => updateStep("label", v)} />
-                              <InputField label="Başlık" value={step.title || ""} onChange={(v: string) => updateStep("title", v)} />
-                              <TextareaField label="Açıklama" value={step.desc || ""} onChange={(v: string) => updateStep("desc", v)} rows={4} />
+                              <InputField label={`Etiket${langSuffix}`} value={step[sKey('label')] || ""} onChange={(v: string) => updateStep(sKey('label'), v)} placeholder={contentLang !== 'tr' ? (trStep.label || '') : ''} />
+                              <InputField label={`Başlık${langSuffix}`} value={step[sKey('title')] || ""} onChange={(v: string) => updateStep(sKey('title'), v)} placeholder={contentLang !== 'tr' ? (trStep.title || '') : ''} />
+                              <TextareaField label={`Açıklama${langSuffix}`} value={step[sKey('desc')] || ""} onChange={(v: string) => updateStep(sKey('desc'), v)} rows={4} placeholder={contentLang !== 'tr' ? (trStep.desc || '') : ''} />
                             </div>
                           );
                         })}
                       </Section>
 
                       <Section title="Koyu Arkaplan Bölümü" subtitle="Dark background section">
-                        <ImageField
-                          label="Arkaplan Görseli"
-                          value={ozelTasarimPage.sections?.darkBgImage || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkBgImage: v } })}
-                          folder="pages"
+                        {contentLang === 'tr' && (
+                          <ImageField
+                            label="Arkaplan Görseli"
+                            value={sec.darkBgImage || ""}
+                            onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...sec, darkBgImage: v } })}
+                            folder="pages"
+                          />
+                        )}
+                        <InputField
+                          label={`Başlık${langSuffix}`}
+                          value={sv('darkTitle')}
+                          onChange={ss('darkTitle')}
+                          placeholder={contentLang !== 'tr' ? trSec('darkTitle') : ''}
                         />
                         <InputField
-                          label="Başlık"
-                          value={ozelTasarimPage.sections?.darkTitle || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkTitle: v } })}
+                          label={`Metin 1${langSuffix}`}
+                          value={sv('darkText1')}
+                          onChange={ss('darkText1')}
+                          placeholder={contentLang !== 'tr' ? trSec('darkText1') : ''}
                         />
                         <InputField
-                          label="Metin 1"
-                          value={ozelTasarimPage.sections?.darkText1 || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkText1: v } })}
-                        />
-                        <InputField
-                          label="Metin 1 Devamı (italik)"
-                          value={ozelTasarimPage.sections?.darkText1Cursive || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkText1Cursive: v } })}
+                          label={`Metin 1 Devamı (italik)${langSuffix}`}
+                          value={sv('darkText1Cursive')}
+                          onChange={ss('darkText1Cursive')}
+                          placeholder={contentLang !== 'tr' ? trSec('darkText1Cursive') : ''}
                         />
                         <TextareaField
-                          label="Metin 2"
-                          value={ozelTasarimPage.sections?.darkText2 || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, darkText2: v } })}
+                          label={`Metin 2${langSuffix}`}
+                          value={sv('darkText2')}
+                          onChange={ss('darkText2')}
                           rows={3}
+                          placeholder={contentLang !== 'tr' ? trSec('darkText2') : ''}
                         />
                       </Section>
 
                       <Section title="CTA Bölümü" subtitle="Sayfanın alt kısmı - çağrı butonu">
                         <InputField
-                          label="Başlık 1 (italik)"
-                          value={ozelTasarimPage.sections?.ctaTitle1 || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaTitle1: v } })}
+                          label={`Başlık 1 (italik)${langSuffix}`}
+                          value={sv('ctaTitle1')}
+                          onChange={ss('ctaTitle1')}
+                          placeholder={contentLang !== 'tr' ? trSec('ctaTitle1') : ''}
                         />
                         <InputField
-                          label="Başlık 2"
-                          value={ozelTasarimPage.sections?.ctaTitle2 || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaTitle2: v } })}
+                          label={`Başlık 2${langSuffix}`}
+                          value={sv('ctaTitle2')}
+                          onChange={ss('ctaTitle2')}
+                          placeholder={contentLang !== 'tr' ? trSec('ctaTitle2') : ''}
                         />
                         <TextareaField
-                          label="Açıklama"
-                          value={ozelTasarimPage.sections?.ctaDesc || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaDesc: v } })}
+                          label={`Açıklama${langSuffix}`}
+                          value={sv('ctaDesc')}
+                          onChange={ss('ctaDesc')}
                           rows={3}
+                          placeholder={contentLang !== 'tr' ? trSec('ctaDesc') : ''}
                         />
                         <InputField
-                          label="Buton Metni"
-                          value={ozelTasarimPage.sections?.ctaButtonText || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaButtonText: v } })}
+                          label={`Buton Metni${langSuffix}`}
+                          value={sv('ctaButtonText')}
+                          onChange={ss('ctaButtonText')}
+                          placeholder={contentLang !== 'tr' ? trSec('ctaButtonText') : ''}
                         />
-                        <InputField
-                          label="Buton Linki"
-                          value={ozelTasarimPage.sections?.ctaButtonLink || ""}
-                          onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...ozelTasarimPage.sections, ctaButtonLink: v } })}
-                        />
+                        {contentLang === 'tr' && (
+                          <InputField
+                            label="Buton Linki"
+                            value={sec.ctaButtonLink || ""}
+                            onChange={(v: string) => setOzelTasarimPage({ ...ozelTasarimPage, sections: { ...sec, ctaButtonLink: v } })}
+                          />
+                        )}
                       </Section>
 
                       <Section title="Galeri Bölümü" subtitle="3 görsel yan yana — tıklandığında ürün sayfasına yönlendirir">
@@ -6345,7 +6730,8 @@ export default function AdminPanel() {
                       </Section>
 
                     </>
-                  ) : (
+                    );
+                  })() : (
                     <div className="text-center py-8 text-gray-500">Sayfa yüklenemedi.</div>
                   )}
                 </div>

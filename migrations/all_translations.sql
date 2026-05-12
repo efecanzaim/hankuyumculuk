@@ -174,7 +174,7 @@ WHERE id = 1;
 -- =====================================================
 -- 10. FOOTER COLUMNS
 -- =====================================================
-UPDATE footer_columns SET title_en = 'HAN JEWELRY', title_ru = 'HAN ЮВЕЛИРНЫЕ' WHERE id = 1;
+UPDATE footer_columns SET title_en = 'HAN KUYUMCULUK', title_ru = 'HAN KUYUMCULUK' WHERE id = 1;
 UPDATE footer_columns SET title_en = 'COLLECTION', title_ru = 'КОЛЛЕКЦИЯ' WHERE id = 2;
 UPDATE footer_columns SET title_en = 'CUSTOMER SERVICE', title_ru = 'ОБСЛУЖИВАНИЕ КЛИЕНТОВ' WHERE id = 3;
 UPDATE footer_columns SET title_en = 'LEGAL', title_ru = 'ПРАВОВАЯ ИНФОРМАЦИЯ' WHERE id = 4;

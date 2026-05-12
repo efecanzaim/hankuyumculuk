@@ -101,29 +101,29 @@
     {
       "id": 1,
       "image": "/images/products/product-1.jpg",
-      "name": "Harmony Бриллиантовое кольцо 0,55 карат",
-      "category": "БРИЛЛИАНТОВОЕ КОЛЬЦО",
+      "name": "",
+      "category": "",
       "link": "/ru/tovar/harmony-pirlanta-yuzuk"
     },
     {
       "id": 2,
       "image": "/images/products/product-2.jpg",
-      "name": "Su Yolu Браслет 1,00 карат бриллиант",
-      "category": "БРИЛЛИАНТОВЫЙ БРАСЛЕТ",
+      "name": "",
+      "category": "",
       "link": "/ru/tovar/su-yolu-bileklik"
     },
     {
       "id": 3,
       "image": "/images/products/product-3.jpg",
-      "name": "Yakamoz Бриллиантовый браслет 0,10 карат",
-      "category": "БРИЛЛИАНТОВЫЙ БРАСЛЕТ",
+      "name": "",
+      "category": "",
       "link": "/ru/tovar/yakamoz-bileklik"
     },
     {
       "id": 4,
       "image": "/images/products/product-4.jpg",
-      "name": "Baget Бриллиантовый браслет 0,31 карат",
-      "category": "БРИЛЛИАНТОВЫЙ БРАСЛЕТ",
+      "name": "",
+      "category": "",
       "link": "/ru/tovar/baget-bileklik"
     }
   ],
@@ -202,7 +202,11 @@
     "image": "/images/blog-featured.jpg",
     "linkText": "продолжение статьи",
     "linkHref": "/ru/blog/pirlanta-hikayeleri",
-    "additionalText": "Здесь вы найдёте все интересующие детали — от колец до колье, от подарков к особым дням до руководств по выбору бриллиантов — в сопровождении вдохновляющего контента и экспертных мнений."
+    "additionalText": "Здесь вы найдёте все интересующие детали — от колец до колье, от подарков к особым дням до руководств по выбору бриллиантов — в сопровождении вдохновляющего контента и экспертных мнений.",
+    "introText": "Каждую неделю мы делимся с вами вдохновляющими историями из мира ювелирных украшений, рассказами о коллекциях и нашими приключениями в индивидуальном дизайне.",
+    "allPostsText": "Чтобы прочитать все наши статьи;",
+    "allPostsButtonText": "ВСЕ ПУБЛИКАЦИИ",
+    "allPostsLink": "/ru/blog"
   },
   "productDetails": {
     "sarmasik-inci-tanem": {
@@ -914,7 +918,7 @@
     "socialLinks": {
       "instagram": "https://www.instagram.com/hankuyumculuk_"
     },
-    "copyright": "\u00a9 2025 Han Kuyumculuk, Все права защищены"
+    "copyright": "© 2025 Han Kuyumculuk, Все права защищены"
   },
   "koleksiyonSayfasi": {
     "title": "Коллекции",

@@ -227,7 +227,16 @@ function getSection($db, $section) {
                 'title' => $row['title'],
                 'subtitle' => $row['subtitle'],
                 'description' => $row['description'],
-                'additionalText' => $row['additional_text'],
+                'introText' => $row['intro_text'] ?? null,
+                'introTextEn' => $row['intro_text_en'] ?? null,
+                'introTextRu' => $row['intro_text_ru'] ?? null,
+                'allPostsText' => $row['all_posts_text'] ?? null,
+                'allPostsTextEn' => $row['all_posts_text_en'] ?? null,
+                'allPostsTextRu' => $row['all_posts_text_ru'] ?? null,
+                'allPostsButtonText' => $row['all_posts_button_text'] ?? null,
+                'allPostsButtonTextEn' => $row['all_posts_button_text_en'] ?? null,
+                'allPostsButtonTextRu' => $row['all_posts_button_text_ru'] ?? null,
+                'allPostsLink' => $row['all_posts_link'] ?? '/blog',
                 'image' => $row['image'],
                 'linkText' => $row['link_text'],
                 'linkUrl' => $row['link_url']
@@ -347,15 +356,27 @@ function updateSection($db, $section, $data) {
             $stmt = $db->prepare('
                 UPDATE homepage_blog_section SET
                     title = ?, subtitle = ?, description = ?,
-                    additional_text = ?, image = ?,
-                    link_text = ?, link_url = ?
+                    intro_text = ?, intro_text_en = ?, intro_text_ru = ?,
+                    all_posts_text = ?, all_posts_text_en = ?, all_posts_text_ru = ?,
+                    all_posts_button_text = ?, all_posts_button_text_en = ?, all_posts_button_text_ru = ?,
+                    all_posts_link = ?,
+                    image = ?, link_text = ?, link_url = ?
                 WHERE id = 1
             ');
             return $stmt->execute([
                 $data['title'] ?? null,
                 $data['subtitle'] ?? null,
                 $data['description'] ?? null,
-                $data['additionalText'] ?? $data['additional_text'] ?? null,
+                $data['introText'] ?? $data['intro_text'] ?? null,
+                $data['introTextEn'] ?? $data['intro_text_en'] ?? null,
+                $data['introTextRu'] ?? $data['intro_text_ru'] ?? null,
+                $data['allPostsText'] ?? $data['all_posts_text'] ?? null,
+                $data['allPostsTextEn'] ?? $data['all_posts_text_en'] ?? null,
+                $data['allPostsTextRu'] ?? $data['all_posts_text_ru'] ?? null,
+                $data['allPostsButtonText'] ?? $data['all_posts_button_text'] ?? null,
+                $data['allPostsButtonTextEn'] ?? $data['all_posts_button_text_en'] ?? null,
+                $data['allPostsButtonTextRu'] ?? $data['all_posts_button_text_ru'] ?? null,
+                $data['allPostsLink'] ?? $data['all_posts_link'] ?? '/blog',
                 $data['image'] ?? null,
                 $data['linkText'] ?? $data['link_text'] ?? null,
                 $data['linkUrl'] ?? $data['link_url'] ?? null

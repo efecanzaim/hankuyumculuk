@@ -121,7 +121,10 @@ export default function HomePageClient() {
         image={latestBlog?.image ? (process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}${latestBlog.image}` : latestBlog.image) : content.blogSection?.image}
         linkText={latestBlog ? t('common.readMore') : content.blogSection?.linkText}
         linkHref={latestBlog ? `${getLocalizedPath('blog', locale)}/${latestBlog.slug}` : content.blogSection?.linkHref}
-        additionalText={content.blogSection?.additionalText}
+        introText={content.blogSection?.introText}
+        allPostsText={content.blogSection?.allPostsText}
+        allPostsButtonText={content.blogSection?.allPostsButtonText}
+        allPostsLink={content.blogSection?.allPostsLink}
       />
 
       {/* Footer */}

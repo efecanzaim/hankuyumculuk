@@ -101,29 +101,29 @@
     {
       "id": 1,
       "image": "/images/products/product-1.jpg",
-      "name": "Harmony Diamond Ring 0.55 Carat",
-      "category": "DIAMOND RING",
+      "name": "",
+      "category": "",
       "link": "/en/product/harmony-pirlanta-yuzuk"
     },
     {
       "id": 2,
       "image": "/images/products/product-2.jpg",
-      "name": "Su Yolu Bracelet 1.00 Carat Diamond",
-      "category": "DIAMOND BRACELET",
+      "name": "",
+      "category": "",
       "link": "/en/product/su-yolu-bileklik"
     },
     {
       "id": 3,
       "image": "/images/products/product-3.jpg",
-      "name": "Yakamoz Diamond Bracelet 0.10 Carat",
-      "category": "DIAMOND BRACELET",
+      "name": "",
+      "category": "",
       "link": "/en/product/yakamoz-bileklik"
     },
     {
       "id": 4,
       "image": "/images/products/product-4.jpg",
-      "name": "Baguette Diamond Bracelet 0.31 Carat",
-      "category": "DIAMOND BRACELET",
+      "name": "",
+      "category": "",
       "link": "/en/product/baget-bileklik"
     }
   ],
@@ -202,7 +202,11 @@
     "image": "/images/blog-featured.jpg",
     "linkText": "read more",
     "linkHref": "/en/blog/pirlanta-hikayeleri",
-    "additionalText": "In this space, you will find all the details you have been curious about, from rings to necklaces, from special occasion gifts to diamond selection guides, presented through inspiring content and expert perspectives."
+    "additionalText": "In this space, you will find all the details you have been curious about, from rings to necklaces, from special occasion gifts to diamond selection guides, presented through inspiring content and expert perspectives.",
+    "introText": "Every week, we share inspiring stories from the world of jewellery, collection tales, and our bespoke design journeys with you.",
+    "allPostsText": "To read all our blog posts;",
+    "allPostsButtonText": "ALL POSTS",
+    "allPostsLink": "/en/blog"
   },
   "productDetails": {
     "sarmasik-inci-tanem": {
@@ -914,7 +918,7 @@
     "socialLinks": {
       "instagram": "https://www.instagram.com/hankuyumculuk_"
     },
-    "copyright": "\u00a9 2025 Han Kuyumculuk, All Rights Reserved"
+    "copyright": "© 2025 Han Kuyumculuk, All Rights Reserved"
   },
   "koleksiyonSayfasi": {
     "title": "Collections",

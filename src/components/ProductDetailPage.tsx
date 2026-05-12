@@ -54,6 +54,17 @@ const stoneTypeMap: Record<string, Record<Locale, string>> = {
   'Turmalin': { tr: 'Turmalin', en: 'Tourmaline', ru: 'Турмалин' },
 };
 
+// Ürün tipi çevirileri (product_type kolonundaki Türkçe değerler)
+const productTypeMap: Record<string, Record<Locale, string>> = {
+  'Kolye': { tr: 'Kolye', en: 'Necklace', ru: 'Ожерелье' },
+  'Yüzük': { tr: 'Yüzük', en: 'Ring', ru: 'Кольцо' },
+  'Bileklik': { tr: 'Bileklik', en: 'Bracelet', ru: 'Браслет' },
+  'Küpe': { tr: 'Küpe', en: 'Earring', ru: 'Серьга' },
+  'Set': { tr: 'Set', en: 'Set', ru: 'Набор' },
+  'Broş': { tr: 'Broş', en: 'Brooch', ru: 'Брошь' },
+  'Toka': { tr: 'Toka', en: 'Buckle', ru: 'Пряжка' },
+};
+
 // Kesim çevirileri
 const cutMap: Record<string, Record<Locale, string>> = {
   'Yuvarlak': { tr: 'Yuvarlak', en: 'Round', ru: 'Круглая' },
@@ -69,6 +80,16 @@ const cutMap: Record<string, Record<Locale, string>> = {
   'Prenses': { tr: 'Prenses', en: 'Princess', ru: 'Принцесса' },
   'Trapez': { tr: 'Trapez', en: 'Trapezoid', ru: 'Трапеция' },
   'Baget': { tr: 'Baget', en: 'Baguette', ru: 'Багет' },
+};
+
+// Altın ayar çevirileri
+const goldKaratMap: Record<string, Record<Locale, string>> = {
+  '8 Ayar': { tr: '8 Ayar', en: '8K', ru: '8 карат' },
+  '14 Ayar': { tr: '14 Ayar', en: '14K', ru: '14 карат' },
+  '18 Ayar': { tr: '18 Ayar', en: '18K', ru: '18 карат' },
+  '21 Ayar': { tr: '21 Ayar', en: '21K', ru: '21 карат' },
+  '22 Ayar': { tr: '22 Ayar', en: '22K', ru: '22 карата' },
+  '24 Ayar': { tr: '24 Ayar', en: '24K', ru: '24 карата' },
 };
 
 export default function ProductDetailPage({
@@ -139,11 +160,22 @@ export default function ProductDetailPage({
 
   const getCutName = (cut: string | undefined): string => {
     if (!cut) return '';
-    return cutMap[cut]?.['en'] || cut;
+    return cutMap[cut]?.[locale] || cut;
   };
 
   const getStoneName = (stoneType: string): string => {
     return stoneTypeMap[stoneType]?.[locale] || stoneType;
+  };
+
+  const getProductTypeName = (productType: string | null | undefined): string => {
+    if (!productType) return '';
+    return productTypeMap[productType]?.[locale] || productType;
+  };
+
+  const getGoldKarat = (karat: number | string | null | undefined): string => {
+    if (!karat) return '';
+    const karatStr = String(karat);
+    return goldKaratMap[karatStr]?.[locale] || karatStr;
   };
 
   const label = (key: string): string => certLabels[key]?.[locale] || key;
@@ -373,7 +405,7 @@ export default function ProductDetailPage({
                         <div className={`grid ${stones.some(s => s.product_type) ? 'grid-cols-7' : 'grid-cols-6'} gap-4 mb-[20px]`}>
                           {stones.some(s => s.product_type) && (
                             <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                              {stone.product_type || ''}
+                              {getProductTypeName(stone.product_type)}
                             </div>
                           )}
                           <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
@@ -443,7 +475,7 @@ export default function ProductDetailPage({
                       })()}
                       {goldKarat && (
                         <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                          {goldKarat}
+                          {getGoldKarat(goldKarat)}
                         </div>
                       )}
                     </div>

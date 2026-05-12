@@ -202,7 +202,11 @@
     "image": "/images/blog-featured.jpg",
     "linkText": "yazının devamı",
     "linkHref": "/blog/pirlanta-hikayeleri",
-    "additionalText": "Bu alanda; yüzüklerden kolyelere, özel gün hediyelerinden pırlanta seçme rehberlerine kadar merak edilen tüm detayları, ilham veren içerikler ve uzman bakış açılarıyla bulacaksınız."
+    "additionalText": "Bu alanda; yüzüklerden kolyelere, özel gün hediyelerinden pırlanta seçme rehberlerine kadar merak edilen tüm detayları, ilham veren içerikler ve uzman bakış açılarıyla bulacaksınız.",
+    "introText": "Her hafta, mücevher dünyasından ilham veren hikâyeler, koleksiyon öyküleri ve özel tasarım serüvenlerimizi sizinle paylaşıyoruz.",
+    "allPostsText": "Tüm blog yazılarımızı okumak için;",
+    "allPostsButtonText": "TÜM PAYLAŞIMLAR",
+    "allPostsLink": "/blog"
   },
   "productDetails": {
     "sarmasik-inci-tanem": {

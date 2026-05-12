@@ -68,11 +68,12 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
 
   useEffect(() => {
     if (!API_URL) return;
-    fetch(`${API_URL}/api/content.php`)
+    const langParam = locale !== 'tr' ? `?locale=${locale}` : '';
+    fetch(`${API_URL}/api/content.php${langParam}`)
       .then(res => res.json())
       .then(data => { if (data.contact) setContactData(data.contact); })
       .catch(() => {});
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
     const fetchHero = async () => {
@@ -81,24 +82,19 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
         const response = await fetch(`${API_URL}/api/pages.php?slug=randevu`);
         if (!response.ok) return;
         const data = await response.json();
-        const localizedTitle =
-          locale === 'en'
-            ? (data.heroTitle_en || data.heroTitle)
-            : locale === 'ru'
-              ? (data.heroTitle_ru || data.heroTitle)
-              : data.heroTitle;
-        const localizedSubtitle =
-          locale === 'en'
-            ? (data.heroSubtitle_en || data.heroSubtitle)
-            : locale === 'ru'
-              ? (data.heroSubtitle_ru || data.heroSubtitle)
-              : data.heroSubtitle;
+        // EN/RU: lokalize değer doluysa onu kullan, yoksa dictionary fallback (TR'ye düşürme)
+        const pickHero = (base: string, fallback: string): string => {
+          if (locale === 'en' && data[`${base}_en`]?.trim()) return data[`${base}_en`];
+          if (locale === 'ru' && data[`${base}_ru`]?.trim()) return data[`${base}_ru`];
+          if (locale === 'tr' && data[base]?.trim()) return data[base];
+          return fallback;
+        };
         setHeroData({
           heroImage: data.heroImage || "/images/categories/ozel-tasarim-card.jpg",
           heroImagePosition: data.heroImagePosition || "50% 50%",
           heroImageScale: data.heroImageScale || 1,
-          heroTitle: localizedTitle || t('appointment.title'),
-          heroSubtitle: localizedSubtitle || t('appointment.subtitle'),
+          heroTitle: pickHero('heroTitle', t('appointment.title')),
+          heroSubtitle: pickHero('heroSubtitle', t('appointment.subtitle')),
         });
       } catch (error) {
         console.error("Randevu sayfa yükleme hatası:", error);
@@ -433,6 +429,7 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
                           selectedDate={selectedDate}
                           onDateSelect={handleDateSelect}
                           bookedDates={bookedDates}
+                          locale={locale}
                         />
                       </div>
 
@@ -444,6 +441,7 @@ function RandevuContentInner({ locale }: RandevuPageContentProps) {
                           onTimeSelect={handleTimeSelect}
                           availableSlots={availableSlots}
                           isLoading={isLoadingSlots}
+                          locale={locale}
                         />
                       </div>
                     </div>

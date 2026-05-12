@@ -16,17 +16,27 @@ $db = getDB();
 switch ($method) {
     case 'GET':
         // Tüm öne çıkan ürünleri getir
-        $stmt = $db->query('
-            SELECT fp.*, p.main_image, p.slug as product_slug, p.name as product_name
+        // display_name_en kolonunun varlığını kontrol et
+        $hasMultilang = false;
+        try {
+            $chk = $db->query("SHOW COLUMNS FROM featured_products LIKE 'display_name_en'");
+            $hasMultilang = $chk->rowCount() > 0;
+        } catch (Exception $e) {}
+
+        $multilangCols = $hasMultilang ? ', fp.display_name_en, fp.display_name_ru, fp.display_category_en, fp.display_category_ru' : '';
+
+        $stmt = $db->query("
+            SELECT fp.id, fp.product_id, fp.display_name, fp.display_category, fp.sort_order, fp.is_active{$multilangCols},
+                   p.main_image, p.slug as product_slug, p.name as product_name
             FROM featured_products fp
             JOIN products p ON fp.product_id = p.id
             WHERE p.is_active = 1
             ORDER BY fp.sort_order ASC
-        ');
+        ");
         $featuredProducts = $stmt->fetchAll();
 
-        $formatted = array_map(function($fp) {
-            return [
+        $formatted = array_map(function($fp) use ($hasMultilang) {
+            $data = [
                 'id' => (int)$fp['id'],
                 'productId' => (int)$fp['product_id'],
                 'productName' => $fp['product_name'],
@@ -37,6 +47,13 @@ switch ($method) {
                 'isActive' => (bool)$fp['is_active'],
                 'link' => '/urun/' . $fp['product_slug']
             ];
+            if ($hasMultilang) {
+                $data['displayNameEn'] = $fp['display_name_en'] ?? '';
+                $data['displayNameRu'] = $fp['display_name_ru'] ?? '';
+                $data['displayCategoryEn'] = $fp['display_category_en'] ?? '';
+                $data['displayCategoryRu'] = $fp['display_category_ru'] ?? '';
+            }
+            return $data;
         }, $featuredProducts);
 
         jsonResponse($formatted);
@@ -107,10 +124,26 @@ switch ($method) {
             $fields[] = 'display_name = ?';
             $values[] = $data['displayName'];
         }
+        if (isset($data['displayNameEn'])) {
+            $fields[] = 'display_name_en = ?';
+            $values[] = $data['displayNameEn'];
+        }
+        if (isset($data['displayNameRu'])) {
+            $fields[] = 'display_name_ru = ?';
+            $values[] = $data['displayNameRu'];
+        }
 
         if (isset($data['displayCategory'])) {
             $fields[] = 'display_category = ?';
             $values[] = $data['displayCategory'];
+        }
+        if (isset($data['displayCategoryEn'])) {
+            $fields[] = 'display_category_en = ?';
+            $values[] = $data['displayCategoryEn'];
+        }
+        if (isset($data['displayCategoryRu'])) {
+            $fields[] = 'display_category_ru = ?';
+            $values[] = $data['displayCategoryRu'];
         }
 
         if (isset($data['sortOrder'])) {

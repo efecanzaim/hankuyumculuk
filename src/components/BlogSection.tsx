@@ -6,12 +6,15 @@ import { getAssetPath } from "@/utils/paths";
 
 interface BlogSectionProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   description: string;
   image: string;
   linkText: string;
   linkHref: string;
-  additionalText?: string;
+  introText?: string;
+  allPostsText?: string;
+  allPostsButtonText?: string;
+  allPostsLink?: string;
 }
 
 function truncateText(text: string, maxLength: number): string {
@@ -27,6 +30,10 @@ export default function BlogSection({
   image,
   linkText,
   linkHref = "#",
+  introText = "Her hafta, mücevher dünyasından ilham veren hikâyeler, koleksiyon öyküleri ve özel tasarım serüvenlerimizi sizinle paylaşıyoruz.",
+  allPostsText = "Tüm blog yazılarımızı okumak için;",
+  allPostsButtonText = "TÜM PAYLAŞIMLAR",
+  allPostsLink = "/blog",
 }: BlogSectionProps) {
   const truncatedDescription = truncateText(description, 160);
 
@@ -74,13 +81,13 @@ export default function BlogSection({
           </Link>
           <div className="border-t border-primary pt-8 mt-4">
             <p className="text-[14px] leading-[26px] font-light text-[#2f3237]/70 mb-5">
-              Her hafta, mücevher dünyasından ilham veren hikâyeler, koleksiyon öyküleri ve özel tasarım serüvenlerimizi sizinle paylaşıyoruz.
+              {introText}
             </p>
             <p className="text-[14px] leading-[26px] font-light text-[#2f3237]/70 mb-3">
-              Tüm blog yazılarımızı okumak için;
+              {allPostsText}
             </p>
-            <Link href="/blog" className="inline-flex items-center justify-center bg-dark text-light h-[46px] w-[210px] text-[12px] tracking-[0.12em] font-light hover:bg-[#3d4147] transition-colors">
-              TÜM PAYLAŞIMLAR
+            <Link href={allPostsLink} className="inline-flex items-center justify-center bg-dark text-light h-[46px] w-[210px] text-[12px] tracking-[0.12em] font-light hover:bg-[#3d4147] transition-colors">
+              {allPostsButtonText}
             </Link>
           </div>
         </div>
@@ -91,16 +98,16 @@ export default function BlogSection({
           {/* Left: Blog intro */}
           <div className="w-1/2 flex flex-col justify-center pr-[60px] lg:pr-[80px] border-r border-primary">
             <p className="text-[16px] lg:text-[18px] leading-[1.9] font-light text-[#2f3237]/75 mb-8">
-              Her hafta, mücevher dünyasından ilham veren hikâyeler, koleksiyon öyküleri ve özel tasarım serüvenlerimizi sizinle paylaşıyoruz.
+              {introText}
             </p>
             <p className="text-[16px] lg:text-[18px] leading-[1.9] font-light text-[#2f3237]/75 mb-4">
-              Tüm blog yazılarımızı okumak için;
+              {allPostsText}
             </p>
             <Link
-              href="/blog"
+              href={allPostsLink}
               className="inline-flex items-center justify-center bg-dark text-light h-[50px] w-[220px] text-[12px] tracking-[0.12em] font-light hover:bg-[#3d4147] transition-colors"
             >
-              TÜM PAYLAŞIMLAR
+              {allPostsButtonText}
             </Link>
           </div>
 

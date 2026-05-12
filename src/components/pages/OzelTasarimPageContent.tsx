@@ -37,15 +37,19 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
   const content = useContent(locale);
   const t = useTranslation(locale);
   const [galleryImages, setGalleryImages] = useState<Array<{ image: string; href: string }>>([]);
+  const [sections, setSections] = useState<Record<string, unknown>>({});
+  const [pageData, setPageData] = useState<Record<string, unknown>>({});
 
   useEffect(() => {
     if (!API_URL) return;
     fetch(`${API_URL}/api/pages.php?slug=ozel-tasarim`)
       .then(r => r.json())
       .then(data => {
+        setPageData(data || {});
         if (data?.content) {
-          const sections = JSON.parse(data.content);
-          const imgs = (sections?.galleryImages || []).map((item: unknown) =>
+          const parsed = JSON.parse(data.content) as Record<string, unknown>;
+          setSections(parsed);
+          const imgs = ((parsed?.galleryImages as unknown[]) || []).map((item: unknown) =>
             typeof item === 'string'
               ? { image: item, href: '' }
               : (item as { image: string; href: string })
@@ -55,6 +59,64 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
       })
       .catch(() => {});
   }, []);
+
+  // DB → TR DB → dictionary fallback zinciri
+  const suffix = locale === 'en' ? 'En' : locale === 'ru' ? 'Ru' : '';
+  const pick = (base: string, fallback: string): string => {
+    if (suffix) {
+      const v = sections[`${base}${suffix}`];
+      if (v && String(v).trim()) return String(v);
+    }
+    const tr = sections[base];
+    if (tr && String(tr).trim()) return String(tr);
+    return fallback;
+  };
+  const pickStep = (idx: number, field: 'label' | 'title' | 'desc', fallback: string): string => {
+    const steps = (sections.steps as Array<Record<string, string>>) || [];
+    const step = steps[idx] || {};
+    if (suffix && step[`${field}${suffix}`]?.trim()) return step[`${field}${suffix}`];
+    if (step[field]?.trim()) return step[field];
+    return fallback;
+  };
+  const heroImage = (pageData.heroImage as string) || "/images/categories/ozel-tasarim-card.jpg";
+  const darkBgImage = (sections.darkBgImage as string) || "/images/parallax-bg.jpg";
+  const splitImage = (sections.splitImage as string) || "/images/trend-left.jpg";
+
+  // Lokalize metinler
+  const txt = {
+    heroSubtitle: pick('heroSubtitle', t('customDesign.brand')),
+    heroTitle: pick('heroTitle', t('customDesign.title')),
+    heroDesc: pick('heroDesc', t('customDesign.heroSubtitle')),
+    // philosophyTitle dictionary'de tek string, virgülle bölünüyor; admin'de 2 ayrı satır var
+    philosophyQuote1: pick('philosophyQuote1', t('customDesign.philosophyTitle').split(',')[0]),
+    philosophyQuote2: pick('philosophyQuote2', t('customDesign.philosophyTitle').split(',').slice(1).join(',').trim()),
+    philosophyText: pick('philosophyText', t('customDesign.philosophyDesc')),
+    splitTitle: pick('splitTitle', t('customDesign.processIntro1')),
+    splitText1: pick('splitText1', t('customDesign.processIntro2')),
+    splitText2: pick('splitText2', t('customDesign.processIntro3')),
+    processTitle: pick('processTitle', t('customDesign.freedomTitle')),
+    processSubtitle: pick('processSubtitle', t('customDesign.freedomDesc')),
+    darkTitle: pick('darkTitle', t('customDesign.darkTitle')),
+    darkText1: pick('darkText1', t('customDesign.darkDesc1')),
+    darkText2: pick('darkText2', t('customDesign.darkDesc2')),
+    ctaTitle1: pick('ctaTitle1', t('customDesign.ctaTitle')),
+    ctaTitle2: pick('ctaTitle2', t('customDesign.ctaSubtitle')),
+    ctaDesc: pick('ctaDesc', t('customDesign.ctaDesc')),
+    ctaButtonText: pick('ctaButtonText', t('common.makeAppointment')),
+    step1Label: pickStep(0, 'label', t('customDesign.step1Title')),
+    step1Title: pickStep(0, 'title', t('customDesign.step1Name')),
+    step1Desc: pickStep(0, 'desc', t('customDesign.step1Desc')),
+    step2Label: pickStep(1, 'label', t('customDesign.step2Title')),
+    step2Title: pickStep(1, 'title', t('customDesign.step2Name')),
+    step2Desc: pickStep(1, 'desc', t('customDesign.step2Desc')),
+    step3Label: pickStep(2, 'label', t('customDesign.step3Title')),
+    step3Title: pickStep(2, 'title', t('customDesign.step3Name')),
+    step3Desc: pickStep(2, 'desc', t('customDesign.step3Desc')),
+    step4Label: pickStep(3, 'label', t('customDesign.step4Title')),
+    step4Title: pickStep(3, 'title', t('customDesign.step4Name')),
+    step4Desc: pickStep(3, 'desc', t('customDesign.step4Desc')),
+  };
+  const ctaButtonLink = (sections.ctaButtonLink as string) || `${getLocalizedPath('appointment', locale)}?subject=size-ozel`;
 
   return (
     <>
@@ -73,8 +135,8 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
           {/* Background Image */}
           <div className="absolute inset-0">
             <Image
-              src={getAssetPath("/images/categories/ozel-tasarim-card.jpg")}
-              alt={t('customDesign.title')}
+              src={getAssetPath(heroImage)}
+              alt={txt.heroTitle}
               fill
               className="object-cover"
               priority
@@ -88,13 +150,13 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
               className="text-[14px] md:text-[16px] tracking-[0.4em] text-white/60 mb-6 uppercase"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              {t('customDesign.brand')}
+              {txt.heroSubtitle}
             </p>
             <h1
               className="text-[50px] md:text-[80px] lg:text-[100px] leading-[1.05] text-white mb-10"
               style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
             >
-              {t('customDesign.title')}
+              {txt.heroTitle}
             </h1>
 
             {/* Decorative Line */}
@@ -104,7 +166,7 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
               className="text-[18px] md:text-[22px] leading-[1.8] text-white/85 font-light max-w-[700px] mx-auto"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              {t('customDesign.heroSubtitle')}
+              {txt.heroDesc}
             </p>
           </div>
 
@@ -118,12 +180,12 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
                 className="text-[26px] md:text-[34px] leading-[1.7] font-light text-[#2f3237]"
                 style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
               >
-                {t('customDesign.philosophyTitle').split(',')[0]},<br />
+                {txt.philosophyQuote1}<br />
                 <span
                   className="text-[24px] md:text-[32px] text-[#2f3237]"
                   style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
                 >
-                  {t('customDesign.philosophyTitle').split(',').slice(1).join(',').trim()}
+                  {txt.philosophyQuote2}
                 </span>
               </p>
             </div>
@@ -131,10 +193,10 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
             <div className="w-[120px] h-[2px] bg-primary mx-auto mb-16" />
 
             <p
-              className="text-[17px] md:text-[19px] leading-loose font-light text-[#2f3237]/75 text-center max-w-[750px] mx-auto"
+              className="text-[17px] md:text-[19px] leading-loose font-light text-[#2f3237]/75 text-center max-w-[750px] mx-auto whitespace-pre-line"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              {t('customDesign.philosophyDesc')}
+              {txt.philosophyText}
             </p>
           </div>
         </section>
@@ -145,8 +207,8 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
             {/* Left - Image */}
             <div className="lg:w-1/2 relative h-[450px] lg:h-auto">
               <Image
-                src={getAssetPath("/images/trend-left.jpg")}
-                alt={t('customDesign.step1Name')}
+                src={getAssetPath(splitImage)}
+                alt={txt.splitTitle}
                 fill
                 className="object-cover"
               />
@@ -156,24 +218,24 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
             <div className="lg:w-1/2 bg-[#f5f5f5] flex items-center">
               <div className="px-8 md:px-16 lg:px-20 py-20 lg:py-0 max-w-[550px] mx-auto lg:mx-0">
                 <p
-                  className="text-[32px] md:text-[40px] leading-[1.1] text-[#2f3237] mb-8"
+                  className="text-[32px] md:text-[40px] leading-[1.1] text-[#2f3237] mb-8 whitespace-pre-line"
                   style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
                 >
-                  {t('customDesign.processIntro1')}
+                  {txt.splitTitle}
                 </p>
 
                 <p
-                  className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75 mb-8"
+                  className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75 mb-8 whitespace-pre-line"
                   style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                 >
-                  {t('customDesign.processIntro2')}
+                  {txt.splitText1}
                 </p>
 
                 <p
-                  className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75"
+                  className="text-[16px] md:text-[17px] leading-loose font-light text-[#2f3237]/75 whitespace-pre-line"
                   style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                 >
-                  {t('customDesign.processIntro3')}
+                  {txt.splitText2}
                 </p>
 
                 <div className="w-[60px] h-[2px] bg-primary mt-10" />
@@ -191,13 +253,13 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
                 className="text-[40px] md:text-[56px] leading-[1.15] text-[#2f3237] mb-8"
                 style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
               >
-                {t('customDesign.freedomTitle')}
+                {txt.processTitle}
               </h2>
               <p
                 className="text-[18px] md:text-[20px] leading-[1.7] font-light text-[#2f3237]/70"
                 style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
               >
-                {t('customDesign.freedomDesc')}
+                {txt.processSubtitle}
               </p>
             </div>
 
@@ -213,19 +275,19 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
                     className="text-[14px] tracking-[0.2em] text-primary mb-3 uppercase"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('customDesign.step1Title')}
+                    {txt.step1Label}
                   </h3>
                   <h4
                     className="text-[28px] md:text-[32px] text-[#2f3237] mb-5"
                     style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
                   >
-                    {t('customDesign.step1Name')}
+                    {txt.step1Title}
                   </h4>
                   <p
-                    className="text-[16px] leading-[1.9] font-light text-[#2f3237]/70"
+                    className="text-[16px] leading-[1.9] font-light text-[#2f3237]/70 whitespace-pre-line"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('customDesign.step1Desc')}
+                    {txt.step1Desc}
                   </p>
                 </div>
 
@@ -265,19 +327,19 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
                     className="text-[14px] tracking-[0.2em] text-primary mb-3 uppercase"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('customDesign.step2Title')}
+                    {txt.step2Label}
                   </h3>
                   <h4
                     className="text-[28px] md:text-[32px] text-[#2f3237] mb-5"
                     style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
                   >
-                    {t('customDesign.step2Name')}
+                    {txt.step2Title}
                   </h4>
                   <p
-                    className="text-[16px] leading-[1.9] font-light text-[#2f3237]/70"
+                    className="text-[16px] leading-[1.9] font-light text-[#2f3237]/70 whitespace-pre-line"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('customDesign.step2Desc')}
+                    {txt.step2Desc}
                   </p>
                 </div>
               </div>
@@ -289,19 +351,19 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
                     className="text-[14px] tracking-[0.2em] text-primary mb-3 uppercase"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('customDesign.step3Title')}
+                    {txt.step3Label}
                   </h3>
                   <h4
                     className="text-[28px] md:text-[32px] text-[#2f3237] mb-5"
                     style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
                   >
-                    {t('customDesign.step3Name')}
+                    {txt.step3Title}
                   </h4>
                   <p
-                    className="text-[16px] leading-[1.9] font-light text-[#2f3237]/70"
+                    className="text-[16px] leading-[1.9] font-light text-[#2f3237]/70 whitespace-pre-line"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('customDesign.step3Desc')}
+                    {txt.step3Desc}
                   </p>
                 </div>
 
@@ -341,19 +403,19 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
                     className="text-[14px] tracking-[0.2em] text-primary mb-3 uppercase"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('customDesign.step4Title')}
+                    {txt.step4Label}
                   </h3>
                   <h4
                     className="text-[28px] md:text-[32px] text-[#2f3237] mb-5"
                     style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
                   >
-                    {t('customDesign.step4Name')}
+                    {txt.step4Title}
                   </h4>
                   <p
-                    className="text-[16px] leading-[1.9] font-light text-[#2f3237]/70"
+                    className="text-[16px] leading-[1.9] font-light text-[#2f3237]/70 whitespace-pre-line"
                     style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
                   >
-                    {t('customDesign.step4Desc')}
+                    {txt.step4Desc}
                   </p>
                 </div>
               </div>
@@ -366,7 +428,7 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
           {/* Background */}
           <div className="absolute inset-0">
             <Image
-              src={getAssetPath("/images/parallax-bg.jpg")}
+              src={getAssetPath(darkBgImage)}
               alt="Background"
               fill
               className="object-cover"
@@ -380,23 +442,23 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
               className="text-[44px] md:text-[60px] leading-[1.15] text-white mb-12"
               style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
             >
-              {t('customDesign.darkTitle')}
+              {txt.darkTitle}
             </h2>
 
             <p
-              className="text-[20px] md:text-[26px] leading-[1.8] font-light text-white/85 mb-10"
+              className="text-[20px] md:text-[26px] leading-[1.8] font-light text-white/85 mb-10 whitespace-pre-line"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              {t('customDesign.darkDesc1')}
+              {txt.darkText1}
             </p>
 
             <div className="w-[80px] h-px bg-primary mx-auto my-12" />
 
             <p
-              className="text-[17px] md:text-[18px] leading-loose font-light text-white/60"
+              className="text-[17px] md:text-[18px] leading-loose font-light text-white/60 whitespace-pre-line"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              {t('customDesign.darkDesc2')}
+              {txt.darkText2}
             </p>
           </div>
         </section>
@@ -408,21 +470,21 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
               className="text-[32px] md:text-[44px] leading-none text-[#2f3237] mb-4"
               style={{ fontFamily: 'var(--font-bw-modelica), cursive' }}
             >
-              {t('customDesign.ctaTitle')}
+              {txt.ctaTitle1}
             </p>
 
             <h2
               className="text-[28px] md:text-[40px] leading-[1.4] text-[#2f3237] mb-6"
               style={{ fontFamily: 'var(--font-faculty-glyphic), serif' }}
             >
-              {t('customDesign.ctaSubtitle')}
+              {txt.ctaTitle2}
             </h2>
 
             <p
-              className="text-[22px] md:text-[28px] leading-[1.6] font-light text-[#2f3237]/70 mb-14"
+              className="text-[22px] md:text-[28px] leading-[1.6] font-light text-[#2f3237]/70 mb-14 whitespace-pre-line"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              {t('customDesign.ctaDesc')}
+              {txt.ctaDesc}
             </p>
 
             {/* Decorative Line */}
@@ -430,11 +492,11 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
 
             {/* CTA Button */}
             <Link
-              href={`${getLocalizedPath('appointment', locale)}?subject=size-ozel`}
+              href={ctaButtonLink}
               className="inline-flex items-center justify-center bg-[#2f3237] text-light text-[14px] tracking-[0.15em] font-light px-14 py-5 hover:bg-[#1a1c1f] transition-all duration-300 group"
               style={{ fontFamily: 'var(--font-bw-modelica), sans-serif' }}
             >
-              {t('common.makeAppointment')}
+              {txt.ctaButtonText}
               <svg
                 className="ml-4 w-5 h-5 group-hover:translate-x-2 transition-transform duration-300"
                 fill="none"
@@ -465,7 +527,7 @@ export default function OzelTasarimPageContent({ locale }: OzelTasarimPageConten
                     <>
                       <Image
                         src={getAssetPath(item.image)}
-                        alt={`${t('customDesign.title')} ${i + 1}`}
+                        alt={`${txt.heroTitle} ${i + 1}`}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-700"
                       />

@@ -103,43 +103,47 @@ export default function HediyePageContent({ locale }: HediyePageContentProps) {
     return sections;
   }, [pageData]);
 
-  // Text content — TR uses DB sections, EN/RU uses translations
-  const txt = locale === 'tr' ? {
-    philosophyTitle1: s.philosophyTitle1,
-    philosophyTitle2: s.philosophyTitle2,
-    philosophyText: s.philosophyText,
-    splitTitle: s.splitTitle,
-    splitText1: s.splitText1,
-    splitText2: s.splitText2,
-    categoriesTitle: s.categoriesTitle,
-    categoriesSubtitle: s.categoriesSubtitle,
-    darkText1: s.darkText1,
-    darkText2: s.darkText2,
-    darkText3: s.darkText3,
-    ctaSmallTitle: s.ctaSmallTitle,
-    ctaTitle: s.ctaTitle,
-    ctaSubtitle: s.ctaSubtitle,
-    heroTitle: (pageData?.heroTitle as string) || "Hediye",
-    heroSubtitle: (pageData?.heroSubtitle as string) || "Kalplerde bir iz olarak kalan özel günler vardır",
-    catExplore: "Keşfet",
-  } : {
-    philosophyTitle1: t('gifts.philosophyTitle1'),
-    philosophyTitle2: t('gifts.philosophyTitle2'),
-    philosophyText: `${t('gifts.philosophySubtitle')}\n\n${t('gifts.philosophyDesc')}`,
-    splitTitle: t('gifts.valueTitle'),
-    splitText1: t('gifts.valueDesc'),
-    splitText2: t('gifts.valueDesc2'),
-    categoriesTitle: t('gifts.categoriesTitle'),
-    categoriesSubtitle: t('gifts.categoriesSubtitle'),
-    darkText1: t('gifts.darkDesc1'),
-    darkText2: t('gifts.darkDesc2'),
-    darkText3: t('gifts.darkDesc3'),
-    ctaSmallTitle: t('gifts.ctaTitle'),
-    ctaTitle: t('gifts.ctaSubtitle'),
-    ctaSubtitle: t('gifts.ctaDesc'),
-    heroTitle: t('gifts.title'),
-    heroSubtitle: t('gifts.heroSubtitle'),
-    catExplore: t('gifts.catExplore'),
+  // Lokalize seçici: önce DB'deki o dilin değeri, yoksa TR DB değeri, yoksa dictionary fallback
+  const sAny = s as Record<string, unknown>;
+  const suffix = locale === 'en' ? 'En' : locale === 'ru' ? 'Ru' : '';
+  const sPick = (base: string, fallback: string): string => {
+    if (suffix) {
+      const v = sAny[`${base}${suffix}`];
+      if (v && String(v).trim()) return String(v);
+    }
+    const tr = sAny[base];
+    if (tr && String(tr).trim()) return String(tr);
+    return fallback;
+  };
+  const pd = pageData as Record<string, unknown> | undefined;
+  const heroPick = (base: string, fallback: string): string => {
+    if (suffix) {
+      const v = pd?.[`${base}_${locale}`];
+      if (v && String(v).trim()) return String(v);
+    }
+    const tr = pd?.[base];
+    if (tr && String(tr).trim()) return String(tr);
+    return fallback;
+  };
+
+  const txt = {
+    philosophyTitle1: sPick('philosophyTitle1', t('gifts.philosophyTitle1')),
+    philosophyTitle2: sPick('philosophyTitle2', t('gifts.philosophyTitle2')),
+    philosophyText: sPick('philosophyText', `${t('gifts.philosophySubtitle')}\n\n${t('gifts.philosophyDesc')}`),
+    splitTitle: sPick('splitTitle', t('gifts.valueTitle')),
+    splitText1: sPick('splitText1', t('gifts.valueDesc')),
+    splitText2: sPick('splitText2', t('gifts.valueDesc2')),
+    categoriesTitle: sPick('categoriesTitle', t('gifts.categoriesTitle')),
+    categoriesSubtitle: sPick('categoriesSubtitle', t('gifts.categoriesSubtitle')),
+    darkText1: sPick('darkText1', t('gifts.darkDesc1')),
+    darkText2: sPick('darkText2', t('gifts.darkDesc2')),
+    darkText3: sPick('darkText3', t('gifts.darkDesc3')),
+    ctaSmallTitle: sPick('ctaSmallTitle', t('gifts.ctaTitle')),
+    ctaTitle: sPick('ctaTitle', t('gifts.ctaSubtitle')),
+    ctaSubtitle: sPick('ctaSubtitle', t('gifts.ctaDesc')),
+    heroTitle: heroPick('heroTitle', locale === 'tr' ? 'Hediye' : t('gifts.title')),
+    heroSubtitle: heroPick('heroSubtitle', locale === 'tr' ? 'Kalplerde bir iz olarak kalan özel günler vardır' : t('gifts.heroSubtitle')),
+    catExplore: locale === 'tr' ? 'Keşfet' : t('gifts.catExplore'),
   };
 
   // Images — always from DB (locale-independent)
@@ -147,15 +151,25 @@ export default function HediyePageContent({ locale }: HediyePageContentProps) {
   const splitImage = s.splitImage || "/images/trend-left.jpg";
   const darkBgImage = s.darkBgImage || "/images/parallax-bg.jpg";
 
-  // Categories — TR uses DB sections, EN/RU uses translations + localized paths
-  const categories = locale === 'tr'
-    ? (s.categories as Array<{ title: string; description: string; image: string; href: string }> || defaultSections.categories)
-    : [
-        { title: t('gifts.catRing'), description: t('gifts.catRingDesc'), image: "/images/products/product-1.jpg", href: getLocalizedPath('jewelry/rings', locale) },
-        { title: t('gifts.catNecklace'), description: t('gifts.catNecklaceDesc'), image: "/images/products/product-2.jpg", href: getLocalizedPath('jewelry/necklaces', locale) },
-        { title: t('gifts.catBracelet'), description: t('gifts.catBraceletDesc'), image: "/images/products/product-3.jpg", href: getLocalizedPath('jewelry/bracelets', locale) },
-        { title: t('gifts.catEarring'), description: t('gifts.catEarringDesc'), image: "/images/products/product-4.jpg", href: getLocalizedPath('jewelry/earrings', locale) },
-      ];
+  // Categories — DB'deki TR kartları kullan, başlık/açıklama lokalize (TR'de title, EN'de titleEn vb.)
+  const dbCategories = (s.categories as Array<Record<string, string>>) || (defaultSections.categories as Array<Record<string, string>>);
+  const localizedDefaults = locale === 'tr' ? null : [
+    { title: t('gifts.catRing'), description: t('gifts.catRingDesc'), href: getLocalizedPath('jewelry/rings', locale) },
+    { title: t('gifts.catNecklace'), description: t('gifts.catNecklaceDesc'), href: getLocalizedPath('jewelry/necklaces', locale) },
+    { title: t('gifts.catBracelet'), description: t('gifts.catBraceletDesc'), href: getLocalizedPath('jewelry/bracelets', locale) },
+    { title: t('gifts.catEarring'), description: t('gifts.catEarringDesc'), href: getLocalizedPath('jewelry/earrings', locale) },
+  ];
+  const categories = dbCategories.map((c, i) => {
+    const titleKey = suffix ? `title${suffix}` : 'title';
+    const descKey = suffix ? `description${suffix}` : 'description';
+    const fallback = localizedDefaults?.[i];
+    return {
+      title: c[titleKey] || c.title || fallback?.title || '',
+      description: c[descKey] || c.description || fallback?.description || '',
+      image: c.image || (defaultSections.categories[i]?.image || ''),
+      href: c.href || fallback?.href || '#',
+    };
+  });
 
   return (
     <>

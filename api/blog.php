@@ -42,32 +42,67 @@ switch ($method) {
                 jsonResponse(['error' => 'Blog yazısı bulunamadı'], 404);
             }
         } elseif (isset($_GET['slug'])) {
+            $lang = $_GET['lang'] ?? 'tr';
             $stmt = $db->prepare("SELECT * FROM blog_posts WHERE slug = ? AND status = 'published'");
             $stmt->execute([$_GET['slug']]);
             $post = $stmt->fetch();
 
             if ($post) {
+                if ($lang !== 'tr') {
+                    $post = localizePost($post, $lang);
+                }
                 jsonResponse($post);
             } else {
                 jsonResponse(['error' => 'Blog yazısı bulunamadı'], 404);
             }
         } elseif (isset($_GET['latest'])) {
-            // En son yayınlanan blog yazısı
-            $stmt = $db->query("SELECT * FROM blog_posts WHERE status = 'published' ORDER BY published_at DESC LIMIT 1");
+            // En son yayınlanan blog yazısı (dile göre filtrele)
+            $lang = $_GET['lang'] ?? 'tr';
+            if ($lang === 'en') {
+                $stmt = $db->query("SELECT * FROM blog_posts WHERE status = 'published' AND title_en IS NOT NULL AND title_en != '' ORDER BY published_at DESC LIMIT 1");
+            } elseif ($lang === 'ru') {
+                $stmt = $db->query("SELECT * FROM blog_posts WHERE status = 'published' AND title_ru IS NOT NULL AND title_ru != '' ORDER BY published_at DESC LIMIT 1");
+            } else {
+                $stmt = $db->query("SELECT * FROM blog_posts WHERE status = 'published' ORDER BY published_at DESC LIMIT 1");
+            }
             $post = $stmt->fetch();
+            if ($post && $lang !== 'tr') {
+                $post = localizePost($post, $lang);
+            }
             jsonResponse($post ?: null);
         } else {
             // Tüm blog yazıları
             $status = $_GET['status'] ?? null;
+            $lang = $_GET['lang'] ?? 'tr';
+
+            $params = [];
+            $where = [];
 
             if ($status) {
-                $stmt = $db->prepare("SELECT * FROM blog_posts WHERE status = ? ORDER BY created_at DESC");
-                $stmt->execute([$status]);
-            } else {
-                $stmt = $db->query("SELECT * FROM blog_posts ORDER BY created_at DESC");
+                $where[] = 'status = ?';
+                $params[] = $status;
             }
 
+            // Dile göre sadece o dilde içeriği olan yazıları getir
+            if ($lang === 'en') {
+                $where[] = "title_en IS NOT NULL AND title_en != ''";
+            } elseif ($lang === 'ru') {
+                $where[] = "title_ru IS NOT NULL AND title_ru != ''";
+            }
+
+            $sql = "SELECT * FROM blog_posts";
+            if (!empty($where)) $sql .= " WHERE " . implode(' AND ', $where);
+            $sql .= " ORDER BY created_at DESC";
+
+            $stmt = $db->prepare($sql);
+            $stmt->execute($params);
             $posts = $stmt->fetchAll();
+
+            // Lokalize alanları döndür
+            if ($lang !== 'tr') {
+                $posts = array_map(fn($p) => localizePost($p, $lang), $posts);
+            }
+
             jsonResponse($posts);
         }
         break;
@@ -222,6 +257,20 @@ switch ($method) {
 
     default:
         jsonResponse(['error' => 'Geçersiz method'], 405);
+}
+
+// Blog yazısını verilen dile göre lokalize et
+function localizePost($post, $lang) {
+    if ($lang === 'en') {
+        if (!empty($post['title_en']))   $post['title']   = $post['title_en'];
+        if (!empty($post['excerpt_en'])) $post['excerpt'] = $post['excerpt_en'];
+        if (!empty($post['content_en'])) $post['content'] = $post['content_en'];
+    } elseif ($lang === 'ru') {
+        if (!empty($post['title_ru']))   $post['title']   = $post['title_ru'];
+        if (!empty($post['excerpt_ru'])) $post['excerpt'] = $post['excerpt_ru'];
+        if (!empty($post['content_ru'])) $post['content'] = $post['content_ru'];
+    }
+    return $post;
 }
 
 // Slug oluşturma fonksiyonu
