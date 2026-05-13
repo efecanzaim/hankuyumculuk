@@ -282,9 +282,6 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
                 $stmt->execute($params);
             }
 
-            // Kartları kaydet - önce mevcut kartları temizle
-            $db->exec('DELETE FROM homepage_cards');
-
             // Konum/zoom sütunları var mı kontrol et
             $hasCardAdjustCols = false;
             try {
@@ -292,48 +289,74 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
                 $hasCardAdjustCols = $checkCol->rowCount() > 0;
             } catch (Exception $e) {}
 
-            // Üst kartları ekle
-            $topCards = $value['topCards'] ?? [];
-            if ($hasCardAdjustCols) {
-                $insertStmt = $db->prepare('INSERT INTO homepage_cards (title, subtitle, image, link, button_text, section_type, sort_order, is_active, image_position, image_scale) VALUES (?,?,?,?,?,?,?,1,?,?)');
-            } else {
-                $insertStmt = $db->prepare('INSERT INTO homepage_cards (title, subtitle, image, link, button_text, section_type, sort_order, is_active) VALUES (?,?,?,?,?,?,?,1)');
-            }
-            foreach ($topCards as $i => $card) {
-                $params = [
-                    $card['title'] ?? '',
-                    $card['subtitle'] ?? '',
-                    $card['image'] ?? '',
-                    $card['link'] ?? '',
-                    $card['buttonText'] ?? '',
-                    'top',
-                    $i + 1
-                ];
-                if ($hasCardAdjustCols) {
-                    $params[] = $card['imagePosition'] ?? '50% 50%';
-                    $params[] = $card['imageScale'] ?? 1;
-                }
-                $insertStmt->execute($params);
-            }
+            // Kartları upsert et (DELETE yapmıyoruz; aksi halde _en/_ru çevirileri kaybolur)
+            // Her section_type için sort_order'a göre UPDATE; yoksa INSERT; fazlalık satırları DELETE.
+            $upsertSection = function (string $sectionType) use ($db, $value, $hasCardAdjustCols) {
+                $cards = $value[$sectionType === 'top' ? 'topCards' : 'bottomCards'] ?? [];
 
-            // Alt kartları ekle
-            $bottomCards = $value['bottomCards'] ?? [];
-            foreach ($bottomCards as $i => $card) {
-                $params = [
-                    $card['title'] ?? '',
-                    $card['subtitle'] ?? '',
-                    $card['image'] ?? '',
-                    $card['link'] ?? '',
-                    $card['buttonText'] ?? '',
-                    'bottom',
-                    $i + 1
-                ];
+                // Mevcut kart sayısını öğren
+                $existingStmt = $db->prepare('SELECT sort_order FROM homepage_cards WHERE section_type=? ORDER BY sort_order ASC');
+                $existingStmt->execute([$sectionType]);
+                $existingOrders = array_column($existingStmt->fetchAll(), 'sort_order');
+
                 if ($hasCardAdjustCols) {
-                    $params[] = $card['imagePosition'] ?? '50% 50%';
-                    $params[] = $card['imageScale'] ?? 1;
+                    $updateSql = 'UPDATE homepage_cards SET title=?, subtitle=?, image=?, link=?, button_text=?, image_position=?, image_scale=?, is_active=1 WHERE section_type=? AND sort_order=?';
+                    $insertSql = 'INSERT INTO homepage_cards (title, subtitle, image, link, button_text, section_type, sort_order, is_active, image_position, image_scale) VALUES (?,?,?,?,?,?,?,1,?,?)';
+                } else {
+                    $updateSql = 'UPDATE homepage_cards SET title=?, subtitle=?, image=?, link=?, button_text=?, is_active=1 WHERE section_type=? AND sort_order=?';
+                    $insertSql = 'INSERT INTO homepage_cards (title, subtitle, image, link, button_text, section_type, sort_order, is_active) VALUES (?,?,?,?,?,?,?,1)';
                 }
-                $insertStmt->execute($params);
-            }
+                $updateStmt = $db->prepare($updateSql);
+                $insertStmt = $db->prepare($insertSql);
+
+                foreach ($cards as $i => $card) {
+                    $sortOrder = $i + 1;
+                    $existsForOrder = in_array($sortOrder, $existingOrders, true);
+                    if ($existsForOrder) {
+                        $params = [
+                            $card['title'] ?? '',
+                            $card['subtitle'] ?? '',
+                            $card['image'] ?? '',
+                            $card['link'] ?? '',
+                            $card['buttonText'] ?? '',
+                        ];
+                        if ($hasCardAdjustCols) {
+                            $params[] = $card['imagePosition'] ?? '50% 50%';
+                            $params[] = $card['imageScale'] ?? 1;
+                        }
+                        $params[] = $sectionType;
+                        $params[] = $sortOrder;
+                        $updateStmt->execute($params);
+                    } else {
+                        $params = [
+                            $card['title'] ?? '',
+                            $card['subtitle'] ?? '',
+                            $card['image'] ?? '',
+                            $card['link'] ?? '',
+                            $card['buttonText'] ?? '',
+                            $sectionType,
+                            $sortOrder,
+                        ];
+                        if ($hasCardAdjustCols) {
+                            $params[] = $card['imagePosition'] ?? '50% 50%';
+                            $params[] = $card['imageScale'] ?? 1;
+                        }
+                        $insertStmt->execute($params);
+                    }
+                }
+
+                // Fazlalık satırları temizle (yeni listede olmayan sort_order'lar)
+                $newCount = count($cards);
+                if ($newCount === 0) {
+                    $db->prepare('DELETE FROM homepage_cards WHERE section_type=?')->execute([$sectionType]);
+                } else {
+                    $del = $db->prepare('DELETE FROM homepage_cards WHERE section_type=? AND sort_order>?');
+                    $del->execute([$sectionType, $newCount]);
+                }
+            };
+
+            $upsertSection('top');
+            $upsertSection('bottom');
 
             return true;
 
