@@ -297,7 +297,7 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
                 // Mevcut kart sayısını öğren
                 $existingStmt = $db->prepare('SELECT sort_order FROM homepage_cards WHERE section_type=? ORDER BY sort_order ASC');
                 $existingStmt->execute([$sectionType]);
-                $existingOrders = array_column($existingStmt->fetchAll(), 'sort_order');
+                $existingOrders = array_map('intval', array_column($existingStmt->fetchAll(), 'sort_order'));
 
                 if ($hasCardAdjustCols) {
                     $updateSql = 'UPDATE homepage_cards SET title=?, subtitle=?, image=?, link=?, button_text=?, image_position=?, image_scale=?, is_active=1 WHERE section_type=? AND sort_order=?';
