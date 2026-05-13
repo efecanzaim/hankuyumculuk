@@ -3,6 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getAssetPath } from "@/utils/paths";
+import { getLocalizedPath, getPageIdFromPath, type Locale } from "@/i18n/config";
+
+function localizeLink(link: string | undefined, locale: Locale): string {
+  if (!link) return "#";
+  if (locale === 'tr') return link;
+  // Preserve query/hash
+  const queryIdx = link.search(/[?#]/);
+  const pathPart = queryIdx >= 0 ? link.slice(0, queryIdx) : link;
+  const suffix = queryIdx >= 0 ? link.slice(queryIdx) : "";
+  const pageId = getPageIdFromPath(pathPart);
+  if (!pageId) return link;
+  return getLocalizedPath(pageId, locale) + suffix;
+}
 
 interface TopCard {
   title: string;
@@ -28,13 +41,15 @@ interface SpecialDesignSectionProps {
   bottomCards: BottomCard[];
   titlePart1?: string;
   titlePart2?: string;
+  locale: Locale;
 }
 
-export default function SpecialDesignSection({ 
-  topCards, 
+export default function SpecialDesignSection({
+  topCards,
   bottomCards,
   titlePart1 = "KENDİNİZİ",
-  titlePart2 = "ÖZEL HİSSEDİN"
+  titlePart2 = "ÖZEL HİSSEDİN",
+  locale,
 }: SpecialDesignSectionProps) {
   return (
     <section className="bg-white">
@@ -80,7 +95,7 @@ export default function SpecialDesignSection({
 
                 {/* Button */}
                 <Link
-                  href={card.link || "#"}
+                  href={localizeLink(card.link, locale)}
                   className="bg-dark text-light text-[13px] leading-[15px] font-light h-[50px] w-[230px] mx-auto flex items-center justify-center hover:bg-[#1a1c1f] transition-colors duration-300"
                 >
                   {card.buttonText}
@@ -113,7 +128,7 @@ export default function SpecialDesignSection({
 
                 {/* Button */}
                 <Link
-                  href={card.link || "#"}
+                  href={localizeLink(card.link, locale)}
                   className="bg-dark text-light text-[13px] leading-[15px] font-light h-[50px] w-[230px] mx-auto flex items-center justify-center hover:bg-[#1a1c1f] transition-colors duration-300"
                 >
                   {card.buttonText}
@@ -153,7 +168,7 @@ export default function SpecialDesignSection({
 
                 {/* Button */}
                 <Link
-                  href={card.link || "#"}
+                  href={localizeLink(card.link, locale)}
                   className="bg-dark text-light text-[13px] leading-[15px] font-light h-[50px] w-[250px] mx-auto flex items-center justify-center hover:bg-[#1a1c1f] transition-colors duration-300"
                 >
                   {card.buttonText}

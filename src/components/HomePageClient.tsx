@@ -106,11 +106,12 @@ export default function HomePageClient() {
       />
 
       {/* Special Design Section */}
-      <SpecialDesignSection 
+      <SpecialDesignSection
         topCards={content.specialDesignSection?.topCards || []}
         bottomCards={content.specialDesignSection?.bottomCards || []}
         titlePart1={content.specialDesignSection?.titlePart1}
         titlePart2={content.specialDesignSection?.titlePart2}
+        locale={locale}
       />
 
       {/* Blog Section - En son yayınlanan blog yazısı veya varsayılan içerik */}
