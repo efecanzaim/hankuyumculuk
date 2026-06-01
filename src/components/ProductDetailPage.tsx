@@ -42,6 +42,7 @@ const certLabels: Record<string, Record<Locale, string>> = {
   cut: { tr: 'Kesim', en: 'Cut', ru: 'Огранка' },
   goldWeight: { tr: 'Altın Ağırlığı', en: 'Gold Weight', ru: 'Вес золота' },
   goldKarat: { tr: 'Altın Ayar', en: 'Gold Karat', ru: 'Проба золота' },
+  productType: { tr: 'Tip', en: 'Type', ru: 'Тип' },
 };
 
 // Taş türü çevirileri
@@ -373,68 +374,101 @@ export default function ProductDetailPage({
                 {/* Taş Bilgileri Tablosu */}
                 {stones && stones.length > 0 && (
                   <div className="mb-[40px]">
-                    {/* Tablo Başlıkları */}
-                    <div className={`grid ${stones.some(s => s.product_type) ? 'grid-cols-7' : 'grid-cols-6'} gap-4 mb-[20px]`}>
-                      {stones.some(s => s.product_type) && <div />}
-                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        {label('stone')}
+                    {/* Desktop: Grid tablo */}
+                    <div className="hidden md:block">
+                      {/* Tablo Başlıkları */}
+                      <div className={`grid ${stones.some(s => s.product_type) ? 'grid-cols-7' : 'grid-cols-6'} gap-4 mb-[20px]`}>
+                        {stones.some(s => s.product_type) && <div />}
+                        <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                          {label('stone')}
+                        </div>
+                        <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                          {label('carat')}
+                        </div>
+                        <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                          {label('quantity')}
+                        </div>
+                        <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                          {label('color')}
+                        </div>
+                        <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                          {label('clarity')}
+                        </div>
+                        <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                          {label('cut')}
+                        </div>
                       </div>
-                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        {label('carat')}
-                      </div>
-                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        {label('quantity')}
-                      </div>
-                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        {label('color')}
-                      </div>
-                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        {label('clarity')}
-                      </div>
-                      <div className="text-[15px] leading-[25px] text-[#2f3237] font-bold text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                        {label('cut')}
-                      </div>
+
+                      {/* Ayırıcı Çizgi */}
+                      <div className="w-full h-px bg-light mb-[20px]"></div>
+
+                      {/* Taş Satırları */}
+                      {stones.map((stone, index) => (
+                        <div key={index}>
+                          <div className={`grid ${stones.some(s => s.product_type) ? 'grid-cols-7' : 'grid-cols-6'} gap-4 mb-[20px]`}>
+                            {stones.some(s => s.product_type) && (
+                              <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                                {getProductTypeName(stone.product_type)}
+                              </div>
+                            )}
+                            <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                              {getStoneName(stone.stone_type)}
+                            </div>
+                            <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                              {(() => {
+                                const caratNum = toNumber(stone.carat);
+                                return caratNum !== null ? caratNum.toFixed(2).replace('.', ',') : '-';
+                              })()}
+                            </div>
+                            <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                              {stone.quantity}
+                            </div>
+                            <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                              {stone.color || '-'}
+                            </div>
+                            <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                              {stone.clarity || '-'}
+                            </div>
+                            <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                              {getCutName(stone.cut)}
+                            </div>
+                          </div>
+                          {index < stones.length - 1 && (
+                            <div className="w-full h-px bg-light mb-[20px]"></div>
+                          )}
+                        </div>
+                      ))}
                     </div>
 
-                    {/* Ayırıcı Çizgi */}
-                    <div className="w-full h-px bg-light mb-[20px]"></div>
-
-                    {/* Taş Satırları */}
-                    {stones.map((stone, index) => (
-                      <div key={index}>
-                        <div className={`grid ${stones.some(s => s.product_type) ? 'grid-cols-7' : 'grid-cols-6'} gap-4 mb-[20px]`}>
-                          {stones.some(s => s.product_type) && (
-                            <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                              {getProductTypeName(stone.product_type)}
-                            </div>
-                          )}
-                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                            {getStoneName(stone.stone_type)}
+                    {/* Mobile: Kart yapısı (label: değer satırları) */}
+                    <div className="md:hidden space-y-4">
+                      {stones.map((stone, index) => {
+                        const caratNum = toNumber(stone.carat);
+                        const rows: Array<[string, string | number]> = [];
+                        if (stone.product_type) rows.push([label('productType'), getProductTypeName(stone.product_type)]);
+                        rows.push([label('stone'), getStoneName(stone.stone_type)]);
+                        rows.push([label('carat'), caratNum !== null ? caratNum.toFixed(2).replace('.', ',') : '-']);
+                        rows.push([label('quantity'), stone.quantity ?? '-']);
+                        rows.push([label('color'), stone.color || '-']);
+                        rows.push([label('clarity'), stone.clarity || '-']);
+                        rows.push([label('cut'), getCutName(stone.cut)]);
+                        return (
+                          <div key={index} className="border border-light rounded-md p-4">
+                            <p className="text-[13px] font-bold text-[#2f3237] mb-3 text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                              {stones.length > 1 ? `${label('stone')} ${index + 1}` : label('stone')}
+                            </p>
+                            <dl className="grid grid-cols-1 gap-y-2">
+                              {rows.map(([k, v], i) => (
+                                <div key={i} className="flex justify-between gap-3 text-[14px] leading-[20px]" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
+                                  <dt className="text-[#2f3237] font-bold shrink-0">{k}</dt>
+                                  <dd className="text-[#2f3237] font-light text-right break-words">{v}</dd>
+                                </div>
+                              ))}
+                            </dl>
                           </div>
-                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                            {(() => {
-                              const caratNum = toNumber(stone.carat);
-                              return caratNum !== null ? caratNum.toFixed(2).replace('.', ',') : '-';
-                            })()}
-                          </div>
-                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                            {stone.quantity}
-                          </div>
-                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                            {stone.color || '-'}
-                          </div>
-                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                            {stone.clarity || '-'}
-                          </div>
-                          <div className="text-[15px] leading-[45px] text-[#2f3237] font-light text-center" style={{ fontFamily: 'var(--font-bw-modelica)' }}>
-                            {getCutName(stone.cut)}
-                          </div>
-                        </div>
-                        {index < stones.length - 1 && (
-                          <div className="w-full h-px bg-light mb-[20px]"></div>
-                        )}
-                      </div>
-                    ))}
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
 
