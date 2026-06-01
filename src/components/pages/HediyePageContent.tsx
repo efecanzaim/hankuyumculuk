@@ -5,8 +5,19 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useContent } from "@/hooks/useContent";
 import { useTranslation } from "@/i18n/useTranslation";
-import { getLocalizedPath } from "@/i18n/config";
+import { getLocalizedPath, getPageIdFromPath } from "@/i18n/config";
 import type { Locale } from "@/i18n/config";
+
+function localizeHref(href: string | undefined, locale: Locale): string {
+  if (!href) return "#";
+  if (locale === 'tr') return href;
+  const queryIdx = href.search(/[?#]/);
+  const pathPart = queryIdx >= 0 ? href.slice(0, queryIdx) : href;
+  const suffix = queryIdx >= 0 ? href.slice(queryIdx) : "";
+  const pageId = getPageIdFromPath(pathPart);
+  if (!pageId) return href;
+  return getLocalizedPath(pageId, locale) + suffix;
+}
 import Link from "next/link";
 import Image from "next/image";
 import { getAssetPath } from "@/utils/paths";
@@ -171,7 +182,7 @@ export default function HediyePageContent({ locale }: HediyePageContentProps) {
       title: titleVal,
       description: descVal,
       image: c.image || (defaultSections.categories[i]?.image || ''),
-      href: c.href || fallback?.href || '#',
+      href: c.href ? localizeHref(c.href, locale) : (fallback?.href || '#'),
     };
   });
 
