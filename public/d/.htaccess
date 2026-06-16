@@ -1,0 +1,11 @@
+# PDF dosyaları: masaüstünde indirme yerine tarayıcıda inline aç
+<IfModule mod_headers.c>
+  <FilesMatch "\.pdf$">
+    Header set Content-Disposition "inline"
+    Header set X-Content-Type-Options "nosniff"
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+</IfModule>
+
+# Dizin listelemesini engelle (kullanıcı /d/ açarsa dosya listesini görmesin)
+Options -Indexes
