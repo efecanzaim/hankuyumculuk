@@ -31,6 +31,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
   const router = useRouter();
   const isHomePage = pathname === '/' || pathname === `/${locale}` || pathname === `/${locale}/`;
   const menuImages = (content as Record<string, unknown>)?.menuImages as Record<string, string> | undefined;
+  const instagramUrl = (content?.header as Record<string, unknown>)?.instagramUrl as string || "https://www.instagram.com/hankuyumculuk_";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topBannerVisible, setTopBannerVisible] = useState(bannerVisible);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -162,7 +163,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
                     textClassName={`text-[11px] font-normal whitespace-nowrap ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
                   />
                   <Link
-                    href="https://www.instagram.com/hankuyumculuk_"
+                    href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`hover:opacity-70 transition-opacity shrink-0 ${isTransparent && !activeMenu ? 'text-white' : 'text-[#2f3237]'}`}
@@ -299,7 +300,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
             </div>
 
             <Link
-              href="https://www.instagram.com/hankuyumculuk_"
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`w-[30px] flex justify-end ${isTransparent ? 'text-white' : 'text-[#2f3237]'}`}
@@ -344,7 +345,7 @@ export default function Header({ logo, logoAlt, mainNav, isTransparent = false, 
               </div>
 
               <Link
-                href="https://www.instagram.com/hankuyumculuk_"
+                href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#2f3237] w-[30px] flex justify-end"

@@ -443,6 +443,7 @@ try {
         'header' => [
             'logo' => $headerSettings['logo_image'] ?? '/images/logo.png',
             'logoAlt' => $headerSettings['logo_alt'] ?? 'Han Kuyumculuk',
+            'instagramUrl' => $headerSettings['instagram_url'] ?? 'https://www.instagram.com/hankuyumculuk_',
             'topLinks' => [
                 ['text' => 'Hakkımızda', 'href' => '/hakkimizda'],
                 ['text' => 'Blog', 'href' => '/blog']

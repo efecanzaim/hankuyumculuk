@@ -4234,6 +4234,11 @@ export default function AdminPanel() {
                                             className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
                                           >
                                             <option value="Pırlanta">Pırlanta</option>
+                                            <option value="Sarı Pırlanta">Sarı Pırlanta</option>
+                                            <option value="Mavi Pırlanta">Mavi Pırlanta</option>
+                                            <option value="Yeşil Pırlanta">Yeşil Pırlanta</option>
+                                            <option value="Konyak Pırlanta">Konyak Pırlanta</option>
+                                            <option value="Kahverengi Pırlanta">Kahverengi Pırlanta</option>
                                             <option value="Yakut">Yakut</option>
                                             <option value="Zümrüt">Zümrüt</option>
                                             <option value="Safir">Safir</option>
@@ -4656,6 +4661,11 @@ export default function AdminPanel() {
                                       className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded px-2 py-1.5 text-white text-xs"
                                     >
                                       <option value="Pırlanta">Pırlanta</option>
+                                      <option value="Sarı Pırlanta">Sarı Pırlanta</option>
+                                      <option value="Mavi Pırlanta">Mavi Pırlanta</option>
+                                      <option value="Yeşil Pırlanta">Yeşil Pırlanta</option>
+                                      <option value="Konyak Pırlanta">Konyak Pırlanta</option>
+                                      <option value="Kahverengi Pırlanta">Kahverengi Pırlanta</option>
                                       <option value="Yakut">Yakut</option>
                                       <option value="Zümrüt">Zümrüt</option>
                                       <option value="Safir">Safir</option>
@@ -6948,6 +6958,12 @@ export default function AdminPanel() {
                     value={(activeContent?.contact as Record<string, unknown>)?.workingHours as string || ""}
                     onChange={(v) => updateField("contact", "workingHours", v)}
                     placeholder={contentLang !== 'tr' ? (content?.contact as Record<string, unknown>)?.workingHours as string : undefined}
+                  />
+                  <InputField
+                    label="Header (üst menü) Instagram ikonu URL — tüm diller için ortak"
+                    value={(content?.header as Record<string, unknown>)?.instagramUrl as string ?? ""}
+                    onChange={(v) => setContent((prev) => prev ? ({ ...prev, header: { ...(prev.header as Record<string, unknown>), instagramUrl: v } } as ContentType) : prev)}
+                    placeholder="https://www.instagram.com/..."
                   />
                   <InputField
                     label="Instagram 1 (kullanıcı adı)"

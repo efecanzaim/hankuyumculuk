@@ -100,17 +100,27 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
             return $stmt->execute([$text, $visible]);
 
         case 'header':
-            // Header alanları dil bağımsız (logo, logoAlt)
+            // Header alanları dil bağımsız (logo, logoAlt, instagramUrl)
             if ($locale !== 'tr') return true;
             $logo = $value['logo'] ?? '/images/logo.png';
             $logoAlt = $value['logoAlt'] ?? 'Han Kuyumculuk';
+            $instagramUrl = $value['instagramUrl'] ?? 'https://www.instagram.com/hankuyumculuk_';
+            // instagram_url kolonunun varlığını kontrol et, yoksa ekle
+            try {
+                $checkCol = $db->query("SHOW COLUMNS FROM header_settings LIKE 'instagram_url'");
+                if ($checkCol->rowCount() === 0) {
+                    $db->exec("ALTER TABLE header_settings ADD COLUMN instagram_url VARCHAR(255) DEFAULT 'https://www.instagram.com/hankuyumculuk_' AFTER logo_alt");
+                }
+            } catch (Exception $e) {
+                error_log('header_settings instagram_url migration failed: ' . $e->getMessage());
+            }
             $stmt = $db->query('SELECT id FROM header_settings LIMIT 1');
             if ($stmt->fetch()) {
-                $stmt = $db->prepare('UPDATE header_settings SET logo_image = ?, logo_alt = ? LIMIT 1');
-                return $stmt->execute([$logo, $logoAlt]);
+                $stmt = $db->prepare('UPDATE header_settings SET logo_image = ?, logo_alt = ?, instagram_url = ? LIMIT 1');
+                return $stmt->execute([$logo, $logoAlt, $instagramUrl]);
             }
-            $stmt = $db->prepare('INSERT INTO header_settings (logo_image, logo_alt) VALUES (?, ?)');
-            return $stmt->execute([$logo, $logoAlt]);
+            $stmt = $db->prepare('INSERT INTO header_settings (logo_image, logo_alt, instagram_url) VALUES (?, ?, ?)');
+            return $stmt->execute([$logo, $logoAlt, $instagramUrl]);
 
         case 'trend_section':
             if ($locale !== 'tr') {
@@ -520,21 +530,36 @@ function saveSettingByKey($db, $key, $value, $locale = 'tr') {
                 foreach ($social as $platform => $url) {
                     $platform = (string)$platform;
                     $url = (string)$url;
-                    // Mevcut platformu kontrol et
-                    $stmt = $db->prepare('SELECT id FROM social_media WHERE platform = ? LIMIT 1');
+
+                    // Aynı platforma ait TÜM kayıtları al (duplike satırlar olabilir)
+                    $stmt = $db->prepare('SELECT id FROM social_media WHERE platform = ? ORDER BY id ASC');
                     $stmt->execute([$platform]);
-                    $existing = $stmt->fetch();
-                    if ($existing) {
-                        if ($url === '') {
-                            $stmt = $db->prepare('DELETE FROM social_media WHERE id = ?');
-                            $stmt->execute([(int)$existing['id']]);
-                        } else {
-                            $stmt = $db->prepare('UPDATE social_media SET url = ?, is_active = 1 WHERE id = ?');
-                            $stmt->execute([$url, (int)$existing['id']]);
+                    $ids = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+
+                    if ($url === '') {
+                        // Boşsa platformun tüm kayıtlarını sil
+                        if (!empty($ids)) {
+                            $stmt = $db->prepare('DELETE FROM social_media WHERE platform = ?');
+                            $stmt->execute([$platform]);
                         }
-                    } elseif ($url !== '') {
+                        continue;
+                    }
+
+                    if (empty($ids)) {
+                        // Hiç kayıt yoksa ekle
                         $stmt = $db->prepare('INSERT INTO social_media (platform, url, is_active) VALUES (?, ?, 1)');
                         $stmt->execute([$platform, $url]);
+                    } else {
+                        // İlk kaydı güncelle
+                        $stmt = $db->prepare('UPDATE social_media SET url = ?, is_active = 1 WHERE id = ?');
+                        $stmt->execute([$url, $ids[0]]);
+                        // Fazla (duplike) kayıtları temizle — tek satır kalsın
+                        if (count($ids) > 1) {
+                            $extra = array_slice($ids, 1);
+                            $placeholders = implode(',', array_fill(0, count($extra), '?'));
+                            $stmt = $db->prepare("DELETE FROM social_media WHERE id IN ($placeholders)");
+                            $stmt->execute($extra);
+                        }
                     }
                 }
             }

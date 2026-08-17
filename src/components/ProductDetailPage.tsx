@@ -48,6 +48,11 @@ const certLabels: Record<string, Record<Locale, string>> = {
 // Taş türü çevirileri
 const stoneTypeMap: Record<string, Record<Locale, string>> = {
   'Pırlanta': { tr: 'Pırlanta', en: 'Diamond', ru: 'Бриллиант' },
+  'Sarı Pırlanta': { tr: 'Sarı Pırlanta', en: 'Fancy Diamond', ru: 'желтые бриллианты' },
+  'Mavi Pırlanta': { tr: 'Mavi Pırlanta', en: 'Blue Diamond', ru: 'синие брилианты' },
+  'Yeşil Pırlanta': { tr: 'Yeşil Pırlanta', en: 'Green Diamond', ru: 'зелёный бриллиант' },
+  'Konyak Pırlanta': { tr: 'Konyak Pırlanta', en: 'Cognac Diamond', ru: 'Коричневые бриллианты' },
+  'Kahverengi Pırlanta': { tr: 'Kahverengi Pırlanta', en: 'Brown Diamond', ru: 'коричневый бриллиант' },
   'Yakut': { tr: 'Yakut', en: 'Ruby', ru: 'Рубин' },
   'Safir': { tr: 'Safir', en: 'Sapphire', ru: 'Сапфир' },
   'Zümrüt': { tr: 'Zümrüt', en: 'Emerald', ru: 'Изумруд' },

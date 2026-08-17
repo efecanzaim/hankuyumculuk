@@ -34,12 +34,12 @@ export default function IletisimPageContent({ locale }: IletisimPageContentProps
 
   useEffect(() => {
     if (API_URL) {
-      fetch(`${API_URL}/api/content.php`)
+      fetch(`${API_URL}/api/content.php?locale=${locale}`)
         .then(res => res.json())
         .then(data => { if (data.contact) setContactData(data.contact); })
         .catch(() => {});
     }
-  }, []);
+  }, [locale]);
 
   const filtered = Object.fromEntries(Object.entries(contactData).filter(([, v]) => v !== '' && v !== null && v !== undefined));
   const contact = { ...defaultContact, ...filtered };
@@ -148,7 +148,9 @@ export default function IletisimPageContent({ locale }: IletisimPageContentProps
                     <div>
                       <h3 className="font-medium text-[#2f3237] text-lg mb-1">{t('contact.workingHours')}</h3>
                       <p className="text-[#6b7280]">
-                        {locale !== 'tr' ? t('contact.workingHoursValue') : contact.workingHours}
+                        {contactData.workingHours
+                          ? contactData.workingHours
+                          : (locale !== 'tr' ? t('contact.workingHoursValue') : defaultContact.workingHours)}
                       </p>
                     </div>
                   </div>
